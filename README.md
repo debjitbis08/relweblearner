@@ -24,7 +24,7 @@ src/relweblearner/
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
 tests/           # acceptance tests, one module per phase
 results/         # CSVs + plots
-docs/            # dev-doc.md (design + phases), scaling.md (distribution/scale note)
+docs/            # dev-doc.md (spec), design-log.md (decisions/reconciliation), scaling.md
 ```
 
 ## Setup
