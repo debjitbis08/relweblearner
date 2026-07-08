@@ -1,0 +1,19 @@
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# environments
+.venv/
+venv/
+
+# results artifacts (regenerable); keep the dir + committed reference CSVs only
+results/*.png
+results/*.pdf
+
+# os / editor
+.DS_Store
+*.swp

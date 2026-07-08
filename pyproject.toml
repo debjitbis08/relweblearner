@@ -1,0 +1,21 @@
+[project]
+name = "relweblearner"
+version = "0.1.0"
+description = "Fixed-Algebra Growing-Web Learner"
+authors = [{ name = "debjit", email = "debjit@fastmail.fm" }]
+readme = "README.md"
+requires-python = ">=3.11,<4.0"
+dependencies = ["numpy", "networkx", "matplotlib", "sympy"]
+
+[tool.poetry]
+packages = [{ include = "relweblearner", from = "src" }]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "*"
+
+[build-system]
+requires = ["poetry-core>=2.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
