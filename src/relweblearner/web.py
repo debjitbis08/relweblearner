@@ -60,6 +60,24 @@ class Edge:
 
 
 @dataclass(frozen=True)
+class WalkResult:
+    """The outcome of a query walk (:meth:`Web.walk`).
+
+    ``off_web`` is True iff the walk fell off a boundary before completing;
+    ``remaining`` is then the deficit — how many steps could not be taken. This
+    deficit is the obstruction the growth engine discharges (P1).
+    """
+
+    start: Node
+    rel: str
+    k: int
+    endpoint: Node
+    taken: int
+    remaining: int
+    off_web: bool
+
+
+@dataclass(frozen=True)
 class Commit:
     """One structural move in the append-only commitment log (invariant #5)."""
 
@@ -94,8 +112,7 @@ class Web:
     """A graph with fixed-algebra edge values, projected from a commit log."""
 
     #: public methods that are "acts" and MUST emit a trace (invariant #4 CI).
-    #: query-walk acts (``walk``) join this set in P1.
-    ACT_METHODS = ("add_node", "add_edge", "relabel", "rewire", "grow")
+    ACT_METHODS = ("add_node", "add_edge", "relabel", "rewire", "grow", "walk")
 
     def __init__(
         self,
@@ -246,6 +263,46 @@ class Web:
                 return None
             values.append(g)
         return self.algebra.compose_all(values)
+
+    def steps(self, u: Node, rel: str) -> list[tuple[Node, Element]]:
+        """All ``(neighbor, value)`` reachable from ``u`` by relation ``rel``.
+
+        A converse relation is written ``rel~`` (e.g. ``succ~`` = predecessor).
+        Multi-valued: a partial/attribute relation may return zero, one, or many.
+        """
+        out = []
+        for edge, forward in self._adj[u]:
+            if forward and edge.rel == rel:
+                out.append((edge.v, edge.value))
+            elif (not forward) and rel.endswith("~") and edge.rel == rel[:-1]:
+                out.append((edge.u, self.algebra.dagger(edge.value)))
+        return out
+
+    def step(self, u: Node, rel: str) -> Optional[tuple[Node, Element]]:
+        """Follow ``rel`` one hop from ``u`` (first match); ``None`` at a boundary."""
+        s = self.steps(u, rel)
+        return s[0] if s else None
+
+    def walk(self, start: Node, rel: str, k: int) -> WalkResult:
+        """Query walk: follow ``rel`` ``k`` times from ``start`` (an act, #4).
+
+        Stops early at a boundary; the trace records the endpoint and, when it
+        fell off, a ``deficit:`` witness token (the unpaired leftover of a query
+        that could not close).
+        """
+        cur = start
+        taken = 0
+        for _ in range(k):
+            nxt = self.step(cur, rel)
+            if nxt is None:
+                break
+            cur = nxt[0]
+            taken += 1
+        off_web = taken < k
+        remaining = k - taken
+        witness = {cur} if not off_web else {cur, f"deficit:{remaining}"}
+        self._trace({start}, witness, tag="walk")
+        return WalkResult(start, rel, k, cur, taken, remaining, off_web)
 
     def underlying_graph(self) -> nx.MultiGraph:
         g = nx.MultiGraph()

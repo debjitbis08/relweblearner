@@ -54,9 +54,18 @@ poetry run pytest        # run the acceptance suite
   - **inv 7** external writes into the act namespace are rejected;
   - **inv 8** a fork never mutates its parent (1000 random move sequences).
 
-See `docs/scaling.md` for the distribution / web-scale / volunteer-computing
-direction (nothing scheduled; records the anti-corner decisions).
+- **P1 — growth engine: complete.** `growth.py` — a persistence-gated,
+  minimal-growth engine. A query walk that falls off the web is an obstruction;
+  the engine spends `P` rounds trying the cheap moves (relabel, proven futile;
+  rewire, scored on a `fork()`) before paying to `grow` the fewest nodes that
+  discharge it, wired with the frozen algebra. `e1` accepted:
+  (a) refuses growth while probes stay in-web; (b) grows exactly `|deficit|`
+  nodes on `3-5`; (c) ≥20 unseen arithmetic facts through the invented nodes are
+  exact zero-shot; plus a sharp growth-vs-position threshold
+  (`results/e1_growth.{csv,png}`) and a rewire-discharges-without-growth case.
 
-Next: **P1 — growth engine** (persistence detector → minimal `grow`; the `e1`
-subtraction-probe experiment), then **P1b** constructing number from bare
-pairing episodes on this substrate.
+See `docs/scaling.md` for the distribution / web-scale / volunteer-computing
+direction, and `docs/design-log.md` for decisions & reconciliation notes.
+
+Next: **P1b** — constructing number from bare pairing episodes on this
+substrate (MATCH→merge, ONEMORE→`+1` edge, self-loop→holonomy defect).

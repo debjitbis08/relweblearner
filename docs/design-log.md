@@ -177,7 +177,34 @@ Carried from `scaling.md §9`:
 
 ---
 
-## 6. Log
+## 6. P1 growth engine — notes (2026-07-09)
+
+- **Query walk is an act** (`Web.walk`, inv 4): stepping follows relation
+  *structure*, not edge values, so a boundary walk-off is reachability, not
+  gauge — which is why relabel is provably futile against it.
+- **Persistence detector without corrupting state.** The "P rounds of
+  relabel+rewire" run on **forks** (`Web.fork`, inv 8), never the committed web:
+  relabel-futility is demonstrated on a throwaway fork, and each rewire
+  candidate is scored on a fork (accept only if the whole walk completes in-web
+  with no new defect). *Bug found & fixed:* an earlier version relabeled the
+  real web, so `_step_value` read gauge-mangled values and accepted a bogus
+  "bouncing" reconnection. Lesson logged: gauge moves must stay off the
+  committed projection during search.
+- **rewire-before-grow is real, not cosmetic.** If an existing node can
+  complete the walk (e.g. a removed middle edge), a single rewire discharges it
+  and growth is refused (`test_obstruction_completable_in_web_is_discharged_by_rewire`).
+  Growth fires only for genuine boundary walk-offs.
+- **Minimal growth** = exactly `deficit` fresh nodes chained with the frozen
+  step value; "BFS over completion candidates" degenerates to this for a linear
+  walk with no reusable node. Zero-shot arithmetic through the invented nodes is
+  exact because the edges carry the same frozen `+1` (e1 (c): ≥20 facts).
+- **Threshold, not drift** (e1 plot): growth is flat-zero for every in-web probe
+  and turns on exactly at the first boundary crossing. `results/e1_growth.{csv,png}`.
+- Open: the discharge accepts the *first* consistent in-web completion (bare —
+  no notion of the "intended" node). Fine for e1; revisit if a phase needs the
+  minimal/most-justified completion rather than any.
+
+## 7. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -186,3 +213,5 @@ Carried from `scaling.md §9`:
 - **2026-07-09** — P0 re-founded on event-sourced substrate committed
   `7944776` (`episode.py`, `journal.py`, `web.py` as projection; 22 tests).
 - **2026-07-09** — This design log created.
+- **2026-07-09** — P1 growth engine: `web.walk`, `growth.py`,
+  `datasets/arithmetic.py`, `experiments/e1_growth.py`; e1 accepted (27 tests).
