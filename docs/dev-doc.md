@@ -33,6 +33,18 @@ failing phase.
   closes" (holonomy = identity) or "this loop does not close" / "these
   two nodes are distinct". Observations are immutable data; the learner
   may never delete one to escape a defect.
+- **Collection / pairing episode**: the barest observation format. A
+  collection is a set of opaque object ids presented together. A pairing
+  episode presents two collections plus a set of pairing edges between
+  their objects (each object used at most once). The learner computes
+  leftovers itself. NO node in the input stream is ever a number, and no
+  relation in the input stream is ever named.
+- **Simulation (fork-score-discard)**: because the web is a projection of
+  an immutable log (invariant 5), it can be FORKED cheaply. A simulation
+  applies candidate moves to a fork, scores the result (defect mass, size),
+  and discards the fork. Nothing is committed to the real log unless the
+  score clears a policy. A simulated act emits a trace flagged
+  counterfactual ('cf'); imagined episodes are episodes.
 - **Motif**: a composite relation defined as a word over existing edge
   types, e.g. same-color(x,y) := exists c: has-color(x,c) and
   has-color(y,c) — equivalently the path x -> c -> y using an edge and a
@@ -54,7 +66,50 @@ failing phase.
      hyperparameter.
 3. **Observations are loop-closure and distinctness assertions only.**
    No coordinates, no node attributes.
-4. **The learning signal is defect persistence.** The objective is total
+4. **No silent operations (reflection is constitutive).** Every operation
+   of every web -- edge addition, loop check, merge, growth, query walk,
+   comparison -- MUST emit a trace episode in the standard observation
+   format (collection_1, collection_2, pairing) onto the same stream as
+   world episodes. One event bus; one parser; zero branching on origin.
+   Emission is free and unconditional (it defines what an operation is);
+   CONSUMPTION of traces is an ordinary act drawn from a bounded attention
+   budget. A web too small to repair anything still emits. CI test: every
+   public method appends >= 1 well-formed episode; the world-episode
+   parser accepts every trace episode unchanged. Reference:
+   experiment0f_reflection.py.
+5. **Belief/data separation (event sourcing).** The episode log is
+   immutable and append-only; the web (merges, motifs, growth) is a
+   PROJECTION of the log. Every committed inference stores its
+   justifying episodes. Any belief must be reproducible by replaying the
+   log and revocable by replaying with an exclusion set. Never mutate
+   beliefs in place in a way that cannot be rebuilt from the log.
+6. **Commitment policy (do not be eagerly trusting).**
+   - Single-witness inferences are PROVISIONAL; commit a merge only at
+     > = 2 independent supporting episodes (threshold k, default 2).
+   - On a genuine contradiction (e.g. a class ONEMORE of itself),
+     LOCALIZE: greedily find the minimal set of match-edges whose
+     exclusion dissolves the contradiction (each step: exclude the edge
+     whose removal minimizes remaining contradictions), then rebuild by
+     replay-with-exclusions. Excluded episodes are flagged in the log,
+     never deleted. Reference: experiment0h_adversarial.py.
+   - Report collateral retraction (clean edges excluded alongside the
+     lie) as a metric; it is the price of recovery, keep it logged.
+7. **Bus provenance.** Trace episodes live in a reserved namespace
+   (act-ids are generated only by the learner). External episodes
+   claiming the act namespace are rejected at ingestion. CI test:
+   attempt an external write into the act namespace; it must fail.
+8. **Simulate before committing consequential moves.** Any non-trivial
+   move (a merge, a growth, a motif reification) is first applied to a
+   FORK of the projection and scored; it is committed to the real log
+   only if it clears policy (default: introduces zero new contradictions,
+   or strictly reduces defect mass). Simulated acts emit cf-flagged
+   traces on the shared bus and MUST NOT alter the real projection. This
+   is a seam over existing parts (fork = invariant 5; moves = invariant
+   2; score = invariant 8/defect mass), not a new subsystem. Known limit:
+   simulation catches only conflicts with ALREADY-KNOWN structure -- it
+   detects incoherence, never non-correspondence. Reference:
+   experiment0i_simulate.py.
+9. **The learning signal is defect persistence.** The objective is total
    defect mass over observed loops; `grow` fires only when a defect
    persists under exhaustive relabel+rewire within budget (persistence
    threshold P).
@@ -71,10 +126,15 @@ relweblearner/
                     #   wake  - ingest observations, local defect checks
                     #   sleep - batch compression: relabel search,
                     #           node/edge-class merging (quotients)
-                    #   play  - propose loop closures, test grow candidates
+                    #   play  - propose closures, SIMULATE each on a fork,
+                    #           commit only the best-scoring (invariant 8)
   datasets/
-    arithmetic.py   # generators: chain webs; addition facts as loop
-                    #   assertions; subtraction probes; doubling probes
+    counting.py     # generators: collections of opaque objects + pairing
+                    #   episodes (NO number nodes; see P1b). Staged
+                    #   presentation schedules (small-collections-first).
+    arithmetic.py   # synthetic chain webs -- UNIT TESTS ONLY for the
+                    #   growth engine (P1); superseded by constructed
+                    #   number classes (P1b) as the data source for P2+
     kinship.py      # kinship relations as loop assertions
   experiments/
     e1_growth.py    # forced-growth threshold
@@ -116,6 +176,41 @@ unseen arithmetic facts through the new nodes all hold exactly. Plot:
 growth events vs probe-stream position — expected result is a sharp
 threshold, not a drift.
 
+### P1b — Constructing number from counting (one-two days)
+
+Numbers must never be input nodes. The stream contains only pairing
+episodes over collections of opaque objects (see glossary). The learner
+derives two predicates itself: MATCH (the pairing saturates both sides)
+and ONEMORE (saturates one side, exactly one object unpaired on the
+other). Pipeline:
+
+1. quotient: union-find merge over MATCH evidence -> emergent class
+   nodes. These classes ARE the numbers; they appear in the growth/merge
+   log, not in the input.
+2. successor: ONEMORE descends to classes. Use successor INJECTIVITY as
+   an inference rule: a class with two successor-classes forces those
+   targets to merge -- guarded: never merge two classes that have
+   ONEMORE evidence between each other (that would make a class ONEMORE
+   of itself, a genuine contradiction to be reported, not repaired).
+3. counting routine: to number a fresh collection, pair it against
+   class representatives along the chain until saturation; its number
+   is the position. Log query cost.
+4. staging: run a small-collections-first presentation schedule and log
+   class crystallization order.
+   Reference implementation: experiment0e_number.py.
+   **Accept (e1b):** (a) grep-proof: no input token is a numeral; (b) final
+   quotient classes are pure by hidden size and the successor graph is a
+   single chain isomorphic to an initial segment of the naturals; (c) a
+   fresh collection is numbered correctly by the chain-pairing routine;
+   (d) staged schedule yields staged crystallization (classes for 1 and 2
+   exist while larger collections remain singletons) before full data;
+   (e) a double-tagged (corrupt) pairing episode produces exactly the
+   'class ONEMORE of itself' defect and is quarantined, never repaired by
+   merging. Downstream phases (P2, P3) must consume the CONSTRUCTED class
+   chain, not synthetic number nodes; subtraction probes (P1) then trigger
+   growth at the quotient level (new classes with no witnessing collections
+   -- the learner's negative numbers).
+
 ### P2 — Symmetry-sector inference (one day)
 
 Given loop assertions only, solve for a per-relation-type transport over
@@ -126,8 +221,15 @@ classification vs ground truth. Add the stressor: `double` cannot carry
 any constant additive transport — correct behavior is that the solver
 REJECTS type-homogeneity for it (residual stays high) and the learner
 represents doubling as a motif (a family of edges) instead. Document it.
+Induction must be noise-tolerant: replace exact consistency with a
+best-fit-under-exception-budget rule (an exception costs a fixed
+description-length penalty; the winning hypothesis minimizes total
+cost). A single mislabeled example must not be able to eliminate the
+true hypothesis.
 **Accept (e2):** same/succ classified correctly from >= 30 random loop
-observations, 20/20 seeds; `double` flagged non-homogeneous.
+observations, 20/20 seeds; `double` flagged non-homogeneous; with one
+adversarially mislabeled training example injected, the induced rule is
+unchanged in >= 18/20 seeds.
 
 ### P2' — Unlabeled-relation type discovery (one-two days)
 
@@ -196,7 +298,74 @@ defect_. Implement the three resolutions:
   afterward. Reference behavior: `experiment0.py` demo D and
   `experiment0c_learning.py` (autonomous split).
 
-### P6 (stretch) — Ensemble geometry
+### P6 — Reflection experiments (one-two days)
+
+With invariant 4 in place, reflection needs no new machinery -- only
+attention allocation. Feed the learner's own trace stream back through
+the ordinary ingest/compare path, mixed with world episodes, and test:
+(a) classes crystallize over the learner's own acts (merge-acts,
+growth-acts, defect-reports) using UNCHANGED type-discovery machinery;
+(b) the attention budget bounds actual regress: emitted-but-unconsumed
+backlog stays finite and consumption never exceeds budget;
+(c) self-derived quantities appear: the learner counts its own defect
+reports with the number chain it constructed in P1b (the system measuring
+itself with its own ruler).
+**Accept:** all three logged, with (a) scored as purity of act-classes
+against hidden operation types.
+
+### P6' — Simulation & lookahead (one-two days)
+
+Implement the fork-score-discard seam and route `play` through it.
+
+1. imagine-then-commit: every consequential move is scored on a fork;
+   commit only if policy clears. Verify the fork never mutates the real
+   projection (property test, 1000 random move sequences).
+2. lookahead: given >1 candidate move for an open query, simulate each
+   and pick least (defect, size); commit only the winner.
+3. counterfactual provenance: simulated acts are cf-flagged on the bus;
+   the cf set and the real set never cross-contaminate (CI test). The
+   learner can count its own simulations with the P1b number chain.
+4. rehearsal-refusal: a move whose simulation shows a contradiction is
+   refused, with a logged reason.
+   Optional depth: n-step lookahead (simulate a move, then simulate moves on
+   that fork) with a branching budget; report solution quality vs budget.
+   **Accept (e6'):** honest moves commit, incoherent moves are refused with
+   reasons, lookahead picks the min-defect candidate 20/20 seeds, and no cf
+   act ever appears in the committed projection. Document the known limit
+   (coherence != correspondence) in results, tying it to the P7 consistent-
+   lie curve: simulation raises the cost of an INCONSISTENT lie to infinity
+   (auto-refused) but does nothing to a fully CONSISTENT one -- only the
+   ensemble does.
+
+### P7 — Adversarial audit (one-two days)
+
+Attack the learner deliberately; measure detection, damage, recovery.
+
+- Poison-rate sweep: inject corrupt pairing episodes at rates 0.1%-5%.
+  Log detection rate, time-to-detection (episodes until first genuine
+  defect), quotient purity before/after retraction, collateral
+  retraction count. **Accept:** purity restored to 1.0 at <= 1% poison;
+  detection rate 100% for contradictions reachable by observed loops.
+- Repeat-lie attack: the same false pair asserted many times. Must cost
+  the attacker; must not cost the learner (parallel evidence on one
+  pair is a single cut).
+- Consistent-lie cost curve: minimum number of coordinated fake
+  episodes needed for a false merge to survive retraction, as a
+  function of the target region's loop connectivity. This curve is the
+  system's core security property (lies must out-fake every loop
+  through the region); plot it.
+- DoS caps: contradiction-flood (must not fragment concepts without
+  bound -- split budget) and unclosable-query flood (must not grow
+  without bound -- growth budget). **Accept:** both budgets hold and
+  the learner degrades to refusal, not to corruption.
+  Honest limit to document in results: a fully consistent lie -- a
+  coherent alternative web with no contradicting loops -- is
+  indistinguishable from truth for a single learner. Coherence is
+  checkable; correspondence requires independent sources (the multi-web
+  ensemble of P5/P8 is the real defense, cross-web interface defects the
+  cross-examination).
+
+### P8 (stretch) — Ensemble geometry
 
 Hypothesis to test: geometric structure of the learned concept space may
 be stable only across an ensemble, not in any single run. Train an

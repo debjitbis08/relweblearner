@@ -16,8 +16,9 @@ def _chain(n: int, grow_cost: int = 10) -> Web:
     w = Web(IntegerGroup(), grow_cost=grow_cost)
     for k in range(n):
         w.add_node(k)
+    w.chain_edges = []
     for k in range(n - 1):
-        w.add_edge(k, k + 1, "succ", 1)
+        w.chain_edges.append(w.add_edge(k, k + 1, "succ", 1))
     return w
 
 
@@ -64,9 +65,10 @@ def test_rewire_that_makes_an_observed_loop_inconsistent_is_rejected():
     # loop [0,1,2] closes: 0->1(+1), 1->2(+1), 2->0(-2). Replace the 1->2 edge
     # with a wrong +5 and the loop no longer closes -> observation violated.
     w = _chain(3)
+    edge_1_2 = w.chain_edges[1]                     # the 1->2 edge
     w.rewire(add=(0, 2, "plus2", 2))               # chord, loop now closes
     w.observe_loop_closes([0, 1, 2])
-    w.rewire(remove=1)                              # drop the good 1->2 edge (eid 1)
+    w.rewire(remove=edge_1_2.eid)                   # drop the good 1->2 edge
     before_cost = w.total_cost
     with pytest.raises(ObservationViolation):
         w.rewire(add=(1, 2, "succ", 5))            # wrong reconnection: holonomy 4
