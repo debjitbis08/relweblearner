@@ -184,13 +184,12 @@ Reconciliation / substrate:
   episodes** rather than asserted? P1b derives MATCH/ONEMORE and never uses the
   pre-derivation Observation API, but the API still exists for P0/unit tests.
   Retire it once every phase consumes derived constraints.
-- **Provisional commitment (inv 6, k≥2).** *Deferred to P7.* P1b commits merges
-  **eagerly on a single MATCH** — required for e1b(e): one poisoned episode must
-  produce a visible 'class ONEMORE of itself' defect, which a k≥2 gate would
-  suppress. This is a deliberate deviation from inv 6 (see §3). The event-
-  sourced substrate makes it safe: the poison is *retractable* by excluding its
-  episode and re-projecting (shown in e1b(e)); P7 adds the k≥2 gate and the
-  greedy localize-and-replay of `experiment0h`.
+- ~~**Provisional commitment (inv 6, k≥2).**~~ **Resolved at P7.** P1b commits
+  eagerly (single MATCH) so e1b(e)'s poison is visible; **P7 adds the k≥2 gate**
+  (`audit.derive_facts(k=2)`) as the primary defense — thinly-witnessed poison
+  never enters the quotient, keeping purity 1.0 across the 0.1–5% sweep — with
+  the greedy localize-and-replay of `experiment0h` as the fallback for lies that
+  clear the gate. See §16.
 
 Carried from `scaling.md §9`:
 - snapshot granularity; when a causal cone is safe to *seal* (compact);
@@ -450,7 +449,36 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   All 57 prior tests still pass. This is the correct event-sourced merge.
 - Accepted (5 tests). `results/e6p_simulate.{csv,png}`.
 
-## 16. Log
+## 16. P7 adversarial audit — notes (2026-07-09)
+
+- **The k>=2 provisional-commitment gate is the primary defense** (resolves the
+  P1b deviation, invariant 6). Thinly-witnessed poison (1 episode) never enters
+  the quotient, so purity stays 1.0 across the whole 0.1%–5% sweep with zero
+  damage and zero collateral. This is cleaner than any recovery.
+- **Localize-and-replay is the fallback** for lies that pass the gate. Greedy
+  min-cut over deduped match-pairs, tie-broken by support (cut thinly-witnessed
+  edges first). Recovers purity, but **honest finding logged**: with *many*
+  independent poison bridges between the same two clusters the greedy is
+  imprecise — removing a clean member reduces the contradiction count as much as
+  cutting a bridge, so it over-cuts (collateral ≈ 30, the documented "price of
+  recovery"). A true graph min-cut would be tighter; greedy is what `0h` uses
+  and it suffices for single/coordinated lies. At ≤2% k=1 still reaches 1.0.
+- **Repeat-lie is one cut.** Match evidence deduped by pair: the same false pair
+  asserted 50× is a single edge to cut. Attacker pays 50, learner pays 1.
+- **Consistent-lie cost curve = connectivity, exactly** (`consistent_lie_cost`
+  measured on the real holonomy substrate — a false merge turns each independent
+  A–B loop into a defect, so a coherent lie must out-fake every loop). Linear,
+  slope 1: the denser the region, the more expensive the lie. The core security
+  property. Note this is holonomy, not union-find (which sees only adjacent
+  false merges).
+- **DoS budgets** hold: split budget bounds fragmentation, growth budget bounds
+  invention; the learner degrades to *refusal*, not corruption.
+- **Documented limit:** a fully consistent lie (no contradicting loop) is
+  undetectable to a single learner — coherence is checkable, correspondence
+  needs the ensemble (P5). Ties to the P6' limit.
+- Accepted (7 tests). `results/e7_adversarial.{csv,png}`.
+
+## 17. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -491,3 +519,8 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   `experiments/e6p_simulate.py`; e6' accepted (62 tests). Fork-score-discard
   play loop; refuse-with-reason; lookahead 20/20; cf never in committed. Fixed a
   latent merge-semantics bug (two-pass `_rebuild`; `all_node_ids`).
+- **2026-07-09** — P7 adversarial audit: `audit.py`,
+  `experiments/e7_adversarial.py`; e7 accepted (69 tests). k>=2 gate keeps purity
+  1.0 across the sweep; localize-and-replay recovery (collateral logged);
+  repeat-lie = 1 cut; consistent-lie cost = connectivity (linear); DoS budgets;
+  k>=2 deviation from P1b resolved.

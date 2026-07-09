@@ -28,6 +28,7 @@ src/relweblearner/
   ensemble.py    # (P5) N-web interference + dynamic ensemble (learned web count)
   reflection.py  # (P6) act-classes from own traces; attention budget; self-count
   simulate.py    # (P6') fork-score-discard play loop: imagine-then-commit, lookahead
+  audit.py       # (P7) adversarial: k>=2 gate, localize-and-replay, DoS budgets
   datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship
   baselines/     # (P3) TransE / ComplEx (numpy, Adam)
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
@@ -154,9 +155,21 @@ poetry run pytest        # run the acceptance suite
   (`results/e6p_simulate.{csv,png}`). Fixed a latent merge-semantics bug in the
   substrate along the way (merge now genuinely collapses the graph).
 
+- **P7 — adversarial audit: complete.** `audit.py` — the **k≥2 provisional-
+  commitment gate** (resolving the P1b deviation) is the primary defense:
+  thinly-witnessed poison never enters the quotient, so purity stays **1.0 across
+  the 0.1–5% sweep**. **Localize-and-replay** (greedy min-cut, support-tie-broken)
+  is the fallback for lies that clear the gate, with collateral logged as the
+  price of recovery. **Repeat-lie is one cut** (attacker pays N, learner pays 1);
+  the **consistent-lie cost curve is exactly linear in loop connectivity** —
+  a coherent lie must out-fake every loop through the region (the core security
+  property); and DoS budgets degrade the learner to *refusal*, not corruption.
+  Documented limit: a fully consistent lie is undetectable to a single learner —
+  correspondence needs the ensemble (`results/e7_adversarial.{csv,png}`).
+
 See `docs/scaling.md` for the distribution / web-scale / volunteer-computing
 direction, and `docs/design-log.md` for decisions & reconciliation notes.
 
-Next: **P7** — adversarial audit (retraction already works; add the k≥2 gate,
-greedy localize-and-replay, and the consistent-lie cost curve — the core
-security property), or **P8** — ensemble geometry.
+Next: **P8** (stretch) — ensemble geometry (spectral-embed the dynamic ensemble;
+test whether concept geometry stabilizes across an ensemble even when it varies
+per run).
