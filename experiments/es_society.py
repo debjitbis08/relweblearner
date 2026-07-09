@@ -79,6 +79,7 @@ def s3_gossip(n_agents=24, k=3):
     for _ in range(4000):
         a, b = rng.sample(agents, 2)
         S.relay(a, b, false)                     # gossip transmits origin set unchanged
+    rumor_naive = sum(1 for a in agents if S.committed_naive(a, false, k))
     rumor_committed = sum(1 for a in agents if S.committed(a, false, k))
 
     true = ("HC", "mango", "yellow")
@@ -94,7 +95,7 @@ def s3_gossip(n_agents=24, k=3):
     for s in sybils:
         S.teach(s, victim, false)
     sybil_origins = S.origin_count(victim, false)
-    return rumor_committed, cited_committed, sybil_origins, n_agents
+    return rumor_naive, rumor_committed, cited_committed, sybil_origins, n_agents
 
 
 def s4_population():
@@ -130,7 +131,7 @@ def s5_disagreement():
 def run():
     curve, identical, adj = s1_dyad()
     census = s1_solipsism()
-    rumor, cited, sybil, n = s3_gossip()
+    rumor_naive, rumor, cited, sybil, n = s3_gossip()
     dialects, creole_on, creole_off = s4_population()
     outcome, queryable, winner, how = s5_disagreement()
 
@@ -144,7 +145,8 @@ def run():
     print("\n" + "=" * 66)
     print("S3. CITATION-TRACKED GOSSIP (the immune system)")
     print("=" * 66)
-    print(f"rumor (1 owner, 50 tellings, 4000 gossip rounds): committed {rumor}/{n}")
+    print(f"rumor (1 owner, 50 tellings, 4000 gossip rounds): "
+          f"NAIVE hearing-count {rumor_naive}/{n} vs ORIGIN-count {rumor}/{n}")
     print(f"cited (6 independent owners, once each): committed {cited}/{n}")
     print(f"Sybil (10 agents, 1 owner): origin count {sybil}")
 
@@ -169,7 +171,8 @@ def run():
         w.writerow(["dyad_lexicons_identical", int(identical)])
         w.writerow(["cross_agent_adjunction", f"{adj:.3f}"])
         w.writerow(["solipsism_debt_final", census[-1]])
-        w.writerow(["rumor_committed", f"{rumor}/{n}"])
+        w.writerow(["rumor_committed_naive", f"{rumor_naive}/{n}"])
+        w.writerow(["rumor_committed_origin", f"{rumor}/{n}"])
         w.writerow(["cited_committed", f"{cited}/{n}"])
         w.writerow(["sybil_origin_count", sybil])
         w.writerow(["dialect_within", f"{dialects[0]:.3f}"])
@@ -177,7 +180,7 @@ def run():
         w.writerow(["creolization_with_inhibition", f"{creole_on:.3f}"])
         w.writerow(["creolization_without_inhibition", f"{creole_off:.3f}"])
         w.writerow(["disagreement_resolution", how])
-    _plot(curve, census, (rumor, cited, n), (creole_on, creole_off),
+    _plot(curve, census, (rumor_naive, rumor, cited, n), (creole_on, creole_off),
           os.path.join(RESULTS, "es_society.png"))
     print(f"\nwrote {csv_path}")
 
@@ -194,11 +197,11 @@ def _plot(curve, census, gossip, creole, path):
     ax.set_ylim(0, 1.05)
 
     ax = axes[1]
-    rumor, cited, n = gossip
-    ax.bar(["rumor\n(1 owner)", "cited\n(6 owners)"], [rumor, cited],
-           color=["#c0392b", "#2c3e50"])
+    rumor_naive, rumor, cited, n = gossip
+    ax.bar(["rumor\n(naive)", "rumor\n(origin)", "cited\n(6 owners)"],
+           [rumor_naive, rumor, cited], color=["#e67e22", "#c0392b", "#2c3e50"])
     ax.axhline(n, ls="--", color="#7f8c8d", lw=1)
-    ax.set_title("S3 gossip: committed under origin-counting\n(rumor cites itself)")
+    ax.set_title("S3 gossip: naive counting trusts the rumor,\norigin-counting doesn't")
     ax.set_ylabel(f"agents committed (of {n})")
     ax.set_ylim(0, n + 1)
 

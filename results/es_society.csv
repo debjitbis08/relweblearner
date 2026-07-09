@@ -3,7 +3,8 @@ dyad_success_final,1.000
 dyad_lexicons_identical,1
 cross_agent_adjunction,1.000
 solipsism_debt_final,0
-rumor_committed,0/24
+rumor_committed_naive,24/24
+rumor_committed_origin,0/24
 cited_committed,24/24
 sybil_origin_count,1
 dialect_within,1.000

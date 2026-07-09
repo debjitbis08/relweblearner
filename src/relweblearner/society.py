@@ -58,6 +58,8 @@ class Agent:
         self.assoc: dict = defaultdict(lambda: defaultdict(float))
         # citation log: fact -> set of distinct origin owners
         self.beliefs: dict = defaultdict(set)
+        # naive hearing count: fact -> tellings heard (the defeated baseline)
+        self.heard: dict = defaultdict(int)
         # facts this agent grounded first-hand (perception outranks testimony)
         self.perceived: dict = {}
         # (other_id, (rel, x)) -> {"mine": (fact, origins), "theirs": (fact, origins)}
@@ -199,16 +201,20 @@ Agent.assoc_meaning = _agent_meaning  # comprehension = inverse of production
 def teach(speaker: Agent, listener: Agent, fact) -> None:
     """Speaker teaches ``fact``: it enters the listener's log with origin =
     speaker's OWNER (not the agent). Many agents under one owner add one origin.
+    Also bumps the naive hearing count (the baseline a rumor defeats).
     """
     listener.beliefs[fact].add(speaker.owner)
+    listener.heard[fact] += 1
 
 
 def relay(teller: Agent, listener: Agent, fact) -> None:
     """Retell a known fact, transmitting its origin set UNCHANGED (a relayer adds
-    no citation of its own).
+    no citation of its own). Each retelling is one more *hearing*, so naive
+    counting climbs with repetition while distinct origins do not.
     """
     if fact in teller.beliefs:
         listener.beliefs[fact] |= teller.beliefs[fact]
+        listener.heard[fact] += 1
 
 
 def committed(agent: Agent, fact, k: int = 3) -> bool:
@@ -216,15 +222,22 @@ def committed(agent: Agent, fact, k: int = 3) -> bool:
     return len(agent.beliefs.get(fact, ())) >= k
 
 
+def committed_naive(agent: Agent, fact, k: int = 3) -> bool:
+    """The defeated baseline: commit on ``>= k`` *hearings*. A rumor drills this
+    threshold with sheer repetition — which is exactly why it is unsafe.
+    """
+    return agent.heard.get(fact, 0) >= k
+
+
 def origin_count(agent: Agent, fact) -> int:
     return len(agent.beliefs.get(fact, ()))
 
 
 def naive_hearing_count(agent: Agent, fact) -> int:
-    """The defeated baseline: how many times heard (here, origins seen). Kept so
-    the rumor test can contrast origin-counting against loud repetition.
+    """How many tellings of ``fact`` this agent has heard (repetition, not
+    independence) — the quantity origin-counting deliberately ignores.
     """
-    return len(agent.beliefs.get(fact, ()))
+    return agent.heard.get(fact, 0)
 
 
 # ===================================================== S4 — population dynamics

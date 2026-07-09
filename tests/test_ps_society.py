@@ -95,6 +95,9 @@ def test_rumor_is_defeated_by_origin_counting():
     committed, agents = _gossip_committed(false, plan)
     assert committed == 0                                       # 0/24 under origin-counting
     assert S.origin_count(agents[0], false) == 1
+    # the contrast the origin-count defeats: naive hearing-counts DO trust it
+    naive = sum(1 for a in agents if S.committed_naive(a, false, 3))
+    assert naive == 24                                         # 24/24 under naive counting
 
 
 def test_independently_cited_fact_commits():

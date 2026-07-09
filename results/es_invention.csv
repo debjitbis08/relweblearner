@@ -8,4 +8,5 @@ poison_contradictions_after,0
 purity_before,0.800
 purity_after,1.000
 banked_content_classes,1
-posit_confirmation_rate,0.500
+posit_before_evidence,1
+posit_confirmation_rate,1.000

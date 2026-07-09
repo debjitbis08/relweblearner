@@ -543,12 +543,23 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   itself notes perception *follows* society because society is the independent
   truth-channel it needs. Files: `society.py`, `invention.py`,
   `datasets/society.py`, `experiments/es_society.py`, `experiments/es_invention.py`,
-  `tests/test_ps_society.py`, `tests/test_ps_invention.py` (16 tests; 101 total).
-- **Only one of three cited references existed** (`experiment0l_dyad.py`;
-  `experiment0m_zoo.py` and `experiment0k_invention.py` are absent). Implemented
-  to the spec *mechanism* and reproduced the *qualitative* targets; the reference
-  constants turned out to match closely anyway (see below), but they are not
-  pinned to a runnable reference.
+  `tests/test_ps_society.py`, `tests/test_ps_invention.py` (17 tests; 102 total).
+- **References reconciled.** The missing `experiment0m_zoo.py` and
+  `experiment0k_invention.py` were added afterwards; ran both and reconciled.
+  `0m` reproduces exactly: dialects **0.53/0.53 within, 0.00 across**, creolization
+  plateau **0.33 → 0.36 → 0.36** (no inhibition), rumor **naive 24/24 vs cited
+  0/24**, true cited **24/24**. `0k` matches: clock blend **h2**, winding **+12**,
+  content; posit-before-evidence **PASS**. Two changes this surfaced: (1) the
+  rumor's *naive hearing-count* baseline (heard ≥ k, which trusts repetition) was
+  mislabelled — added a real `heard` counter and `committed_naive` so the
+  experiment shows the **24/24 naive vs 0/24 origin** contrast; (2) the
+  invention census gained a concrete **posit-before-evidence** (neutrino) path
+  (`posit_from_closure` + timestamped members) matching `0k` Part 1, replacing an
+  abstract placeholder. Note the model choice: `0m` is the *pre-fix* run (no
+  lateral inhibition → within-community only 0.53, creolization stuck at 0.36);
+  this implementation applies the spec's REQUIRED inhibition fix throughout, so
+  its dialects fully converge (within 1.0) and creolization reaches 1.0, while
+  **disabling inhibition reproduces `0m`'s 0.36 plateau** as the failure mode.
 - **S1 lateral inhibition made real.** The dyad reference uses one word per
   concept, so inhibition is vacuous there. Modelled weighted synonym
   associations so inhibition actually bites, and measured population convergence
@@ -574,7 +585,7 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   *refuses* an `observe_distinct`+`merge` at commit time, so the error path is
   demonstrated via the number/audit poison and a direct self-loop web, not a
   blocked merge.
-- Accepted (16 tests; 101 total).
+- Accepted (17 tests; 102 total).
 
 ## 20. Log
 
@@ -634,7 +645,7 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   dependency + disjoint namespaces CI-tested.
 - **2026-07-09** — PS society + P7' invention (standalone spec; NOT roadmap P9):
   `society.py`, `invention.py`, `datasets/society.py`, `experiments/es_society.py`,
-  `experiments/es_invention.py`; accepted (101 tests). Dyad 0.86→1.00 with
+  `experiments/es_invention.py`; accepted (102 tests). Dyad 0.86→1.00 with
   lateral inhibition; cross-agent adjunction 1.0; solipsism debt 2→1→0; gossip
   rumor 0/24 vs cited 24/24, Sybil→1; dialects within 1.0/cross 0.0; creolization
   1.0 vs 0.35 plateau; interface-defect disagreement. P7' content-vs-error:

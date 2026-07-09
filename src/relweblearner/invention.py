@@ -80,20 +80,39 @@ class InventionCensus:
         self.banked.append(entry)
         return entry
 
-    def posit(self, node: Node) -> None:
-        """Log an entity grown from a closure requirement before any evidence."""
-        self.posited.append(node)
+    def posit(self, node: Node, members=None, at: int | None = None) -> None:
+        """Log an entity grown from a closure requirement before any evidence.
+
+        ``members`` are its derived (unobserved) contents and ``at`` a logical
+        timestamp — both used to check a posit *preceded* its confirmation.
+        """
+        self.posited.append({"id": node, "members": set(members) if members else set(), "at": at})
+
+    def _entry(self, node: Node):
+        return next((p for p in self.posited if p["id"] == node), None)
 
     def confirm(self, node: Node) -> None:
-        if node in self.posited:
+        if self._entry(node) is not None:
             self.confirmed.add(node)
 
     def refute(self, node: Node) -> None:
-        if node in self.posited:
+        if self._entry(node) is not None:
             self.refuted.add(node)
 
     def posit_confirmation_rate(self) -> float:
         return len(self.confirmed) / len(self.posited) if self.posited else 0.0
+
+
+def posit_from_closure(source: set, seen_dests: list) -> set:
+    """Members a split fails to account for — the derived posit (the neutrino).
+
+    A banked conservation motif says a split saturates its source. When observed
+    destinations cover only part of the source, the residue must live in an
+    UNSEEN container: the closure requirement invents an entity with exactly
+    these members, before any episode witnesses it.
+    """
+    covered = set().union(*seen_dests) if seen_dests else set()
+    return set(source) - covered
 
 
 # ---------------------------------------------------------------- content: banking

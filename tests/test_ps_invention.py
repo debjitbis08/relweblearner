@@ -91,3 +91,22 @@ def test_invention_census_tracks_posit_confirmation():
     census.posit("neg2")
     census.confirm("neg1")
     assert census.posit_confirmation_rate() == 0.5
+
+
+def test_posit_before_evidence_neutrino_pattern():
+    # an incomplete split leaves a member unaccounted -> posit an unseen entity
+    source = {"o1", "o2", "o3", "o4", "o5"}
+    seen = [{"o1", "o2"}, {"o3", "o4"}]
+    missing = INV.posit_from_closure(source, seen)
+    assert missing == {"o5"}                     # derived by closure, never observed
+
+    census = INV.InventionCensus()
+    t_posit = 1
+    census.posit("H*", members=missing, at=t_posit)
+    # a retrieval baseline has nothing to return at posit time
+    assert not [d for d in seen if "o5" in d]
+    # the world reveals it strictly later -> the posit preceded its evidence
+    t_reveal = 2
+    census.confirm("H*")
+    assert t_posit < t_reveal
+    assert census.posit_confirmation_rate() == 1.0

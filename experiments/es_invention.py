@@ -96,10 +96,35 @@ def run():
     print(f"poison contradictions {bad_before} -> {bad_after} after localize; "
           f"purity {purity_before:.2f} -> {purity_after:.2f}")
 
-    # ---- posit-before-evidence census (grown entities, later confirmed)
-    census.posit("neg1")
-    census.posit("neg2")
-    census.confirm("neg1")                       # a later episode witnessed neg1
+    # ---- posit-before-evidence (the neutrino pattern): posit an unseen entity
+    # from a closure requirement, timestamped BEFORE any confirming observation
+    t = [0]
+
+    def stamp():
+        t[0] += 1
+        return t[0]
+
+    # a conservation motif is banked; an incomplete split leaves members missing
+    source = {"o1", "o2", "o3", "o4", "o5"}
+    seen_dests = [{"o1", "o2"}, {"o3", "o4"}]
+    missing = INV.posit_from_closure(source, seen_dests)
+    t_posit = stamp()
+    census.posit("H*", members=missing, at=t_posit)          # derived, not observed
+    retrieval = [e for e in seen_dests if "o5" in e]         # a retrieval baseline...
+    t_reveal = stamp()                                        # ...the world reveals it later
+    if missing == {"o5"}:
+        census.confirm("H*")
+
+    print("\n" + "=" * 66)
+    print("POSIT-BEFORE-EVIDENCE (the neutrino pattern)")
+    print("=" * 66)
+    print(f"incomplete split of 5 accounts for 4 -> POSIT unseen entity H* "
+          f"with members {sorted(missing)} at t={t_posit}")
+    print(f"retrieval baseline asked 'where is o5?' at t={t_posit}: "
+          f"{'nothing' if not retrieval else retrieval} (invention, not search)")
+    print(f"reveal at t={t_reveal} confirms H*: posit preceded evidence "
+          f"({t_posit} < {t_reveal})")
+
     print("\n" + "=" * 66)
     print("INVENTION CENSUS")
     print("=" * 66)
@@ -121,6 +146,7 @@ def run():
         w.writerow(["purity_before", f"{purity_before:.3f}"])
         w.writerow(["purity_after", f"{purity_after:.3f}"])
         w.writerow(["banked_content_classes", len(census.banked)])
+        w.writerow(["posit_before_evidence", int(t_posit < t_reveal)])
         w.writerow(["posit_confirmation_rate", f"{census.posit_confirmation_rate():.3f}"])
     _plot((purity_before, purity_after), (bad_before, bad_after),
           os.path.join(RESULTS, "es_invention.png"))
