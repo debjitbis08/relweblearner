@@ -426,7 +426,31 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   count is the rank of the holonomy map, not the count of "wrong-looking edges."
 - Accepted (4 tests). `results/e6_reflection.{csv,png}`.
 
-## 15. Log
+## 15. P6' simulation & lookahead — notes (2026-07-09)
+
+- **Pure seam, as promised.** `simulate.py` is fork (inv 5) + apply (inv 2) +
+  score by holonomy (inv 8/9) + discard. No new primitive. `imagine_then_commit`
+  commits only if defect mass does not rise; else it emits a `refuse` trace with
+  the reason. `lookahead` scores candidates on forks and commits the least
+  `(defect, size)` — 20/20 seeds pick the min-defect merge.
+- **cf isolation is structural.** Simulations run on `fork()` (cf=True), so their
+  traces are cf-flagged and `Journal.committed` never yields them; the learner
+  counts its own simulations with the P1b chain (3 → 3).
+- **Documented limit:** a *consistent* but false merge (two nodes with no
+  distinguishing edge) has 0 defect, so simulation cannot refuse it — coherence
+  is checkable, correspondence needs an independent source (the ensemble, P7).
+- **Latent substrate bug found and fixed (important).** A `merge` was updating
+  only the alias map, not the graph — so holonomy never saw a merge, and P1b's
+  "class ONEMORE of itself" worked *only* because `number.project` re-resolved
+  endpoints when adding edges. Fixed `Web._rebuild` to a **two-pass** rebuild:
+  build the alias from all merge commits, then rebuild nodes/edges with
+  endpoints resolved through it. Now a merge genuinely collapses the graph (an
+  edge whose endpoints collapse becomes a self-loop = a holonomy defect), and
+  P1b membership is recovered via `Web.all_node_ids()` (current + merged-away).
+  All 57 prior tests still pass. This is the correct event-sourced merge.
+- Accepted (5 tests). `results/e6p_simulate.{csv,png}`.
+
+## 16. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -463,3 +487,7 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   `experiments/e6_reflection.py`; accepted (57 tests). Act-classes crystallize
   at purity 1.0 (unchanged machinery); attention budget bounds the regress;
   learner counts its own defect-reports with the P1b chain.
+- **2026-07-09** — P6' simulation & lookahead: `simulate.py`,
+  `experiments/e6p_simulate.py`; e6' accepted (62 tests). Fork-score-discard
+  play loop; refuse-with-reason; lookahead 20/20; cf never in committed. Fixed a
+  latent merge-semantics bug (two-pass `_rebuild`; `all_node_ids`).

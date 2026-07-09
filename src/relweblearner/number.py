@@ -203,8 +203,10 @@ class NumberLearner:
 
     # ------------------------------------------------------------ read-out
     def classes(self, web: Web) -> dict:
+        # iterate ALL node ids (incl. merged-away ones) so class membership is
+        # recovered even though a merge collapses the graph to representatives.
         cls = defaultdict(set)
-        for n in web.nodes:
+        for n in web.all_node_ids():
             cls[web.resolve(n)].add(n)
         return cls
 

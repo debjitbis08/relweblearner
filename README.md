@@ -27,6 +27,7 @@ src/relweblearner/
   holdout.py     # (P3) compositional-holdout eval: web (exact) vs KGE baselines
   ensemble.py    # (P5) N-web interference + dynamic ensemble (learned web count)
   reflection.py  # (P6) act-classes from own traces; attention budget; self-count
+  simulate.py    # (P6') fork-score-discard play loop: imagine-then-commit, lookahead
   datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship
   baselines/     # (P3) TransE / ComplEx (numpy, Adam)
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
@@ -142,9 +143,20 @@ poetry run pytest        # run the acceptance suite
   reports** with the P1b number chain (1/2/3 → 1/2/3) — self-measurement with
   its own ruler (`results/e6_reflection.{csv,png}`).
 
+- **P6' — simulation & lookahead: complete.** `simulate.py` routes consequential
+  moves through the `fork` seam (fork → apply → score by holonomy → discard):
+  **imagine-then-commit** (commit only if defect mass doesn't rise, else refuse
+  with a logged reason), **lookahead** (score candidates on forks, commit the
+  least `(defect, size)` — **20/20 seeds**), and **cf isolation** (simulated acts
+  are cf-flagged, never enter the committed stream, and are countable with the
+  P1b chain). Documents the limit: a *consistent* lie has 0 defect and cannot be
+  refused — coherence is checkable, correspondence needs the ensemble
+  (`results/e6p_simulate.{csv,png}`). Fixed a latent merge-semantics bug in the
+  substrate along the way (merge now genuinely collapses the graph).
+
 See `docs/scaling.md` for the distribution / web-scale / volunteer-computing
 direction, and `docs/design-log.md` for decisions & reconciliation notes.
 
-Next: **P6'** — simulation & lookahead (the `fork` seam already exists), or
-**P7** — adversarial audit (retraction already works; add k≥2 + the
-consistent-lie cost curve), or **P8** — ensemble geometry.
+Next: **P7** — adversarial audit (retraction already works; add the k≥2 gate,
+greedy localize-and-replay, and the consistent-lie cost curve — the core
+security property), or **P8** — ensemble geometry.

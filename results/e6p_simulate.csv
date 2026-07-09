@@ -1,0 +1,6 @@
+metric,value
+lookahead_hits_of_20,20
+cf_simulations,3
+cf_in_committed,False
+self_counted_simulations,3
+consistent_lie_committed,True

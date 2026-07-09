@@ -155,25 +155,34 @@ class Web:
         return cid
 
     def _apply(self, c: Commit) -> Optional[Edge]:
-        """Fold one commit into the live projection (incremental)."""
+        """Fold one commit into the live projection.
+
+        Endpoints are resolved through the current merge alias, so a merge
+        genuinely collapses the graph: a merged-away node never appears, and an
+        edge whose endpoints both resolve to one node becomes a self-loop (which
+        holonomy reads as a defect).
+        """
         if c.kind == "node":
-            (v,) = c.payload
+            v = self.resolve(c.payload[0])
             self.nodes.add(v)
             self._adj.setdefault(v, [])
         elif c.kind == "edge":
             u, v, rel, value = c.payload
-            self.nodes.add(u)
-            self.nodes.add(v)
-            self._adj.setdefault(u, [])
-            self._adj.setdefault(v, [])
-            e = Edge(c.cid, u, v, rel, value)
+            ru, rv = self.resolve(u), self.resolve(v)
+            self.nodes.add(ru)
+            self.nodes.add(rv)
+            self._adj.setdefault(ru, [])
+            self._adj.setdefault(rv, [])
+            e = Edge(c.cid, ru, rv, rel, value)
             self._edges.append(e)
-            self._adj[u].append((e, True))
-            self._adj[v].append((e, False))
+            self._adj[ru].append((e, True))
+            self._adj[rv].append((e, False))
             return e
         elif c.kind == "merge":
             a, b = c.payload
-            self._alias[b] = a
+            ra, rb = self.resolve(a), self.resolve(b)
+            if ra != rb:
+                self._alias[rb] = ra
         # 'remove' commits act only via tombstones during a full rebuild
         return None
 
@@ -199,12 +208,22 @@ class Web:
             if c.kind == "remove" and c.cid not in excl and c.target is not None
         }
 
+        # pass 1: build the merge alias from all (non-excluded) merge commits
+        self._alias = {}
+        for c in self._commits:
+            if c.cid in excl or c.kind != "merge":
+                continue
+            a, b = c.payload
+            ra, rb = self.resolve(a), self.resolve(b)
+            if ra != rb:
+                self._alias[rb] = ra
+
+        # pass 2: rebuild nodes/edges with endpoints resolved through the alias
         self.nodes = set()
         self._edges = []
         self._adj = defaultdict(list)
-        self._alias = {}
         for c in self._commits:
-            if c.cid in excl or c.kind == "remove":
+            if c.cid in excl or c.kind in ("remove", "merge"):
                 continue
             if c.kind == "edge" and c.cid in tomb:
                 continue
@@ -215,6 +234,15 @@ class Web:
         while x in self._alias:
             x = self._alias[x]
         return x
+
+    def all_node_ids(self) -> set:
+        """Every node id ever seen, including merged-away ones.
+
+        After a merge the graph keeps only representatives; the merged-away ids
+        live on in the alias map. Group these by :meth:`resolve` to recover class
+        membership (P1b).
+        """
+        return set(self.nodes) | set(self._alias) | set(self._alias.values())
 
     # ---- retraction (invariant #6) ----
     def retract(self, cid: int, reason: str = "") -> None:
