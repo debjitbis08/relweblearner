@@ -1,5 +1,7 @@
 # SPEC — Reading & Writing (language webs)
 
+Note: While writing this, the N web work was not conceived.
+
 Standalone phase spec, to be handed to the agent AFTER the main DEVDOC
 phases are underway. Self-contained; assumes only the DEVDOC glossary.
 Reference implementation of every mechanism: experiment0j_readwrite.py

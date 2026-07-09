@@ -26,6 +26,7 @@ src/relweblearner/
   types.py       # (P2') unlabeled relation-type discovery: refinement + disjointness
   holdout.py     # (P3) compositional-holdout eval: web (exact) vs KGE baselines
   ensemble.py    # (P5) N-web interference + dynamic ensemble (learned web count)
+  reflection.py  # (P6) act-classes from own traces; attention budget; self-count
   datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship
   baselines/     # (P3) TransE / ComplEx (numpy, Adam)
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
@@ -131,9 +132,19 @@ poetry run pytest        # run the acceptance suite
   learned**: persistence-gated merges/splits evolve the count `3 → 2 → 1 → 2`
   (`results/e5_interference.{csv,png}`).
 
+- **P6 — reflection: complete.** With invariant 4 already emitting every act as
+  a bare episode, reflection needs no new machinery. `reflection.py` feeds the
+  learner's own act traces back through the ordinary path: **(a)** act-classes
+  crystallize at **purity 1.0** by the same structural type-discovery used for
+  relations (and act traces parse like world episodes — homoiconicity); **(b)**
+  an **attention budget bounds the regress** (emission never stops, consumption
+  is capped, backlog finite); **(c)** the learner **counts its own defect
+  reports** with the P1b number chain (1/2/3 → 1/2/3) — self-measurement with
+  its own ruler (`results/e6_reflection.{csv,png}`).
+
 See `docs/scaling.md` for the distribution / web-scale / volunteer-computing
 direction, and `docs/design-log.md` for decisions & reconciliation notes.
 
-Next: **P6** — reflection experiments (feed the learner's own trace stream back
-through the ordinary ingest path; act-classes crystallize; self-measurement),
-or **P6'/P7/P8**.
+Next: **P6'** — simulation & lookahead (the `fork` seam already exists), or
+**P7** — adversarial audit (retraction already works; add k≥2 + the
+consistent-lie cost curve), or **P8** — ensemble geometry.

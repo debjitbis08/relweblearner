@@ -404,7 +404,29 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   count over time; node-level split already exists (P1b / resolutions).
 - e5 accepted (4 tests). `results/e5_interference.{csv,png}`.
 
-## 14. Log
+## 14. P6 reflection — notes (2026-07-09)
+
+- **No new machinery, as the dev-doc promised.** Invariant 4 already puts every
+  act on the bus as a bare episode; `reflection.py` only *reads* them back.
+- **(a) act-classes at purity 1.0.** Structural role refinement (the P2'
+  refinement key: collection sizes + pairing arity + reflexivity) types the
+  acts; each signature is one operation kind (add_edge (1,1,1), merge/rewire
+  (2,1,1,reflexive), grow (2,1,0), walk-off-web (1,2,0)). The world parser
+  (`number.derive`) consumes act episodes unchanged — homoiconicity, verified.
+- **(b) the regress is potential, not actual.** `bounded_consume`: each
+  consumption emits (emission never stops), but consumption is capped at the
+  attention budget, so the backlog is finite. Matches `experiment0f` part 4.
+- **(c) self-measurement.** The learner counts its own defect-report acts with
+  the P1b chain: 1/2/3 defects → counted 1/2/3. The ruler it built measures the
+  hand that built it.
+- **A real subtlety surfaced (logged):** on a chain, asserting `0≡3` and `1≡4`
+  is *one* independent defect, not two — `1≡4` is implied by the period-3 wrap.
+  `defects()` correctly returned 1; the test fixture had to use *disjoint*
+  regions for N genuinely-independent defects. Good confirmation that the defect
+  count is the rank of the holonomy map, not the count of "wrong-looking edges."
+- Accepted (4 tests). `results/e6_reflection.{csv,png}`.
+
+## 15. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -437,3 +459,7 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   `datasets/kinship.py`, `experiments/e5_interference.py`; e5 accepted (53
   tests). N-web interface via union holonomy; consensus map finds/isolates
   poison; transfer 0.33→1.0 zero-shared-params; web count evolves 3→2→1→2.
+- **2026-07-09** — P6 reflection: `reflection.py`,
+  `experiments/e6_reflection.py`; accepted (57 tests). Act-classes crystallize
+  at purity 1.0 (unchanged machinery); attention budget bounds the regress;
+  learner counts its own defect-reports with the P1b chain.

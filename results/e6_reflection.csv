@@ -1,0 +1,10 @@
+part,detail,value
+a_purity,act-class purity,1.000
+a_class,"(1, 1, 1, False)",['add_edge']:9
+a_class,"(1, 2, 0, False)",['walk']:3
+a_class,"(2, 1, 0, False)",['grow']:1
+a_class,"(2, 1, 1, True)",['rewire']:3
+b_budget,consumed/backlog,5/5
+c_selfcount,1_defects,1
+c_selfcount,2_defects,2
+c_selfcount,3_defects,3
