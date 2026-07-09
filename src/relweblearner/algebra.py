@@ -252,6 +252,142 @@ class SymmetricInverseMonoid(Algebra):
         return [frozenset(zip(range(self.n), p)) for p in permutations(range(self.n))]
 
 
+class GradedAlgebra(Algebra):
+    """A **graded** algebra: a group core for TOTAL sectors, an inverse-monoid
+    boundary for PARTIAL sectors — one carrier, two composition laws chosen per
+    sector (P4′, from the frontier finding).
+
+    The P4 sweep found the frontier is a genuine dichotomy: totality (ℤ, groups)
+    is exactly what hallucinates inverses on partial relations, and partiality
+    (the inverse monoid) is exactly what refuses to compose. This algebra tests
+    the hypothesis that grading resolves it: use the ℤ law where the relation is
+    total (number, order) and the inverse-monoid law where it is partial
+    (capital-of, has-colour).
+
+    Elements are sector-tagged: the shared identity ``("e",)``; total-sector
+    ``("Z", k)`` (integers under +, dagger = negation); partial-sector
+    ``("P", frozenset[(a, b)])`` (partial bijections on ``{0..n-1}``, dagger =
+    inverse). Composition **within** a sector uses that sector's law; **across**
+    sectors it is undefined (``None``) — you cannot compose a successor-step with
+    an attribute edge. So it inherits ℤ's bloat 1.0 on the total sector and the
+    inverse monoid's false-inverse 0.0 on the partial one, paying with a high
+    ``undefined_fraction`` (the price of grading: cross-sector paths don't close).
+    """
+
+    _E = ("e",)   # the shared, glued identity of both sectors
+
+    def __init__(self, n: int = 3):
+        self.n = n
+        self.name = f"Graded(Z|Inv_{n})"
+
+    @property
+    def identity(self):
+        return self._E
+
+    # ---- normalizers that glue each sector's own identity to the shared one
+    def _total(self, k: int):
+        return self._E if k == 0 else ("Z", k)
+
+    def _partial(self, pairs):
+        fs = frozenset(pairs)
+        return self._E if fs == frozenset((i, i) for i in range(self.n)) else ("P", fs)
+
+    def compose(self, a, b):
+        if a is None or b is None:
+            return None
+        if a == self._E:
+            return b
+        if b == self._E:
+            return a
+        if a[0] == "Z" and b[0] == "Z":
+            return self._total(a[1] + b[1])
+        if a[0] == "P" and b[0] == "P":
+            bmap = dict(b[1])
+            out = frozenset((x, bmap[y]) for (x, y) in a[1] if y in bmap)
+            return self._partial(out) if out else None   # empty composite undefined
+        return None                                       # cross-sector: undefined
+
+    def dagger(self, a):
+        if a == self._E:
+            return self._E
+        if a[0] == "Z":
+            return self._total(-a[1])
+        return self._partial(frozenset((y, x) for (x, y) in a[1]))
+
+    def norm(self, a) -> float:
+        if a is None:
+            return 1.0
+        if a == self._E:
+            return 0.0
+        if a[0] == "Z":
+            return abs(a[1])
+        return self.n - sum(1 for (x, y) in a[1] if x == y)   # partial: unfixed points
+
+    def _sector(self, x):
+        return None if x == self._E else x[0]
+
+    def relabel_edge(self, phi_u, value, phi_v):
+        """A **graded** gauge acts sector-wise: each edge is relabeled only by the
+        same-sector component of its endpoints' potentials (a cross-sector unit
+        acts as the identity there). Same-sector loops get a proper gauge;
+        cross-sector loops have undefined (non-defect) transport either way — so
+        relabel-invariance (the P0 discipline) still holds for the graded carrier.
+        """
+        s = self._sector(value)
+        if s is None:                                  # identity edge
+            su, sv = self._sector(phi_u), self._sector(phi_v)
+            if su is not None and sv is not None and su != sv:
+                return self._E                         # cross-sector: leave identity
+            s = su if su is not None else sv
+            if s is None:
+                return self._E
+        pu = phi_u if self._sector(phi_u) in (None, s) else self._E
+        pv = phi_v if self._sector(phi_v) in (None, s) else self._E
+        return self.compose(self.compose(pu, value), self.dagger(pv))
+
+    # ---- P4 diagnostic fixtures
+    def generator(self):
+        """The total-sector successor step — so bloat is measured on ℤ (→ 1.0)."""
+        return ("Z", 1)
+
+    def partial_elements(self) -> list:
+        """Genuinely partial maps in the P sector — ``g . g† ≠ identity`` (→ 0.0)."""
+        return [
+            ("P", frozenset({(0, 1)})),
+            ("P", frozenset((i, i + 1) for i in range(self.n - 1))),
+        ]
+
+    def units(self) -> list:
+        """Units: total steps (all invertible) + full permutations of the P sector."""
+        from itertools import permutations
+
+        tot = [self._total(k) for k in range(-2, 3)]
+        perms = [self._partial(frozenset(zip(range(self.n), p)))
+                 for p in permutations(range(self.n))]
+        out, seen = [], set()
+        for u in [self._E, *tot, *perms]:
+            if u not in seen:
+                seen.add(u)
+                out.append(u)
+        return out
+
+    def sectors(self) -> list:
+        """``[(name, element_pool, units), ...]`` — one entry per graded sector.
+
+        A graded algebra is *used* with each relation in a single sector (a web's
+        edges for one relation are all total, or all partial). This exposes the
+        per-sector pools so relabel-invariance can be checked the way the carrier
+        is physically deployed — unlike the default diagnostic, which mixes
+        sectors on one web and so forfeits strict edge-id invariance (grading's
+        third cost: identity edges bridge sectors, and relabel relocates them).
+        """
+        z_pool = [self._E, ("Z", 1), ("Z", -1), ("Z", 2)]
+        z_units = [self._total(k) for k in range(-2, 3)]
+        p_pool = [self._E, *self.partial_elements()]
+        p_units = [u for u in self.units() if u == self._E or u[0] == "P"]
+        return [("Z", z_pool, z_units), ("P", p_pool, p_units)]
+
+
 class FreeInvolutiveMonoid(Algebra):
     """Free involutive monoid on ``k`` generators, truncated at word length ``L``.
 

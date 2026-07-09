@@ -1,0 +1,4 @@
+algebra,bloat,false_inverse,undefined,relabel_mixed,relabel_per_sector
+Z,1.000,1.000,0.000,1,1
+InvMon_3,4.000,0.000,0.312,1,1
+Graded(Z|Inv_3),1.000,0.000,0.647,0,1

@@ -110,6 +110,32 @@ def relabel_invariant(algebra: Algebra, trials: int = 200, seed: int = 0) -> boo
     return True
 
 
+def _sector_invariant(algebra: Algebra, pool: list, units: list, trials: int, seed: int) -> bool:
+    from .holonomy import defects
+
+    rng = random.Random(seed)
+    for _ in range(trials):
+        w = _random_web(algebra, pool, rng)
+        before = {d.edge.eid for d in defects(w)}
+        w.relabel({n: rng.choice(units) for n in w.nodes})
+        if {d.edge.eid for d in defects(w)} != before:
+            return False
+    return True
+
+
+def per_sector_relabel_invariant(algebra: Algebra, trials: int = 300, seed: int = 0) -> bool:
+    """Relabel-invariance checked the way a graded carrier is deployed: on
+    single-sector webs, per :meth:`GradedAlgebra.sectors`. The default
+    :func:`relabel_invariant` mixes sectors on one web (unphysical for a graded
+    algebra) and so reports ``False``; this reports the discipline that holds.
+    """
+    sectors = getattr(algebra, "sectors", None)
+    if sectors is None:
+        return relabel_invariant(algebra, trials, seed)
+    return all(_sector_invariant(algebra, pool, units, trials, seed)
+               for _name, pool, units in sectors())
+
+
 def report(algebra: Algebra, C: int = 12) -> AlgebraReport:
     D, bl = bloat(algebra, C)
     return AlgebraReport(
