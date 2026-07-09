@@ -1,0 +1,6 @@
+metric,value
+mean_per_run_recovery,0.904
+raw_spread,0.109
+aligned_spread,0.046
+raw_axis_recovery,0.862
+aligned_axis_recovery,0.928

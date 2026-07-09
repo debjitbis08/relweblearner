@@ -29,6 +29,7 @@ src/relweblearner/
   reflection.py  # (P6) act-classes from own traces; attention budget; self-count
   simulate.py    # (P6') fork-score-discard play loop: imagine-then-commit, lookahead
   audit.py       # (P7) adversarial: k>=2 gate, localize-and-replay, DoS budgets
+  geometry.py    # (P8) graph-Laplacian eigenmaps; ensemble magnitude-axis stability
   datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship
   baselines/     # (P3) TransE / ComplEx (numpy, Adam)
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
@@ -167,9 +168,15 @@ poetry run pytest        # run the acceptance suite
   Documented limit: a fully consistent lie is undetectable to a single learner —
   correspondence needs the ensemble (`results/e7_adversarial.{csv,png}`).
 
-See `docs/scaling.md` for the distribution / web-scale / volunteer-computing
-direction, and `docs/design-log.md` for decisions & reconciliation notes.
+- **P8 — ensemble geometry (stretch): complete.** `geometry.py` — graph-Laplacian
+  eigenmaps of each learner's relational graph recover a **magnitude axis** (the
+  Fiedler vector orders the numbers). The axis is real in every run but its
+  **orientation is arbitrary**, so the raw ensemble mean washes out — while the
+  **sign-aligned ensemble** recovers a stable monotonic axis (spread 0.11 → 0.05).
+  Concept geometry is stable only across the ensemble, exactly the hypothesis
+  (`results/e8_geometry.{csv,png}`).
 
-Next: **P8** (stretch) — ensemble geometry (spectral-embed the dynamic ensemble;
-test whether concept geometry stabilizes across an ensemble even when it varies
-per run).
+**The full roadmap P0–P8 is complete** — 72 acceptance tests, one substrate that
+never needed a redesign after P0. See `docs/scaling.md` for the distribution /
+web-scale / volunteer-computing direction, and `docs/design-log.md` for the
+decision & reconciliation log.

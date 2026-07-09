@@ -478,7 +478,23 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   needs the ensemble (P5). Ties to the P6' limit.
 - Accepted (7 tests). `results/e7_adversarial.{csv,png}`.
 
-## 17. Log
+## 17. P8 ensemble geometry — notes (2026-07-09)
+
+- **Hypothesis confirmed.** Graph-Laplacian eigenmaps of each learner's
+  relational graph (collections; MATCH clusters + ONEMORE chain) recover a
+  **magnitude axis** — the Fiedler vector orders the size-classes. Per-run axis
+  recovery |corr| ≈ 0.90 (the axis is real every run), but the **orientation is
+  arbitrary** (Fiedler sign splits ~half/half across 24 runs).
+- **Stable only across the aligned ensemble.** The *raw* ensemble mean washes
+  out (spread 0.109, axis recovery 0.86 — the ± runs cancel). The *sign-aligned*
+  ensemble mean is a clean monotonic magnitude axis (spread 0.046, recovery
+  0.93). So the concept geometry stabilizes across the ensemble even though it
+  varies per run — exactly the P8 hypothesis. `results/e8_geometry.{csv,png}`.
+- Embarrassingly parallel, pure numpy (`np.linalg.eigh`), CPU. No new substrate.
+- This sits on P5's ensemble idea and closes the roadmap.
+- Accepted (3 tests).
+
+## 18. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -524,3 +540,7 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   1.0 across the sweep; localize-and-replay recovery (collateral logged);
   repeat-lie = 1 cut; consistent-lie cost = connectivity (linear); DoS budgets;
   k>=2 deviation from P1b resolved.
+- **2026-07-09** — P8 ensemble geometry (stretch): `geometry.py`,
+  `experiments/e8_geometry.py`; accepted (72 tests). Magnitude axis recovered per
+  run, orientation arbitrary; stable only across the sign-aligned ensemble.
+  **Roadmap P0–P8 complete.**
