@@ -4,12 +4,12 @@ Response to `docs/phase-1-verification.md`. Establishes what is actually true
 about the P0–P8 + read/write (PL) + society (PS) build. Generated 2026-07-09.
 
 **Headline:** Part B (the gate) passes — all five integration compositions hold.
-108 acceptance tests pass. Part C shows the seed-sensitive criteria are stable
+119 acceptance tests pass (108 at verification time; +11 from the next-steps below). Part C shows the seed-sensitive criteria are stable
 across 20 seeds (rumor 0/N at every seed). Part D soaks 12 agents for 10⁶ rounds
 with 1% noise: memory, fragmentation, defect mass (post-recovery), and reflection
 backlog all bounded.
 
-Run everything: `poetry run pytest -q` (108 tests) plus the four experiments
+Run everything: `poetry run pytest -q` (119 tests) plus the experiments
 named below.
 
 ---
@@ -279,35 +279,41 @@ hard gate). No previously-PASS criterion reverts to FAIL under seed variance.
 ## Next steps (sharpened by this verification)
 
 Ordered by what the verification itself surfaced, not by roadmap number.
+**Three of four are now done** (2026-07-09); item 2 remains scheduled.
 
-1. **Wire perception → P2′ → grounding (the last unpaid structuralist debt).**
-   I3 / deviation 6 / struggle 3 are one thing: relation types are *given* at the
-   language and society boundary, pinned to an allowlist, not discovered. Making
-   every type in read/write grounding and society teaching traceable to a P2′
-   discovery event is scoped, unbuilt work — it is the *first half of P9* and the
-   single substantive gap in the whole build. Everything downstream is honest only
-   once this is closed.
+1. **✅ DONE — Wire read/write grounding to P2′-discovered types.** The concept
+   web is now handed in label-free; `language.discover_relation_types` runs P2′
+   disjointness compression to recover its relation types with a discovery
+   record, `language.ground` consumes the discovered typed-edges (keys T1/T2,
+   never HC/GO), and `language.type_provenance` traces every grounded relation
+   type back to a discovery event. Grounding on discovered types yields the same
+   token→concept map as given labels — discovery adds traceability, not a
+   different answer. I3 upgraded to a genuine trace; the *society fact-teaching*
+   layer's HC/GO labels remain the only pinned allowlist deviation, until
+   perception (P9) supplies discovered types there too.
+   (`tests/test_pl_discovery.py`, `experiments/el_discovery.py`.)
 
-2. **Run the full-integration soak before any zoo alpha (deviation 12).** Part D
-   soaked the society layer at 10⁶ rounds but ran defect-mass and reflection-
-   backlog on their *home substrates*, not inside twelve *complete* learners.
-   Cross-layer resource interactions (emission overhead × gossip × projection
-   cost, per agent, concurrently) are exactly what a substrate-per-agent soak
-   exists to catch and what the home-substrate proxy cannot see. Schedule it
-   before shipping a live multi-agent alpha.
+2. **SCHEDULED — Run the full-integration soak before any zoo alpha (deviation
+   12).** Part D soaked the society layer at 10⁶ rounds but ran defect-mass and
+   reflection-backlog on their *home substrates*, not inside twelve *complete*
+   learners. Cross-layer resource interactions (emission overhead × gossip ×
+   projection cost, per agent, concurrently) are exactly what a substrate-per-
+   agent soak exists to catch and what the home-substrate proxy cannot see. Still
+   the largest unbuilt item; schedule before shipping a live multi-agent alpha.
 
-3. **Promote localize-and-replay to load-bearing infrastructure in the threat
-   model.** Part D's finding deserves a standing line: at *sustained* 1% poison the
-   k≥2 commitment gate **is** breached (repeated poison pairs accumulate ≥2
-   witnesses; pre-recovery defect mass reached 398), and only localize-and-replay
-   held the line back to 0. Commitment thresholds *delay*; recovery *repairs*. The
-   recovery policy is not a safety net behind a sufficient gate — it is the
-   primary defense under adversarial pressure, and every future threat model
-   should say so.
+3. **✅ DONE — Recovery promoted to load-bearing in the threat model.** Standing
+   test `test_p7_adversarial.test_k2_gate_is_breached_by_repeated_poison_and_recovery_holds_the_line`
+   proves the k≥2 gate is breached by a repeated poison pair (≥2 witnesses) while
+   localize-and-replay holds purity at 1.0; the threat-model note is recorded in
+   `design-log.md §16`. Thresholds delay; recovery repairs.
 
-4. **Test the graded-algebra hypothesis (from the P4 frontier).** The sweep
-   produced a concrete, unasked design question: a group core for total sectors +
-   an inverse-monoid boundary for partial ones. It is the natural P4′.
+4. **✅ DONE — Graded-algebra hypothesis confirmed (P4′).** `GradedAlgebra`
+   (group core for total sectors, inverse-monoid boundary for partial ones)
+   Pareto-dominates the frontier {ℤ, InvMon} on (bloat 1.0, false-inverse 0.0),
+   at the cost of undefined-fraction 0.65 and per-sector-only relabel invariance
+   (grading's third cost — identity edges bridge sectors on mixed webs).
+   (`tests/test_p4prime_graded.py`, `experiments/e4prime_graded.py`,
+   `results/e4prime_graded.csv`.)
 
 ---
 
@@ -317,7 +323,13 @@ Part B (the gate) passes; no new phase is blocked. The build is what it claims t
 be: a single frozen-algebra substrate carrying P0–P8, a one-way language layer,
 and a multi-agent society, with the compositions between them verified — and,
 per the reviewer's own method, reproducible by a stranger from a clean clone
-(`poetry run pytest -q` → 108/108). The one substantive gap is honest and named:
-**relation types are given, not P2′-discovered, at the read/write and society
-boundary** (I3 / deviation 6 / struggle 3) — which is precisely the perception
-phase (P9) the roadmap defers, and item 1 above.
+(`poetry run pytest -q` → 119/119).
+
+**Update (2026-07-09):** three of the four next steps are done. Read/write
+grounding now consumes P2′-**discovered** types with full traceability, so the
+report's one substantive gap is closed *for grounding* — it survives only as the
+society fact-teaching layer's given HC/GO labels (a pinned allowlist), which
+perception (P9) will supply from discovery. The graded-algebra hypothesis is
+confirmed (P4′), and recovery is a standing load-bearing item in the threat
+model. The single remaining scheduled item is the full-integration soak (twelve
+complete learners) — run it before a live multi-agent alpha.

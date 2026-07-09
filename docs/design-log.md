@@ -477,6 +477,16 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   undetectable to a single learner — coherence is checkable, correspondence
   needs the ensemble (P5). Ties to the P6' limit.
 - Accepted (7 tests). `results/e7_adversarial.{csv,png}`.
+- **THREAT-MODEL NOTE (added 2026-07-09, from the phase-1 soak).** The k≥2
+  commitment gate stops a *thin* poison but is **breached by repetition**: the
+  same false pair asserted ≥2 times accumulates ≥2 witnesses and clears the gate
+  (soak: pre-recovery defect mass reached 398 at sustained 1% poison). The gate
+  *delays*; **localize-and-replay repairs**, holding purity at 1.0. So recovery
+  is **load-bearing infrastructure under sustained adversarial pressure, not a
+  safety net behind a sufficient gate** — every future threat model should say
+  so. Standing test:
+  `test_p7_adversarial.test_k2_gate_is_breached_by_repeated_poison_and_recovery_holds_the_line`.
+  The repeated lie remains a single cut (attacker pays N, learner pays 1).
 
 ## 17. P8 ensemble geometry — notes (2026-07-09)
 

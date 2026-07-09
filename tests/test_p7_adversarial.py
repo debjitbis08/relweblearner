@@ -73,6 +73,27 @@ def test_k2_gate_blocks_a_lone_episode_poison():
     assert gated.purity_before == 1.0                   # no damage at all
 
 
+# -------------------------------- recovery is load-bearing (soak finding)
+def test_k2_gate_is_breached_by_repeated_poison_and_recovery_holds_the_line():
+    # The phase-1 soak found this: the k>=2 commitment gate stops a *thin* poison,
+    # but a *repeated* false pair accumulates >=2 witnesses and clears it. So the
+    # gate DELAYS; localize-and-replay REPAIRS. Recovery is load-bearing
+    # infrastructure under sustained pressure, not a safety net behind a
+    # sufficient gate.
+    lone, sizes, _ = _poisoned_learner(n_poison=1)
+    assert not audit.audit(lone.journal, sizes, set(), k=2).detected   # gate holds vs 1 witness
+
+    L, sizes, pairs = _poisoned_learner(n_poison=3)               # same pair, 3 tellings
+    breached = audit.audit(L.journal, sizes, pairs, k=2)
+    assert breached.detected                                      # gate BREACHED at k>=2
+    assert breached.purity_before < 1.0                           # damage got in
+    assert breached.purity_after == 1.0                           # recovery holds the line
+    # and the repeated lie is still a single cut for the learner to pay
+    mp, om = audit.derive_facts(L.journal, k=2)
+    excluded, refused = audit.localize(mp, om)
+    assert len(excluded) == 1 and not refused
+
+
 # ---------------------------------------------------- consistent-lie curve
 def test_consistent_lie_cost_grows_with_connectivity():
     costs = [audit.consistent_lie_cost(c) for c in range(0, 6)]
