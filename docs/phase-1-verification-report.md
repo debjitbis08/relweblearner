@@ -183,6 +183,52 @@ generating script.
 
 ---
 
+## Part A.5 — Findings the matrix understates (read straight from the CSVs)
+
+The pass/fail matrix records *that* P4 and P8 pass; it omits *what they say*. Both
+numbers below are read directly from the committed CSVs.
+
+### P4 — the frontier is real and nothing dominates (`e4_sweep.csv`)
+
+| algebra | bloat (C/D) | false-inverse rate | undefined fraction |
+|---|---|---|---|
+| ℤ | **1.00** | **1.00** | 0.00 |
+| ℤ₂ | 6.00 | 1.00 | 0.00 |
+| ℤ₄ | 3.00 | 1.00 | 0.00 |
+| ℤ₂×ℤ₂ | 6.00 | 1.00 | 0.00 |
+| InvMon₃ | 4.00 | **0.00** | **0.31** |
+| Free_L3 | 3.00 | 1.00 | 0.00 |
+
+The pre-committed weak/strong tradeoff resolves to a genuine **dichotomy, not a
+winner**: **totality is exactly what lies about partial relations** (every group,
+and ℤ, hallucinate inverses at a 100% false-inverse rate), and **partiality is
+exactly what refuses to compose** (InvMon₃ is the *only* algebra at 0%
+false-inverse, paying 31% undefined compositions). The **non-dominated frontier is
+{ℤ, InvMon₃}**: ℤ Pareto-dominates every finite group (equal false-inverse rate,
+strictly less bloat), so no group is on it. Within the groups, **ℤ₄ is the knee
+(3× bloat vs 6× for ℤ₂/ℤ₂×ℤ₂)** — a small honest nod to a finite-cyclic default,
+but the load-bearing result is that *no group suffices for knowledge in general*.
+
+**Design hypothesis this hands the roadmap** (untested): a **graded algebra** —
+group-like core for the *total* sectors (number, order) and an inverse-monoid
+boundary for the *partial* ones (capital-of, has-color). Structurally this is the
+two-sector / one-algebra story again (the Π_sym pattern): one carrier, two
+composition laws selected per sector. It is the first concrete algebra-design
+question the sweep produces rather than assumes.
+
+### P8 — geometry stabilizes only in the aligned ensemble (`e8_geometry.csv`)
+
+Per-run magnitude-axis recovery averages **0.904** (the axis is real every run),
+but orientation is arbitrary, so the **raw** ensemble mean washes out to
+`raw_axis_recovery` **0.862** with spread **0.109**; sign-**aligning** the ensemble
+halves the spread to **0.046** and lifts recovery to **0.928**. Concept geometry is
+an ensemble property, not a single-web one — with numbers, now.
+
+*(Correction to an easy misread: 0.862 is the washed-out `raw_axis_recovery`;
+per-run recovery is 0.904. The report earlier stated neither — this closes it.)*
+
+---
+
 ## Part C — Seed variance (20 seeds)
 
 `python experiments/verify_seed_variance.py` → `results/verify_seed_variance.csv`.
@@ -230,11 +276,48 @@ hard gate). No previously-PASS criterion reverts to FAIL under seed variance.
 
 ---
 
+## Next steps (sharpened by this verification)
+
+Ordered by what the verification itself surfaced, not by roadmap number.
+
+1. **Wire perception → P2′ → grounding (the last unpaid structuralist debt).**
+   I3 / deviation 6 / struggle 3 are one thing: relation types are *given* at the
+   language and society boundary, pinned to an allowlist, not discovered. Making
+   every type in read/write grounding and society teaching traceable to a P2′
+   discovery event is scoped, unbuilt work — it is the *first half of P9* and the
+   single substantive gap in the whole build. Everything downstream is honest only
+   once this is closed.
+
+2. **Run the full-integration soak before any zoo alpha (deviation 12).** Part D
+   soaked the society layer at 10⁶ rounds but ran defect-mass and reflection-
+   backlog on their *home substrates*, not inside twelve *complete* learners.
+   Cross-layer resource interactions (emission overhead × gossip × projection
+   cost, per agent, concurrently) are exactly what a substrate-per-agent soak
+   exists to catch and what the home-substrate proxy cannot see. Schedule it
+   before shipping a live multi-agent alpha.
+
+3. **Promote localize-and-replay to load-bearing infrastructure in the threat
+   model.** Part D's finding deserves a standing line: at *sustained* 1% poison the
+   k≥2 commitment gate **is** breached (repeated poison pairs accumulate ≥2
+   witnesses; pre-recovery defect mass reached 398), and only localize-and-replay
+   held the line back to 0. Commitment thresholds *delay*; recovery *repairs*. The
+   recovery policy is not a safety net behind a sufficient gate — it is the
+   primary defense under adversarial pressure, and every future threat model
+   should say so.
+
+4. **Test the graded-algebra hypothesis (from the P4 frontier).** The sweep
+   produced a concrete, unasked design question: a group core for total sectors +
+   an inverse-monoid boundary for partial ones. It is the natural P4′.
+
+---
+
 ## Verdict
 
 Part B (the gate) passes; no new phase is blocked. The build is what it claims to
 be: a single frozen-algebra substrate carrying P0–P8, a one-way language layer,
-and a multi-agent society, with the compositions between them verified. The one
-substantive gap is honest and named: **relation types are given, not
-P2′-discovered, at the read/write and society boundary** (I3 / deviation 6 /
-struggle 3) — which is precisely the perception phase (P9) the roadmap defers.
+and a multi-agent society, with the compositions between them verified — and,
+per the reviewer's own method, reproducible by a stranger from a clean clone
+(`poetry run pytest -q` → 108/108). The one substantive gap is honest and named:
+**relation types are given, not P2′-discovered, at the read/write and society
+boundary** (I3 / deviation 6 / struggle 3) — which is precisely the perception
+phase (P9) the roadmap defers, and item 1 above.
