@@ -19,7 +19,9 @@ src/relweblearner/
   algebra.py     # frozen algebra: IntegerGroup(Z, +, dagger=negate); Algebra ABC
   web.py         # Web as a projection of a commitment log; 3 moves; fork() for simulate
   holonomy.py    # BFS potential, defect extraction, holonomy, defect-mass objective
-  datasets/      # (P1+) generators: counting (bare pairing), arithmetic (unit tests), kinship
+  growth.py      # (P1) persistence detector -> minimal grow; fork-scored rewire
+  number.py      # (P1b) NumberLearner: bare episodes -> derived MATCH/ONEMORE -> number web
+  datasets/      # generators: counting (bare pairing), arithmetic (unit-test scaffold)
   baselines/     # (P3+) TransE / ComplEx
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
 tests/           # acceptance tests, one module per phase
@@ -64,8 +66,22 @@ poetry run pytest        # run the acceptance suite
   exact zero-shot; plus a sharp growth-vs-position threshold
   (`results/e1_growth.{csv,png}`) and a rewire-discharges-without-growth case.
 
+- **P1b — constructing number from counting: complete.** `number.py` — the
+  reconciliation made concrete. The learner ingests only bare pairing episodes,
+  derives MATCH/ONEMORE from leftovers, and **projects** them onto a web:
+  MATCH→merge (the union-find quotient *is* the merge projection), ONEMORE→`+1`
+  succ edge. The emergent class nodes are the numbers. A false MATCH (poison)
+  welds two size-classes and surfaces as a `+1` **holonomy self-loop** — "class
+  ONEMORE of itself" — so invariant 9 (defect mass) literally detects counting
+  contradictions. `e1b` accepted: (a) no numeral tokens; (b) pure classes +
+  single naturals chain; (c) fresh collection counted by chain-pairing;
+  (d) staged crystallization (a "2-knower" before full data); (e) poison →
+  self-loop defect, quarantined and **retractable by replay-with-exclusion**
+  (`results/e1b_number.{csv,png}`).
+
 See `docs/scaling.md` for the distribution / web-scale / volunteer-computing
 direction, and `docs/design-log.md` for decisions & reconciliation notes.
 
-Next: **P1b** — constructing number from bare pairing episodes on this
-substrate (MATCH→merge, ONEMORE→`+1` edge, self-loop→holonomy defect).
+Next: **P2** — symmetry-sector inference (per-relation transport over Z via
+sympy nullspace; symmetric vs antisymmetric), consuming the constructed class
+chain.

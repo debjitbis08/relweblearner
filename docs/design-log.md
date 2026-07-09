@@ -133,6 +133,16 @@ why. (Candidate dev-doc edits are flagged in §4.)
   at laptop scale; optimized when a phase stresses memory (P7 floods).
 - **`sympy` treated as a hard dep** (P2's noise-tolerant integer nullspace),
   though the spec lists it optional. Already installed.
+- **P1b commits merges eagerly (single MATCH), not at k≥2 (inv 6).** Required
+  for e1b(e) to exhibit a visible contradiction from one poison; k≥2 provisional
+  commitment and localize-and-replay move to P7. Safe because the merge is
+  event-sourced and retractable. See §5.
+- **The number projection uses its own construction journal.** `project()`
+  builds the number web with a fresh journal so replaying the world log N times
+  does not pollute it with N copies of construction traces. The world log
+  (`NumberLearner.journal`) stays the clean, replayable source of truth. A
+  literal reading of inv 4 ("one bus") is bent here for projection hygiene; the
+  world/reflection bus is still single.
 
 ---
 
@@ -159,16 +169,23 @@ Left for you since you're actively editing `dev-doc.md`:
 ## 5. Open questions
 
 Reconciliation / substrate:
-- **MATCH = merge, or MATCH = `0`-value "same" edge?** Leaning merge (makes
-  injectivity a 0-holonomy compression and retraction a commit exclusion). A
-  `0`-edge keeps nodes distinct and defers identification — may matter for
-  provisional (k≥2) commitment [dev-doc inv 6]. Decide at P1b.
+- ~~**MATCH = merge, or MATCH = `0`-value "same" edge?**~~ **Resolved at P1b:
+  MATCH = merge** (a rewire, with the poison's justifying episode as
+  provenance). This makes the union-find quotient literally the merge
+  projection, successor-injectivity a 0-holonomy compression, and — the payoff —
+  "class ONEMORE of itself" a `+1` holonomy self-loop detected by
+  `holonomy.defects` (invariant 9, no separate contradiction machinery). See §7.
 - **How are `loop_closes` / `distinct` observations *derived* from bare
-  episodes** rather than asserted? (MATCH ⇒ loop closes / same; ONEMORE ⇒
-  distinct + successor.) Needed to retire the pre-derivation Observation API.
-- **Provisional commitment vs projection.** Inv 6 wants merges provisional
-  until k≥2 witnesses. Does "provisional" mean the merge commitment is withheld,
-  or committed-but-flagged and easily excluded? Ties to the MATCH question.
+  episodes** rather than asserted? P1b derives MATCH/ONEMORE and never uses the
+  pre-derivation Observation API, but the API still exists for P0/unit tests.
+  Retire it once every phase consumes derived constraints.
+- **Provisional commitment (inv 6, k≥2).** *Deferred to P7.* P1b commits merges
+  **eagerly on a single MATCH** — required for e1b(e): one poisoned episode must
+  produce a visible 'class ONEMORE of itself' defect, which a k≥2 gate would
+  suppress. This is a deliberate deviation from inv 6 (see §3). The event-
+  sourced substrate makes it safe: the poison is *retractable* by excluding its
+  episode and re-projecting (shown in e1b(e)); P7 adds the k≥2 gate and the
+  greedy localize-and-replay of `experiment0h`.
 
 Carried from `scaling.md §9`:
 - snapshot granularity; when a causal cone is safe to *seal* (compact);
@@ -204,7 +221,33 @@ Carried from `scaling.md §9`:
   no notion of the "intended" node). Fine for e1; revisit if a phase needs the
   minimal/most-justified completion rather than any.
 
-## 7. Log
+## 7. P1b number-from-counting — notes (2026-07-09)
+
+The reconciliation of §1 is now code (`number.py`):
+
+- **Bare episode → derived predicate → web move.** `derive(ep)` reads only
+  `ep.leftovers()`: both empty → MATCH; one singleton leftover → ONEMORE. No
+  numbers, no labels. MATCH → `web.rewire(merge=...)`; ONEMORE → `+1` succ edge.
+- **The union-find quotient IS the web's merge projection.** `web.resolve`
+  gives the class; classes are the numbers, appearing only in the merge log.
+- **Contradiction = holonomy, not a special case.** A false MATCH welds two
+  size-classes; a ONEMORE edge between them becomes a `+1` self-loop;
+  `holonomy.defects` reports it as 'class ONEMORE of itself'. Invariant 9 is
+  literally the counting-contradiction detector. (Confirmed: `defects()` handles
+  self-loop edges — residual `phi[u]+1-phi[u] = 1`.)
+- **Guarded successor-injectivity** merges the (unique) successor of each class
+  but refuses to merge two classes with ONEMORE evidence between them — that
+  would *create* the self-loop, i.e. hide the contradiction. So the poison stays
+  visible; it is never "repaired" into a coherent-but-wrong chain.
+- **Projection = replay (inv 5).** `project(exclude=...)` replays the world log
+  minus an exclusion set, so retracting the poison is `exclude({pid})` +
+  re-project — purity restored, no data deleted. This is the P7 hook, working.
+- **Deviations logged in §3/§5:** eager single-witness merge (k≥2 → P7); the
+  projection uses its own construction journal.
+- e1b accepted (5 tests); `experiments/e1b_number.py` reproduces `0e` (staging,
+  counting, poison) on the substrate. `results/e1b_number.{csv,png}`.
+
+## 8. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -215,3 +258,6 @@ Carried from `scaling.md §9`:
 - **2026-07-09** — This design log created.
 - **2026-07-09** — P1 growth engine: `web.walk`, `growth.py`,
   `datasets/arithmetic.py`, `experiments/e1_growth.py`; e1 accepted (27 tests).
+- **2026-07-09** — P1b number-from-counting: `datasets/counting.py`,
+  `number.py`, `experiments/e1b_number.py`; e1b accepted (32 tests). MATCH=merge
+  resolved; contradiction = holonomy self-loop; poison retractable by replay.
