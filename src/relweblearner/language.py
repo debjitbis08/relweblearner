@@ -275,6 +275,49 @@ def automorphism_orbits(con_edges: dict[str, set]) -> list[frozenset]:
     return [frozenset(s) for s in orbits.values()]
 
 
+# ------------------------------------------- L3′ — discovered (not given) types
+class DiscoveredConceptWeb(NamedTuple):
+    edges_by_type: dict   # {discovered_type_id: {(x, y), ...}} — feeds ``ground``
+    provenance: dict      # the discovery record every used type must trace back to
+
+
+def discover_relation_types(unlabeled_edges, hub_threshold: int = 3) -> DiscoveredConceptWeb:
+    """Recover the concept web's relation types from UNLABELED edges (P2′), and
+    key the typed-edge projection by the *discovered* type ids.
+
+    This is what closes the last structuralist debt: the concept web is handed in
+    label-free, `types.discover_types` (disjointness compression) partitions it
+    into structural types, and the returned ``edges_by_type`` is a drop-in for
+    :func:`ground`'s ``con_edges`` — so grounding aligns frame words to types the
+    learner *discovered*, never to given labels. ``provenance`` is the discovery
+    record (method, params, member edges per type) that :func:`type_provenance`
+    traces every grounded relation type back to.
+    """
+    from .types import discover_types
+
+    disc = discover_types(list(unlabeled_edges), hub_threshold=hub_threshold)
+    edges_by_type = {t: set(es) for t, es in disc.items() if es}
+    provenance = {
+        "method": "P2'-disjointness-compression",
+        "hub_threshold": hub_threshold,
+        "types": {t: sorted(tuple(e) for e in es) for t, es in edges_by_type.items()},
+    }
+    return DiscoveredConceptWeb(edges_by_type, provenance)
+
+
+def type_provenance(markers: dict, discovered: DiscoveredConceptWeb) -> dict:
+    """Trace each relation type used in grounding back to a discovery record.
+
+    Returns ``{type_id: "discovered" | "SMUGGLED"}``. A ``"SMUGGLED"`` entry is a
+    type that grounding uses but that no discovery event produced — the exact
+    thing the I3 audit exists to catch.
+    """
+    return {
+        t: ("discovered" if t in discovered.provenance["types"] else "SMUGGLED")
+        for t in set(markers.values())
+    }
+
+
 # ============================================================== L4 — ostension
 
 

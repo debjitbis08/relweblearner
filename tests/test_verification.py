@@ -135,25 +135,37 @@ def test_I2_invention_diffusion():
 
 # ================================================ I3 — discovered-types audit
 # The relation-type labels the toy read/write + society phases use. These are
-# GIVEN for tractability (documented deviation §3 of the design log), not
-# smuggled: the audit pins the allowlist so any NEW given label breaks the test.
+# The society fact-teaching layer still names relations by given labels (HC/GO);
+# that is a pinned, documented deviation until perception is wired. The allowlist
+# makes any NEW given label break the test.
 _DOCUMENTED_GIVEN_TYPES = {"HC", "GO"}
 
 
-def test_I3_discovered_types_audit():
+def test_I3_grounding_types_trace_to_discovery():
+    # CLOSED: read/write grounding now consumes P2′-discovered types, and every
+    # relation type it uses traces to a discovery record (no smuggled labels).
+    from relweblearner import language as L
     from relweblearner.datasets import language as DL
-    from relweblearner.datasets.bare import build_bare_web
-    from relweblearner.types import discover_types, overall_purity
 
-    # (a) the discovery mechanism exists and recovers types WITHOUT given labels
-    edges, truth = build_bare_web(colors=3, plants=2, full=True)
-    discovered = discover_types(edges)
-    assert overall_purity(discovered, truth) == 1.0        # a real discovery record
+    word = DL.make_surface_forms()
+    syl = DL.syllabify(word)
+    units, _g = DL.stream_of(600, facts=DL.rich_facts(), word=word, syl=syl, seed=3)
+    words, _b = L.segment(units)
+    fw = L.discover_frame_words(words)
+    tok_web = L.token_web(L.chunk(words, fw), fw)
 
-    # (b) audit: every relation type the read/write + society layers put on the
-    # wire is in the documented given-label allowlist (a new one = smuggled label)
-    used = set(DL.concept_edges()) | {r for (r, _x, _y) in
-                                      [("HC", "lime", "green")]}  # society fact-claims
+    disc = L.discover_relation_types(DL.unlabeled_edges())
+    g = L.ground(tok_web, disc.edges_by_type)
+    trace = L.type_provenance(g.markers, disc)
+    assert trace and all(v == "discovered" for v in trace.values())   # nothing smuggled
+    assert all(word[c] == t for t, c in g.map.items())                # and still correct
+
+
+def test_I3_society_teaching_labels_pinned_to_allowlist():
+    # REMAINING: the society layer still teaches facts by given relation label.
+    from relweblearner.datasets import language as DL
+
+    used = set(DL.concept_edges()) | {r for (r, _x, _y) in [("HC", "lime", "green")]}
     assert used <= _DOCUMENTED_GIVEN_TYPES
 
 
