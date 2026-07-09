@@ -687,3 +687,18 @@ Post-verification work (the report's four next steps). All committed on `main`.
   rumor 0/24 vs cited 24/24, Sybil→1; dialects within 1.0/cross 0.0; creolization
   1.0 vs 0.35 plateau; interface-defect disagreement. P7' content-vs-error:
   clock banked (11+3≡2 mod 12), poison retracts (24→0, purity 0.80→1.0).
+- **2026-07-10** — R2 curriculum reading (frame induction; extends SPEC_READWRITE
+  along the reading ladder; NOT roadmap P9): `datasets/curriculum.py`,
+  `curriculum.py`, `experiments/ec_curriculum.py`, `docs/spec-curriculum-reading.md`;
+  accepted (132 tests). L2′ frame induction by per-position dominance (≥0.8) +
+  anchor floor (≥2) + rejection-to-frontier; both frames recovered, coverage 0.98,
+  only the two off-frame captions in the frontier. Required **pollution
+  failure-mode** reproduced in CI: length-grouping alone (exact-constancy, no anchor
+  floor) over-generalizes to an all-slot skeleton at false coverage 1.00; the
+  discipline is the fix. **Frontier-as-trigger** growth re-induces on the frontier to
+  grow `where is the _`. Grounding through frames **delegates to `language.ground`**
+  ("unchanged machinery"): the frame is the relation marker, the **picture channel
+  orients each fact** (joint attention, no slot-role supervision), iterative taps
+  ground 10/10 at 4 taps (4-orbit + three 2-orbits); one-page fast-map (`zebu→red`,
+  book provenance); assimilation 0.049, comprehension answered from the web not
+  echoed. Concept-agnostic + one-way dependency + disjoint namespaces CI-tested.

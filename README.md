@@ -33,7 +33,8 @@ src/relweblearner/
   language.py    # (PL) reading & writing: separate one-way web; ground/ostend/read/write
   society.py     # (PS) multi-agent: dyad naming game, citation gossip, population, disagreement
   invention.py   # (P7') content-vs-error defects: bank content, retract error, invention census
-  datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship, language, society
+  curriculum.py  # (R2) curriculum reading: frame induction, frontier growth, grounding through frames
+  datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship, language, society, curriculum
   baselines/     # (P3) TransE / ComplEx (numpy, Adam)
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
 tests/           # acceptance tests, one module per phase
@@ -229,9 +230,30 @@ poetry run pytest        # run the acceptance suite
   so P7 localize-and-replay still retracts it (contradictions 24 → 0, purity
   0.80 → 1.00) — both in one run. Plus the invention census: banked content +
   posit-before-evidence confirmation rate (`results/es_invention.{csv,png}`).
+- **R2 — curriculum reading (frame induction, the book path): complete.**
+  `curriculum.py` — the reading-ladder R2 rung (`docs/spec-curriculum-reading.md`,
+  extending SPEC_READWRITE): the creature is taught from picture-book pages, each a
+  **joint episode** (illustration + caption + a tap on the pictured referent). Also
+  concept-agnostic and one-way dependent; grounding **delegates to `language.py`**
+  ("unchanged machinery"). **L2′** frame INDUCTION: group captions by length, mark a
+  position FIXED when one token **dominates** (≥ 0.8) else a SLOT, require ≥ 2
+  anchors, and REJECT non-matching captions to the **frontier** — both frames
+  recovered exactly, coverage **0.98** with only the two off-frame captions in the
+  frontier. The required **pollution failure-mode** is reproduced in CI: grouping by
+  length alone over-generalizes to an all-slot skeleton (false coverage 1.00); the
+  dominance + anchor + rejection discipline is the fix. **Frontier as trigger**:
+  re-inducing on the frontier grows the next frame (`where is the _`), the same
+  obstruction→growth pattern. **Grounding through frames**: the frame is the relation
+  marker, the picture channel orients each fact, and iterative picture taps ground
+  the fillers **10/10 at 4 taps** (a 4-orbit + three 2-orbits world); one page + one
+  tap **fast-maps** a novel animal (`zebu → red`, book provenance). Path metrics:
+  assimilation **0.049** committed facts/sentence (all correct), taps-per-book,
+  frontier census, and a comprehension check answered from the web, not echoed
+  (`results/ec_curriculum.{csv,png}`).
 
 **The dev-doc roadmap P0–P8 is complete**, plus the standalone **PL** (language)
-and **PS** (society, incl. the **P7'** defect amendment) phases — 121 acceptance
+and **PS** (society, incl. the **P7'** defect amendment) phases and the **R2**
+curriculum-reading rung — 132 acceptance
 tests, one substrate that never needed a redesign after P0. (P9 — Perception &
 data feed — is now in the dev-doc and handled later; the society layer is the
 independent truth-channel it depends on.) See `docs/scaling.md` for the

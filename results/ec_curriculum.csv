@@ -1,0 +1,13 @@
+metric,value
+frames_induced,2
+coverage,0.984
+frontier_size,2
+pollution_broken_coverage,1.000
+pollution_fixed_coverage,0.833
+frontier_trigger_frames,3
+frontier_trigger_residual,1
+grounded,10/10
+taps,4
+fastmap_fact,zebu->red
+assimilation_rate,0.049
+comprehension_accuracy,1.000
