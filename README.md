@@ -231,9 +231,18 @@ poetry run pytest        # run the acceptance suite
   posit-before-evidence confirmation rate (`results/es_invention.{csv,png}`).
 
 **The dev-doc roadmap P0–P8 is complete**, plus the standalone **PL** (language)
-and **PS** (society, incl. the **P7'** defect amendment) phases — 102 acceptance
+and **PS** (society, incl. the **P7'** defect amendment) phases — 108 acceptance
 tests, one substrate that never needed a redesign after P0. (P9 — Perception &
 data feed — is now in the dev-doc and handled later; the society layer is the
 independent truth-channel it depends on.) See `docs/scaling.md` for the
 distribution / web-scale / volunteer-computing direction, and
 `docs/design-log.md` for the decision & reconciliation log.
+
+**Post-build verification** (`docs/phase-1-verification.md`) is complete —
+report in `docs/phase-1-verification-report.md`. Part B integration gate (I1–I5:
+teach-a-friend-to-count, invention diffusion, discovered-types audit,
+reflection×society isolation, full regression under society) passes; Part C shows
+20-seed stability (rumor 0/N at every seed); Part D soaks 12 agents for 10⁶
+rounds with 1% noise, all four curves bounded. One honest gap named: relation
+types are given, not P2′-discovered, at the language/society boundary — precisely
+the P9 perception work.

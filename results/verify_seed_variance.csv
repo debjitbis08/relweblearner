@@ -1,0 +1,11 @@
+metric,mean,min,max,n_seeds
+in_web_growth,0.000,0,0,20
+deficit_match,1.000,1,1,20
+purity,1.000,1.0,1.0,20
+conflated,0.000,0,0,20
+ostension_budget,2.000,2,2,20
+orbit_count,2.000,2,2,20
+match,1.000,1,1,20
+rounds_to_converge,18.500,10,30,20
+rumor_committed,0.000,0,0,20
+i1_match,1.000,1,1,20
