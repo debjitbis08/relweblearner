@@ -22,7 +22,8 @@ src/relweblearner/
   growth.py      # (P1) persistence detector -> minimal grow; fork-scored rewire
   number.py      # (P1b) NumberLearner: bare episodes -> derived MATCH/ONEMORE -> number web
   sectors.py     # (P2) per-relation transport inference: symmetric / antisym / motif
-  datasets/      # generators: counting (bare pairing), arithmetic, sectors (relations)
+  types.py       # (P2') unlabeled relation-type discovery: refinement + disjointness
+  datasets/      # generators: counting, arithmetic, sectors, bare (unlabeled web)
   baselines/     # (P3+) TransE / ComplEx
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
 tests/           # acceptance tests, one module per phase
@@ -90,9 +91,17 @@ poetry run pytest        # run the acceptance suite
   unchanged (20/20). End-to-end demo consumes a real P1b `NumberChain`
   (`results/e2_sectors.{csv,png}`).
 
+- **P2' — unlabeled-relation type discovery: complete.** `types.py` — edges
+  carry no labels; a relation type is a structural equivalence class. Degree-role
+  **refinement** over-refines (WL degree-pair: 4 classes for 3 true types);
+  **disjointness compression** (mutual exclusivity — hubs merge iff their
+  member-sets are disjoint) recovers the truth. Generic coverage → the mixed web
+  (chain + colors + plants) recovered at purity 1.0; sparse coverage conflates,
+  and the conflation-vs-coverage curve falls 1.0 → 0.13 as crossing observations
+  arrive (`results/e2p_types.{csv,png}`).
+
 See `docs/scaling.md` for the distribution / web-scale / volunteer-computing
 direction, and `docs/design-log.md` for decisions & reconciliation notes.
 
-Next: **P2'** — unlabeled-relation type discovery (structural equivalence
-classes; refinement vs compression), or **P3** — compositional holdout vs
-TransE/ComplEx baselines.
+Next: **P3** — compositional holdout vs TransE/ComplEx baselines (the headline
+sample-efficiency figure; needs a small torch-CPU baseline).

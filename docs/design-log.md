@@ -273,7 +273,31 @@ The reconciliation of §1 is now code (`number.py`):
 - Deviation logged in §3: robust consensus replaces the spec's sympy nullspace.
 - e2 accepted (4 tests); `results/e2_sectors.{csv,png}`.
 
-## 9. Log
+## 9. P2' unlabeled-relation type discovery — notes (2026-07-09)
+
+- **The most "bare web is standard" phase.** Edges carry no labels; a relation
+  type is a *structural equivalence class*. Two opposing operations, per the
+  spec: **refinement** (`naive_degree_typing`, a 1-round WL degree-pair coloring
+  that over-refines — 4 classes for 3 true types) and **compression** (the
+  disjointness / mutual-exclusivity merge that recovers the truth).
+- **Disjointness = Markman's mutual exclusivity.** Hubs whose member-sets are
+  disjoint are the same type (colors are pairwise disjoint; plants are; a color
+  and a plant *overlap* via shared fruits, so they stay distinct). Connected
+  components of the disjointness graph are the attribute types; hub-free edges
+  are the chain type.
+- **Failure mode is a data-volume prediction, not a bug.** With too few crossing
+  observations a color hub and a plant hub are accidentally disjoint → one
+  bridging edge welds the two cliques → everything conflates into one type. The
+  conflation-vs-coverage curve falls from 1.0 (no crossings) to ~0.13 (20
+  crossings); generic/full coverage → 0. `results/e2p_types.{csv,png}`.
+- **Runs on discovered types, not given ones** (dev-doc mandate): discovery
+  consumes only unlabeled `(u, v)` pairs; `truth` is used solely for scoring.
+- Kept as an unlabeled edge-list module (`types.py`) rather than forcing the
+  bare-episode/Web wrapper — the discovery is purely structural over the graph;
+  a `Web`'s `underlying_graph()` feeds it directly when needed.
+- Accepted (4 tests); the naive-refinement over-refinement is logged for contrast.
+
+## 10. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -290,3 +314,7 @@ The reconciliation of §1 is now code (`number.py`):
 - **2026-07-09** — P2 symmetry-sector inference: `datasets/sectors.py`,
   `sectors.py`, `experiments/e2_sectors.py`; e2 accepted (36 tests). same→sym,
   succ→antisym, double→motif; noise-tolerant; consumes the P1b chain.
+- **2026-07-09** — P2' unlabeled type discovery: `datasets/bare.py`, `types.py`,
+  `experiments/e2p_types.py`; accepted (40 tests). Refinement over-refines,
+  disjointness compression recovers types at purity 1.0; conflation-vs-coverage
+  curve logged.
