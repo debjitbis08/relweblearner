@@ -375,6 +375,62 @@ concept geometry (symmetric/antisymmetric regions, a magnitude axis)
 stabilizes across the ensemble even when it varies per run.
 Embarrassingly parallel, CPU pool.
 
+P9 (scale) — Perception & data feed
+
+Not prototyped in-repo as a toy; this is a subsystem spec. Three layers.
+
+LAYER 1 — source (engineering). Stream relational shards from text:
+dependency-parse triples and co-occurrence within a window become
+candidate pairing/relation episodes. Relations are NOT labeled with a
+fixed vocabulary; types are left for P2' to discover. Calibration set:
+Wikidata with relation labels stripped (labels retained only as the
+answer key). Target: raw text. Output format = the standard episode.
+
+LAYER 2 — entity resolution (the real bottleneck). Cross-episode identity
+is a merge decision, reusing invariant-2 merges + invariant-8 simulation:
+for a new mention, BLOCK to cheap candidates (string/context-hash
+similarity), then for each candidate fork the projection, hypothesize
+mention = candidate-node, score coherence, commit only the clean best
+(or none -> a new node). Word-sense splits ("bank") fall out as the split
+resolution (P5) at the perceptual boundary.
+
+The blocking features are a NON-relational perceptual prior. Name it,
+isolate it in one module, and measure its error (candidate recall,
+adjudication precision). It is the one place pure structuralism is
+conceded, for tractability; keep it auditable.
+Cost: naive is O(mentions^2); blocking makes it near-linear in
+mentions x candidates-per-block. Report both.
+Accept (P9a): on label-stripped Wikidata, entity-resolution F1
+against the known entity ids; ablate the structural adjudicator (blocking
+only) to show coherence-scoring adds precision.
+
+LAYER 3 — attention/curriculum (pull, not push). The feed exceeds the
+consumption budget (invariant 4). Schedule perception by the defect map:
+prioritize episodes touching high-defect regions, defer episodes
+redundant with consolidated structure. The learner PULLS the episode
+type it needs; the source serves matching shards. Curiosity = defect-
+gradient ascent.
+Accept (P9c): with a fixed consumption budget, defect-prioritized
+scheduling reaches target purity in fewer consumed episodes than
+random-order ingestion (both on the same corpus).
+
+TWO SCALE DANGERS (wired to existing invariants):
+
+Popularity distortion: raw frequency lets common entities dominate
+geometry and rare ones never reach the k>=2 commitment threshold.
+Defense: consolidation tracks INDEPENDENT-SOURCE DIVERSITY, not raw
+count (N copies of one sentence = one witness). This is provenance-
+aware counting -- the same mechanism as the P7 repeat-lie defense.
+Coherence != truth at scale: harvested text is claims, not ground
+truth (unlike P0-P8). A single web can only enforce coherence.
+Correspondence requires the ENSEMBLE (P8): distinct sources = distinct
+webs; cross-source agreement is the truth signal; cross-web interface
+defects (P5) are how sources are found to disagree. Feeding at scale
+is what makes the ensemble mandatory rather than optional.
+Accept (P9-truth): seed the corpus with a coherent falsehood present
+in a minority of sources; a single web accepts it, the ensemble flags it
+via cross-web interface defect. This is the headline scale result.
+
 ## 4. Metrics to log everywhere
 
 - defect mass (total |holonomy| over observed loops), per step
