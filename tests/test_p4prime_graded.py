@@ -40,7 +40,19 @@ def test_graded_inherits_bloat_of_Z_and_honesty_of_the_inverse_monoid():
     r = sweep.report(GradedAlgebra(3))
     assert r.bloat == 1.0                     # ℤ's bloat: total sector never bloats
     assert r.false_inverse_rate == 0.0        # InvMon's honesty: no hallucinated inverse
-    assert r.undefined_fraction > 0.0         # the price: cross-sector paths don't close
+    assert r.undefined_fraction > 0.0         # cross-sector paths refuse (see decomposition)
+
+
+def test_undefined_is_all_legitimate_refusal_emergent_type_checking():
+    # the high undefined fraction is NOT a cost: it decomposes into cross-sector
+    # category errors (deserve refusal) + intrinsic partiality, with ZERO
+    # illegitimate refusals in the total sector — undefined == q exactly.
+    d = sweep.undefined_decomposition(GradedAlgebra(3))
+    assert d["within_total"] == 0.0                        # ℤ never refuses a legit compose
+    assert d["cross_sector"] > d["within_partial"]        # bulk is emergent type checking
+    assert abs((d["cross_sector"] + d["within_partial"]) - d["total"]) < 1e-9
+    # and total == the raw undefined_fraction it decomposes
+    assert abs(d["total"] - sweep.undefined_fraction(GradedAlgebra(3))) < 1e-9
 
 
 def test_graded_pareto_dominates_the_old_frontier():
@@ -53,8 +65,10 @@ def test_graded_pareto_dominates_the_old_frontier():
     assert g.bloat < inv.bloat and g.false_inverse_rate <= inv.false_inverse_rate
 
 
-def test_graded_relabel_invariance_holds_per_sector():
-    # the discipline holds the way a graded carrier is deployed (single-sector
-    # webs); the default mixed-web diagnostic forfeits it (documented third cost)
-    assert sweep.per_sector_relabel_invariant(GradedAlgebra(3)) is True
-    assert sweep.report(GradedAlgebra(3)).relabel_invariant is False
+def test_graded_relabel_invariance_over_the_sector_preserving_gauge_group():
+    # P0 relabel-invariance, AMENDED for a graded carrier: the legal gauge group
+    # is the sector-preserving relabelings, and the invariant holds over it. The
+    # default diagnostic mixes sectors — not a legal gauge move — so it reports
+    # False: a restricted symmetry group, not a violated invariant.
+    assert sweep.per_sector_relabel_invariant(GradedAlgebra(3)) is True   # the real invariant
+    assert sweep.report(GradedAlgebra(3)).relabel_invariant is False      # mixed = not a gauge

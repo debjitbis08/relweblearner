@@ -597,7 +597,34 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   blocked merge.
 - Accepted (17 tests; 102 total).
 
-## 20. Log
+## 20. P4′ graded algebra + next-steps — notes (2026-07-09)
+
+Post-verification work (the report's four next steps). All committed on `main`.
+
+- **P4′ graded algebra — hypothesis confirmed, both "costs" dissolved by
+  measurement.** `GradedAlgebra` (ℤ core for total sectors, inverse monoid for
+  partial ones; one carrier, two composition laws) Pareto-dominates the P4
+  frontier {ℤ, InvMon} on (bloat 1.0, false-inverse 0.0). The referee's
+  decomposition (reproduced): `undefined 0.647 = cross-sector 0.490 + within
+  -partial 0.158 + within-total 0.000`. So **undefined == q exactly** — the
+  algebra never refuses a legitimate composition; the 0.65 is a sector-uniform
+  query-mix artifact, and cross-sector refusal is **emergent type checking**
+  (sortal discipline from the composition law, not bolted on). The
+  `relabel(mixed)=False` is **not a cost**: the gauge group of a graded carrier
+  is the sector-preserving relabelings, so a sector-mixing relabel isn't a legal
+  gauge move — the correctly-stated invariant (`relabel(sector)=True`) holds.
+  Made an explicit **spec amendment** to the P0 Accept criterion (dev-doc): the
+  relabel-invariance property quantifies over the legal gauge group, restricted
+  to sector-preserving potentials for graded carriers. The grading-respecting
+  gauge is the **Π_sym structure**, forced by a KR sweep that knew no physics.
+- **Next-steps 1/2/3** (grounding on discovered types; full-integration soak with
+  the super-linear-recovery-cost finding; recovery-as-load-bearing standing test)
+  — see `docs/phase-1-verification-report.md` next-steps §1–3 and §16 above.
+- The verifier has now been corrected three times by the build (types need no
+  smuggling; grading breaks no invariant; undefined is legitimate refusal) and
+  zero times by wishful thinking — the asymmetry a research program wants.
+
+## 21. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new

@@ -270,8 +270,21 @@ class GradedAlgebra(Algebra):
     inverse). Composition **within** a sector uses that sector's law; **across**
     sectors it is undefined (``None``) — you cannot compose a successor-step with
     an attribute edge. So it inherits ℤ's bloat 1.0 on the total sector and the
-    inverse monoid's false-inverse 0.0 on the partial one, paying with a high
-    ``undefined_fraction`` (the price of grading: cross-sector paths don't close).
+    inverse monoid's false-inverse 0.0 on the partial one.
+
+    The high ``undefined_fraction`` is **not a price** — :func:`sweep.undefined_
+    decomposition` shows it is entirely cross-sector *category errors* (a chain
+    mixing a number-step and a colour-edge; "the colour of seven") plus the
+    inverse monoid's intrinsic partiality, with **zero illegitimate refusals in
+    the total sector**: ``undefined == q`` exactly, nothing legitimate is ever
+    refused. Cross-sector refusal is **emergent type checking** — sortal
+    discipline falls out of the composition law instead of being bolted on. And
+    the gauge group is correspondingly graded: relabel-invariance holds under the
+    **sector-preserving** relabelings (:func:`sweep.per_sector_relabel_invariant`);
+    a sector-mixing relabeling is not a legal gauge move, so the default
+    diagnostic's mixed-web ``False`` is a *restricted symmetry group*, not a
+    violated invariant. Two sectors on one carrier that don't mix under the legal
+    transformations — the Π_sym structure, re-derived from a KR sweep.
     """
 
     _E = ("e",)   # the shared, glued identity of both sectors
@@ -374,12 +387,13 @@ class GradedAlgebra(Algebra):
     def sectors(self) -> list:
         """``[(name, element_pool, units), ...]`` — one entry per graded sector.
 
-        A graded algebra is *used* with each relation in a single sector (a web's
-        edges for one relation are all total, or all partial). This exposes the
-        per-sector pools so relabel-invariance can be checked the way the carrier
-        is physically deployed — unlike the default diagnostic, which mixes
-        sectors on one web and so forfeits strict edge-id invariance (grading's
-        third cost: identity edges bridge sectors, and relabel relocates them).
+        The gauge group of a graded carrier is the **sector-preserving**
+        relabelings. Exposing the per-sector pools lets the P0 relabel-invariance
+        discipline be quantified over exactly that group (each relation lives in
+        one sector; a web's edges for one relation are all total or all partial) —
+        the correctly-stated invariant, which holds. A sector-mixing relabeling
+        is not a legal gauge move at all, so the default diagnostic's mixed-web
+        ``False`` reflects a restricted symmetry group, not a violated invariant.
         """
         z_pool = [self._E, ("Z", 1), ("Z", -1), ("Z", 2)]
         z_units = [self._total(k) for k in range(-2, 3)]

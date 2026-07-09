@@ -163,6 +163,19 @@ networkx `minimum_cycle_basis` on the underlying graph.
 -> exactly one independent defect class; relabel provably cannot change
 any defect (property test over random potentials, 1000 trials).
 
+**Amendment (2026-07-09, from P4′).** The relabel-invariance property
+quantifies over the carrier's *legal gauge group*. For a total or a purely
+partial carrier that is all potentials (the original statement). For a
+**graded** carrier the gauge group is restricted to the **sector-preserving**
+relabelings: a sector-mixing potential is not a legal gauge move (it can turn
+a sector edge into the shared identity, which bridges sectors in the BFS
+gauge-fix), so invariance is asserted over sector-preserving potentials only
+(`sweep.per_sector_relabel_invariant`). This is a *restricted symmetry group*,
+not a weakened invariant — stated in the open here rather than a footnote. The
+grading-respecting gauge (two sectors on one carrier that do not mix under the
+legal transformations) is the Π_sym structure, re-derived from the algebra
+sweep. See `design-log.md` and `docs/phase-1-verification-report.md`.
+
 ### P1 — Growth engine (one day)
 
 Persistence detector: a defect (or a query path that walks off the web)

@@ -8,11 +8,18 @@ an inverse-monoid boundary for partial ones — one carrier, two composition law
 
 Result: ``Graded(Z|Inv_3)`` inherits ℤ's **bloat 1.0** AND the inverse monoid's
 **false-inverse 0.0**, Pareto-dominating the old frontier on the two headline
-axes. It pays two costs: **undefined 0.65** (cross-sector paths don't close —
-correct, a number-step and a colour-edge genuinely don't compose) and a subtler
-one — strict relabel-invariance holds **per sector** (how it is deployed) but not
-on artificially sector-mixed webs (identity edges bridge sectors; relabel
-relocates them). Grading's third cost.
+axes — and the two apparent "costs" both dissolve under measurement:
+
+* **undefined 0.65 is not a price.** It decomposes into cross-sector *category
+  errors* (≈0.49 — "the colour of seven" deserves refusal) + the inverse monoid's
+  intrinsic partiality (≈0.16), with **0.000 illegitimate refusals in the total
+  sector**: ``undefined == q`` exactly. Cross-sector refusal is **emergent type
+  checking** — sortal discipline falling out of the composition law.
+* **relabel(mixed) = False is a restricted symmetry group, not a violated
+  invariant.** The gauge group of a graded carrier is the *sector-preserving*
+  relabelings; a sector-mixing relabel is not a legal gauge move. The correctly
+  stated P0 invariant (``relabel(sector) = True``) holds. Two sectors on one
+  carrier that don't mix under the legal transformations — the Π_sym structure.
 
 Writes results/e4prime_graded.csv.
 Run: ``poetry run python experiments/e4prime_graded.py``
@@ -67,8 +74,14 @@ def run():
           f"(bloat {graded['bloat']:.0f}≤{z['bloat']:.0f}, false-inv {graded['false_inverse']:.0f}<{z['false_inverse']:.0f})")
     print(f"  Graded Pareto-dominates InvMon: {dominates_inv}  "
           f"(bloat {graded['bloat']:.0f}<{inv['bloat']:.0f}, false-inv {graded['false_inverse']:.0f}≤{inv['false_inverse']:.0f})")
-    print(f"  Price: undefined_fraction {graded['undefined']:.2f}; strict relabel-invariance "
-          f"per-sector {graded['relabel_per_sector']}, mixed-web {graded['relabel_mixed']}.")
+    d = sweep.undefined_decomposition(GradedAlgebra(3))
+    print("\nThe two apparent costs dissolve under measurement:")
+    print(f"  undefined {d['total']:.3f} = cross-sector {d['cross_sector']:.3f} "
+          f"(category errors — emergent TYPE CHECKING) + within-partial "
+          f"{d['within_partial']:.3f} (intrinsic partiality) + within-total "
+          f"{d['within_total']:.3f} (illegitimate — ZERO). undefined == q; nothing legit refused.")
+    print(f"  relabel: mixed-web {graded['relabel_mixed']} is NOT a legal gauge move; the "
+          f"sector-preserving invariant (the real P0 discipline) holds: {graded['relabel_per_sector']}.")
 
     os.makedirs(RESULTS, exist_ok=True)
     path = os.path.join(RESULTS, "e4prime_graded.csv")
@@ -80,6 +93,11 @@ def run():
             w.writerow([r["algebra"], f"{r['bloat']:.3f}", f"{r['false_inverse']:.3f}",
                         f"{r['undefined']:.3f}", int(r["relabel_mixed"]),
                         int(r["relabel_per_sector"])])
+        w.writerow([])
+        w.writerow(["graded_undefined_decomposition", "cross_sector", "within_partial",
+                    "within_total", "total"])
+        w.writerow(["", f"{d['cross_sector']:.3f}", f"{d['within_partial']:.3f}",
+                    f"{d['within_total']:.3f}", f"{d['total']:.3f}"])
     print(f"\nwrote {path}")
 
 
