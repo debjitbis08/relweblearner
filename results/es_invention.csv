@@ -1,0 +1,11 @@
+metric,value
+clock_classify,content
+clock_holonomy,12
+modular_query_11plus3,h2
+error_classify,error
+poison_contradictions_before,24
+poison_contradictions_after,0
+purity_before,0.800
+purity_after,1.000
+banked_content_classes,1
+posit_confirmation_rate,0.500

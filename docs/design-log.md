@@ -535,7 +535,48 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   write of an orbit word refused. `results/el_readwrite.{csv,png}`.
 - Accepted (13 tests; 85 total).
 
-## 19. Log
+## 19. PS society + P7' invention — notes (2026-07-09)
+
+- **Provenance & naming.** From the standalone `docs/spec-society.md`, off the
+  numbered roadmap (like PL). Tagged **PS** (society) with the **P7'** defect
+  amendment (spec §7). NOT the roadmap's P9 (Perception & data feed) — the spec
+  itself notes perception *follows* society because society is the independent
+  truth-channel it needs. Files: `society.py`, `invention.py`,
+  `datasets/society.py`, `experiments/es_society.py`, `experiments/es_invention.py`,
+  `tests/test_ps_society.py`, `tests/test_ps_invention.py` (16 tests; 101 total).
+- **Only one of three cited references existed** (`experiment0l_dyad.py`;
+  `experiment0m_zoo.py` and `experiment0k_invention.py` are absent). Implemented
+  to the spec *mechanism* and reproduced the *qualitative* targets; the reference
+  constants turned out to match closely anyway (see below), but they are not
+  pinned to a runnable reference.
+- **S1 lateral inhibition made real.** The dyad reference uses one word per
+  concept, so inhibition is vacuous there. Modelled weighted synonym
+  associations so inhibition actually bites, and measured population convergence
+  by **lexical_convergence** (share of the single most-held word per concept) —
+  which honestly exhibits the plateau. Dyad success **0.86 → 1.00** (matches the
+  reference), creolization **1.00 with inhibition vs 0.35 without** (≈ the 0.36
+  plateau), a *persistent* plateau (stable across 2k–8k rounds), not merely slow.
+- **S3 origin-counting.** Origin sets are per-**owner**, transmitted unchanged on
+  relay; commit needs ≥k distinct origins. Rumor **0/24**, cited **24/24**,
+  Sybil (10 agents / 1 owner) → **1** — all reproduced. This is P7's repeat-lie
+  defense socialized: a rumor cites itself.
+- **S5 tension resolved explicitly.** Two resolution paths: own perception
+  outranks testimony (the documented consensus≠truth limit → keep own belief,
+  even when wrong), else origin weight decides. The acceptance's "resolved by
+  origin weight" routes through the no-own-perception path; both are tested.
+- **P7' classifier, concretized on the substrate.** A persistent defect is
+  **error** iff it forces an *observation* conflict — a `succ` self-loop (class
+  ONEMORE of itself) or a merge of nodes observed `distinct`; **content** iff its
+  nonzero holonomy violates no observation. The clock (12-cycle, winding +12)
+  banks and answers **11+3 ≡ 2 (mod 12)** via the ordinary walk on the kept
+  wrap-edge; the poisoned merge still retracts via unchanged `audit.localize`
+  (contradictions 24→0, purity 0.80→1.00) — both in one run. Note: the substrate
+  *refuses* an `observe_distinct`+`merge` at commit time, so the error path is
+  demonstrated via the number/audit poison and a direct self-loop web, not a
+  blocked merge.
+- Accepted (16 tests; 101 total).
+
+## 20. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -591,3 +632,10 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   class discovered; grounding up to brute-force automorphism orbits (7/11);
   ostension cascade 7→9→11; fast-map; adjunction 0 violations. One-way
   dependency + disjoint namespaces CI-tested.
+- **2026-07-09** — PS society + P7' invention (standalone spec; NOT roadmap P9):
+  `society.py`, `invention.py`, `datasets/society.py`, `experiments/es_society.py`,
+  `experiments/es_invention.py`; accepted (101 tests). Dyad 0.86→1.00 with
+  lateral inhibition; cross-agent adjunction 1.0; solipsism debt 2→1→0; gossip
+  rumor 0/24 vs cited 24/24, Sybil→1; dialects within 1.0/cross 0.0; creolization
+  1.0 vs 0.35 plateau; interface-defect disagreement. P7' content-vs-error:
+  clock banked (11+3≡2 mod 12), poison retracts (24→0, purity 0.80→1.0).

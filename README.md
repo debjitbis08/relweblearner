@@ -31,7 +31,9 @@ src/relweblearner/
   audit.py       # (P7) adversarial: k>=2 gate, localize-and-replay, DoS budgets
   geometry.py    # (P8) graph-Laplacian eigenmaps; ensemble magnitude-axis stability
   language.py    # (PL) reading & writing: separate one-way web; ground/ostend/read/write
-  datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship, language
+  society.py     # (PS) multi-agent: dyad naming game, citation gossip, population, disagreement
+  invention.py   # (P7') content-vs-error defects: bank content, retract error, invention census
+  datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship, language, society
   baselines/     # (P3) TransE / ComplEx (numpy, Adam)
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
 tests/           # acceptance tests, one module per phase
@@ -199,8 +201,39 @@ poetry run pytest        # run the acceptance suite
   adjunction laws `read(write(f)) == f` and `write(read(u)) ~ u` holding at
   **0 violations** over the full expressible set (`results/el_readwrite.{csv,png}`).
 
-**The dev-doc roadmap P0–P8 is complete**, plus the standalone **PL** language
-phase — 85 acceptance tests, one substrate that never needed a redesign after
-P0. (P9 — Perception & data feed — is now in the dev-doc and handled later.) See
-`docs/scaling.md` for the distribution / web-scale / volunteer-computing
-direction, and `docs/design-log.md` for the decision & reconciliation log.
+- **PS — society (multi-agent layer): complete.** `society.py` — the standalone
+  society spec (`docs/spec-society.md`), off the numbered roadmap. Multi-agent is
+  forced *before* perception-at-scale by three limits the earlier phases prove:
+  solipsism debt (grounding only up to orbits), coherence≠correspondence
+  (disagreement is the only native truth signal), and ensemble science.
+  **S0** agents share no memory (message-passing only); provenance is
+  per-**owner** (the Sybil boundary). **S1** a dyad naming game with **lateral
+  inhibition** converges to one shared lexicon (communication success 0.86 →
+  1.00), cross-agent adjunction `read_B(write_A(f)) == f` at 1.0, and **peer
+  ostension discharges the solipsism debt** (unresolved orbits 2 → 1 → 0).
+  **S3** citation-tracked gossip: every claim carries an **origin set**
+  transmitted unchanged, commit needs ≥k **distinct origins** — a rumor (1 owner,
+  50 tellings, 4000 gossip rounds) commits **0/24**, an independently-cited fact
+  (6 owners) **24/24**, and 10 Sybils under one owner count as **1** origin.
+  **S4** dialects form without contact (within 1.00, cross 0.00) and contact
+  **creolizes only with inhibition** (1.00 vs a 0.35 adopt-only plateau — the
+  failure mode the fix is tested against). **S5** a conflicting claim is logged
+  as a queryable **interface defect** (both origin sets), resolved by origin
+  weight, with own perception outranking testimony (`results/es_society.{csv,png}`).
+- **P7' — content vs error defects (society §7 amendment): complete.**
+  `invention.py` — a persistent holonomy class that **conflicts with no
+  observation is CONTENT** (banked as structure), not error. Clock arithmetic
+  (a counting chain glued to a wrap-around) carries winding **+12**, conflicts
+  nothing, is banked, and answers modular queries (**11 + 3 ≡ 2 mod 12**); a
+  poisoned merge ("class ONEMORE of itself") **conflicts with an observation**,
+  so P7 localize-and-replay still retracts it (contradictions 24 → 0, purity
+  0.80 → 1.00) — both in one run. Plus the invention census: banked content +
+  posit-before-evidence confirmation rate (`results/es_invention.{csv,png}`).
+
+**The dev-doc roadmap P0–P8 is complete**, plus the standalone **PL** (language)
+and **PS** (society, incl. the **P7'** defect amendment) phases — 101 acceptance
+tests, one substrate that never needed a redesign after P0. (P9 — Perception &
+data feed — is now in the dev-doc and handled later; the society layer is the
+independent truth-channel it depends on.) See `docs/scaling.md` for the
+distribution / web-scale / volunteer-computing direction, and
+`docs/design-log.md` for the decision & reconciliation log.
