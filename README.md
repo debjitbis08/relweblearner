@@ -30,7 +30,8 @@ src/relweblearner/
   simulate.py    # (P6') fork-score-discard play loop: imagine-then-commit, lookahead
   audit.py       # (P7) adversarial: k>=2 gate, localize-and-replay, DoS budgets
   geometry.py    # (P8) graph-Laplacian eigenmaps; ensemble magnitude-axis stability
-  datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship
+  language.py    # (PL) reading & writing: separate one-way web; ground/ostend/read/write
+  datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship, language
   baselines/     # (P3) TransE / ComplEx (numpy, Adam)
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
 tests/           # acceptance tests, one module per phase
@@ -176,7 +177,30 @@ poetry run pytest        # run the acceptance suite
   Concept geometry is stable only across the ensemble, exactly the hypothesis
   (`results/e8_geometry.{csv,png}`).
 
-**The full roadmap P0–P8 is complete** — 72 acceptance tests, one substrate that
-never needed a redesign after P0. See `docs/scaling.md` for the distribution /
-web-scale / volunteer-computing direction, and `docs/design-log.md` for the
-decision & reconciliation log.
+- **PL — reading & writing (language): complete.** `language.py` — the
+  standalone read/write spec (`docs/spec-read-write.md`), off the numbered
+  dev-doc roadmap (whose P9 is Perception & data feed — unrelated; handled
+  later). **Language is a separate web**, one-way dependent on the
+  concept web (a skill atop concepts): deleting language leaves every
+  concept-web test passing; reading cannot ground without concepts, and surface
+  forms share no namespace with concept ids (both CI-tested). Six layers from a
+  raw syllable stream: **L1** boundaries from transition-probability dips
+  (precision/recall 1.0, exact lexicon; a logged degradation curve 1.00 → 0.71
+  as words share units, recall pinned at 1.0) + novel-word segmentation by
+  subtraction; **L2** the closed (frame) class **discovered, not given** (the
+  count maximizes frame-shape regularity); **L3** grounding by structure alone
+  (joint WL + frame↔relation bijection) that resolves meanings **exactly up to
+  the concept web's automorphism orbits** — 7/11 grounded, the unresolved
+  residue equal to a **brute-force orbit computation** (the formal gavagai
+  limit); **L4** ostension (budget = #orbits; one pointing per orbit cascades
+  7 → 9 → 11); **L5** reading as confirm / teach / fast-map (single-exposure
+  novel word → correct) / refuse-a-false-claim; **L6** writing = inverse map +
+  **read-back before commit**, refusing ambiguous orbit words, with the
+  adjunction laws `read(write(f)) == f` and `write(read(u)) ~ u` holding at
+  **0 violations** over the full expressible set (`results/el_readwrite.{csv,png}`).
+
+**The dev-doc roadmap P0–P8 is complete**, plus the standalone **PL** language
+phase — 85 acceptance tests, one substrate that never needed a redesign after
+P0. (P9 — Perception & data feed — is now in the dev-doc and handled later.) See
+`docs/scaling.md` for the distribution / web-scale / volunteer-computing
+direction, and `docs/design-log.md` for the decision & reconciliation log.

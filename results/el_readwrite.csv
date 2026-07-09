@@ -1,0 +1,16 @@
+metric,value
+seg_precision_clean,1.000
+seg_recall_clean,1.000
+lexicon_exact,1
+seg_precision@shared0,1.000
+seg_precision@shared1,0.886
+seg_precision@shared2,0.831
+seg_precision@shared3,0.755
+seg_precision@shared4,0.708
+frame_class_discovered,1
+grounded_structural,7/11
+orbits_match_bruteforce,1
+ostension_budget,2
+grounded_after_ostension,11/11
+fastmap_correct,1
+adjunction_violation_rate,0.000

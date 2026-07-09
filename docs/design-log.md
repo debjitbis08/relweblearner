@@ -494,7 +494,48 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
 - This sits on P5's ensemble idea and closes the roadmap.
 - Accepted (3 tests).
 
-## 18. Log
+## 18. PL reading & writing (language) — notes (2026-07-09)
+
+- **Provenance & naming.** From the standalone `docs/spec-read-write.md`,
+  deliberately *outside* the numbered dev-doc roadmap: "handed to the agent after
+  the main DEVDOC phases are underway, assumes only the glossary." Tagged **PL**
+  (Language), NOT P9 — P9 is the roadmap's Perception & data feed phase (real
+  Wikidata / data feed / truth-seeding), a separate effort handled later.
+  Reference PoC `experiment0j_readwrite.py`; files `language.py`,
+  `datasets/language.py`, `experiments/el_readwrite.py`, `test_pl_language.py`.
+- **Architecture: language is a separate web, one-way dependent.** `language.py`
+  imports nothing concept-specific — it takes the concept web as its typed-edge
+  projection `{rel: {(x,y)}}` (what a `Web` exposes anyway). Two §0/§1 CI
+  properties made into tests: (a) surface forms ∩ concept ids = ∅ (words are
+  gensyms; nothing string-matches); (b) grounding cannot proceed without a
+  concept web. Like `geometry.py`, it is a read-only analysis layer over the
+  concept web, so invariant 4 (episode emission) does not newly apply.
+- **Where the promotion exceeded the PoC** (the acceptance text asked for more
+  than the PoC delivered; closed the gaps rather than copy its shortcuts):
+  - **L2 discovered, not given.** The PoC hardcodes `most_common(2)` (works only
+    because the 2 markers barely outrank `tree`). Replaced with a *discovery* of
+    the frame-class count as the k maximizing frame-shape regularity → recovers
+    exactly the 2 markers, honestly "never given."
+  - **L3 orbits vs brute force.** WL-equal-signature groups ≠ automorphism
+    orbits in general. Added a genuine brute-force orbit computation
+    (`automorphism_orbits`, networkx VF2 over the typed concept graph) and assert
+    the unresolved residue equals it — the structural (gavagai) limit as a
+    checked result, not an assertion.
+  - **L1 degradation curve.** The PoC reports one stress point; swept
+    unit-sharing 0→4 into a monotone curve (precision 1.00 → 0.71, recall pinned
+    at 1.0). shared=2 ≈ 0.83 (PoC quoted 0.81; differs only by rng path).
+  - **L5 four paths.** confirm / teach / fast-map / **refuse-a-false-claim** (a
+    claim contradicting a functional edge — the read-back rehearsal the spec
+    cross-references), where the PoC really only showed fast-map.
+  - **L6 adjunction over the full expressible set** (property-style), 0
+    violations, vs the PoC's two spot writes.
+- **Reference numbers reproduced.** 7/11 grounded structurally; unresolved =
+  {mango,lemon,apple,cherry} = the two 2-orbits; ostension budget 2, cascade
+  7 → 9 → 11 all-correct; fast-map `wumi`→fig from one exposure; pre-ostension
+  write of an orbit word refused. `results/el_readwrite.{csv,png}`.
+- Accepted (13 tests; 85 total).
+
+## 19. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -544,3 +585,9 @@ that split/merge over long stimulus streams**. Both fit the substrate cleanly.
   `experiments/e8_geometry.py`; accepted (72 tests). Magnitude axis recovered per
   run, orientation arbitrary; stable only across the sign-aligned ensemble.
   **Roadmap P0–P8 complete.**
+- **2026-07-09** — PL reading & writing (language, standalone spec; NOT the
+  roadmap's P9=Perception): `datasets/language.py`, `language.py`,
+  `experiments/el_readwrite.py`; accepted (85 tests). Separate one-way web; frame
+  class discovered; grounding up to brute-force automorphism orbits (7/11);
+  ostension cascade 7→9→11; fast-map; adjunction 0 violations. One-way
+  dependency + disjoint namespaces CI-tested.
