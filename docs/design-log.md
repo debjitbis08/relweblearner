@@ -131,8 +131,13 @@ why. (Candidate dev-doc edits are flagged in §4.)
   P1 growth/rewire search.
 - **Whole-log rebuild** rather than incremental/cone-scoped projection — correct
   at laptop scale; optimized when a phase stresses memory (P7 floods).
-- **`sympy` treated as a hard dep** (P2's noise-tolerant integer nullspace),
-  though the spec lists it optional. Already installed.
+- **P2 uses robust consensus, not `sympy` nullspace.** The spec suggests
+  "sympy integer least squares / nullspace" for per-relation transport. Because
+  the P1b chain already provides node coordinates, classification reduces to a
+  per-relation transport-sample consensus under an exception budget — simpler,
+  and it is what actually delivers e2's noise tolerance (a nullspace solve is
+  brittle to a single bad row). `sympy` stays available for P4's partial-algebra
+  work but is unused in P2. See §8.
 - **P1b commits merges eagerly (single MATCH), not at k≥2 (inv 6).** Required
   for e1b(e) to exhibit a visible contradiction from one poison; k≥2 provisional
   commitment and localize-and-replay move to P7. Safe because the merge is
@@ -247,7 +252,28 @@ The reconciliation of §1 is now code (`number.py`):
 - e1b accepted (5 tests); `experiments/e1b_number.py` reproduces `0e` (staging,
   counting, poison) on the substrate. `results/e1b_number.{csv,png}`.
 
-## 8. Log
+## 8. P2 symmetry-sector inference — notes (2026-07-09)
+
+- **Coordinates come from P1b, so classification is per-relation transport
+  consensus.** Each loop observation ``(a, b, r)`` contributes a sample
+  ``coord(b) - coord(a)``; the winning transport is the one that minimizes
+  exceptions (DL rule). A relation is homogeneous iff one transport explains
+  ``≥ 1 - exception_fraction`` of samples.
+  - ``g = 0`` → **symmetric** (the ``2g = 0`` signal: seen both ways, transport
+    0 each way, consistent only with 0 over Z).
+  - ``g ≠ 0`` → **antisymmetric**.
+  - no constant fits → **non-homogeneous / motif** — ``double``'s transport is
+    ``count(a)``, so support collapses (≈0.3–0.5, well under the 0.8 threshold).
+- **Noise tolerance falls straight out of the exception budget.** One
+  adversarial mislabel is a single exception, cheaper than abandoning the true
+  transport, so the rule is unchanged (e2: 20/20, not just ≥18/20).
+- **Consumes the constructed chain (dev-doc mandate).** `e2_sectors.py`
+  end-to-end takes coordinates from a P1b `NumberChain` (class position), not
+  given numbers; same/succ/double still classify correctly.
+- Deviation logged in §3: robust consensus replaces the spec's sympy nullspace.
+- e2 accepted (4 tests); `results/e2_sectors.{csv,png}`.
+
+## 9. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -261,3 +287,6 @@ The reconciliation of §1 is now code (`number.py`):
 - **2026-07-09** — P1b number-from-counting: `datasets/counting.py`,
   `number.py`, `experiments/e1b_number.py`; e1b accepted (32 tests). MATCH=merge
   resolved; contradiction = holonomy self-loop; poison retractable by replay.
+- **2026-07-09** — P2 symmetry-sector inference: `datasets/sectors.py`,
+  `sectors.py`, `experiments/e2_sectors.py`; e2 accepted (36 tests). same→sym,
+  succ→antisym, double→motif; noise-tolerant; consumes the P1b chain.

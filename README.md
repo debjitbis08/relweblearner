@@ -21,7 +21,8 @@ src/relweblearner/
   holonomy.py    # BFS potential, defect extraction, holonomy, defect-mass objective
   growth.py      # (P1) persistence detector -> minimal grow; fork-scored rewire
   number.py      # (P1b) NumberLearner: bare episodes -> derived MATCH/ONEMORE -> number web
-  datasets/      # generators: counting (bare pairing), arithmetic (unit-test scaffold)
+  sectors.py     # (P2) per-relation transport inference: symmetric / antisym / motif
+  datasets/      # generators: counting (bare pairing), arithmetic, sectors (relations)
   baselines/     # (P3+) TransE / ComplEx
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
 tests/           # acceptance tests, one module per phase
@@ -79,9 +80,19 @@ poetry run pytest        # run the acceptance suite
   self-loop defect, quarantined and **retractable by replay-with-exclusion**
   (`results/e1b_number.{csv,png}`).
 
+- **P2 — symmetry-sector inference: complete.** `sectors.py` — each loop
+  observation gives a relation a transport sample `coord(b) - coord(a)` (the
+  coordinates come from the P1b chain); the relation's sector is read from
+  whether a single transport fits under an exception budget: `g=0` →
+  **symmetric** (the `2g=0` signal), `g≠0` → **antisymmetric**, no constant fit
+  → **non-homogeneous / motif**. `e2` accepted: same/succ classified 20/20
+  seeds; `double` flagged a motif; one adversarial mislabel leaves the rule
+  unchanged (20/20). End-to-end demo consumes a real P1b `NumberChain`
+  (`results/e2_sectors.{csv,png}`).
+
 See `docs/scaling.md` for the distribution / web-scale / volunteer-computing
 direction, and `docs/design-log.md` for decisions & reconciliation notes.
 
-Next: **P2** — symmetry-sector inference (per-relation transport over Z via
-sympy nullspace; symmetric vs antisymmetric), consuming the constructed class
-chain.
+Next: **P2'** — unlabeled-relation type discovery (structural equivalence
+classes; refinement vs compression), or **P3** — compositional holdout vs
+TransE/ComplEx baselines.

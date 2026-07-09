@@ -1,0 +1,4 @@
+relation,mean_support,expected_sector
+same,1.000,symmetric
+succ,1.000,antisymmetric
+double,0.425,non-homogeneous
