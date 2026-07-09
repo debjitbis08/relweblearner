@@ -297,7 +297,30 @@ The reconciliation of §1 is now code (`number.py`):
   a `Web`'s `underlying_graph()` feeds it directly when needed.
 - Accepted (4 tests); the naive-refinement over-refinement is logged for contrast.
 
-## 10. Log
+## 10. P3 compositional holdout vs baselines — notes (2026-07-09)
+
+- **Headline (N=200):** web **Hits@1 = 1.0 / MRR = 1.0** on the held-out ``+5``
+  relation, with **zero parameters** learned for it — it composes ``+1`` and
+  ``+2`` transports exactly. Baselines (dim 32): **ComplEx** 0.49 / 0.85 / 0.61
+  (Hits@1/Hits@10/MRR), **TransE** 0.15 / 0.38 / 0.23. `results/e3_holdout.{csv,png}`.
+- **The clean finding:** ComplEx *memorizes the training relations perfectly*
+  (Hits@1 = 1.0 on ``+1``/``+2``) yet composes the unseen ``+5`` only ~half the
+  time. Memorization ≠ composition; the web composes by construction.
+- **Deviations (logged):**
+  - **numpy, not torch, for baselines.** The spec lists torch-CPU as optional;
+    the models are tiny (dim 32, N≈200) so numpy is competent, deterministic,
+    and dependency-light. Adam is implemented inline.
+  - **TransE needs hard (nearby) negatives.** With standard uniform corruption
+    it collapses to the ``r ≈ 0`` degenerate on a dense integer chain (a known
+    TransE weakness) and learns nothing; mixing in nearby negatives lets it
+    learn local order. ComplEx fits fine with standard uniform negatives, so the
+    strong baseline is fully standard.
+  - **Report Hits@1 / Hits@10 / MRR**, not Hits@1 alone — it shows the baselines
+    *do* learn approximate structure (ComplEx Hits@10 0.85) but cannot nail the
+    exact composition the web gets for free.
+- e3 accepted (3 tests): web exact; baselines fall short by a large gap.
+
+## 11. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -318,3 +341,7 @@ The reconciliation of §1 is now code (`number.py`):
   `experiments/e2p_types.py`; accepted (40 tests). Refinement over-refines,
   disjointness compression recovers types at purity 1.0; conflation-vs-coverage
   curve logged.
+- **2026-07-09** — P3 compositional holdout: `datasets/holdout.py`,
+  `baselines/kge.py`, `holdout.py`, `experiments/e3_holdout.py`; e3 accepted
+  (43 tests). web Hits@1=1.0 by construction; ComplEx 0.49, TransE 0.15 — gap
+  recorded. numpy baselines (Adam inline).

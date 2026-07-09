@@ -23,8 +23,9 @@ src/relweblearner/
   number.py      # (P1b) NumberLearner: bare episodes -> derived MATCH/ONEMORE -> number web
   sectors.py     # (P2) per-relation transport inference: symmetric / antisym / motif
   types.py       # (P2') unlabeled relation-type discovery: refinement + disjointness
-  datasets/      # generators: counting, arithmetic, sectors, bare (unlabeled web)
-  baselines/     # (P3+) TransE / ComplEx
+  holdout.py     # (P3) compositional-holdout eval: web (exact) vs KGE baselines
+  datasets/      # generators: counting, arithmetic, sectors, bare, holdout
+  baselines/     # (P3) TransE / ComplEx (numpy, Adam)
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
 tests/           # acceptance tests, one module per phase
 results/         # CSVs + plots
@@ -100,8 +101,16 @@ poetry run pytest        # run the acceptance suite
   and the conflation-vs-coverage curve falls 1.0 → 0.13 as crossing observations
   arrive (`results/e2p_types.{csv,png}`).
 
+- **P3 — compositional holdout vs baselines: complete.** Train `n-(+k)->n+k`
+  for k∈{1,2}; hold out all k=5. The web scores `+5` by transport composition —
+  **Hits@1 = 1.0 by construction, zero parameters** for the held-out relation.
+  KGE baselines (dim 32) must compose learned embeddings: **ComplEx** memorizes
+  training perfectly yet composes `+5` only to Hits@1 0.49 / Hits@10 0.85;
+  **TransE** 0.15. The gap is the headline sample-efficiency figure
+  (`results/e3_holdout.{csv,png}`). Baselines are numpy (Adam inline), not torch.
+
 See `docs/scaling.md` for the distribution / web-scale / volunteer-computing
 direction, and `docs/design-log.md` for decisions & reconciliation notes.
 
-Next: **P3** — compositional holdout vs TransE/ComplEx baselines (the headline
-sample-efficiency figure; needs a small torch-CPU baseline).
+Next: **P4** — algebra sweep (swap Z for finite involutive monoids behind the
+frozen `Algebra` interface; the weak/strong tradeoff frontier).
