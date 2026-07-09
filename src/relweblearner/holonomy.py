@@ -63,7 +63,10 @@ def potential(web: Web) -> dict:
             u = dq.popleft()
             for v, value, _eid in web.neighbors(u):
                 if v not in phi:
-                    phi[v] = algebra.compose(phi[u], value)
+                    p = algebra.compose(phi[u], value)
+                    if p is None:            # undefined transport (partial algebra)
+                        continue             # reach v by another defined path, or leave it
+                    phi[v] = p
                     dq.append(v)
     return phi
 
@@ -82,7 +85,11 @@ def defects(web: Web, phi: Optional[dict] = None) -> list[Defect]:
         phi = potential(web)
     out: list[Defect] = []
     for e in web.edges():
+        if e.u not in phi or e.v not in phi:
+            continue                         # endpoint unreachable by a defined path
         residual = algebra.relabel_edge(phi[e.u], e.value, phi[e.v])
+        if residual is None:
+            continue                         # undefined loop (Section 6): not a defect
         if not algebra.is_identity(residual):
             out.append(Defect(edge=e, residual=residual))
     return out

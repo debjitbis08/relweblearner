@@ -16,7 +16,8 @@ tree sketched in the dev doc):
 src/relweblearner/
   episode.py     # the bare (coll1, coll2, pairing) atom — one homoiconic format
   journal.py     # append-only bus/log: emit traces, ingest world eps, replay-with-exclusions
-  algebra.py     # frozen algebra: IntegerGroup(Z, +, dagger=negate); Algebra ABC
+  algebra.py     # frozen Algebra ABC: IntegerGroup, CyclicGroup, KleinFour, inverse monoids
+  sweep.py       # (P4) per-algebra diagnostics: bloat, false-inverse, undefined-loop, relabel
   web.py         # Web as a projection of a commitment log; 3 moves; fork() for simulate
   holonomy.py    # BFS potential, defect extraction, holonomy, defect-mass objective
   growth.py      # (P1) persistence detector -> minimal grow; fork-scored rewire
@@ -109,8 +110,18 @@ poetry run pytest        # run the acceptance suite
   **TransE** 0.15. The gap is the headline sample-efficiency figure
   (`results/e3_holdout.{csv,png}`). Baselines are numpy (Adam inline), not torch.
 
+- **P4 — algebra sweep: complete.** Swap ℤ for finite involutive monoids
+  (`Z_2`, `Z_4`, `Z_2×Z_2`, the symmetric inverse monoid with *partial*
+  composition, a truncated free involutive monoid) behind the **unchanged**
+  frozen `Algebra` interface — no web/holonomy/growth changes. The pre-committed
+  tradeoff frontier (`bloat = C/D` vs `false_inverse_rate`) is the finding:
+  **Z** (no bloat, hallucinates inverses) and the **inverse monoid** (honest
+  partial inverses + flagged undefined loops, at a bloat cost) are non-dominated;
+  small groups bloat *and* hallucinate. Relabel-invariance holds for every
+  algebra (`results/e4_sweep.{csv,png}`).
+
 See `docs/scaling.md` for the distribution / web-scale / volunteer-computing
 direction, and `docs/design-log.md` for decisions & reconciliation notes.
 
-Next: **P4** — algebra sweep (swap Z for finite involutive monoids behind the
-frozen `Algebra` interface; the weak/strong tradeoff frontier).
+Next: **P5** — two-web interference (arithmetic ↔ kinship interface map;
+project/split/superpose resolutions; transfer with zero shared parameters).

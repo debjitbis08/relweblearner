@@ -6,7 +6,14 @@ and :mod:`.journal` (the substrate), then :mod:`.algebra`, :mod:`.web`,
 :mod:`.holonomy`. See ``docs/dev-doc.md`` and ``docs/scaling.md``.
 """
 
-from .algebra import Algebra, IntegerGroup
+from .algebra import (
+    Algebra,
+    CyclicGroup,
+    FreeInvolutiveMonoid,
+    IntegerGroup,
+    KleinFour,
+    SymmetricInverseMonoid,
+)
 from .episode import ACT_NAMESPACE, Episode, world_episode
 from .holonomy import (
     Defect,
@@ -30,6 +37,10 @@ __all__ = [
     # algebra + web
     "Algebra",
     "IntegerGroup",
+    "CyclicGroup",
+    "KleinFour",
+    "SymmetricInverseMonoid",
+    "FreeInvolutiveMonoid",
     "Web",
     "Edge",
     "Commit",

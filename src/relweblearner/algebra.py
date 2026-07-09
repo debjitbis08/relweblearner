@@ -84,8 +84,13 @@ class Algebra(ABC):
         ``phi(u) . value . phi(v)^dagger`` — the relabeled value. Relabeling
         (a "potential" / change of bookkeeping) provably changes no loop
         holonomy; that discipline is enforced by the P0 property test.
+
+        Returns ``None`` if any composite is undefined (partial algebras).
         """
-        return self.compose(self.compose(phi_u, value), self.dagger(phi_v))
+        inner = self.compose(phi_u, value)
+        if inner is None:
+            return None
+        return self.compose(inner, self.dagger(phi_v))
 
 
 class IntegerGroup(Algebra):
@@ -113,3 +118,186 @@ class IntegerGroup(Algebra):
 
     def __repr__(self) -> str:  # pragma: no cover - cosmetic
         return "IntegerGroup(Z, +)"
+
+    # ---- P4 diagnostic fixtures (see relweblearner.sweep) ----
+    def generator(self) -> int:
+        """A distinguished non-identity element (the "+1" successor step)."""
+        return 1
+
+    def partial_elements(self) -> list:
+        """Representative edge values for modelling a partial relation.
+
+        A group has no non-invertible elements, so ``g . g^dagger`` is always the
+        identity — the algebra *hallucinates* a total inverse for any partial
+        relation. Returning a representative generator surfaces exactly that.
+        """
+        return [1]
+
+
+# ===================================================================== finite
+# Finite involutive monoids behind the same interface (P4). The machinery
+# (web, holonomy, growth, ...) is unchanged; only the algebra is swapped.
+
+
+class CyclicGroup(Algebra):
+    """The cyclic group ``Z_m`` under addition mod m. dagger = negation mod m."""
+
+    def __init__(self, m: int):
+        self.m = m
+        self.name = f"Z_{m}"
+
+    @property
+    def identity(self) -> int:
+        return 0
+
+    def compose(self, a: int, b: int) -> int:
+        return (a + b) % self.m
+
+    def dagger(self, a: int) -> int:
+        return (-a) % self.m
+
+    def norm(self, a: int) -> float:
+        return min(a % self.m, (-a) % self.m)      # Cayley distance to identity
+
+    def generator(self) -> int:
+        return 1 % self.m
+
+    def partial_elements(self) -> list:
+        return [1 % self.m]
+
+    def units(self) -> list:
+        return list(range(self.m))                  # every element is invertible
+
+
+class KleinFour(Algebra):
+    """``Z_2 x Z_2`` as ``({0,1,2,3}, XOR)``: every element is self-inverse."""
+
+    name = "Z2xZ2"
+
+    @property
+    def identity(self) -> int:
+        return 0
+
+    def compose(self, a: int, b: int) -> int:
+        return a ^ b
+
+    def dagger(self, a: int) -> int:
+        return a                                    # self-inverse
+
+    def norm(self, a: int) -> float:
+        return 0 if a == 0 else 1
+
+    def generator(self) -> int:
+        return 1
+
+    def partial_elements(self) -> list:
+        return [1]
+
+    def units(self) -> list:
+        return [0, 1, 2, 3]
+
+
+class SymmetricInverseMonoid(Algebra):
+    """Partial bijections on ``{0..n-1}`` (the symmetric inverse monoid I_n).
+
+    An element is a ``frozenset`` of ``(a, b)`` pairs — a partial injection.
+    Composition is left-to-right (``x`` then ``y``); an empty composite is
+    **undefined** and returned as ``None`` (partial composition, Section 6).
+    dagger inverts the partial map. Unlike a group, ``x . x^dagger`` is the
+    identity only on ``x``'s domain (an idempotent) — so partial relations get
+    honest pseudo-inverses, not hallucinated total ones.
+    """
+
+    def __init__(self, n: int):
+        self.n = n
+        self.name = f"InvMon_{n}"
+
+    @property
+    def identity(self):
+        return frozenset((i, i) for i in range(self.n))
+
+    def compose(self, a, b):
+        if a is None or b is None:
+            return None
+        bmap = dict(b)
+        out = frozenset((x, bmap[y]) for (x, y) in a if y in bmap)
+        return out if out else None                 # empty composite -> undefined
+
+    def dagger(self, a):
+        return frozenset((y, x) for (x, y) in a)
+
+    def norm(self, a) -> float:
+        if a is None:
+            return 1.0
+        return self.n - sum(1 for (x, y) in a if x == y)   # points not fixed
+
+    def is_identity(self, a) -> bool:
+        return a is not None and a == self.identity
+
+    def generator(self):
+        """A partial shift ``0->1->...->(n-2)``; ``n-1`` has no image."""
+        return frozenset((i, i + 1) for i in range(self.n - 1))
+
+    def partial_elements(self) -> list:
+        # genuinely partial maps (domain smaller than the full set)
+        return [
+            frozenset({(0, 1)}),                    # single partial link
+            frozenset((i, i + 1) for i in range(self.n - 1)),
+        ]
+
+    def units(self) -> list:
+        """The units of I_n are the full permutations of ``{0..n-1}``."""
+        from itertools import permutations
+
+        return [frozenset(zip(range(self.n), p)) for p in permutations(range(self.n))]
+
+
+class FreeInvolutiveMonoid(Algebra):
+    """Free involutive monoid on ``k`` generators, truncated at word length ``L``.
+
+    Elements are reduced tuples of tokens ``(gen_index, is_dagger)``; adjacent
+    inverse pairs cancel. A composite longer than ``L`` is **undefined**
+    (``None``) — the truncation. The control ("maximally expressive"): it can
+    tell many concepts apart (low bloat) but, being group-like on its
+    generators (``g . g^dagger`` reduces to the identity), it hallucinates
+    inverses like a group.
+    """
+
+    def __init__(self, k: int = 2, L: int = 3):
+        self.k = k
+        self.L = L
+        self.name = f"Free_L{L}"
+
+    @property
+    def identity(self):
+        return ()
+
+    def _reduce(self, word):
+        out = []
+        for tok in word:
+            if out and out[-1][0] == tok[0] and out[-1][1] != tok[1]:
+                out.pop()                           # g g^dagger -> identity
+            else:
+                out.append(tok)
+        return tuple(out)
+
+    def compose(self, a, b):
+        if a is None or b is None:
+            return None
+        w = self._reduce(tuple(a) + tuple(b))
+        return None if len(w) > self.L else w       # truncation -> undefined
+
+    def dagger(self, a):
+        return tuple((i, not d) for (i, d) in reversed(a))
+
+    def norm(self, a) -> float:
+        return 1.0 if a is None else len(a)
+
+    def generator(self):
+        return ((0, False),)
+
+    def partial_elements(self) -> list:
+        return [((0, False),)]
+
+    def units(self) -> list:
+        return [()]                                 # only the identity is a unit

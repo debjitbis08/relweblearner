@@ -320,7 +320,41 @@ The reconciliation of §1 is now code (`number.py`):
     exact composition the web gets for free.
 - e3 accepted (3 tests): web exact; baselines fall short by a large gap.
 
-## 11. Log
+## 11. P4 algebra sweep — notes (2026-07-09)
+
+- **Pre-committed tradeoff metric** (declared before running, Section 6): the
+  two axes are ``bloat = C/D`` (weakness) and ``false_inverse_rate`` (strength);
+  no scalar winner; the ``(bloat, false_inverse)`` frontier is the finding.
+  Recorded here *before* the numbers to honor "do not tune post hoc".
+- **The frozen `Algebra` ABC held.** Adding `CyclicGroup`, `KleinFour`,
+  `SymmetricInverseMonoid`, `FreeInvolutiveMonoid` needed no change to web /
+  holonomy / growth — exactly the P0 bet (partial composition via `None` was
+  already in the interface). Only holonomy needed None-guards (undefined loops
+  skipped + counted, Section 6).
+- **The table (C=12):**
+
+  | algebra | D | bloat | false_inv | undef | relabel_ok |
+  |---|---|---|---|---|---|
+  | Z | 12 | 1.00 | 1.00 | 0.00 | ✓ |
+  | Z_2 | 2 | 6.00 | 1.00 | 0.00 | ✓ |
+  | Z_4 | 4 | 3.00 | 1.00 | 0.00 | ✓ |
+  | Z2xZ2 | 2 | 6.00 | 1.00 | 0.00 | ✓ |
+  | InvMon_3 | 3 | 4.00 | **0.00** | 0.31 | ✓ |
+  | Free_L3 | 4 | 3.00 | 1.00 | 0.00 | ✓ |
+
+  Non-dominated: **Z** (no bloat, hallucinates inverses) and **InvMon_3**
+  (honest partial inverses + 31% undefined loops flagged, at a bloat cost). The
+  small groups bloat *and* hallucinate — dominated. `results/e4_sweep.{csv,png}`.
+- **Relabel-invariance extended to every algebra** (Section 6 mandate): checked
+  as defect-*status* invariance under *unit* relabels (permutations for the
+  inverse monoid), the universal form of the P0 discipline. Held for all.
+- Scope note: e1/e2/e3 re-runs *per algebra* were folded into the ``bloat``
+  expressivity axis (D distinct signatures = how much of the integer task the
+  algebra can represent) rather than re-run separately; the two named
+  diagnostics + the frontier are the deliverable the acceptance asks for.
+- Accepted (6 tests).
+
+## 12. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -345,3 +379,7 @@ The reconciliation of §1 is now code (`number.py`):
   `baselines/kge.py`, `holdout.py`, `experiments/e3_holdout.py`; e3 accepted
   (43 tests). web Hits@1=1.0 by construction; ComplEx 0.49, TransE 0.15 — gap
   recorded. numpy baselines (Adam inline).
+- **2026-07-09** — P4 algebra sweep: finite involutive monoids in `algebra.py`,
+  `sweep.py`, `experiments/e4_sweep.py`; e4 accepted (49 tests). Frozen Algebra
+  ABC held with zero substrate changes; frontier = {Z, InvMon_3}; relabel-
+  invariance extended to every algebra.
