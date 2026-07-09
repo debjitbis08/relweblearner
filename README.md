@@ -231,7 +231,7 @@ poetry run pytest        # run the acceptance suite
   posit-before-evidence confirmation rate (`results/es_invention.{csv,png}`).
 
 **The dev-doc roadmap P0–P8 is complete**, plus the standalone **PL** (language)
-and **PS** (society, incl. the **P7'** defect amendment) phases — 119 acceptance
+and **PS** (society, incl. the **P7'** defect amendment) phases — 120 acceptance
 tests, one substrate that never needed a redesign after P0. (P9 — Perception &
 data feed — is now in the dev-doc and handled later; the society layer is the
 independent truth-channel it depends on.) See `docs/scaling.md` for the
