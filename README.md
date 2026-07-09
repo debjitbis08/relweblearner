@@ -25,7 +25,8 @@ src/relweblearner/
   sectors.py     # (P2) per-relation transport inference: symmetric / antisym / motif
   types.py       # (P2') unlabeled relation-type discovery: refinement + disjointness
   holdout.py     # (P3) compositional-holdout eval: web (exact) vs KGE baselines
-  datasets/      # generators: counting, arithmetic, sectors, bare, holdout
+  ensemble.py    # (P5) N-web interference + dynamic ensemble (learned web count)
+  datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship
   baselines/     # (P3) TransE / ComplEx (numpy, Adam)
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
 tests/           # acceptance tests, one module per phase
@@ -120,8 +121,19 @@ poetry run pytest        # run the acceptance suite
   small groups bloat *and* hallucinate. Relabel-invariance holds for every
   algebra (`results/e4_sweep.{csv,png}`).
 
+- **P5 — N-web dynamic ensemble: complete.** `ensemble.py` generalizes
+  interference beyond pairwise: the union of N webs + cross-web *identifications*
+  is one graph, and an interface defect is a holonomy defect on it. The learner
+  finds the mismatch-minimizing interface map by consensus (isolating a poisoned
+  identification), **transfers through the fabric with zero shared parameters**
+  (holdout answerability 0.33 → 1.00), resolves the poison by **split**, and —
+  the dynamic part — runs a stimulus stream where the **number of webs is
+  learned**: persistence-gated merges/splits evolve the count `3 → 2 → 1 → 2`
+  (`results/e5_interference.{csv,png}`).
+
 See `docs/scaling.md` for the distribution / web-scale / volunteer-computing
 direction, and `docs/design-log.md` for decisions & reconciliation notes.
 
-Next: **P5** — two-web interference (arithmetic ↔ kinship interface map;
-project/split/superpose resolutions; transfer with zero shared parameters).
+Next: **P6** — reflection experiments (feed the learner's own trace stream back
+through the ordinary ingest path; act-classes crystallize; self-measurement),
+or **P6'/P7/P8**.

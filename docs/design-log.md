@@ -354,7 +354,57 @@ The reconciliation of §1 is now code (`number.py`):
   diagnostics + the frontier are the deliverable the acceptance asks for.
 - Accepted (6 tests).
 
-## 12. Log
+## 12. P5 design — N-web dynamic ensemble (decided 2026-07-09)
+
+The user extended P5 beyond the dev-doc's pairwise A↔B: **N webs**, and **webs
+that split/merge over long stimulus streams**. Both fit the substrate cleanly.
+
+- **N-web interference is one graph.** The union of N webs + their cross-web
+  *identifications* is a single graph; an **interface defect** is a holonomy
+  defect on that union — a loop that crosses web boundaries and fails to close.
+  `holonomy.py` is already graph-agnostic, so N webs is nearly free. An
+  **interface** is a graph of identifications `A:x ↔ B:y` carrying a translation
+  value (identity for same-count↔same-generation; a transport for
+  successor↔generation-shift). Since webs are internally consistent chains,
+  `interface_defect_mass = defect_mass(union)`.
+- **Mismatch-minimizing map = alignment search** over candidate identifications
+  minimizing union defect mass (bipartite for 2 webs, multi-web for N).
+- **Transfer with zero shared parameters** flows through the interface *fabric*
+  transitively (A→B→C): only graph edges carry the frozen algebra — no weights.
+- **Dynamic webs = the number of webs is learned structure**, exactly like the
+  number of classes in P1b but at the web level. Splits/merges are the existing
+  moves, **persistence-gated over the stimulus stream** (P1's detector, sleep/
+  dream phase, `scaling.md §6`): a web with a persistent undischargeable defect
+  **splits**; two webs with a consistently-supported (k≥2) zero-defect
+  identification **merge**. Over long stimuli the web count evolves.
+- **Three resolutions** of an interface defect: *project* (trust one web —
+  overwrite the interface value), *split* (bifurcate the shared node — the webs
+  meant different things), *superpose* (keep both readings, weighted).
+- This dynamic ensemble is also the substrate P8 (ensemble geometry) wants.
+
+## 13. P5 implementation — notes (2026-07-09)
+
+- **N-web interface = union holonomy, as designed (§12).** `ensemble.py` builds
+  the union graph (all webs' edges + `iface` identification edges) and reads
+  interface defects straight off `holonomy.defects`. `interface_defect_mass =
+  defect_mass(union) - internal`. Confirmed on 3 webs (arith / kinship / steps).
+- **Map search reuses the P2 consensus.** Each candidate identification implies
+  an offset `coord(b) - coord(a)`; the modal offset is the interface map, and the
+  poison (`a2 ↔ k4`, offset 2) falls out as the lone outlier. Committing the
+  consistent map → 0 defect; adding the poison → mass 8; `split` → 0.
+- **Transfer, zero shared parameters.** With the interface, the union's
+  coordinates extend web A's reach through K and S: holdout answerability
+  0.33 → 1.00. Nothing is shared but graph edges over the frozen algebra.
+- **Dynamic ensemble works.** `stream_dynamics` gates merges (support ≥ k) and
+  splits (contradiction persists ≥ P) over a stimulus stream; the web-group
+  count evolves `3 → 2 → 1 → 2` — the number of webs is learned, exactly the
+  P1b class-count idea lifted to the web level.
+- Scope note: the dynamic model is web-group-level (union-find over web names)
+  rather than full node-level bifurcation — enough to demonstrate the learned
+  count over time; node-level split already exists (P1b / resolutions).
+- e5 accepted (4 tests). `results/e5_interference.{csv,png}`.
+
+## 14. Log
 
 - **2026-07-09** — P0 (original holonomy kernel) committed `9b75123`.
 - **2026-07-09** — Doc revised (invariants 4–8, P1b, P6/P6'/P7/P8; new
@@ -383,3 +433,7 @@ The reconciliation of §1 is now code (`number.py`):
   `sweep.py`, `experiments/e4_sweep.py`; e4 accepted (49 tests). Frozen Algebra
   ABC held with zero substrate changes; frontier = {Z, InvMon_3}; relabel-
   invariance extended to every algebra.
+- **2026-07-09** — P5 N-web dynamic ensemble: `ensemble.py`,
+  `datasets/kinship.py`, `experiments/e5_interference.py`; e5 accepted (53
+  tests). N-web interface via union holonomy; consensus map finds/isolates
+  poison; transfer 0.33→1.0 zero-shared-params; web count evolves 3→2→1→2.

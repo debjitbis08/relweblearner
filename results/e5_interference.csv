@@ -1,0 +1,8 @@
+metric,value
+interface_map_offset,0
+poison_detected,"[('a2', 'k4')]"
+transfer_without,0.333
+transfer_with,1.000
+poison_defect_mass,8
+after_split_mass,0
+web_count_history,"[3, 2, 2, 1, 1, 1, 2]"
