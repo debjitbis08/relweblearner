@@ -137,7 +137,8 @@ def answer(state: dict, tokens: list[str]) -> dict:
             ),
             key=lambda a: a["status"] != "committed",
         )
-        return {"kind": "answer", "frame": f.id, "given": given, "answers": answers, "known": bool(answers)}
+        return {"kind": "answer", "frame": f.id, "given": given, "answers": answers,
+                "known": bool(answers), "rel_class": qclass, "forward": forward}
     return {"kind": "unparsed", "reason": "that question matches no frame I know yet"}
 
 

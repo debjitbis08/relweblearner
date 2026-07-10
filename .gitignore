@@ -14,8 +14,12 @@ venv/
 results/*.png
 results/*.pdf
 
-# reading-app session data (append-only log; local state, not source)
+# reading-app session data + trained creatures (local state, regenerable)
 data/
+
+# fetched public-domain corpus (re-derivable from corpus/MANIFEST.json via
+# scripts/fetch_corpus.py — the manifest + loader are committed, the bytes aren't)
+corpus/raw/
 
 # os / editor
 .DS_Store

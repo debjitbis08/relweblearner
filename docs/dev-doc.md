@@ -83,6 +83,24 @@ failing phase.
    justifying episodes. Any belief must be reproducible by replaying the
    log and revocable by replaying with an exclusion set. Never mutate
    beliefs in place in a way that cannot be rebuilt from the log.
+
+   **Amendment (2026-07-10, scale substrate).** The streaming creature
+   (`creature.py`) briefly abandoned this invariant outright
+   (`experiment0p`: "no episode is stored anywhere"; `experiment0q`
+   measured the cost). Restored at the substrate level by
+   `episodelog.py`: every `observe()` and every committed act appends to
+   an append-only EpisodeLog BEFORE distillation (write-ahead) —
+   file-backed at scale and only ever streamed, so working memory stays
+   O(world) while history is O(experience) on disk. The distilled
+   creature is a CHECKPOINT of a replay: load = checkpoint + tail
+   replay; reproduce = replay from zero (`rebuild`); retract =
+   replay-with-exclusions at episode granularity (`retract_episodes`;
+   excluded entries are flagged, never deleted). The decrement
+   retraction on the edge aggregates remains the fast path.
+   `NullEpisodeLog` is the explicit opt-out — distill-and-discard with
+   decrement-only retraction, the 0q tradeoff taken knowingly as a
+   visible constructor argument, never a silent property of the
+   architecture.
 6. **Commitment policy (do not be eagerly trusting).**
    - Single-witness inferences are PROVISIONAL; commit a merge only at
      > = 2 independent supporting episodes (threshold k, default 2).

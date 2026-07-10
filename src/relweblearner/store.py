@@ -104,6 +104,12 @@ class EdgeStore:
     def num_edges(self) -> int:
         raise NotImplementedError
 
+    def clear(self) -> None:
+        """Drop every edge (a replay-with-exclusions rebuild starts here).
+        Only ever called by the projection layer with the episode log as the
+        surviving source of truth — never a data-deletion path on its own."""
+        raise NotImplementedError
+
     def close(self) -> None:
         pass
 
@@ -181,6 +187,10 @@ class InMemoryEdgeStore(EdgeStore):
 
     def num_edges(self):
         return len(self._e)
+
+    def clear(self):
+        self._e = {}
+        self._by_source = {}
 
 
 # ============================================================ SQLite backing
@@ -348,6 +358,12 @@ class SqliteEdgeStore(EdgeStore):
     def num_edges(self):
         return self.db.execute("SELECT COUNT(*) FROM edges").fetchone()[0]
 
+    def clear(self):
+        for table in ("edges", "edge_rel", "edge_src", "nodes"):
+            self.db.execute(f"DELETE FROM {table}")
+        self._nid.clear()
+        self.db.commit()
+
     def commit(self) -> None:
         self.db.commit()
 
@@ -429,6 +445,10 @@ class ShardedEdgeStore(EdgeStore):
 
     def num_edges(self):
         return sum(sh.num_edges() for sh in self.shards)
+
+    def clear(self):
+        for sh in self.shards:
+            sh.clear()
 
     def commit(self) -> None:
         for sh in self.shards:

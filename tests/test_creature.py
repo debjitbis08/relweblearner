@@ -63,6 +63,77 @@ def test_talk_back_matches_the_hidden_world():
         assert s["sentence"]
 
 
+def test_web_view_is_a_bounded_ego_graph():
+    c = Creature("grapher", commit_k=2, min_group=6, induction_interval=100)
+    episodes, world = PB.generate(n_episodes=4000, level=2, seed=5)
+    c.ingest(episodes)
+    a = next(iter(world))
+
+    g = c.web_view(a)
+    assert g["focus"] == a
+    # focus is present and marked; every edge touches the focus (ego-graph)
+    assert any(n["id"] == a and n["focus"] for n in g["nodes"])
+    assert all(e["source"] == a or e["target"] == a for e in g["edges"])
+    # the focus's colour fact is a neighbour, oriented focus -> colour
+    assert any(e["target"] == world[a]["colour"] and e["committed"] for e in g["edges"])
+
+    # bounded: never returns more than `limit` edges, and flags truncation
+    small = c.web_view(a, limit=2)
+    assert len(small["edges"]) <= 2
+    assert small["truncated"] == (len(g["edges"]) > 2)
+
+    # empty focus seeds on a committed concept rather than returning nothing
+    assert c.web_view()["focus"] is not None
+    # an unknown concept is honest (no neighbours), not a crash
+    assert c.web_view("nosuchconcept")["edges"] == []
+
+
+def test_web_graph_is_the_whole_web_bounded():
+    c = Creature("mapper", commit_k=2, min_group=6, induction_interval=100)
+    episodes, world = PB.generate(n_episodes=4000, level=2, seed=6)
+    c.ingest(episodes)
+
+    g = c.web_graph()
+    # it's the WHOLE web (many concepts, not one node's neighbourhood)
+    assert len(g["nodes"]) > 10 and g["edges"]
+    assert not g["truncated"] and g["total_nodes"] == len(g["nodes"])
+    # nodes carry degree + role; every edge connects two present nodes
+    ids = {n["id"] for n in g["nodes"]}
+    assert all(n["kind"] in ("entity", "attribute") and n["deg"] >= 1 for n in g["nodes"])
+    assert all(e["source"] in ids and e["target"] in ids for e in g["edges"])
+    # an animal is an entity; its colour value is an attribute
+    a = next(iter(world))
+    kind = {n["id"]: n["kind"] for n in g["nodes"]}
+    assert kind.get(a) == "entity"
+    assert kind.get(world[a]["colour"]) == "attribute"
+
+    # bounded: capping nodes keeps only the top-degree core and flags truncation
+    small = c.web_graph(max_nodes=8)
+    assert len(small["nodes"]) <= 8 and small["truncated"]
+    assert small["total_nodes"] == len(g["nodes"])
+
+
+def test_mind_map_places_concepts_in_learned_coordinates():
+    c = Creature("cartographer", commit_k=2, min_group=6, induction_interval=100)
+    episodes, _ = PB.generate(n_episodes=4000, level=2, seed=7)
+    c.ingest(episodes)
+
+    mm = c.mind_map()
+    P = mm["points"]
+    assert P and mm["n_component"] >= 8
+    # every point has learned coordinates + a colour scalar, all normalised to [0,1]
+    for p in P:
+        assert 0.0 <= p["x"] <= 1.0 and 0.0 <= p["y"] <= 1.0 and 0.0 <= p["c"] <= 1.0
+        assert p["kind"] in ("entity", "attribute") and p["deg"] >= 1
+    # the geometry actually SPREADS (not collapsed to one spot) — the whole point
+    xs = [p["x"] for p in P]; ys = [p["y"] for p in P]
+    assert max(xs) - min(xs) > 0.5 and max(ys) - min(ys) > 0.5
+    cells = {(round(p["x"], 1), round(p["y"], 1)) for p in P}
+    assert len(cells) >= len(P) // 3
+    # edges index into the point list (the connected component)
+    assert all(0 <= e["s"] < len(P) and 0 <= e["t"] < len(P) for e in mm["edges"])
+
+
 def test_persistence_is_bounded_and_reloads_identically(tmp_path):
     episodes, _ = PB.generate(n_episodes=4000, seed=4)
     c = Creature("saver", commit_k=2, min_group=6, induction_interval=100)
@@ -72,7 +143,11 @@ def test_persistence_is_bounded_and_reloads_identically(tmp_path):
     path = tmp_path / "saver.json"
     c.save(path)
     after = Creature.load(path).snapshot()
-    assert before == after   # distilled model reloads exactly
+    # the "log" census reports the EpisodeLog, separate state by design: a
+    # reload without its log honestly shows an empty history. The distilled
+    # MODEL — everything else in the snapshot — reloads exactly.
+    assert before.pop("log")["entries"] == 4000 and after.pop("log")["entries"] == 0
+    assert before == after
 
     # bounded: the persisted MODEL is smaller than even the bare token text of the
     # 4000 episodes it distilled — it stores what was learned, not what was read.

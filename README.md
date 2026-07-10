@@ -34,7 +34,13 @@ src/relweblearner/
   society.py     # (PS) multi-agent: dyad naming game, citation gossip, population, disagreement
   invention.py   # (P7') content-vs-error defects: bank content, retract error, invention census
   curriculum.py  # (R2) curriculum reading: frame induction, frontier growth, grounding through frames
-  datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship, language, society, curriculum
+  transport.py   # the algebra under the creature: P2 sector inference over relation classes,
+                 #   valued Web projections per gauge group, holonomy defects, transport
+                 #   derivation (P3), walk-off growth via the stock P1 engine
+  episodelog.py  # the creature's append-only episode log (invariant #5): world episodes +
+                 #   committed acts; checkpoint + tail replay; replay-with-exclusions
+                 #   retraction; file-backed (JSONL) at scale; Null log = explicit opt-out
+  datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship, language, society, curriculum, patternbooks, mathbooks, kidbooks
   baselines/     # (P3) TransE / ComplEx (numpy, Adam)
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
 tests/           # acceptance tests, one module per phase
@@ -71,12 +77,99 @@ poetry run relweb-serve            # -> http://127.0.0.1:8000
 For experiments beyond hand-training, `creature.Creature` is a **named identity**
 whose persisted state is its **geometry** — the web (concept nodes + algebra-valued
 edges, and the language-web frames); the algebra stays frozen in code. Episodes
-stream through `observe()` and are distilled into that geometry, not retained. The
-geometry grows with what is *learned* (distinct structure), independent of the
-*episode count* — repetition is free, novelty costs; it saturates on a closed world
-and grows on an open one. `datasets/patternbooks.py` is the corpus firehose and
+stream through `observe()` into an **append-only episode log first**
+(`episodelog.py`, file-backed at scale, invariant #5), then distil into the
+geometry — which is therefore a replayable **checkpoint**: reproduce by
+`rebuild()`, retract a single lying page by `retract_episodes()`
+(replay-with-exclusions), resume a stale save by tail replay (`load`/`catch_up`).
+Working memory grows with what is *learned* (distinct structure), independent of
+the *episode count* — repetition is free, novelty costs; it saturates on a closed
+world and grows on an open one, while history lives on disk where it belongs. `datasets/patternbooks.py` is the corpus firehose and
 `experiments/ec_scale.py` distils 100k episodes in ~2s. Induction is near-linear.
 See `docs/scale-substrate.md`.
+
+Answering runs **lookup, then algebra** (`transport.py`): relation classes get
+fixed-algebra transports inferred from converse-pair loops (the P2 sector
+machinery — `comes after`/`is before` resolve to an antisymmetric `±1` pair,
+attribute relations stay unconstrained and support no derivation), committed
+facts project to algebra-valued `web.Web`s per gauge group (P4′: groups are
+mutually ungauged), and a never-taught question is answered by **transport
+composition** (P3, status `derived` — "ten comes after nine" entails the
+never-heard "nine is before ten" via the dagger). A committed contradiction is
+a nonzero-holonomy **defect** (invariant #9, `snapshot()["defects"]`), and a
+question that walks off the web pays for **growth** through the stock P1
+engine (relabel futile → fork-scored rewire → persistence-gated minimal grow):
+the creature posits an unnamed `new-*` concept — its own "negative numbers"
+(P1b) — under a growth budget that degrades to refusal (P7).
+
+Two further firehose rungs broaden the world beyond animal attributes:
+`datasets/mathbooks.py` (basic maths — number ordering, one-more, shape sides)
+and `datasets/kidbooks.py` (early-reader kid content — animal sounds, fruit
+colours, habitats, opposites). Both are frame-graded functional worlds that a
+streaming `Creature` induces and grounds; `experiments/ec_scale_content.py`
+distils each at 100k episodes with a bounded model and correct comprehension.
+
+## Training a creature — a mastery-gated curriculum
+
+`relweb-train` teaches a persistent, resumable `Creature` at
+`data/creatures/<id>.json` through a **graded curriculum**, math & science first.
+The curriculum lives in one declarative file, `corpus/sources.json`: a list of
+`sources` (each with a stable `id`) grouped into ordered `stages`. Two kinds of
+source split the way a child's inputs do:
+
+- **generated** worlds (`mathbooks`/`sciencebooks`/`patternbooks`/`kidbooks`) carry
+  the picture/tap channel, so parsed frames commit **clean oriented facts** — the
+  creature comes to *know* a triangle has three sides, a whale is a mammal, ice is
+  a solid, mars is the fourth planet. The maths/science worlds mirror what
+  primary-grade arithmetic and elementary-science books teach.
+  - **Maths is not authored — it is grown.** We only teach the creature to COUNT
+    (the successor line); arithmetic is *computed* by the fixed algebra walking that
+    line, and when a walk runs off the end the growth engine (P1) INVENTS exactly
+    the missing numbers, with exact coordinates (`numbers.py`). Taught 0–10, it
+    answers `seven plus six = 13` and `three minus five = -2` by growing the web —
+    no sum is ever hand-written. See `experiments/ec_number_growth.py`.
+- **gutenberg** books (`datasets/realbooks.py`, fetched on demand, US public
+  domain) carry no tap but teach the creature to **read** — it induces real
+  English constructions and what it can't yet structure lands in the frontier.
+
+**Progression is mastery-gated by worksheets.** After reading a stage's sources the
+creature *sits a worksheet* — `(question, answer)` problems drawn from the grounded
+world's hidden truth, phrased in the frames it was taught (`syllabus.py`). It only
+advances when it scores above the stage's pass-mark; otherwise it holds and re-sits.
+Every attempt is logged to `data/progress.jsonl`.
+
+```bash
+poetry run relweb-train --reset --all    # run the whole curriculum for 'scholar'
+poetry run relweb-train                  # teach + grade the next single stage (a tick)
+poetry run relweb-progress               # report card: stages mastered, latest scores
+```
+
+Because it is resumable and safe to re-run, point cron at `scripts/train_tick.sh`
+(a `flock`-guarded no-op once the curriculum is mastered) so the creature advances
+**one lesson at a time on a schedule**:
+
+```cron
+*/30 * * * * /path/to/relweblearner/scripts/train_tick.sh >> /path/to/relweblearner/data/train.log 2>&1
+```
+
+**The curriculum expands from real, external knowledge** (`datasets/factsource.py`).
+Beyond the hand-authored worlds, two source kinds stream real `(subject, object)`
+triples into grounded episodes + auto-generated worksheets, each fact traceable to
+its source:
+
+- **`wordnet`** — WordNet is-a taxonomy, offline (`a poodle is a dog`, `a dog is a
+  mammal`). A source names a subtree root; the whole subtree becomes lessons.
+- **`wikidata`** — Wikidata properties via SPARQL (`france has capital paris`,
+  `hydrogen has symbol h`), fetched once and cached (the endpoint is rate-limited).
+
+So expansion is just more registry lines — a new WordNet root or Wikidata relation
+adds hundreds of real, gradeable facts, and the cron masters them stage by stage.
+
+Grow the syllabus by appending `sources`/`stages` — no code change; the next tick
+picks them up. Everything is file- and CLI-based (paths/target via `RELWEB_*` env
+vars), so when the laptop is outgrown the same curriculum, ledger and script move to
+a bigger box or a data volume unchanged. The live viewer (`relweb-serve`) reloads
+the creature when training rewrites it, so the two never clobber each other.
 
 ## Status
 

@@ -124,3 +124,15 @@ def truth(world: dict) -> dict:
     """Flatten the world to the ``{animal: colour}`` view the comprehension check
     scores against (the ``is``/``see`` relation)."""
     return {a: facts["colour"] for a, facts in world.items()}
+
+
+def quiz(world: dict, level: int = 2) -> list[tuple[str, str]]:
+    """A WORKSHEET over the animal-attribute world: ``(question, answer)`` in the
+    exact frames taught, graded by ``level``."""
+    items: list[tuple[str, str]] = []
+    for a, facts in world.items():
+        items.append((f"the {a} is ?", facts["colour"]))          # colour (level 1)
+        if level >= 2:
+            items.append((f"{a} has ? legs", facts["legs"]))       # leg count
+            items.append((f"the {a} eats ?", facts["food"]))       # diet
+    return items

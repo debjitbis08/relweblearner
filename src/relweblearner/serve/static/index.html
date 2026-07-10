@@ -143,6 +143,41 @@
   .muted { color: var(--ink-soft); }
   .frontier-item { color: var(--ink-soft); font-style: italic; font-family: var(--serif); padding: 3px 0; }
   .empty { color: var(--ink-soft); font-style: italic; padding: 6px 0; }
+  /* scalable mind: constant-size summary + bounded previews, not a full dump */
+  .mind-summary { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .stat { font-family: var(--mono); font-size: 12px; color: var(--ink-soft);
+    border: 1px solid var(--rule); border-radius: 2px; padding: 4px 9px; }
+  .stat b { color: var(--ink); font-weight: 600; }
+  .mind-head { display: flex; justify-content: space-between; align-items: baseline;
+    margin: 16px 0 6px; border-bottom: 1px solid var(--rule); padding-bottom: 4px; }
+  .mind-head .lbl { color: var(--ink-soft); font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+  .mind-head .cnt { color: var(--red); font-family: var(--mono); font-size: 11px; }
+  .more { color: var(--ink-soft); font-style: italic; font-size: 12px; padding: 6px 0; }
+  .flen { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip-f { font-family: var(--mono); font-size: 12px; color: var(--ink-soft);
+    border: 1px dashed var(--rule); border-radius: 2px; padding: 3px 7px; }
+  /* the visual concept web (bounded ego-graph) */
+  .web-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .web-head .foc { font-family: var(--mono); color: var(--red); font-size: 13px; }
+  .web-jump { display: flex; gap: 8px; align-items: baseline; }
+  .web-jump input { width: 180px; font-size: 16px; }
+  /* "the mind's geometry" — a learned latent-space map, not a node-link graph */
+  #mm-svg { width: 100%; height: auto; display: block; border-radius: 4px; cursor: crosshair;
+    background: #12100e; box-shadow: inset 0 0 60px rgba(0,0,0,0.6); }
+  .mm-edge { stroke: #6a6152; stroke-width: 0.8; opacity: .07; }
+  .mm-edge.lit { opacity: .7; stroke-width: 1.3; }
+  .mm-core { transition: opacity .15s; }
+  .mm-core circle { stroke: rgba(255,255,255,0.28); stroke-width: 0.6; }
+  .mm-core text { font-family: var(--mono); font-size: 9.5px; fill: #efe5d0; pointer-events: none;
+    text-anchor: middle; opacity: 0; transition: opacity .12s; paint-order: stroke; stroke: #12100e; stroke-width: 2.5px; }
+  .mm-core.lbl text { opacity: .82; }
+  .mm-core:hover text, .mm-core.lit text { opacity: 1; }
+  #mm-scene.dim .mm-core { opacity: .28; } #mm-scene.dim .mm-glow { opacity: .25; }
+  #mm-scene.dim .mm-core.lit { opacity: 1; }
+  .mm-empty { fill: #9c927f; font-style: italic; font-family: var(--serif); font-size: 15px; }
+  .web-legend { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
+  .web-legend .bar { display: inline-block; width: 70px; height: 9px; border-radius: 5px; vertical-align: middle; margin: 0 5px;
+    background: linear-gradient(90deg, #4b3fa0, #2f9e8f, #e8b04b, #e0684f); }
   .tabs { display: flex; gap: 4px; margin-bottom: 14px; }
   .tabs button { background: transparent; color: var(--ink-soft); border: none; border-bottom: 2px solid transparent; border-radius: 0; padding: 6px 10px; }
   .tabs button.active { color: var(--ink); border-bottom-color: var(--red); }
@@ -160,9 +195,10 @@
       </div>
     </div>
     <div class="metrics">
-      <div><b id="m-pages">0</b>pages read</div>
+      <div><b id="m-pages">0</b>episodes read</div>
+      <div><b id="m-facts">0</b>facts known</div>
       <div><b id="m-cov">0.00</b>coverage</div>
-      <div><b id="m-assim">0.00</b>facts / page</div>
+      <div><b id="m-assim">0.00</b>facts / ep</div>
     </div>
   </header>
 
@@ -225,6 +261,27 @@
       </div>
     </section>
   </div>
+
+  <!-- ==================== THE MIND'S GEOMETRY (learned latent space) ==================== -->
+  <section>
+    <h2 class="section">The Mind's Geometry</h2>
+    <div class="card">
+      <div class="web-head">
+        <div>Each concept sits where the algebra <em>computes</em> it belongs &mdash; not a drawn layout<span class="foc" id="web-focus"></span></div>
+        <div class="web-jump">
+          <input id="web-q" type="text" autocomplete="off" placeholder="find a concept — e.g. dog" />
+          <button id="web-go" class="ghost">Find</button>
+        </div>
+      </div>
+      <svg id="mm-svg" viewBox="0 0 600 460" role="img" aria-label="the creature's learned concept space"></svg>
+      <div class="web-legend">
+        <span>position = relational distance (close = related)</span>
+        <span>colour<span class="bar"></span>a learned axis</span>
+        <span>size = how connected</span>
+        <span>hover a concept to see its ties</span>
+      </div>
+    </div>
+  </section>
 </div>
 
 <script>
@@ -299,6 +356,8 @@ async function readIt() {
   if (!r.ok) { $("obs").innerHTML = `<span class="tag frontier">refused</span> ${data.detail}`; return; }
   showObs(data.observation);
   renderMind(data.status);
+  const fact = data.observation && data.observation.fact;
+  if (fact) focusOrLoad(fact[0]);        // pan the web to what it just learned
   $("phrase").value = ""; chipState = {}; renderChips();
   $("phrase").focus();
 }
@@ -334,28 +393,160 @@ function beliefLine(b) {
   return `<div class="belief"><span>${line}</span><span class="muted">${b.sources.join(", ")}</span></div>`;
 }
 
+// A large mind can hold thousands of frames and millions of facts, so the panel
+// NEVER dumps the whole model: it shows authoritative TOTALS (from the snapshot's
+// counts, not array lengths) plus a fixed-size preview of each section. Deep lookup
+// of a specific concept is the "Ask it" / "About" box, which is server-indexed.
+const PREVIEW = { frames: 8, committed: 10, provisional: 6, flen: 12 };
+
+function mindHead(label, total, shown) {
+  const c = (shown < total) ? `${total} · showing ${shown}` : `${total}`;
+  return `<div class="mind-head"><span class="lbl">${label}</span><span class="cnt">${c}</span></div>`;
+}
+
 function renderMind(s) {
-  $("m-pages").textContent = s.pages_read;
+  // native Creature snapshot: episodes streamed (not pages logged), bounded model_size
+  $("m-pages").textContent = s.episodes_seen;
+  $("m-facts").textContent = s.committed_count;   // "known" = committed, not provisional
   $("m-cov").textContent = s.coverage.toFixed(2);
   $("m-assim").textContent = s.assimilation_rate.toFixed(2);
+
+  const ms = s.model_size;
+  const frontierTotal = Object.values(s.frontier).reduce((a, c) => a + c.count, 0);
   const parts = [];
-  parts.push(`<div class="muted" style="margin-bottom:6px;">FRAMES it has induced</div>`);
-  if (s.frames.length === 0) parts.push('<div class="empty">none yet &mdash; needs a few phrases of the same shape.</div>');
-  s.frames.forEach(f => parts.push(`<div class="frame-row"><span class="fid">${f.id}</span><span class="tmpl">${tmplHTML(f.template)}</span></div>`));
 
-  parts.push(`<div class="muted" style="margin:14px 0 6px;">BELIEFS &mdash; committed</div>`);
-  if (s.committed.length === 0) parts.push('<div class="empty">nothing committed yet.</div>');
-  s.committed.forEach(b => parts.push(beliefLine(b)));
+  // headline: constant-size stat chips (the shape of the whole mind at a glance)
+  parts.push(`<div class="mind-summary">
+    <span class="stat"><b>${ms.frames}</b> frames</span>
+    <span class="stat"><b>${s.committed_count}</b> facts</span>
+    <span class="stat"><b>${s.provisional_count}</b> provisional</span>
+    <span class="stat"><b>${frontierTotal}</b> frontier</span>
+    <span class="stat"><b>${ms.buffer}</b> buffered</span></div>`);
 
-  if (s.provisional.length) {
-    parts.push(`<div class="muted" style="margin:14px 0 6px;">provisional &mdash; heard, not yet committed</div>`);
-    s.provisional.forEach(b => parts.push(beliefLine(b)));
+  // FRAMES — bounded preview
+  const fShown = Math.min(PREVIEW.frames, s.frames.length);
+  parts.push(mindHead("frames induced", ms.frames, fShown));
+  if (!s.frames.length) parts.push('<div class="empty">none yet &mdash; needs a few phrases of the same shape.</div>');
+  s.frames.slice(0, PREVIEW.frames).forEach(f => parts.push(`<div class="frame-row"><span class="fid">${f.id}</span><span class="tmpl">${tmplHTML(f.template)}</span></div>`));
+  if (ms.frames > fShown) parts.push(`<div class="more">+${ms.frames - fShown} more frames</div>`);
+
+  // BELIEFS committed — bounded preview + pointer to the indexed lookup
+  const cShown = Math.min(PREVIEW.committed, s.committed.length);
+  parts.push(mindHead("beliefs committed", s.committed_count, cShown));
+  if (!s.committed_count) parts.push('<div class="empty">nothing committed yet.</div>');
+  s.committed.slice(0, PREVIEW.committed).forEach(b => parts.push(beliefLine(b)));
+  if (s.committed_count > cShown) parts.push(`<div class="more">+${s.committed_count - cShown} more &mdash; look one up with <b>Ask it</b> / <b>About</b> &rarr;</div>`);
+
+  // PROVISIONAL — bounded preview
+  if (s.provisional_count) {
+    const pShown = Math.min(PREVIEW.provisional, s.provisional.length);
+    parts.push(mindHead("provisional (heard, not committed)", s.provisional_count, pShown));
+    s.provisional.slice(0, PREVIEW.provisional).forEach(b => parts.push(beliefLine(b)));
+    if (s.provisional_count > pShown) parts.push(`<div class="more">+${s.provisional_count - pShown} more</div>`);
   }
-  if (s.frontier.length) {
-    parts.push(`<div class="muted" style="margin:14px 0 6px;">FRONTIER &mdash; what confuses it (${s.frontier.length})</div>`);
-    s.frontier.forEach(t => parts.push(`<div class="frontier-item">&ldquo;${t.join(" ")}&rdquo;</div>`));
+
+  // FRONTIER — a compact per-length census (chips), never a per-line dump
+  const flen = Object.keys(s.frontier).sort((a, b) => s.frontier[b].count - s.frontier[a].count);
+  if (flen.length) {
+    parts.push(mindHead("frontier (can't yet frame)", frontierTotal, frontierTotal));
+    parts.push(`<div class="flen">${flen.slice(0, PREVIEW.flen).map(k => `<span class="chip-f">len ${k} &middot; ${s.frontier[k].count}</span>`).join("")}</div>`);
+    const ex = s.frontier[flen[0]].exemplars;
+    if (ex && ex.length) parts.push(`<div class="frontier-item">e.g. &ldquo;${ex[0]}&rdquo;</div>`);
   }
+
   $("mind").innerHTML = parts.join("");
+}
+
+// ---------- the mind's geometry: concepts in their LEARNED coordinates ----------
+function esc(s) { return String(s).replace(/[&<>'"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[c])); }
+
+const MM_W = 600, MM_H = 460, MM_PAD = 36;
+let MIND = null;
+// a learned semantic axis, coloured indigo -> teal -> gold -> warm red
+const CSTOPS = [[75, 63, 160], [47, 158, 143], [232, 176, 75], [224, 104, 79]];
+function colorFor(c) {
+  const t = Math.max(0, Math.min(1, c)) * (CSTOPS.length - 1), i = Math.min(Math.floor(t), CSTOPS.length - 2), f = t - i;
+  const a = CSTOPS[i], b = CSTOPS[i + 1];
+  return `rgb(${Math.round(a[0] + (b[0] - a[0]) * f)},${Math.round(a[1] + (b[1] - a[1]) * f)},${Math.round(a[2] + (b[2] - a[2]) * f)})`;
+}
+const mmX = x => MM_PAD + x * (MM_W - 2 * MM_PAD);
+const mmY = y => MM_PAD + (1 - y) * (MM_H - 2 * MM_PAD);
+
+async function loadMind(highlight) {
+  try { const g = await (await fetch("/api/mindmap")).json(); buildMind(g); if (highlight) findConcept(highlight); }
+  catch (e) { /* keep current */ }
+}
+
+function buildMind(g) {
+  const svg = $("mm-svg"); MIND = g;
+  if (!g.points || !g.points.length) {
+    svg.innerHTML = `<rect width="${MM_W}" height="${MM_H}" fill="#12100e"/><text x="${MM_W / 2}" y="${MM_H / 2}" text-anchor="middle" class="mm-empty">${(g && g.note) || "read more — a geometry forms as it learns"}</text>`;
+    $("web-focus").textContent = ""; return;
+  }
+  const P = g.points, maxDeg = Math.max(1, ...P.map(p => p.deg));
+  $("web-focus").textContent = ` — ${g.n_component} concepts in one connected space`;
+  const parts = [`<defs><filter id="mmglow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7"/></filter>`
+    + `<radialGradient id="mmvig" cx="50%" cy="42%" r="75%"><stop offset="58%" stop-color="transparent"/><stop offset="100%" stop-color="rgba(0,0,0,0.5)"/></radialGradient></defs>`,
+    `<rect width="${MM_W}" height="${MM_H}" fill="#12100e"/>`, '<g id="mm-scene">'];
+  // blurred glow layer -> the "terrain" / nebula of the mind
+  parts.push('<g class="mm-glow" filter="url(#mmglow)">');
+  P.forEach(p => { const r = 6 + 16 * Math.sqrt(p.deg / maxDeg); parts.push(`<circle cx="${mmX(p.x).toFixed(1)}" cy="${mmY(p.y).toFixed(1)}" r="${r.toFixed(1)}" fill="${colorFor(p.c)}" opacity="0.5"/>`); });
+  parts.push('</g>');
+  // faint relational threads (structure hinted, not drawn as a graph)
+  parts.push('<g id="mm-edges">');
+  g.edges.forEach((e, i) => { const a = P[e.s], b = P[e.t]; parts.push(`<line id="me${i}" class="mm-edge" x1="${mmX(a.x).toFixed(1)}" y1="${mmY(a.y).toFixed(1)}" x2="${mmX(b.x).toFixed(1)}" y2="${mmY(b.y).toFixed(1)}"/>`); });
+  parts.push('</g>');
+  // luminous cores + hub labels
+  const hubs = new Set([...P.keys()].sort((a, b) => P[b].deg - P[a].deg).slice(0, Math.min(18, P.length)));
+  parts.push('<g id="mm-cores">');
+  P.forEach((p, i) => { const r = 2.2 + 3.6 * Math.sqrt(p.deg / maxDeg), x = mmX(p.x).toFixed(1), y = mmY(p.y);
+    parts.push(`<g class="mm-core ${hubs.has(i) ? 'lbl' : ''}" data-i="${i}"><circle cx="${x}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${colorFor(p.c)}"/><text x="${x}" y="${(y - r - 3).toFixed(1)}">${esc(p.id)}</text></g>`); });
+  parts.push('</g>');
+  parts.push(`<rect width="${MM_W}" height="${MM_H}" fill="url(#mmvig)" pointer-events="none"/></g>`);
+  svg.innerHTML = parts.join("");
+  wireMind(g, P);
+}
+
+function litNode(i, g, P) {
+  const scene = document.getElementById("mm-scene");
+  scene.classList.add("dim");
+  document.querySelector(`.mm-core[data-i="${i}"]`).classList.add("lit");
+  P._nbr[i].forEach(ei => {
+    const l = document.getElementById("me" + ei); if (l) l.classList.add("lit");
+    const e = g.edges[ei];
+    document.querySelector(`.mm-core[data-i="${e.s}"]`).classList.add("lit");
+    document.querySelector(`.mm-core[data-i="${e.t}"]`).classList.add("lit");
+  });
+  $("web-focus").textContent = ` — ${P[i].id} · ${P[i].deg} tie${P[i].deg === 1 ? "" : "s"} · ${P[i].kind}`;
+}
+function clearLit(g) {
+  document.getElementById("mm-scene").classList.remove("dim");
+  document.querySelectorAll(".mm-core.lit").forEach(n => n.classList.remove("lit"));
+  document.querySelectorAll(".mm-edge.lit").forEach(n => n.classList.remove("lit"));
+  $("web-focus").textContent = ` — ${g.n_component} concepts in one connected space`;
+}
+function wireMind(g, P) {
+  P._nbr = P.map(() => new Set());
+  g.edges.forEach((e, i) => { P._nbr[e.s].add(i); P._nbr[e.t].add(i); });
+  document.querySelectorAll("#mm-cores .mm-core").forEach(el => {
+    const i = +el.dataset.i;
+    el.addEventListener("mouseenter", () => litNode(i, g, P));
+    el.addEventListener("mouseleave", () => clearLit(g));
+    el.addEventListener("click", () => { $("say-ref").value = P[i].id; });
+  });
+}
+
+function findConcept(id) {
+  if (!MIND || !MIND.points) return;
+  id = String(id || "").toLowerCase().trim();
+  const i = MIND.points.findIndex(p => p.id === id);
+  if (i < 0) return;
+  litNode(i, MIND, MIND.points);
+  setTimeout(() => clearLit(MIND), 2000);
+}
+function focusOrLoad(id) {
+  const q = String(id || "").toLowerCase().trim();
+  if (MIND && MIND.points && MIND.points.some(p => p.id === q)) findConcept(q); else loadMind(q);
 }
 
 async function ask() {
@@ -364,6 +555,8 @@ async function ask() {
   const d = await r.json();
   const out = $("ask-out"); out.innerHTML = "";
   if (d.kind === "unparsed") { out.innerHTML = `<div class="said muted">&ldquo;I can't answer that yet &mdash; ${d.reason}.&rdquo;</div>`; return; }
+  const focus = d.referent || d.given;
+  if (focus) focusOrLoad(focus.split(" ").pop());  // show the concept just asked about
   const answers = d.kind === "about" ? (d.beliefs || []).map(b => ({sentence: b.sentence, status: b.status, answer: b.target})) : (d.answers || []);
   if (!answers.length) { out.innerHTML = `<div class="said muted">&ldquo;I don't know yet.&rdquo;</div>`; return; }
   answers.forEach((a, i) => {
@@ -375,6 +568,7 @@ async function ask() {
 
 async function say() {
   const referent = $("say-ref").value.trim() || null;
+  if (referent) focusOrLoad(referent);
   const r = await fetch("/api/say", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({referent}) });
   const d = await r.json();
   const out = $("say-out"); out.innerHTML = "";
@@ -400,7 +594,12 @@ $("ask-btn").onclick = ask;
 $("q").addEventListener("keydown", e => { if (e.key === "Enter") ask(); });
 $("say-btn").onclick = say;
 
+// the web: find a concept by name (highlights + centers it)
+$("web-go").onclick = () => focusOrLoad($("web-q").value);
+$("web-q").addEventListener("keydown", e => { if (e.key === "Enter") focusOrLoad($("web-q").value); });
+
 fetch("/api/status").then(r => r.json()).then(renderMind);
+loadMind();          // draw the mind's learned geometry
 renderChips();
 </script>
 </body>
