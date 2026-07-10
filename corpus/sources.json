@@ -1,32 +1,270 @@
 {
-  "note": "The training corpus REGISTRY + a graded CURRICULUM. `sources` is the declarative list of everything the creature can read (each with a stable `id`); `stages` groups sources into a math/science-first ladder and attaches a WORKSHEET pass-mark. Training advances a stage only when the creature SITS the stage's worksheet and passes (mastery-gated). Grounded (`generated`) sources carry the picture/tap channel -> clean facts the worksheet can grade; the maths and science worlds are modelled on what primary-grade arithmetic and elementary-science books actually teach. `gutenberg` books are US public domain and add reading/language (no worksheet). Grow the corpus by appending sources; grow the curriculum by editing stages.",
-  "license": "Project Gutenberg — US public domain. Boilerplate stripped at load.",
+  "note": "The training corpus REGISTRY + a graded CURRICULUM. `sources` is the declarative list of everything the creature can read (each with a stable `id`); `stages` groups sources into a math/science-first ladder and attaches a WORKSHEET pass-mark. Training advances a stage only when the creature SITS the stage's worksheet and passes (mastery-gated). Grounded (`generated`) sources carry the picture/tap channel -> clean facts the worksheet can grade; the maths and science worlds are modelled on what primary-grade arithmetic and elementary-science books actually teach. `gutenberg` books are US public domain and add reading/language (no worksheet). Grow the corpus by appending sources; grow the curriculum by editing stages. Fact sources render each triple through one of several paraphrase `frames` (P9 label discipline: the relation label never reaches the stream; the learner unifies the constructions; the label grades the worksheet).",
+  "license": "Project Gutenberg \u2014 US public domain. Boilerplate stripped at load.",
   "sources": [
-    {"id": "g-math-counting", "kind": "generated", "generator": "mathbooks",    "params": {"n_episodes": 9000,  "level": 1, "seed": 7}, "domain": "math",       "title": "counting & number order"},
-    {"id": "g-math-arith",    "kind": "generated", "generator": "mathbooks",    "params": {"n_episodes": 12000, "level": 2, "seed": 7}, "domain": "math",       "title": "shapes + computed arithmetic (grown, not memorised)"},
-    {"id": "g-sci-living",    "kind": "generated", "generator": "sciencebooks", "params": {"n_episodes": 10000, "level": 1, "seed": 7}, "domain": "science",    "title": "the living world & the senses"},
-    {"id": "g-sci-cosmos",    "kind": "generated", "generator": "sciencebooks", "params": {"n_episodes": 12000, "level": 2, "seed": 7}, "domain": "science",    "title": "matter & the solar system"},
-    {"id": "g-animals",       "kind": "generated", "generator": "patternbooks", "params": {"n_episodes": 8000,  "level": 2, "seed": 7}, "domain": "everyday",   "title": "animal attributes (colour / food / legs)"},
-    {"id": "g-kidwords",      "kind": "generated", "generator": "kidbooks",     "params": {"n_episodes": 12000, "level": 3, "seed": 7}, "domain": "everyday",   "title": "sounds, colours, homes, opposites"},
-
-    {"id": "gutenberg-14640", "kind": "gutenberg", "ref": 14640, "title": "McGuffey's Eclectic Primer",        "domain": "literature"},
-    {"id": "gutenberg-14668", "kind": "gutenberg", "ref": 14668, "title": "McGuffey's Second Eclectic Reader", "domain": "literature"},
-    {"id": "gutenberg-19994", "kind": "gutenberg", "ref": 19994, "title": "The Aesop for Children",            "domain": "literature"},
-
-    {"id": "wn-animals", "kind": "wordnet", "root": "animal.n.01", "max": 220, "frame": ["a", "{s}", "is", "a", "{o}"], "domain": "science",   "title": "animal taxonomy (WordNet is-a)"},
-    {"id": "wn-plants",  "kind": "wordnet", "root": "plant.n.02",  "max": 150, "frame": ["a", "{s}", "is", "a", "{o}"], "domain": "science",   "title": "plant taxonomy (WordNet is-a)"},
-
-    {"id": "wd-capitals", "kind": "wikidata", "relation": "capitals", "max": 200, "frame": ["{s}", "has", "capital", "{o}"], "domain": "geography", "title": "world capitals (Wikidata)"},
-    {"id": "wd-elements", "kind": "wikidata", "relation": "elements", "max": 150, "frame": ["{s}", "has", "symbol",  "{o}"], "domain": "science",   "title": "chemical elements & symbols (Wikidata)"}
+    {
+      "id": "g-math-counting",
+      "kind": "generated",
+      "generator": "mathbooks",
+      "params": {
+        "n_episodes": 9000,
+        "level": 1,
+        "seed": 7
+      },
+      "domain": "math",
+      "title": "counting & number order"
+    },
+    {
+      "id": "g-math-arith",
+      "kind": "generated",
+      "generator": "mathbooks",
+      "params": {
+        "n_episodes": 12000,
+        "level": 2,
+        "seed": 7
+      },
+      "domain": "math",
+      "title": "shapes + computed arithmetic (grown, not memorised)"
+    },
+    {
+      "id": "g-sci-living",
+      "kind": "generated",
+      "generator": "sciencebooks",
+      "params": {
+        "n_episodes": 10000,
+        "level": 1,
+        "seed": 7
+      },
+      "domain": "science",
+      "title": "the living world & the senses"
+    },
+    {
+      "id": "g-sci-cosmos",
+      "kind": "generated",
+      "generator": "sciencebooks",
+      "params": {
+        "n_episodes": 12000,
+        "level": 2,
+        "seed": 7
+      },
+      "domain": "science",
+      "title": "matter & the solar system"
+    },
+    {
+      "id": "g-animals",
+      "kind": "generated",
+      "generator": "patternbooks",
+      "params": {
+        "n_episodes": 8000,
+        "level": 2,
+        "seed": 7
+      },
+      "domain": "everyday",
+      "title": "animal attributes (colour / food / legs)"
+    },
+    {
+      "id": "g-kidwords",
+      "kind": "generated",
+      "generator": "kidbooks",
+      "params": {
+        "n_episodes": 12000,
+        "level": 3,
+        "seed": 7
+      },
+      "domain": "everyday",
+      "title": "sounds, colours, homes, opposites"
+    },
+    {
+      "id": "gutenberg-14640",
+      "kind": "gutenberg",
+      "ref": 14640,
+      "title": "McGuffey's Eclectic Primer",
+      "domain": "literature"
+    },
+    {
+      "id": "gutenberg-14668",
+      "kind": "gutenberg",
+      "ref": 14668,
+      "title": "McGuffey's Second Eclectic Reader",
+      "domain": "literature"
+    },
+    {
+      "id": "gutenberg-19994",
+      "kind": "gutenberg",
+      "ref": 19994,
+      "title": "The Aesop for Children",
+      "domain": "literature"
+    },
+    {
+      "id": "wn-animals",
+      "kind": "wordnet",
+      "root": "animal.n.01",
+      "max": 220,
+      "domain": "science",
+      "title": "animal taxonomy (WordNet is-a)",
+      "frames": [
+        [
+          "a",
+          "{s}",
+          "is",
+          "a",
+          "{o}"
+        ],
+        [
+          "the",
+          "{s}",
+          "is",
+          "a",
+          "kind",
+          "of",
+          "{o}"
+        ]
+      ]
+    },
+    {
+      "id": "wn-plants",
+      "kind": "wordnet",
+      "root": "plant.n.02",
+      "max": 150,
+      "domain": "science",
+      "title": "plant taxonomy (WordNet is-a)",
+      "frames": [
+        [
+          "a",
+          "{s}",
+          "is",
+          "a",
+          "{o}"
+        ],
+        [
+          "the",
+          "{s}",
+          "is",
+          "a",
+          "kind",
+          "of",
+          "{o}"
+        ]
+      ]
+    },
+    {
+      "id": "wd-capitals",
+      "kind": "wikidata",
+      "relation": "capitals",
+      "max": 200,
+      "domain": "geography",
+      "title": "world capitals (Wikidata)",
+      "frames": [
+        [
+          "{s}",
+          "has",
+          "capital",
+          "{o}"
+        ],
+        [
+          "the",
+          "capital",
+          "of",
+          "{s}",
+          "is",
+          "{o}"
+        ]
+      ]
+    },
+    {
+      "id": "wd-elements",
+      "kind": "wikidata",
+      "relation": "elements",
+      "max": 150,
+      "domain": "science",
+      "title": "chemical elements & symbols (Wikidata)",
+      "frames": [
+        [
+          "{s}",
+          "has",
+          "symbol",
+          "{o}"
+        ],
+        [
+          "{o}",
+          "is",
+          "the",
+          "symbol",
+          "for",
+          "{s}"
+        ]
+      ]
+    }
   ],
   "stages": [
-    {"id": "s1-counting",  "name": "Counting & number order",            "sources": ["g-math-counting"],              "pass": 0.8},
-    {"id": "s2-arithmetic","name": "Arithmetic: more, shapes, doubling", "sources": ["g-math-arith"],                 "pass": 0.8},
-    {"id": "s3-living",    "name": "The living world & the senses",      "sources": ["g-sci-living"],                 "pass": 0.8},
-    {"id": "s4-cosmos",    "name": "Matter & the solar system",          "sources": ["g-sci-cosmos"],                 "pass": 0.8},
-    {"id": "s5-words",     "name": "Everyday words",                     "sources": ["g-animals", "g-kidwords"],      "pass": 0.75},
-    {"id": "s6-books",     "name": "Reading real books",                 "sources": ["gutenberg-14640", "gutenberg-14668", "gutenberg-19994"], "pass": 0.0},
-    {"id": "s7-taxonomy",  "name": "Taxonomy of living things (WordNet)", "sources": ["wn-animals", "wn-plants"],      "pass": 0.8},
-    {"id": "s8-world",     "name": "Capitals & the elements (Wikidata)",  "sources": ["wd-capitals", "wd-elements"],   "pass": 0.75}
+    {
+      "id": "s1-counting",
+      "name": "Counting & number order",
+      "sources": [
+        "g-math-counting"
+      ],
+      "pass": 0.8
+    },
+    {
+      "id": "s2-arithmetic",
+      "name": "Arithmetic: more, shapes, doubling",
+      "sources": [
+        "g-math-arith"
+      ],
+      "pass": 0.8
+    },
+    {
+      "id": "s3-living",
+      "name": "The living world & the senses",
+      "sources": [
+        "g-sci-living"
+      ],
+      "pass": 0.8
+    },
+    {
+      "id": "s4-cosmos",
+      "name": "Matter & the solar system",
+      "sources": [
+        "g-sci-cosmos"
+      ],
+      "pass": 0.8
+    },
+    {
+      "id": "s5-words",
+      "name": "Everyday words",
+      "sources": [
+        "g-animals",
+        "g-kidwords"
+      ],
+      "pass": 0.75
+    },
+    {
+      "id": "s6-books",
+      "name": "Reading real books",
+      "sources": [
+        "gutenberg-14640",
+        "gutenberg-14668",
+        "gutenberg-19994"
+      ],
+      "pass": 0.0
+    },
+    {
+      "id": "s7-taxonomy",
+      "name": "Taxonomy of living things (WordNet)",
+      "sources": [
+        "wn-animals",
+        "wn-plants"
+      ],
+      "pass": 0.8
+    },
+    {
+      "id": "s8-world",
+      "name": "Capitals & the elements (Wikidata)",
+      "sources": [
+        "wd-capitals",
+        "wd-elements"
+      ],
+      "pass": 0.75
+    }
   ]
 }

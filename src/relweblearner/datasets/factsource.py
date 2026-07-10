@@ -4,14 +4,27 @@ The hand-authored generators (``mathbooks`` etc.) are finite; this is how the
 curriculum *expands* from external, growing sources. A fact source yields
 ``(subject, object)`` triples for one relation — WordNet hypernyms (``a dog is a
 mammal``), Wikidata properties (``france has capital paris``) — and this module
-renders them, through a configurable frame, into the SAME joint episodes the
-generators emit (picture = the subject, so the parsed fact is oriented) plus an
-auto-generated WORKSHEET (blank the object; the object is the answer key). So every
-learned fact — and every exam question — traces back to the source, and adding a
-new relation or a bigger slice grows the creature's knowledge with no new code.
+renders them into the SAME joint episodes the generators emit (picture = the
+subject, so the parsed fact is oriented) plus an auto-generated WORKSHEET (blank
+the object; the object is the answer key). So every learned fact — and every
+exam question — traces back to the source, and adding a new relation or a
+bigger slice grows the creature's knowledge with no new code.
 
-A frame is a token list with ``{s}``/``{o}`` placeholders, e.g. ``["a", "{s}", "is",
-"a", "{o}"]``. Only single-token subjects/objects are kept, so facts commit cleanly.
+The P9 label discipline: **the episode stream carries no relation label** —
+types are left for the learner to discover; the source's label survives only as
+the worksheet's answer key. Rendering every fact through ONE fixed template
+would quietly undo that (the surface form becomes a perfect proxy for the
+stripped label, and "discovery" is a tautology), so a source renders each fact
+through one of several PARAPHRASES — distinct constructions, including
+reversed-argument ones (``paris is the capital of france``: the picture/tap
+orients the fact, not token order). The creature must then induce each frame
+from repetition and discover, by relation unification over the committed edge
+sets (evidence-gated, simulate-gated), that the constructions express one
+relation — before a worksheet phrased across all of them can be passed.
+
+A frame is a token list with ``{s}``/``{o}`` placeholders, e.g. ``["a", "{s}",
+"is", "a", "{o}"]``; ``frames`` arguments accept one or a list. Only
+single-token subjects/objects are kept, so facts commit cleanly.
 """
 
 from __future__ import annotations
@@ -43,29 +56,43 @@ def clean_triples(triples) -> list[tuple[str, str]]:
     return out
 
 
-def episodes_from_triples(triples, frame, source_tag, *, n_episodes, seed=0):
-    """Render triples into ``{book, tokens, picture, marks}`` episodes. ``frame`` is a
-    token template with ``{s}``/``{o}``; the subject is the picture (grounds the fact)."""
+def _as_frames(frames) -> list[list[str]]:
+    """Accept one frame (a token list) or a list of paraphrase frames."""
+    return [frames] if frames and isinstance(frames[0], str) else list(frames)
+
+
+def episodes_from_triples(triples, frames, source_tag, *, n_episodes, seed=0):
+    """Render triples into ``{book, tokens, picture, marks}`` episodes.
+
+    ``frames`` is one template or a list of paraphrases; each episode draws a
+    fact AND a construction, so every fact recurs in several surface forms and
+    relation identity is left to be discovered. The subject is the picture
+    (grounds and orients the fact — token order carries no burden)."""
     rng = random.Random(seed)
     triples = list(triples)
+    frames = _as_frames(frames)
     if not triples:
         return []
     eps = []
     for i in range(n_episodes):
         s, o = rng.choice(triples)
+        frame = rng.choice(frames)
         tokens = [s if t == "{s}" else o if t == "{o}" else t for t in frame]
         eps.append({"book": f"{source_tag}-{i // 40:05d}", "tokens": tokens,
                     "picture": s, "marks": None})
     return eps
 
 
-def worksheet_from_triples(triples, frame) -> list[tuple[str, str]]:
-    """Auto-worksheet: each triple becomes a question (frame with the object blanked
-    to ``?``) whose answer key is the object."""
-    q_tokens = [t if t != "{o}" else "?" for t in frame]
+def worksheet_from_triples(triples, frames) -> list[tuple[str, str]]:
+    """Auto-worksheet: each triple becomes a question (a frame with the object
+    blanked to ``?``) whose answer key is the object. Questions ROTATE through
+    the paraphrases, so passing the worksheet requires the constructions to
+    have unified — the exam itself checks the relation was discovered."""
+    frames = _as_frames(frames)
     items = []
-    for s, o in triples:
-        q = " ".join(s if t == "{s}" else t for t in q_tokens)
+    for i, (s, o) in enumerate(triples):
+        frame = frames[i % len(frames)]
+        q = " ".join("?" if t == "{o}" else s if t == "{s}" else t for t in frame)
         items.append((q, o))
     return items
 

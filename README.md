@@ -139,6 +139,19 @@ measuring the world with its own ruler. The number sense is a pure projection
 of the episode log (pairing + ostension entries), re-derived on load rather
 than checkpointed.
 
+**Fact-source label discipline** (P9, `datasets/factsource.py`): a WordNet /
+Wikidata relation reaches the learner as label-free episodes rendered through
+**several paraphrase constructions** — including reversed-argument ones
+(`paris is the capital of france`; the picture/tap orients the fact, not token
+order). One fixed template would make the surface form a proxy for the
+stripped label; with paraphrases, relation identity must be *discovered* by
+unification over committed edge sets (evidence- and simulate-gated) before the
+worksheet — whose questions rotate through the constructions — can be passed.
+The label survives only as the worksheet's answer key. Paraphrases are chosen
+so no same-length pair across sources shares ≥ 2 anchor columns (they would
+merge into a degenerate all-slot cluster at induction); CI checks this over
+`corpus/sources.json`.
+
 Two further firehose rungs broaden the world beyond animal attributes:
 `datasets/mathbooks.py` (basic maths — number ordering, one-more, shape sides)
 and `datasets/kidbooks.py` (early-reader kid content — animal sounds, fruit

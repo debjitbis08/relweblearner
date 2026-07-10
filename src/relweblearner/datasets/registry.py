@@ -84,12 +84,18 @@ def source_episodes(entry: dict, *, raw: str | Path | None = None, fetch: bool =
         triples = cached_triples(entry, raw=raw, fetch=fetch)
         n = entry.get("episodes") or max(6000, len(triples) * 40)
         return factsource.episodes_from_triples(
-            triples, entry["frame"], entry["id"], n_episodes=n, seed=entry.get("seed", 0))
+            triples, _entry_frames(entry), entry["id"], n_episodes=n, seed=entry.get("seed", 0))
 
     raise LookupError(f"unknown source kind {kind!r} in {entry.get('id')!r}")
 
 
 # ------------------------------------------------------- external fact sources (cached)
+
+def _entry_frames(entry: dict) -> list:
+    """A fact source's paraphrase frames — ``frames`` (a list of constructions,
+    the P9 label discipline) or the legacy single ``frame``."""
+    return entry.get("frames") or [entry["frame"]]
+
 
 def _triples_path(entry: dict, raw: str | Path | None = None) -> Path:
     return raw_dir(raw) / f"{entry['id']}.triples.json"
@@ -134,7 +140,7 @@ def source_worksheet(entry: dict, *, raw: str | Path | None = None) -> list[tupl
             triples = cached_triples(entry, raw=raw, fetch=False)
         except FileNotFoundError:
             return []
-        return factsource.worksheet_from_triples(triples, entry["frame"])
+        return factsource.worksheet_from_triples(triples, _entry_frames(entry))
     return []
 
 

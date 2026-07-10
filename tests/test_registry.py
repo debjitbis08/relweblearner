@@ -27,9 +27,24 @@ def test_registry_is_well_formed():
         elif s["kind"] == "gutenberg":
             assert isinstance(s["ref"], int)
         elif s["kind"] == "wordnet":
-            assert "root" in s and "frame" in s
+            assert "root" in s and ("frames" in s or "frame" in s)
         elif s["kind"] == "wikidata":
             assert s["relation"] in __import__("relweblearner.datasets.factsource", fromlist=["x"]).WIKIDATA_QUERIES
+        if s["kind"] in ("wordnet", "wikidata"):
+            frames = R._entry_frames(s)
+            # >= 2 paraphrases per relation (P9: the construction must not be a
+            # label proxy), and no same-length pair ACROSS sources shares >= 2
+            # anchor columns (they would merge into one degenerate cluster)
+            assert len(frames) >= 2
+    fact_frames = [f for s in reg if s["kind"] in ("wordnet", "wikidata")
+                   for f in R._entry_frames(s)]
+    for i, a in enumerate(fact_frames):
+        for b in fact_frames[i + 1:]:
+            if a == b or len(a) != len(b):
+                continue
+            shared = sum(1 for x, y in zip(a, b)
+                         if x == y and x not in ("{s}", "{o}"))
+            assert shared < 2, f"colliding constructions: {a} / {b}"
 
 
 def test_generated_source_materialises():
