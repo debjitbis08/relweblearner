@@ -299,16 +299,23 @@ class Creature:
 
     def ingest(self, episodes: Iterable[dict]) -> "Creature":
         """Stream a corpus through :meth:`observe` (episodes are ``{book/source,
-        tokens, picture, marks}`` dicts, as the generator emits)."""
+        tokens, picture, marks}`` dicts, as the generator emits). A dict with
+        ``id1`` is a BARE PAIRING episode (the counting-play channel) and is
+        routed through :meth:`observe_pairing` — one stream, two senses."""
         n = 0
         for e in episodes:
-            self.observe(
-                e["tokens"],
-                picture=e.get("picture"),
-                source=e.get("source") or e.get("book", "stream"),
-                marks=e.get("marks"),
-                collection=e.get("collection"),
-            )
+            if "id1" in e:
+                self.observe_pairing(e["id1"], e["members1"], e["id2"], e["members2"],
+                                     e.get("pairing", ()),
+                                     source=e.get("source") or e.get("book", "play"))
+            else:
+                self.observe(
+                    e["tokens"],
+                    picture=e.get("picture"),
+                    source=e.get("source") or e.get("book", "stream"),
+                    marks=e.get("marks"),
+                    collection=e.get("collection"),
+                )
             n += 1
         merges = self.unify_relations()   # recognise synonymous frames once evidence has accrued
         self.commit()
@@ -819,13 +826,8 @@ class Creature:
         """The number sense, reported: chain length, named positions, map
         status, and its defects (contradiction self-loops, poison namings)."""
         ch = self.numbers.chain()
-        m = None
-        if ch.order:
-            self._ensure_transports()
-            for _gid, web in sorted(self._group_webs.items()):
-                m = self.numbers.map(potential(web))
-                if m is not None:
-                    break
+        maps = self._number_maps() if ch.order else []
+        m = maps[0] if maps else None
         pos = {rep: i + 1 for i, rep in enumerate(ch.order)}
         return {
             "classes": len(ch.order),
@@ -919,20 +921,29 @@ class Creature:
         t = sector.transport if forward else web.algebra.dagger(sector.transport)
         return self.numbers.word_step(m, potential(web), given, t)
 
+    def _number_maps(self) -> list[dict]:
+        """Every committed interface map across the gauge groups, BEST first —
+        ranked by coordinate-consistent identifications. Number words recur as
+        fillers of unrelated relations (``a triangle has three sides``), whose
+        group can accidentally commit a k-word map; ranking keeps the real
+        chain's map (all words consistent, no poison) ahead of coincidences."""
+        self._ensure_transports()
+        maps = [m for _gid, web in sorted(self._group_webs.items())
+                if (m := self.numbers.map(potential(web))) is not None]
+        maps.sort(key=lambda m: (-len(m["consistent"]), -len(m["word_of"])))
+        return maps
+
     def how_many(self, members) -> dict:
         """Number a pile of opaque objects with the creature's own ruler: the
         P1b counting routine gives the class, the P5 interface map gives the
         word. Answerable exactly as far as the chain is built and named."""
-        self._ensure_transports()
         counted = self.numbers.count_fresh(members)
         word = None
         if counted is not None:
-            for _gid, web in sorted(self._group_webs.items()):
-                m = self.numbers.map(potential(web))
-                if m is not None:
-                    word = m["word_of"].get(counted[1])
-                    if word is not None:
-                        break
+            for m in self._number_maps():
+                word = m["word_of"].get(counted[1])
+                if word is not None:
+                    break
         self._trace("how-many",
                     {f"position:{counted[0]}"} if counted else {"off-chain"},
                     {word or "unnamed"})

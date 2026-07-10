@@ -29,18 +29,26 @@ def stage_worksheet(stage: dict, registry: list[dict]) -> list[tuple[str, str]]:
     return items
 
 
-def run_exam(creature, items: list[tuple[str, str]]) -> dict:
-    """Sit the worksheet: the creature fills each blank via :meth:`Creature.answer`;
-    return a graded report (score, counts, a few missed items)."""
+def run_exam(creature, items: list[tuple]) -> dict:
+    """Sit the worksheet. A string question fills a blank via
+    :meth:`Creature.answer`; a ``{"kind": "count", "members": [...]}`` item is
+    a PILE to number and name (:meth:`Creature.how_many` — the counting
+    routine plus the word↔class interface map, graded). Returns the report
+    (score, counts, a few missed items)."""
     correct = 0
     wrong: list[tuple[str, str, str | None]] = []
     for q, a in items:
-        r = creature.answer(q)
-        got = r["answers"][0]["answer"] if r.get("known") and r.get("answers") else None
+        if isinstance(q, dict) and q.get("kind") == "count":
+            got = creature.how_many(q["members"]).get("word")
+            shown = f"how many? · a pile of {len(q['members'])}"
+        else:
+            r = creature.answer(q)
+            got = r["answers"][0]["answer"] if r.get("known") and r.get("answers") else None
+            shown = q
         if got == a:
             correct += 1
         elif len(wrong) < 8:
-            wrong.append((q, a, got))
+            wrong.append((shown, a, got))
     total = len(items)
     return {"correct": correct, "total": total,
             "score": (correct / total) if total else 1.0, "wrong": wrong}

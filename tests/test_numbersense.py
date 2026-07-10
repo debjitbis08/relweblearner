@@ -153,6 +153,40 @@ def test_number_sense_reprojects_on_load(tmp_path):
     c2.close()
 
 
+def test_counting_curriculum_stages_pass():
+    # the REAL registry path: play (no worksheet — the map cannot commit before
+    # order sentences exist), then words, then the how-many exam where the
+    # creature numbers FRESH piles and speaks the mapped word.
+    from relweblearner.datasets import registry as R
+    from relweblearner.datasets import syllabus as SYL
+
+    reg = R.load_registry()
+    play = R.source_by_id(reg, "g-count-play")
+    exam = R.source_by_id(reg, "g-count-exam")
+    c = Creature("pupil", **_PARAMS)
+
+    c.ingest_source(play["id"], R.source_episodes(play))
+    assert R.source_worksheet(play) == []            # level 1 is ungraded by design
+    assert c.numbers.chain().order                   # the chain crystallised from play
+
+    # level 2 words: order sentences give coordinates, and the sides frame
+    # ("a triangle has three sides") plants number words in an UNRELATED gauge
+    # group whose accidental map must rank below the real chain's
+    c.ingest(MB.generate(n_episodes=6000, level=2, seed=3)[0])
+
+    ws = R.source_worksheet(exam)
+    assert len(ws) == 20 and all(isinstance(q, dict) and q["kind"] == "count" for q, _ in ws)
+    # exam piles are FRESH: no play episode ever contained their object ids
+    assert all(m not in c.numbers.members for q, _ in ws for m in q["members"][:1])
+    c.ingest_source(exam["id"], R.source_episodes(exam))
+    report = SYL.run_exam(c, ws)
+    assert report["score"] >= 0.9, report["wrong"]
+    # the census reports the BEST map — the full clean chain, not a coincidence
+    census = c.snapshot()["numbers"]
+    assert census["map"]["poison"] == 0
+    assert len(census["map"]["named"]) == census["classes"]
+
+
 def test_poisoned_naming_retracts_by_replay():
     cols = _cols()
     four_piles = [k for k, v in cols.items() if len(v) == 4][:1]

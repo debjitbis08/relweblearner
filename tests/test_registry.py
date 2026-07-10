@@ -49,10 +49,13 @@ def test_registry_is_well_formed():
 
 def test_generated_source_materialises():
     reg = R.load_registry()
-    world = next(s for s in reg if s["kind"] == "generated")
-    eps = R.source_episodes(world)
-    assert eps and all(set(e) >= {"tokens"} for e in eps)
-    assert len(eps) == world["params"]["n_episodes"]
+    # an episode is either a caption page ({tokens, ...}) or a bare pairing
+    # episode ({id1, members1, ...}) — the counting-play channel
+    for world in [s for s in reg if s["kind"] == "generated"][:3]:
+        eps = R.source_episodes(world)
+        assert eps and all("tokens" in e or "id1" in e for e in eps)
+    sized = next(s for s in reg if s["kind"] == "generated" and "n_episodes" in s["params"])
+    assert len(R.source_episodes(sized)) == sized["params"]["n_episodes"]
 
 
 def test_gutenberg_source_without_network_or_cache_raises(tmp_path):

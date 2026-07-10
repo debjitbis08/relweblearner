@@ -1,4 +1,4 @@
-"""Bare pairing episodes — the P1b data source.
+"""Bare pairing episodes — the P1b data source, and the counting CURRICULUM.
 
 The stream the number learner sees is *only* pairing episodes over collections
 of opaque objects (glossary "collection / pairing episode"). **No token is ever
@@ -7,6 +7,23 @@ for scoring. See ``experiment0e_number.py`` for the reference.
 
 Object ids (``o0, o1, ...``) and collection ids (``K0, K1, ...``) are gensyms —
 letter-prefixed so a numeral grep over the stream finds nothing (e1b accept a).
+
+As a registry generator (:func:`generate`) this is the curriculum's numeracy
+ground floor, in two rungs:
+
+  * **level 1 — play, then naming.** A long wordless pairing stream (the
+    constructed chain crystallises from MATCH/ONEMORE alone), followed by
+    joint ostension pages ("here are three" over a pile the creature must
+    COUNT itself). No worksheet: naming candidates accrue here, but the
+    word↔class interface map cannot commit until order sentences (mathbooks)
+    give the words coordinates — grading before that would hold the stage
+    forever on an impossibility.
+  * **level 2 — the how-many exam.** More ostension pages, and a worksheet of
+    FRESH piles (object ids never seen in play): the creature must number
+    each with its own chain-pairing routine and speak the mapped word —
+    :meth:`~relweblearner.creature.Creature.how_many`, graded. This is the
+    stage where "the system measures the world with its own ruler" is a
+    report-card line.
 """
 
 from __future__ import annotations
@@ -15,6 +32,12 @@ import random
 from collections import defaultdict
 
 from ..episode import Episode, world_episode
+from .mathbooks import NUMBERS
+
+# the fixed counting world (module constants so `_world(seed)` and `generate`
+# agree — the registry reconstructs the world from the seed alone)
+N_COLS = 140
+MAX_SIZE = 10
 
 
 def make_collections(n: int, max_size: int = 5, seed: int = 7) -> dict[str, list[str]]:
@@ -104,6 +127,67 @@ def joint_pages(
             "collection": {"id": k, "members": sorted(cols[k])},
         })
     return pages
+
+
+# ===================================================== the registry generator
+
+
+def _world(seed: int = 0) -> dict:
+    """The hidden counting world: the collections (sizes are ground truth used
+    only for page words and grading — never surfaced to the learner)."""
+    return {"cols": make_collections(N_COLS, max_size=MAX_SIZE, seed=seed),
+            "max_size": MAX_SIZE}
+
+
+def _play_dicts(cols, n_episodes: int, seed: int) -> list[dict]:
+    """The wordless play stream as ingest dicts (kind: bare pairing)."""
+    out = []
+    for i, ep in enumerate(random_stream(cols, n_episodes, seed=seed)):
+        out.append({"book": f"play-{i // 40:05d}", "id1": ep.id1,
+                    "members1": sorted(ep.members1), "id2": ep.id2,
+                    "members2": sorted(ep.members2),
+                    "pairing": [list(p) for p in ep.pairing]})
+    return out
+
+
+def generate(
+    *,
+    level: int = 1,
+    n_play: int = 5000,
+    n_pages: int = 100,
+    seed: int = 0,
+):
+    """Stream the counting curriculum at the given ``level``.
+
+    Level 1: ``n_play`` bare pairing episodes (play first — the chain must
+    exist before a pile can be counted) then ``n_pages`` ostension pages.
+    Level 2: ostension pages only (reinforcement under fresh books; the
+    worksheet lives here). Returns ``(episodes, world)``.
+    """
+    w = _world(seed)
+    if level <= 1:
+        eps = _play_dicts(w["cols"], n_play, seed) + \
+            joint_pages(w["cols"], NUMBERS, n_pages=n_pages,
+                        books=("count-a", "count-b", "count-c"), seed=seed)
+    else:
+        eps = joint_pages(w["cols"], NUMBERS, n_pages=n_pages,
+                          books=("count-d", "count-e", "count-f"), seed=seed + 1)
+    return eps, w
+
+
+def quiz(world: dict, level: int = 2) -> list[tuple]:
+    """The how-many WORKSHEET (level 2 only): fresh piles — object ids no play
+    episode ever contained — each to be numbered by the creature's own routine
+    and answered with the mapped word. Item format ``({"kind": "count",
+    "members": [...]}, word)``; :func:`syllabus.run_exam` dispatches on it."""
+    if level < 2:
+        return []
+    items: list[tuple] = []
+    for s in range(1, world["max_size"] + 1):
+        for j in ("x", "y"):
+            members = [f"exam-{j}{s}-thing{k}" for k in range(s)]
+            items.append(({"kind": "count", "members": members}, NUMBERS[s]))
+    return items
 
 
 def staged_stream(cols, small_max: int, n_small: int, n_full: int, seed: int = 0):

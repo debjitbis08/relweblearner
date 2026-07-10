@@ -66,6 +66,8 @@ def test_math_and_science_lead_the_curriculum():
     def domains(stage):
         return {R.source_by_id(registry, s)["domain"] for s in stage["sources"]}
     assert domains(stages[0]) == {"math"}
-    assert "science" in {d for s in stages[:4] for d in domains(s)}
+    # science within the first five (counting play + how-many added two more
+    # math stages up front — the backbone got MORE math, not less)
+    assert "science" in {d for s in stages[:5] for d in domains(s)}
     # literature is not the first thing taught
     assert "literature" not in domains(stages[0])

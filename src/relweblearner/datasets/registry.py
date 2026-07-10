@@ -14,7 +14,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import factsource, kidbooks, mathbooks, patternbooks, realbooks, sciencebooks
+from . import counting, factsource, kidbooks, mathbooks, patternbooks, realbooks, sciencebooks
 
 # generator name (as written in sources.json) -> module exposing generate()
 _GENERATORS = {
@@ -22,6 +22,7 @@ _GENERATORS = {
     "mathbooks": mathbooks,
     "kidbooks": kidbooks,
     "sciencebooks": sciencebooks,
+    "counting": counting,
 }
 
 

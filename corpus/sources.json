@@ -3,6 +3,31 @@
   "license": "Project Gutenberg \u2014 US public domain. Boilerplate stripped at load.",
   "sources": [
     {
+      "id": "g-count-play",
+      "kind": "generated",
+      "generator": "counting",
+      "params": {
+        "level": 1,
+        "n_play": 5000,
+        "n_pages": 100,
+        "seed": 7
+      },
+      "domain": "math",
+      "title": "counting play: wordless piles, then naming"
+    },
+    {
+      "id": "g-count-exam",
+      "kind": "generated",
+      "generator": "counting",
+      "params": {
+        "level": 2,
+        "n_pages": 60,
+        "seed": 7
+      },
+      "domain": "math",
+      "title": "how many? \u2014 count fresh piles, speak the word"
+    },
+    {
       "id": "g-math-counting",
       "kind": "generated",
       "generator": "mathbooks",
@@ -198,12 +223,28 @@
   ],
   "stages": [
     {
+      "id": "s0-play",
+      "name": "Counting play (wordless piles + naming)",
+      "sources": [
+        "g-count-play"
+      ],
+      "pass": 0.0
+    },
+    {
       "id": "s1-counting",
       "name": "Counting & number order",
       "sources": [
         "g-math-counting"
       ],
       "pass": 0.8
+    },
+    {
+      "id": "s1b-howmany",
+      "name": "How many? (number fresh piles with its own ruler)",
+      "sources": [
+        "g-count-exam"
+      ],
+      "pass": 0.9
     },
     {
       "id": "s2-arithmetic",
