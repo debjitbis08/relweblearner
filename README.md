@@ -43,6 +43,10 @@ src/relweblearner/
                  # the creature also carries a trace BUS (invariant #4): every epistemic
                  #   op emits a bare episode onto one shared journal.Journal, and relation
                  #   merges are simulated before commit (invariant #8, transport.simulate_merge)
+  numbersense.py # (P1b+P5) the creature's number sense: bare-play pairing episodes build
+                 #   the constructed chain; ostension pages name counted classes; the P5
+                 #   mismatch-minimizing search (over the sign gauge) commits the interface
+                 #   map; word-order steps route through the constructed chain
   datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship, language, society, curriculum, patternbooks, mathbooks, kidbooks
   baselines/     # (P3) TransE / ComplEx (numpy, Adam)
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
@@ -117,6 +121,23 @@ projection, cf-flagged traces on the same bus, refusal with a logged reason
 demote a composable relation to a motif. The bus is the live event stream, not
 checkpoint state — in-RAM and O(experience), honestly noted as the next
 file-backing seam.
+
+**Number sense** (P1b + P5, `numbersense.py`): bare pairing episodes
+(`ingest_play` — collections of opaque objects, no numeral anywhere in the
+stream) construct the P1b number chain; joint ostension pages (`observe` with a
+`collection`) present a pile with a tapped number word, and the creature COUNTS
+the pile itself before recording the naming as a candidate identification. The
+interface map between the word chain and the constructed chain is found by the
+P5 mismatch-minimizing search — extended, stated in the open, over the chain's
+sign gauge (`x ↦ -x` is a Z automorphism) — with committed-at-k discipline and
+miscounts surfacing as offset-outlier POISON. With the map committed, a
+word-order question the word web cannot answer steps along the CONSTRUCTED
+chain (`via: "counting"`): a word heard only in ostension, never in an order
+sentence, gets its order from counting piles — grown, not memorised. And
+`how_many(members)` numbers a fresh pile and speaks its word: the system
+measuring the world with its own ruler. The number sense is a pure projection
+of the episode log (pairing + ostension entries), re-derived on load rather
+than checkpointed.
 
 Two further firehose rungs broaden the world beyond animal attributes:
 `datasets/mathbooks.py` (basic maths — number ordering, one-more, shape sides)

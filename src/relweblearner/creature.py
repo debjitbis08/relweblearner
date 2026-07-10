@@ -54,6 +54,16 @@ consequential merges are SIMULATED before committing (invariant #8) —
 :func:`~relweblearner.transport.simulate_merge` (cf-flagged on the same bus)
 and records rehearsal-refusals with reasons.
 
+Number sense (P1b + P5): bare pairing episodes (:meth:`observe_pairing` /
+:meth:`ingest_play`) build a CONSTRUCTED number chain — classes of piles, no
+numeral ever input — and joint ostension pages (:meth:`observe` with a
+``collection``) name classes the creature counts itself. The P5 interface map,
+found by mismatch-minimizing search (:mod:`~relweblearner.numbersense`),
+identifies the word chain with the constructed chain; word-order questions the
+word web cannot answer then step along the constructed chain (``via:
+"counting"``), and :meth:`how_many` numbers a fresh pile and speaks its word —
+the system measuring the world with its own ruler.
+
 Talk-back (:meth:`about` / :meth:`answer` / :meth:`say`) runs through the shared
 :mod:`~relweblearner.talk` layer, so a streamed creature speaks identically to a
 hand-trained one.
@@ -72,7 +82,9 @@ from . import curriculum as C
 from . import talk as T
 from . import transport as TR
 from .episodelog import EpisodeLog, InMemoryEpisodeLog
+from .holonomy import potential
 from .journal import Journal
+from .numbersense import NumberSense
 from .store import EdgeStore, InMemoryEdgeStore
 
 
@@ -164,6 +176,13 @@ class Creature:
         # file-backed treatment the episode log got. A stated seam, deferred.
         self.bus: Journal = bus if bus is not None else Journal(self.id)
         self.refused_merges: list[dict] = []                   # bounded rehearsal-refusal record
+        # NUMBER SENSE (P1b + P5): the constructed chain and its naming table.
+        # Like the group webs, this is a PROJECTION — of the pairing/ostension
+        # entries in the episode log — so it is not checkpointed; load()
+        # re-projects it from the log (`_reproject_numbers`). Under a
+        # NullEpisodeLog it lives only as long as the process — the honest
+        # price of the opt-out.
+        self.numbers = NumberSense(commit_k=commit_k, source_cap=source_cap)
         self.frames: dict[str, C.Frame] = {}
         self.source_slot: dict[str, int] = {}                  # frame -> picture slot index
         self._rel_parent: dict[str, str] = {}                  # union-find: frame -> relation class
@@ -200,22 +219,69 @@ class Creature:
 
     # ============================================================= streaming ingest
 
-    def observe(self, tokens, picture: str | None = None, source: str = "stream", marks=None) -> dict:
+    def observe(self, tokens, picture: str | None = None, source: str = "stream",
+                marks=None, collection: dict | None = None) -> dict:
         """Log one episode, then distil it into the model (write-ahead: the log
-        is the belief source, the model its projection — invariant #5)."""
+        is the belief source, the model its projection — invariant #5).
+
+        ``collection`` (optional) makes this a JOINT ostension page: a pile of
+        opaque objects (``{"id", "members"}``) presented alongside the caption,
+        whose tapped ``picture`` word names the pile's count. The creature
+        counts the pile itself (P1b routine) — the word is never told which
+        class it means — and the naming accrues as a candidate identification
+        for the P5 interface map (:mod:`~relweblearner.numbersense`)."""
         if source.startswith("act:"):
             # invariant #7: the act namespace belongs to the learner's own moves;
             # external testimony may never claim it.
             raise ValueError("source namespace 'act:' is reserved for the learner's own moves")
         entry = {"kind": "world", "tokens": list(tokens), "picture": picture,
                  "source": source, "marks": [list(m) for m in marks] if marks else None}
+        if collection is not None:
+            entry["collection"] = {"id": collection["id"],
+                                   "members": sorted(collection["members"])}
         seq = self.log.append(entry)
         self.log_position = seq + 1
         r = self._distill(entry)
         outcome = ({f"fact:{r['fact'][0]}:{r['fact'][1]}"} if r.get("parsed")
                    else {f"frontier:{len(entry['tokens'])}"})
         self._trace("observe", {f"log:{seq}"}, outcome)
+        if collection is not None:
+            counted = r.get("counted")
+            self._trace("count", {entry["collection"]["id"]},
+                        {f"position:{counted[0]}"} if counted else {"off-chain"})
         return r
+
+    def observe_pairing(self, id1, members1, id2, members2, pairing=(),
+                        source: str = "play") -> dict:
+        """Log one BARE pairing episode — two collections of opaque objects and
+        a pairing between them (the P1b stream; no token is ever a numeral) —
+        and feed it to the number sense. MATCH/ONEMORE are derived, never given."""
+        if source.startswith("act:"):
+            raise ValueError("source namespace 'act:' is reserved for the learner's own moves")
+        entry = {"kind": "pairing", "id1": id1, "members1": sorted(members1),
+                 "id2": id2, "members2": sorted(members2),
+                 "pairing": [list(p) for p in pairing], "source": source}
+        seq = self.log.append(entry)
+        self.log_position = seq + 1
+        self._feed_pairing(entry)
+        self._trace("pair", {id1}, {id2})
+        return {"logged": seq}
+
+    def ingest_play(self, episodes) -> "Creature":
+        """Stream bare :class:`~relweblearner.episode.Episode` pairings (as the
+        counting dataset emits) through :meth:`observe_pairing`."""
+        n = 0
+        for ep in episodes:
+            self.observe_pairing(ep.id1, ep.members1, ep.id2, ep.members2, ep.pairing)
+            n += 1
+        self.commit()
+        self._trace("ingest", {f"pairings:{n}"}, {"play"})
+        return self
+
+    def _feed_pairing(self, entry: dict) -> None:
+        self.numbers.feed_pairing(entry["id1"], entry["members1"],
+                                  entry["id2"], entry["members2"],
+                                  [tuple(p) for p in entry["pairing"]])
 
     def _distill(self, entry: dict) -> dict:
         """Fold one WORLD log entry into the model (shared by live observation
@@ -225,7 +291,11 @@ class Creature:
         pic = (entry["picture"] or "").strip().lower() or None
         if entry.get("marks"):
             self._add_human_frame(tokens, entry["marks"])
-        return self._absorb({"tokens": tokens, "picture": pic, "source": entry["source"]})
+        r = self._absorb({"tokens": tokens, "picture": pic, "source": entry["source"]})
+        col = entry.get("collection")
+        if col is not None and pic is not None:
+            r["counted"] = self.numbers.name(pic, col["id"], col["members"], entry["source"])
+        return r
 
     def ingest(self, episodes: Iterable[dict]) -> "Creature":
         """Stream a corpus through :meth:`observe` (episodes are ``{book/source,
@@ -237,6 +307,7 @@ class Creature:
                 picture=e.get("picture"),
                 source=e.get("source") or e.get("book", "stream"),
                 marks=e.get("marks"),
+                collection=e.get("collection"),
             )
             n += 1
         merges = self.unify_relations()   # recognise synonymous frames once evidence has accrued
@@ -272,6 +343,8 @@ class Creature:
     def _apply_entry(self, entry: dict) -> None:
         if entry["kind"] == "world":
             self._distill(entry)
+        elif entry["kind"] == "pairing":
+            self._feed_pairing(entry)
         elif entry["kind"] == "act":
             self._apply_act(entry)
 
@@ -333,6 +406,7 @@ class Creature:
         self._rel_groups, self._group_webs, self._cmaps = {}, {}, {}
         self.growth_events = []
         self.refused_merges = []
+        self.numbers = NumberSense(commit_k=self.commit_k, source_cap=self.source_cap)
         self.grown_seq = 0
         self.episodes_seen = self.parsed = self.unparsed = 0
 
@@ -345,6 +419,30 @@ class Creature:
         self._trace("rebuild", {f"entries:{len(self.log)}"},
                     {f"excluded:{len(self.log.excluded())}"})
         return self
+
+    def _reproject_numbers(self) -> None:
+        """Re-derive the number sense from the log's pairing/ostension entries
+        up to the checkpoint position (the tail is :meth:`catch_up`'s job).
+
+        The number web and naming table are projections, not checkpoint state
+        — the word geometry is checkpointed because distilling it is lossy
+        (episodes drop from the buffer), while the number projection is exact
+        replay, so storing it would duplicate the log (invariant #5). Word
+        distillation is NOT re-run here: those entries already shaped the
+        checkpoint."""
+        excluded = self.log.excluded()
+        for seq, entry in self.log.entries(0):
+            if seq >= self.log_position:
+                break
+            if seq in excluded:
+                continue
+            if entry["kind"] == "pairing":
+                self._feed_pairing(entry)
+            elif entry["kind"] == "world" and entry.get("collection"):
+                pic = (entry.get("picture") or "").strip().lower() or None
+                if pic is not None:
+                    col = entry["collection"]
+                    self.numbers.name(pic, col["id"], col["members"], entry["source"])
 
     def retract_episodes(self, seqs, reason: str = "") -> dict:
         """Invariant #6 retraction at EPISODE granularity: flag the entries
@@ -717,6 +815,29 @@ class Creature:
             for r, s in sorted((self._sectors or {}).items())
         ]
 
+    def _numbers_census(self) -> dict:
+        """The number sense, reported: chain length, named positions, map
+        status, and its defects (contradiction self-loops, poison namings)."""
+        ch = self.numbers.chain()
+        m = None
+        if ch.order:
+            self._ensure_transports()
+            for _gid, web in sorted(self._group_webs.items()):
+                m = self.numbers.map(potential(web))
+                if m is not None:
+                    break
+        pos = {rep: i + 1 for i, rep in enumerate(ch.order)}
+        return {
+            "classes": len(ch.order),
+            "contradictions": [list(x) for x in ch.contradictions],
+            "map": None if m is None else {
+                "orientation": m["s"], "offset": m["c"],
+                "named": {w: pos[rep] for w, rep in sorted(m["class_of"].items())
+                          if rep in pos},
+                "poison": len(m["poison"]), "conflicts": m["conflicts"],
+            },
+        }
+
     def _fresh_concept(self) -> str:
         """A durable opaque id for a posited concept. Hyphenated, so it can
         never collide with a tokenised surface word."""
@@ -771,12 +892,52 @@ class Creature:
             fact = (given, n) if forward else (n, given)
             res["answers"].append({"answer": n, "status": "derived",
                                    "sentence": self._render_via(fact, res["frame"])})
+        if not res["answers"]:
+            # the word web cannot answer: try the P5 interface — step along the
+            # CONSTRUCTED number chain instead (order learned from counting
+            # piles, not from sentences), voicing through the question's frame.
+            w = self._interface_answer(qclass, given, forward, sector, web)
+            if w is not None:
+                fact = (given, w) if forward else (w, given)
+                res["answers"].append({"answer": w, "status": "derived", "via": "counting",
+                                       "sentence": self._render_via(fact, res["frame"])})
         if not res["answers"] and given in web.nodes:
             self._probe_growth(res, web, qclass, given, forward)
         rank = {"committed": 0, "derived": 1, "provisional": 2, "grown": 3, "rewired": 3}
         res["answers"].sort(key=lambda a: rank.get(a["status"], 4))
         res["known"] = bool(res["answers"])
         return res
+
+    def _interface_answer(self, qclass, given, forward, sector, web) -> str | None:
+        """One word-order step routed through the constructed chain: word →
+        class (the committed interface map) → ``s·t`` successor steps → class →
+        word. Answers exist here that the word web cannot reach — a word known
+        only from ostension has no order edge, but its CLASS has a position."""
+        m = self.numbers.map(potential(web))
+        if m is None:
+            return None
+        t = sector.transport if forward else web.algebra.dagger(sector.transport)
+        return self.numbers.word_step(m, potential(web), given, t)
+
+    def how_many(self, members) -> dict:
+        """Number a pile of opaque objects with the creature's own ruler: the
+        P1b counting routine gives the class, the P5 interface map gives the
+        word. Answerable exactly as far as the chain is built and named."""
+        self._ensure_transports()
+        counted = self.numbers.count_fresh(members)
+        word = None
+        if counted is not None:
+            for _gid, web in sorted(self._group_webs.items()):
+                m = self.numbers.map(potential(web))
+                if m is not None:
+                    word = m["word_of"].get(counted[1])
+                    if word is not None:
+                        break
+        self._trace("how-many",
+                    {f"position:{counted[0]}"} if counted else {"off-chain"},
+                    {word or "unnamed"})
+        return {"known": word is not None, "word": word,
+                "position": counted[0] if counted else None}
 
     def _probe_growth(self, res: dict, web: TR.Web, qclass: str, given: str, forward: bool) -> None:
         """The P1 engine on the question's group web; a committed move is
@@ -897,10 +1058,11 @@ class Creature:
         while "this one page of an otherwise-good source was wrong" does not."""
         before = self.edges.num_committed(self.commit_k)
         touched = self.edges.retract_source(source)
+        namings = self.numbers.retract_source(source)   # the naming table decrements too
         after = self.edges.num_committed(self.commit_k)
         self._sectors = None                        # geometry changed; transports are stale
-        self._trace("retract-source", {source}, {f"touched:{touched}"})
-        return {"source": source, "edges_touched": touched,
+        self._trace("retract-source", {source}, {f"touched:{touched + namings}"})
+        return {"source": source, "edges_touched": touched, "namings_touched": namings,
                 "committed_before": before, "committed_after": after,
                 "uncommitted": before - after}
 
@@ -944,6 +1106,7 @@ class Creature:
             "defects": self.defects(),
             "growth": {"count": len(self.growth_events), "budget": self.growth_budget,
                        "events": self.growth_events[-10:]},
+            "numbers": self._numbers_census(),
             "bus": vars(self.bus.counts()).copy(),
 
             "committed": [
@@ -1274,8 +1437,11 @@ class Creature:
     def load(cls, path: str | Path, log: EpisodeLog | None = None) -> "Creature":
         """Restore the checkpoint; if the given log has grown past it (another
         writer appended, or a crash lost a save), replay the tail (invariant #5:
-        the log is the belief source, the file just a checkpoint of it)."""
+        the log is the belief source, the file just a checkpoint of it). The
+        number sense — a pure projection — re-derives from the log's pairing
+        and ostension entries."""
         c = cls.from_dict(json.loads(Path(path).read_text(encoding="utf-8")), log=log)
+        c._reproject_numbers()
         if len(c.log) > c.log_position:
             c.catch_up()
         return c

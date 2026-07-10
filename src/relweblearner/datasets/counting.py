@@ -74,6 +74,38 @@ def random_stream(cols, n_episodes: int, seed: int = 0) -> list[Episode]:
     return [pairing_episode(cols, *rng.sample(keys, 2), rng=rng) for _ in range(n_episodes)]
 
 
+def joint_pages(
+    cols: dict[str, list[str]],
+    number_words: list[str],
+    *,
+    n_pages: int = 60,
+    books: tuple = ("cb1", "cb2", "cb3"),
+    seed: int = 0,
+) -> list[dict]:
+    """JOINT ostension pages: a pile of opaque objects presented with a caption
+    whose tapped word names its count — ``{book, tokens, picture, collection}``.
+
+    ``number_words[s]`` is the word for size ``s`` — the DATASET knows sizes
+    (it is the world); the learner is never told which class a word means and
+    must count the pile itself. The pile is the collection verbatim (ids shared
+    with the play stream — cross-episode identity is the one given)."""
+    rng = random.Random(seed)
+    sizes = {s: ks for s, ks in by_size(cols).items() if s < len(number_words)}
+    order = sorted(sizes)
+    pages = []
+    for i in range(n_pages):
+        s = order[i % len(order)]       # leveled: every size it teaches recurs
+        k = rng.choice(sizes[s])
+        w = number_words[s]
+        pages.append({
+            "book": rng.choice(list(books)),
+            "tokens": ["here", "are", w],
+            "picture": w,
+            "collection": {"id": k, "members": sorted(cols[k])},
+        })
+    return pages
+
+
 def staged_stream(cols, small_max: int, n_small: int, n_full: int, seed: int = 0):
     """A small-collections-first schedule (e1b accept d).
 
