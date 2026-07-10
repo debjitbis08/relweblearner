@@ -99,11 +99,43 @@ is constant.
 - `experiments/ec_scale.py` — the scale soak.
 - `tests/test_creature.py` — bounded-model, streaming, identity, persistence.
 
+## Indexed store — the web past memory (`store.py`)
+
+The concept web's nodes + edges are the one unbounded part of the geometry. When
+they outgrow a JSON blob / RAM, they move behind an **`EdgeStore`** — queried by
+NEIGHBOURHOOD, never loaded whole:
+
+- **`InMemoryEdgeStore`** — dict backing (small / interactive; the `Creature`
+  default, so existing behaviour is unchanged);
+- **`SqliteEdgeStore`** — B-tree-indexed tables (`nodes`, `edges`, `edge_rel`,
+  `edge_src`) on disk. `observe` upserts one edge incrementally; point and
+  neighbourhood queries are indexed; the **database file *is* the persistence**
+  (reopen without re-ingest, no full rewrite);
+- **`ShardedEdgeStore`** — routes edges to N shard stores by source concept, so no
+  single file/process holds the whole web. Forward queries (`out_edges`, `get`,
+  `bump`) hit one shard; reverse queries (`in_edges`) fan out.
+
+A `Creature` takes any of these via `store=`. Everything else it holds (frames,
+frontier, the capped buffer) stays bounded in memory; only the edges are
+externalised. Measured (`experiments/ec_store.py`, open world streamed to disk):
+
+| animals | episodes | nodes | edges | db | ingest | point query |
+|--------:|---------:|------:|------:|---:|-------:|------------:|
+| 5,000   | 10,000   | 5,006 | 5,000 | 0.3 MB | 0.46s | 51 µs |
+| 50,000  | 100,000  | 50,006 | 50,000 | 10 MB | 4.8s | 57 µs |
+| 200,000 | 400,000  | 200,006 | 200,000 | 42 MB | 20s | 54 µs |
+
+The web grows with the world (200k concepts → 200k edges, on disk), yet **point-query
+latency stays flat** — `about`/`answer` cost `O(neighbourhood)`, not `O(web)`,
+however large the geometry gets. Sharded across 6 files it splits evenly (~10k
+edges each). JSON geometry migrates into a store via `EdgeStore.put`.
+
 ## Not yet built (next steps)
 
-- A real store (SQLite/DuckDB) with the model as indexed tables + an optional
-  archived/sampled episode stream, when a single JSON model file is outgrown.
-- Migrating the web app to serve **named creatures** (identity in the API/UI).
+- Migrating the web app to serve **named creatures** (identity in the API/UI),
+  and per-creature store selection (in-memory vs on-disk vs sharded).
+- An archived/sampled episode stream alongside the store (currently episodes are
+  distilled and dropped; keeping a sampled trail would aid audit/replay).
 - Cross-frame relation identity (the `is` and `see` frames express the *same*
   colour relation) — currently each frame is its own relation; unifying them is
   R3-adjacent entity-resolution work.

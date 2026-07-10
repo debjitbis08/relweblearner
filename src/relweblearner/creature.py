@@ -41,6 +41,7 @@ from typing import Iterable
 
 from . import curriculum as C
 from . import talk as T
+from .store import EdgeStore, InMemoryEdgeStore
 
 
 def _slug(name: str) -> str:
@@ -63,6 +64,7 @@ class Creature:
         exemplar_cap: int = 5,
         created: str | None = None,
         level: int | None = None,
+        store: EdgeStore | None = None,
     ):
         self.name = name
         self.id = _slug(name)
@@ -77,10 +79,14 @@ class Creature:
         self.source_cap = source_cap
         self.exemplar_cap = exemplar_cap
 
-        # ------- bounded model (memory grows with what is LEARNED) -------
+        # The concept web's edges are the ONE unbounded part of the geometry — they
+        # live behind an indexed EdgeStore (in-memory by default; SQLite / sharded
+        # for open-world scale). Everything else a creature holds is bounded and
+        # stays in memory: the language web (frames), the frontier census, and the
+        # capped rolling induction buffer.
+        self.edges: EdgeStore = store if store is not None else InMemoryEdgeStore()
         self.frames: dict[str, C.Frame] = {}
         self.source_slot: dict[str, int] = {}                  # frame -> picture slot index
-        self.evidence: dict[tuple, dict] = {}                  # (src,tgt) -> {count, sources, frame}
         self.frontier: dict[int, dict] = {}                    # length -> {count, exemplars}
         self._buffer: list[dict] = []                          # rolling unparsed episodes
         self._since_induction = 0
@@ -110,7 +116,16 @@ class Creature:
                 source=e.get("source") or e.get("book", "stream"),
                 marks=e.get("marks"),
             )
+        self.commit()
         return self
+
+    def commit(self) -> None:
+        """Flush pending store writes (a no-op for the in-memory backend)."""
+        if hasattr(self.edges, "commit"):
+            self.edges.commit()
+
+    def close(self) -> None:
+        self.edges.close()
 
     def _absorb(self, ep: dict) -> dict:
         r = C.parse(ep["tokens"], self.frames)
@@ -131,13 +146,7 @@ class Creature:
         return {"parsed": False, "frontier": True, "fact": None}
 
     def _bump_fact(self, fact, source, fid, fillers, picture) -> None:
-        e = self.evidence.get(fact)
-        if e is None:
-            e = self.evidence[fact] = {"count": 0, "sources": set(), "frames": set()}
-        e["count"] += 1
-        e["frames"].add(fid)                          # relation typing: which frames express it
-        if len(e["sources"]) < self.source_cap:      # capped: commitment (>= commit_k) stays decidable
-            e["sources"].add(source)
+        self.edges.bump(fact[0], fact[1], fid, source, self.source_cap)   # indexed, incremental
         if picture is not None and fid not in self.source_slot:
             for i, fill in enumerate(fillers):
                 if fill == picture:
@@ -206,55 +215,81 @@ class Creature:
     # ============================================================= belief / queries
 
     def _status(self, fact: tuple) -> str:
-        e = self.evidence.get(fact)
+        e = self.edges.get(*fact)
         if e is None:
             return "unknown"
         return "committed" if len(e["sources"]) >= self.commit_k else "provisional"
 
-    def state(self) -> dict:
-        """The shared talk-back view (see :mod:`~relweblearner.talk`)."""
-        facts = {fact: ev["sources"] for fact, ev in self.evidence.items()}
-        committed = {fact for fact, ev in self.evidence.items() if len(ev["sources"]) >= self.commit_k}
-        fact_frames = {fact: ev["frames"] for fact, ev in self.evidence.items()}
+    def _state_for(self, edges: list) -> dict:
+        """A talk-back state (see :mod:`~relweblearner.talk`) over ONLY the given
+        edges ``(src, tgt, info)`` — a neighbourhood, never the whole web. Frames
+        and slot orientation are bounded and always in memory."""
+        facts, committed, fact_frames = {}, set(), {}
+        for s, t, info in edges:
+            facts[(s, t)] = info["sources"]
+            fact_frames[(s, t)] = info["frames"]
+            if len(info["sources"]) >= self.commit_k:
+                committed.add((s, t))
         return {"frames": self.frames, "facts": facts, "committed": committed,
                 "source_slot": self.source_slot, "fact_frames": fact_frames}
 
     def about(self, referent: str) -> dict:
-        return T.about(self.state(), referent)
+        r = referent.strip().lower()
+        return T.about(self._state_for([(r, t, i) for t, i in self.edges.out_edges(r)]), r)
 
     def answer(self, phrase: str) -> dict:
         from .reader import tokenize
-        return T.answer(self.state(), tokenize(phrase))
+        tokens = tokenize(phrase)
+        # load the neighbourhood of each content token (the given filler is among
+        # them) — indexed lookups, not a full-web scan.
+        content = [t for t in tokens if t not in ("?", "_") and not self._is_anchor(t)]
+        edges = []
+        for tok in content:
+            edges += [(tok, t, i) for t, i in self.edges.out_edges(tok)]
+            edges += [(s, tok, i) for s, i in self.edges.in_edges(tok)]
+        return T.answer(self._state_for(edges), tokens)
+
+    def _is_anchor(self, tok: str) -> bool:
+        return any(tok in f.anchors for f in self.frames.values())
 
     def say(self, referent: str | None = None, limit: int = 20) -> list[dict]:
-        return T.say(self.state(), referent, limit)
+        if referent is not None:
+            r = referent.strip().lower()
+            edges = [(r, t, i) for t, i in self.edges.out_edges(r)]
+        else:
+            edges = self.edges.committed(self.commit_k, limit=max(limit * 3, limit))
+        return T.say(self._state_for(edges), referent, limit)
 
     # ============================================================= metrics / snapshot
 
-    def snapshot(self) -> dict:
-        st = self.state()
+    def snapshot(self, committed_limit: int = 200) -> dict:
         total = self.parsed + self.unparsed
+        n_edges = self.edges.num_edges()
+        n_committed = self.edges.num_committed(self.commit_k)
+        committed_edges = self.edges.committed(self.commit_k, limit=committed_limit)
+        st = self._state_for(committed_edges)   # render only the shown committed facts
         return {
             "identity": {"name": self.name, "id": self.id, "created": self.created, "level": self.level},
             "episodes_seen": self.episodes_seen,
             "model_size": {
+                "nodes": self.edges.num_nodes(),
                 "frames": len(self.frames),
-                "facts": len(self.evidence),
+                "facts": n_edges,
                 "frontier_clusters": len(self.frontier),
                 "buffer": len(self._buffer),
             },
             "coverage": round(self.parsed / total, 3) if total else 0.0,
-            "assimilation_rate": round(len(st["committed"]) / self.episodes_seen, 4) if self.episodes_seen else 0.0,
+            "assimilation_rate": round(n_committed / self.episodes_seen, 4) if self.episodes_seen else 0.0,
             "frames": [
                 {"id": f.id, "template": f.template, "anchors": list(f.anchors), "n_slots": f.n_slots}
                 for f in sorted(self.frames.values(), key=lambda fr: fr.id)
             ],
             "committed": [
-                {"source": s, "target": t, "sources": sorted(self.evidence[(s, t)]["sources"]),
-                 "sentence": T.render_fact(s, t, st)}
-                for (s, t) in sorted(st["committed"])
+                {"source": s, "target": t, "sources": sorted(info["sources"]), "sentence": T.render_fact(s, t, st)}
+                for (s, t, info) in committed_edges
             ],
-            "provisional_count": len(self.evidence) - len(st["committed"]),
+            "committed_count": n_committed,
+            "provisional_count": n_edges - n_committed,
             "frontier": {str(k): v for k, v in sorted(self.frontier.items())},
         }
 
@@ -275,14 +310,13 @@ class Creature:
           * **language web** — the induced frames (constructions over the sequence
             web) and each frame's picture-slot orientation.
         """
-        nodes = sorted({n for e in self.evidence for n in e})
-        edges = [
-            {"src": s, "tgt": t, "rel": sorted(ev["frames"]),
-             "count": ev["count"], "sources": sorted(ev["sources"])}
-            for (s, t), ev in sorted(self.evidence.items())
-        ]
+        edges, node_set = [], set()
+        for s, t, ev in sorted(self.edges.iter_edges()):
+            node_set.update((s, t))
+            edges.append({"src": s, "tgt": t, "rel": sorted(ev["frames"]),
+                          "count": ev["count"], "sources": sorted(ev["sources"])})
         return {
-            "concept_web": {"nodes": nodes, "edges": edges},
+            "concept_web": {"nodes": sorted(node_set), "edges": edges},
             "language_web": {
                 "frames": {fid: [list(e) for e in f.pattern] for fid, f in self.frames.items()},
                 "source_slot": self.source_slot,
@@ -298,12 +332,13 @@ class Creature:
 
         from . import geometry as Geo
 
-        nodes = sorted({n for e in self.evidence for n in e})
+        all_edges = list(self.edges.iter_edges())
+        nodes = sorted({n for s, t, _ in all_edges for n in (s, t)})
         if len(nodes) <= dim:
             return {"nodes": nodes, "coords": [], "note": "too few nodes to embed"}
         idx = {n: i for i, n in enumerate(nodes)}
         A = np.zeros((len(nodes), len(nodes)))
-        for (s, t), ev in self.evidence.items():
+        for s, t, ev in all_edges:
             A[idx[s]][idx[t]] += ev["count"]
             A[idx[t]][idx[s]] += ev["count"]
         try:
@@ -345,10 +380,8 @@ class Creature:
         lang = geo["language_web"]
         c.frames = {fid: C.Frame(fid, tuple(tuple(e) for e in pat)) for fid, pat in lang["frames"].items()}
         c.source_slot = {k: int(v) for k, v in lang["source_slot"].items()}
-        c.evidence = {
-            (e["src"], e["tgt"]): {"count": e["count"], "sources": set(e["sources"]), "frames": set(e["rel"])}
-            for e in geo["concept_web"]["edges"]
-        }
+        for e in geo["concept_web"]["edges"]:
+            c.edges.put(e["src"], e["tgt"], {"count": e["count"], "sources": e["sources"], "frames": e["rel"]})
         c.frontier = {int(k): v for k, v in d["frontier"].items()}
         c._buffer = list(d.get("working", {}).get("buffer", []))
         return c
