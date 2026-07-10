@@ -447,35 +447,49 @@ function drawWeb(g){
   const svg = $("websvg"); svg.innerHTML = "";
   if (!g.focus) return;
   const W = 1000, H = 520, cx = W/2, cy = H/2;
-  const outs = g.edges.filter(e => e.source === g.focus);
-  const ins  = g.edges.filter(e => e.target === g.focus && e.source !== g.focus);
-  const place = (list, side) => list.map((e, i) => {
-    const n = list.length, span = Math.min(Math.PI*1.15, .5 + n*.28);
-    const a = (n === 1 ? 0 : (i/(n-1) - .5)) * span;
-    const r = 175 + (i % 2) * 55;
-    return { e, x: cx + side * Math.cos(a) * r * 2.1, y: cy + Math.sin(a) * r,
-             other: side > 0 ? e.target : e.source };
-  });
-  const P = [...place(outs, +1), ...place(ins, -1)];
+  // ONE node per neighbour concept. A neighbour that is both a source and a
+  // target of the focus (a converse pair — "four is before five" / "five comes
+  // after four") is a SINGLE node carrying both relations, never two glyphs.
+  const byOther = new Map();
+  for (const e of g.edges){
+    const other = e.source === g.focus ? e.target : e.source;
+    if (other === g.focus) continue;
+    if (!byOther.has(other)) byOther.set(other, {other, rels:new Set(), out:false, in:false, committed:false});
+    const o = byOther.get(other);
+    o.rels.add(e.rel);
+    if (e.source === g.focus) o.out = true; else o.in = true;
+    o.committed = o.committed || e.committed;
+  }
+  const nbrs = [...byOther.values()].sort((a,b) => a.other.localeCompare(b.other));
+  const N = nbrs.length;
   const NS = "http://www.w3.org/2000/svg";
   const mk = (t, at) => { const el = document.createElementNS(NS, t); for (const k in at) el.setAttribute(k, at[k]); return el; };
+  const P = nbrs.map((o, i) => {
+    const a = (i / Math.max(1, N)) * 2 * Math.PI - Math.PI/2;   // full ring, even spacing
+    const r = 168 + (i % 2) * 46;
+    return { o, x: cx + Math.cos(a) * r * 2.0, y: cy + Math.sin(a) * r, a };
+  });
   for (const p of P){
-    const grown = /^new-/.test(p.other);
-    const col = grown ? "var(--grown)" : p.e.committed ? "var(--committed)" : "var(--provisional)";
+    const grown = /^new-/.test(p.o.other);
+    const col = grown ? "var(--grown)" : p.o.committed ? "var(--committed)" : "var(--provisional)";
+    // an arrowless line, but marked with direction: → out, ← in, ↔ both (converse)
     svg.appendChild(mk("line", {x1:cx, y1:cy, x2:p.x, y2:p.y, stroke:col,
-      "stroke-width": p.e.committed ? 1.6 : 1, "stroke-dasharray": (p.e.committed && !grown) ? "" : "4 4", opacity:.55}));
+      "stroke-width": p.o.committed ? 1.6 : 1, "stroke-dasharray": (p.o.committed && !grown) ? "" : "4 4", opacity:.5}));
+    const dir = p.o.out && p.o.in ? "↔" : p.o.out ? "→" : "←";
+    const rel = [...p.o.rels].join(", ");
     const tl = mk("text", {x:(cx+p.x)/2, y:(cy+p.y)/2 - 4, "text-anchor":"middle", class:"rel"});
-    tl.textContent = p.e.rel; svg.appendChild(tl);
+    tl.textContent = `${dir} ${rel}`; svg.appendChild(tl);
   }
   for (const p of P){
-    const grown = /^new-/.test(p.other);
+    const grown = /^new-/.test(p.o.other);
     const nd = mk("g", {class:"nd"});
-    const t = mk("text", {x:p.x, y:p.y, "text-anchor":"middle"});
-    t.textContent = p.other;
+    const anchor = p.x < cx - 30 ? "end" : p.x > cx + 30 ? "start" : "middle";
+    const t = mk("text", {x:p.x, y:p.y, "text-anchor":anchor});
+    t.textContent = p.o.other;
     if (grown) t.setAttribute("fill", "var(--grown)");
-    else if (!p.e.committed) t.setAttribute("fill", "var(--dim)");
+    else if (!p.o.committed) t.setAttribute("fill", "var(--dim)");
     nd.appendChild(t);
-    nd.onclick = () => loadWeb(p.other);
+    nd.onclick = () => loadWeb(p.o.other);
     svg.appendChild(nd);
   }
   const f = mk("g", {class:"focus"});

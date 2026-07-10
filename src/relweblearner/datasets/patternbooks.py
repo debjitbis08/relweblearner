@@ -29,17 +29,33 @@ COLOURS = ["red", "blue", "green", "yellow", "brown", "grey", "black", "white"]
 FOODS = ["grass", "meat", "corn", "fish", "leaves", "honey", "seeds", "roots"]
 LEGS = ["two", "four", "six", "eight"]
 
+# Leg counts are BIOLOGICAL, not random: "owl has four legs" is the kind of
+# plainly-false fact that makes the whole web look untrustworthy. Colour/food
+# stay arbitrary-but-consistent (a toy world's job is to be a recoverable
+# functional mapping, not an encyclopedia), but a leg count everyone knows must
+# be right. This is also what makes property inheritance meaningful — an owl
+# inherits two legs *because it is a bird*, and that only reads true if birds
+# actually have two legs here.
+LEGS_BY_ANIMAL = {
+    "bird": "two", "duck": "two", "owl": "two",
+    "spider": "eight", "ant": "six",
+    "bear": "four", "cat": "four", "frog": "four", "horse": "four", "lion": "four",
+    "cow": "four", "dog": "four", "pig": "four", "goat": "four", "wolf": "four",
+    "deer": "four",
+}
+
 
 def _world(seed: int) -> dict:
     """A deterministic functional world: each animal has one colour, one food and
     a leg-count. This is the truth reading is scored against — never shown as
-    labels, only expressed through frames."""
+    labels, only expressed through frames. Colour/food are seeded-arbitrary;
+    leg counts follow real biology (:data:`LEGS_BY_ANIMAL`)."""
     rng = random.Random(seed)
     return {
         a: {
             "colour": rng.choice(COLOURS),
             "food": rng.choice(FOODS),
-            "legs": rng.choice(LEGS),
+            "legs": LEGS_BY_ANIMAL[a],
         }
         for a in ANIMALS
     }
