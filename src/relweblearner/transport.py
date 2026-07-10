@@ -58,7 +58,7 @@ __all__ = [
     "ANTISYMMETRIC", "NON_HOMOGENEOUS", "SYMMETRIC", "UNCONSTRAINED",
     "RelationSector", "SectorGrowth", "Web",
     "build_group_webs", "defect_report", "derive", "infer",
-    "non_homogeneous_by_defect",
+    "non_homogeneous_by_defect", "simulate_merge",
 ]
 
 
@@ -174,12 +174,21 @@ def build_group_webs(
     sectors: dict[str, RelationSector],
     groups: dict[str, str],
     name: str = "creature",
+    journal=None,
+    cf: bool = False,
 ) -> dict[str, Web]:
     """One algebra-valued :class:`Web` per constraint group.
 
     Motif (non-homogeneous) classes carry no transport and are left out —
     their edges remain in the store as facts; they are simply not composable.
     Insertion order is fully sorted so the projection is deterministic.
+
+    ``journal``/``cf`` thread through to :class:`Web`. The creature's CACHED
+    projections pass neither: re-deriving a projection from already-committed
+    facts is bookkeeping whose constituting acts are already on the bus, and
+    re-emitting thousands of ``add_edge`` traces per staleness rebuild would
+    bury the act stream. SIMULATION webs (:func:`simulate_merge`) do ride the
+    shared bus, ``cf``-flagged — imagined episodes are episodes (invariant #8).
     """
     members: dict[str, list[str]] = defaultdict(list)
     for r, gid in groups.items():
@@ -187,13 +196,79 @@ def build_group_webs(
             members[gid].append(r)
     webs: dict[str, Web] = {}
     for gid, rs in sorted(members.items()):
-        w = Web(IntegerGroup(), name=f"{name}:{gid}")
+        w = Web(IntegerGroup(), name=f"{name}:{gid}", journal=journal, cf=cf)
         for r in sorted(rs):
             g = sectors[r].transport
             for (s, t) in sorted(cmaps[r]):
                 w.add_edge(s, t, r, g)
         webs[gid] = w
     return webs
+
+
+def simulate_merge(
+    cmaps: dict[str, set],
+    class_a: str,
+    class_b: str,
+    exception_fraction: float = 0.2,
+    journal=None,
+    name: str = "sim",
+) -> dict:
+    """Fork-score-discard for a relation-class merge (invariant #8).
+
+    A merge of two relation classes is a consequential move: it changes which
+    loops exist and which transports are forced. So it is IMAGINED first — the
+    class maps are re-inferred and re-projected twice, once as they stand and
+    once with ``class_b`` folded into ``class_a`` — and the verdict compares
+    the two counterfactual projections. The real projection is never touched;
+    both trial builds ride the shared ``journal`` ``cf``-flagged, so the
+    imagining itself is on the record and can never enter belief
+    (:func:`relweblearner.simulate.committed_has_no_cf` holds by construction).
+
+    Scoring is restricted to the constraint groups ``class_a`` and ``class_b``
+    belong to: a merge only rewires loop evidence through its own classes'
+    gauge groups, so distant groups cannot change verdict-relevant mass — the
+    restriction is an efficiency statement, not an approximation of policy.
+
+    REFUSED iff either:
+
+      * the merged class comes out NON-HOMOGENEOUS when neither part was — the
+        merge destroys composability (a motif demotion is a worsening even
+        though a motif web carries no holonomy to count); or
+      * defect mass over the touched groups strictly increases — the merge
+        manufactures contradictions.
+
+    Returns ``{"commit", "reason", "defect_delta", "degrades"}``.
+    """
+    base_sectors, base_groups = infer(cmaps, exception_fraction)
+    ga = base_groups.get(class_a, class_a)
+    gb = base_groups.get(class_b, class_b)
+    touched = {r for r, g in base_groups.items() if g in (ga, gb)}
+    base_slice = {r: cmaps[r] for r in touched if r in cmaps}
+
+    bs, bg = infer(base_slice, exception_fraction)
+    bwebs = build_group_webs(base_slice, bs, bg, name=f"{name}:base", journal=journal, cf=True)
+    base_mass = defect_report(bwebs)["mass"]
+
+    trial_slice = {r: set(e) for r, e in base_slice.items() if r != class_b}
+    trial_slice[class_a] = trial_slice.get(class_a, set()) | cmaps.get(class_b, set())
+    ts, tg = infer(trial_slice, exception_fraction)
+    twebs = build_group_webs(trial_slice, ts, tg, name=f"{name}:trial", journal=journal, cf=True)
+    trial_mass = defect_report(twebs)["mass"]
+
+    was_motif = any(
+        base_sectors[r].sector == NON_HOMOGENEOUS
+        for r in (class_a, class_b) if r in base_sectors
+    )
+    merged = ts.get(class_a)
+    degrades = merged is not None and merged.sector == NON_HOMOGENEOUS and not was_motif
+    delta = trial_mass - base_mass
+    if degrades:
+        return {"commit": False, "degrades": True, "defect_delta": delta,
+                "reason": "merged class loses homogeneity (motif demotion)"}
+    if delta > 0:
+        return {"commit": False, "degrades": False, "defect_delta": delta,
+                "reason": f"defect mass would rise by {delta}"}
+    return {"commit": True, "degrades": False, "defect_delta": delta, "reason": "clean"}
 
 
 def non_homogeneous_by_defect(

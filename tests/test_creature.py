@@ -143,10 +143,12 @@ def test_persistence_is_bounded_and_reloads_identically(tmp_path):
     path = tmp_path / "saver.json"
     c.save(path)
     after = Creature.load(path).snapshot()
-    # the "log" census reports the EpisodeLog, separate state by design: a
-    # reload without its log honestly shows an empty history. The distilled
+    # the "log" census reports the EpisodeLog and "bus" the live trace stream —
+    # both separate state by design: a reload without its log honestly shows an
+    # empty history, and a reloaded creature starts a fresh bus. The distilled
     # MODEL — everything else in the snapshot — reloads exactly.
     assert before.pop("log")["entries"] == 4000 and after.pop("log")["entries"] == 0
+    assert before.pop("bus")["total"] > after.pop("bus")["total"]
     assert before == after
 
     # bounded: the persisted MODEL is smaller than even the bare token text of the

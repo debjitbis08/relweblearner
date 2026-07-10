@@ -44,6 +44,16 @@ deliberate :meth:`rebuild` replays the whole log through the current frames.
 Only a :class:`~relweblearner.episodelog.NullEpisodeLog` (the explicit opt-out)
 trades retroactivity away entirely.
 
+No silent operations (invariant #4): every epistemic act — observing, inducing
+a frame, merging relations, growing, retracting, answering, even taking a
+snapshot — emits a bare trace episode onto one shared
+:class:`~relweblearner.journal.Journal` bus via the single :meth:`_trace` seam,
+so the P6 reflection machinery consumes the creature's own acts unchanged; and
+consequential merges are SIMULATED before committing (invariant #8) —
+:meth:`unify_relations` runs each candidate through
+:func:`~relweblearner.transport.simulate_merge` (cf-flagged on the same bus)
+and records rehearsal-refusals with reasons.
+
 Talk-back (:meth:`about` / :meth:`answer` / :meth:`say`) runs through the shared
 :mod:`~relweblearner.talk` layer, so a streamed creature speaks identically to a
 hand-trained one.
@@ -62,6 +72,7 @@ from . import curriculum as C
 from . import talk as T
 from . import transport as TR
 from .episodelog import EpisodeLog, InMemoryEpisodeLog
+from .journal import Journal
 from .store import EdgeStore, InMemoryEdgeStore
 
 
@@ -96,6 +107,7 @@ class Creature:
         level: int | None = None,
         store: EdgeStore | None = None,
         log: EpisodeLog | None = None,
+        bus: Journal | None = None,
     ):
         self.name = name
         self.id = _slug(name)
@@ -141,6 +153,17 @@ class Creature:
         # opt-out with decrement-only retraction.
         self.log: EpisodeLog = log if log is not None else InMemoryEpisodeLog()
         self.log_position = 0
+        # The trace BUS (invariant #4): every epistemic operation emits a bare
+        # episode here — the core :class:`~relweblearner.journal.Journal`, so
+        # reflection (P6) runs over the creature's acts with the machinery
+        # unchanged and simulations ride it cf-flagged (invariant #8). The bus
+        # is the LIVE event stream, not checkpoint state: it is deliberately
+        # not serialised (a reloaded creature starts a fresh bus — its durable
+        # history is the episode LOG above). Honest limit: the bus is in-RAM
+        # and unbounded, O(experience); at open-world scale it needs the same
+        # file-backed treatment the episode log got. A stated seam, deferred.
+        self.bus: Journal = bus if bus is not None else Journal(self.id)
+        self.refused_merges: list[dict] = []                   # bounded rehearsal-refusal record
         self.frames: dict[str, C.Frame] = {}
         self.source_slot: dict[str, int] = {}                  # frame -> picture slot index
         self._rel_parent: dict[str, str] = {}                  # union-find: frame -> relation class
@@ -162,6 +185,19 @@ class Creature:
         self.parsed = 0
         self.unparsed = 0
 
+    # ============================================================= tracing (invariant #4)
+
+    def _trace(self, tag: str, members1, members2, pairing=(), *, cf: bool = False):
+        """The single emission seam, mirroring :meth:`Web._trace`: every
+        epistemic act — ingest, induction, merge, growth, retraction, query —
+        puts a bare episode on the shared bus. Members are small sets of
+        opaque marker strings, never payloads: an ``observe`` trace REFERENCES
+        its log entry (``log:<seq>``) rather than duplicating it, so the bus
+        indexes the streams it unifies. Excluded on purpose: ``commit`` /
+        ``close`` / ``save`` / ``load`` / ``to_dict`` / ``from_dict`` — pure
+        persistence plumbing that moves bytes, not beliefs."""
+        return self.bus.emit(members1, members2, pairing, cf=cf, tag=tag)
+
     # ============================================================= streaming ingest
 
     def observe(self, tokens, picture: str | None = None, source: str = "stream", marks=None) -> dict:
@@ -173,8 +209,13 @@ class Creature:
             raise ValueError("source namespace 'act:' is reserved for the learner's own moves")
         entry = {"kind": "world", "tokens": list(tokens), "picture": picture,
                  "source": source, "marks": [list(m) for m in marks] if marks else None}
-        self.log_position = self.log.append(entry) + 1
-        return self._distill(entry)
+        seq = self.log.append(entry)
+        self.log_position = seq + 1
+        r = self._distill(entry)
+        outcome = ({f"fact:{r['fact'][0]}:{r['fact'][1]}"} if r.get("parsed")
+                   else {f"frontier:{len(entry['tokens'])}"})
+        self._trace("observe", {f"log:{seq}"}, outcome)
+        return r
 
     def _distill(self, entry: dict) -> dict:
         """Fold one WORLD log entry into the model (shared by live observation
@@ -189,6 +230,7 @@ class Creature:
     def ingest(self, episodes: Iterable[dict]) -> "Creature":
         """Stream a corpus through :meth:`observe` (episodes are ``{book/source,
         tokens, picture, marks}`` dicts, as the generator emits)."""
+        n = 0
         for e in episodes:
             self.observe(
                 e["tokens"],
@@ -196,8 +238,10 @@ class Creature:
                 source=e.get("source") or e.get("book", "stream"),
                 marks=e.get("marks"),
             )
-        self.unify_relations()   # recognise synonymous frames once evidence has accrued
+            n += 1
+        merges = self.unify_relations()   # recognise synonymous frames once evidence has accrued
         self.commit()
+        self._trace("ingest", {f"episodes:{n}"}, {f"merges:{merges}"})
         return self
 
     def ingest_source(self, source_id: str, episodes: Iterable[dict]) -> "Creature":
@@ -205,6 +249,7 @@ class Creature:
         incremental run skips what has already been read."""
         self.ingest(episodes)
         self.read_sources.add(source_id)
+        self._trace("ingest-source", {source_id}, {"read"})
         return self
 
     def commit(self) -> None:
@@ -257,6 +302,7 @@ class Creature:
     def catch_up(self) -> int:
         """Replay log entries past the checkpoint position (skipping excluded
         ones); returns how many were applied. Idempotent when nothing is new."""
+        start = self.log_position
         excluded = self.log.excluded()
         applied = 0
         for seq, entry in self.log.entries(self.log_position):
@@ -267,6 +313,7 @@ class Creature:
         if applied:
             self.unify_relations()
             self.commit()
+        self._trace("catch-up", {f"from:{start}"}, {f"applied:{applied}"})
         return applied
 
     def _reset_model(self) -> None:
@@ -285,6 +332,7 @@ class Creature:
         self._sectors = None
         self._rel_groups, self._group_webs, self._cmaps = {}, {}, {}
         self.growth_events = []
+        self.refused_merges = []
         self.grown_seq = 0
         self.episodes_seen = self.parsed = self.unparsed = 0
 
@@ -294,6 +342,8 @@ class Creature:
         self._reset_model()
         self.log_position = 0
         self.catch_up()
+        self._trace("rebuild", {f"entries:{len(self.log)}"},
+                    {f"excluded:{len(self.log.excluded())}"})
         return self
 
     def retract_episodes(self, seqs, reason: str = "") -> dict:
@@ -309,6 +359,8 @@ class Creature:
             self.log.exclude(s, reason)
         self.rebuild()
         after = self.edges.num_committed(self.commit_k)
+        self._trace("retract-episodes", {f"excluded:{len(seqs)}"},
+                    {f"uncommitted:{before - after}"})
         return {"excluded": seqs, "reason": reason,
                 "committed_before": before, "committed_after": after,
                 "uncommitted": before - after}
@@ -429,6 +481,7 @@ class Creature:
             return
         fid = f"H{len(self.frames)}_{'_'.join(e[1] for e in pat if e[0] == C.LIT)}"
         self.frames[fid] = C.Frame(fid, pat)
+        self._trace("induce", {"human"}, {fid})   # scaffolded frame growth is an act too
         self._rescan_buffer()
 
     def _induce(self) -> None:
@@ -444,13 +497,14 @@ class Creature:
             prefix=f"S{self.episodes_seen}_",
         )
         existing = {f.anchors for f in self.frames.values()}
-        added = False
+        added: list[str] = []
         for f in new.values():
             if f.anchors not in existing:
                 self.frames[f.id] = f
                 existing.add(f.anchors)
-                added = True
+                added.append(f.id)
         if added:
+            self._trace("induce", {f"buffer:{len(self._buffer)}"}, set(added))
             self._rescan_buffer()
 
     def _rescan_buffer(self) -> None:
@@ -505,10 +559,19 @@ class Creature:
 
           * **evidence-gated** — needs >= ``min_shared`` shared committed arguments
             agreeing at >= ``agree_threshold`` (the commitment discipline, in the
-            relation dimension), and
-          * **defect-guarded** — refused if it makes the relation non-functional (a
-            source with two committed targets is a holonomy self-loop defect; the
-            fixed algebra rejects a bad merge just as it does a false MATCH).
+            relation dimension);
+          * **functionality-guarded** — refused if it makes the relation
+            non-functional (:meth:`_merge_consistent`). Kept ALONGSIDE the
+            simulation below because a functional fan-out is not a holonomy
+            loop — the defect score alone cannot see it; and
+          * **simulated before committed** (invariant #8) — each surviving
+            candidate is IMAGINED on a counterfactual projection
+            (:func:`~relweblearner.transport.simulate_merge`): the class maps
+            are re-inferred with and without the merge, cf-flagged traces ride
+            the shared bus, and the union is committed only if it neither
+            raises defect mass nor demotes a composable class to a motif.
+            A refused merge is logged with its reason (rehearsal-refusal),
+            bounded in :attr:`refused_merges`.
 
         After unification, talk-back filters by relation CLASS, so synonymous frames
         answer each other. Returns the number of merges performed.
@@ -521,7 +584,8 @@ class Creature:
                 if len(info["sources"]) >= self.commit_k:
                     m.setdefault(s, set()).add(t)
             maps[fid] = m
-        merges = 0
+        merges = refused = 0
+        cmaps: dict[str, set] | None = None       # class maps, valid until a union changes the roots
         for i, a in enumerate(fids):
             for b in fids[i + 1:]:
                 if self._rel_find(a) == self._rel_find(b):
@@ -530,12 +594,37 @@ class Creature:
                 if len(shared) < self.min_shared:
                     continue
                 agree = sum(1 for s in shared if maps[a][s] == maps[b][s]) / len(shared)
-                if agree >= self.agree_threshold and self._merge_consistent(maps[a], maps[b]):
+                if agree < self.agree_threshold:
+                    continue
+                if not self._merge_consistent(maps[a], maps[b]):
+                    self._refuse_merge(a, b, "functional fan-out conflict")
+                    refused += 1
+                    continue
+                if cmaps is None:
+                    cmaps = self._class_maps()
+                verdict = TR.simulate_merge(
+                    cmaps, self._rel_find(a), self._rel_find(b),
+                    self.exception_fraction, journal=self.bus, name=self.id,
+                )
+                if verdict["commit"]:
                     self._rel_union(a, b)
+                    self._trace("merge", {a, b}, {self._rel_find(a)})
                     merges += 1
+                    cmaps = None
+                else:
+                    self._refuse_merge(a, b, verdict["reason"])
+                    refused += 1
         if merges:
             self._sectors = None                    # classes changed; transports are stale
+        self._trace("unify", {f"frames:{len(fids)}"},
+                    {f"merges:{merges}", f"refused:{refused}"})
         return merges
+
+    def _refuse_merge(self, a: str, b: str, reason: str) -> None:
+        """Rehearsal-refusal (invariant #8): the move is declined with a logged
+        reason, never silently skipped. Bounded diagnostic state — newest kept."""
+        self.refused_merges = (self.refused_merges + [{"a": a, "b": b, "reason": reason}])[-32:]
+        self._trace("refuse-merge", {a, b}, {reason})
 
     def _relation_classes(self) -> list[list[str]]:
         """Frames grouped by unified relation class (templates), for display."""
@@ -603,6 +692,7 @@ class Creature:
         """The algebra-valued concept web: one :class:`~relweblearner.web.Web`
         per constraint group (groups are mutually ungauged — P4′)."""
         self._ensure_transports()
+        self._trace("webs", {"concept-webs"}, {f"groups:{len(self._group_webs)}"})
         return dict(self._group_webs)
 
     def defects(self) -> dict:
@@ -610,7 +700,9 @@ class Creature:
         learning signal, visible again: a committed contradiction is a loop
         that fails to close, not just a lookup anomaly."""
         self._ensure_transports()
-        return TR.defect_report(self._group_webs)
+        rep = TR.defect_report(self._group_webs)
+        self._trace("defects", {"defects"}, {f"count:{rep['count']}", f"mass:{rep['mass']}"})
+        return rep
 
     def _sector_rows(self) -> list[dict]:
         """Per-relation-class sector report for the snapshot."""
@@ -688,9 +780,14 @@ class Creature:
 
     def _probe_growth(self, res: dict, web: TR.Web, qclass: str, given: str, forward: bool) -> None:
         """The P1 engine on the question's group web; a committed move is
-        persisted to the store under the reserved ``act:`` namespace."""
+        persisted to the store under the reserved ``act:`` namespace. The
+        engine's micro-moves (fork relabels, trial rewires, walks) ride the
+        group web's own journal; the creature-level probe and outcome are what
+        land on the shared bus."""
+        self._trace("probe", {given}, {qclass})
         if len(self.growth_events) >= self.growth_budget:
             res["refused"] = "growth budget exhausted"        # P7: refusal, not corruption
+            self._trace("refuse", {given}, {"budget"})
             return
         engine = TR.SectorGrowth(self.growth_persistence, self._fresh_concept)
         a = engine.answer(web, given, qclass if forward else qclass + "~", 1)
@@ -711,6 +808,7 @@ class Creature:
         # re-APPLIES it as recorded — a commitment, not a re-derivation.
         self.log_position = self.log.append({"kind": "act", **event}) + 1
         self._apply_act(event)
+        self._trace(move, {given}, {a.endpoint})
         res["answers"].append({"answer": a.endpoint,
                                "status": "grown" if a.grew else "rewired",
                                "sentence": self._render_via(fact, res["frame"])})
@@ -741,7 +839,9 @@ class Creature:
 
     def about(self, referent: str) -> dict:
         r = referent.strip().lower()
-        return T.about(self._state_for([(r, t, i) for t, i in self.edges.out_edges(r)]), r)
+        res = T.about(self._state_for([(r, t, i) for t, i in self.edges.out_edges(r)]), r)
+        self._trace("about", {r}, {f"beliefs:{len(res['beliefs'])}"})
+        return res
 
     def answer(self, phrase: str) -> dict:
         from .reader import tokenize
@@ -756,6 +856,11 @@ class Creature:
         res = T.answer(self._state_for(edges), tokens)
         if res.get("kind") == "answer":
             res = self._think(res)                # lookup first, then transport (P3/P1)
+            marks = ({f"{a['status']}:{a['answer']}" for a in res["answers"][:3]}
+                     or {"unknown"})
+            self._trace("answer", {res.get("given") or "?"}, marks)
+        else:
+            self._trace("answer", {"?"}, {res.get("kind", "unparsed")})
         return res
 
 
@@ -768,7 +873,9 @@ class Creature:
             edges = [(r, t, i) for t, i in self.edges.out_edges(r)]
         else:
             edges = self.edges.committed(self.commit_k, limit=max(limit * 3, limit))
-        return T.say(self._state_for(edges), referent, limit)
+        out = T.say(self._state_for(edges), referent, limit)
+        self._trace("say", {referent or "*"}, {f"sentences:{len(out)}"})
+        return out
 
     # ============================================================= retraction
 
@@ -792,6 +899,7 @@ class Creature:
         touched = self.edges.retract_source(source)
         after = self.edges.num_committed(self.commit_k)
         self._sectors = None                        # geometry changed; transports are stale
+        self._trace("retract-source", {source}, {f"touched:{touched}"})
         return {"source": source, "edges_touched": touched,
                 "committed_before": before, "committed_after": after,
                 "uncommitted": before - after}
@@ -799,6 +907,7 @@ class Creature:
     # ============================================================= metrics / snapshot
 
     def snapshot(self, committed_limit: int = 200) -> dict:
+        self._trace("snapshot", {"snapshot"}, {f"episodes:{self.episodes_seen}"})
         total = self.parsed + self.unparsed
         n_edges = self.edges.num_edges()
         n_committed = self.edges.num_committed(self.commit_k)
@@ -830,10 +939,12 @@ class Creature:
                 for f in sorted(self.frames.values(), key=lambda fr: fr.id)
             ],
             "relations": self._relation_classes(),
+            "relations_refused": self.refused_merges[-8:],
             "sectors": self._sector_rows(),
             "defects": self.defects(),
             "growth": {"count": len(self.growth_events), "budget": self.growth_budget,
                        "events": self.growth_events[-10:]},
+            "bus": vars(self.bus.counts()).copy(),
 
             "committed": [
                 {"source": s, "target": t, "sources": sorted(info["sources"]), "sentence": T.render_fact(s, t, st)}
@@ -860,6 +971,7 @@ class Creature:
         if focus is None:
             seed = self.edges.committed(self.commit_k, limit=1)
             focus = seed[0][0] if seed else None
+        self._trace("web-view", {focus or "*"}, {"ego-graph"})
         if focus is None:
             return {"focus": None, "nodes": [], "edges": [], "truncated": False}
 
@@ -905,6 +1017,7 @@ class Creature:
             deg[s] += 1
             deg[t] += 1
         total_nodes = len(deg)
+        self._trace("web-graph", {f"nodes:{total_nodes}"}, {f"edges:{len(all_edges)}"})
 
         keep = {n for n, _ in deg.most_common(max_nodes)}
         edges = []
@@ -942,6 +1055,7 @@ class Creature:
         from collections import deque
 
         all_edges = list(self.edges.iter_edges())
+        self._trace("mind-map", {f"edges:{len(all_edges)}"}, {f"dim:{dim}"})
         if not all_edges:
             return {"points": [], "edges": [], "note": "nothing learned yet"}
 
@@ -1053,6 +1167,7 @@ class Creature:
             node_set.update((s, t))
             edges.append({"src": s, "tgt": t, "rel": sorted(ev["frames"]),
                           "count": ev["count"], "sources": dict(sorted(ev["sources"].items()))})
+        self._trace("geometry", {f"nodes:{len(node_set)}"}, {f"edges:{len(edges)}"})
         return {
             "concept_web": {"nodes": sorted(node_set), "edges": edges},
             "language_web": {
@@ -1073,6 +1188,7 @@ class Creature:
 
         all_edges = list(self.edges.iter_edges())
         nodes = sorted({n for s, t, _ in all_edges for n in (s, t)})
+        self._trace("embedding", {f"nodes:{len(nodes)}"}, {f"dim:{dim}"})
         if len(nodes) <= dim:
             return {"nodes": nodes, "coords": [], "note": "too few nodes to embed"}
         idx = {n: i for i, n in enumerate(nodes)}

@@ -40,6 +40,9 @@ src/relweblearner/
   episodelog.py  # the creature's append-only episode log (invariant #5): world episodes +
                  #   committed acts; checkpoint + tail replay; replay-with-exclusions
                  #   retraction; file-backed (JSONL) at scale; Null log = explicit opt-out
+                 # the creature also carries a trace BUS (invariant #4): every epistemic
+                 #   op emits a bare episode onto one shared journal.Journal, and relation
+                 #   merges are simulated before commit (invariant #8, transport.simulate_merge)
   datasets/      # generators: counting, arithmetic, sectors, bare, holdout, kinship, language, society, curriculum, patternbooks, mathbooks, kidbooks
   baselines/     # (P3) TransE / ComplEx (numpy, Adam)
 experiments/     # standalone proof-of-concept demos (experiment0*.py)
@@ -101,6 +104,19 @@ question that walks off the web pays for **growth** through the stock P1
 engine (relabel futile → fork-scored rewire → persistence-gated minimal grow):
 the creature posits an unnamed `new-*` concept — its own "negative numbers"
 (P1b) — under a growth budget that degrades to refusal (P7).
+
+**No silent operations** (invariant #4): every epistemic creature op — observe,
+induce, merge, grow, retract, answer, snapshot — emits a bare trace episode
+onto one shared `journal.Journal` bus, so the P6 reflection machinery consumes
+the creature's own acts unchanged (`reflection.act_traces(c.bus)`). And a
+relation merge is **imagined before it is committed** (invariant #8):
+`unify_relations` runs each candidate through `transport.simulate_merge` —
+the class maps re-inferred with and without the merge on a counterfactual
+projection, cf-flagged traces on the same bus, refusal with a logged reason
+(`snapshot()["relations_refused"]`) when the merge would raise defect mass or
+demote a composable relation to a motif. The bus is the live event stream, not
+checkpoint state — in-RAM and O(experience), honestly noted as the next
+file-backing seam.
 
 Two further firehose rungs broaden the world beyond animal attributes:
 `datasets/mathbooks.py` (basic maths — number ordering, one-more, shape sides)
