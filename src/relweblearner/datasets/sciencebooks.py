@@ -26,9 +26,14 @@ import random
 ORGAN_SENSE = {
     "eye": "sight", "ear": "hearing", "nose": "smell", "tongue": "taste", "skin": "feeling",
 }
+# ``duck`` and ``owl`` also live in the patternbooks world with (biological)
+# leg counts, so the class facts here give the motif layer its witnesses:
+# ``x kind-of bird`` + ``x has two legs`` + ``bird has two legs`` (twice, the
+# commit threshold) is what lets ``hen`` — taught as a bird here but given no
+# legs fact anywhere — INHERIT "two legs" instead of answering unknown.
 ANIMAL_CLASS = {
     "whale": "mammal", "dog": "mammal", "bat": "mammal",
-    "eagle": "bird", "owl": "bird", "hen": "bird",
+    "eagle": "bird", "owl": "bird", "hen": "bird", "duck": "bird",
     "shark": "fish", "trout": "fish", "carp": "fish",
     "snake": "reptile", "lizard": "reptile", "turtle": "reptile",
     "frog": "amphibian", "newt": "amphibian",

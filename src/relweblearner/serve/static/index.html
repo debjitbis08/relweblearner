@@ -386,6 +386,7 @@ function answerCards(r){
       <span class="w" data-c="${esc(a.answer)}">${esc(a.answer)}</span>
       ${statusChip(a)}
       ${a.sentence ? `<span class="sent">“${esc(a.sentence)}”</span>` : ""}
+      ${a.via === "motif" && a.through ? `<span class="src">inherited through ${a.through.map(esc).join(" → ")}</span>` : ""}
     </div>`).join("");
 }
 function pushQA(q, html){
@@ -581,6 +582,11 @@ function renderLedger(){
       <td>${esc(e.given)} → <b>${esc(e.answer)}</b></td>
       <td class="tmplcell">${esc((e.anchors||[]).join(" "))}</td>
       <td class="num">${e.rounds} rounds</td></tr>`).join("");
+  const motifs = (s.motifs||[]).map(m => `<tr>
+      <td class="tmplcell">${(m.rel_templates.length?m.rel_templates:[m.rel]).map(tmplHTML).join("<br>")}</td>
+      <td class="tmplcell">${(m.via_templates.length?m.via_templates:[m.via]).map(tmplHTML).join("<br>")}</td>
+      <td><span class="st ${m.committed ? "derived" : "provisional"}">${m.committed ? "committed" : "refused"}</span></td>
+      <td class="num">${m.witnesses}</td><td class="num">${m.violations}</td><td class="num">${m.support}</td></tr>`).join("");
   const refused = (s.relations_refused||[]).map(r => `<tr>
       <td>${esc(r.a)} + ${esc(r.b)}</td><td class="warn">${esc(r.reason)}</td></tr>`).join("");
   const frontier = Object.entries(s.frontier||{}).sort((a,b)=>b[1].count-a[1].count).slice(0,8)
@@ -590,6 +596,9 @@ function renderLedger(){
     <h3 class="sub">Relation classes — inferred transports</h3>
     ${sect ? `<table><tr><th>constructions (unified)</th><th>sector</th><th>g</th><th>edges</th><th>support</th></tr>${sect}</table>`
            : '<div class="empty">no relations yet</div>'}
+    <h3 class="sub">Motifs — inheritance rules scored on committed testimony (rel ⊇ via ∘ rel)</h3>
+    ${motifs ? `<table><tr><th>inherited relation</th><th>through</th><th>verdict</th><th>witnesses</th><th>violations</th><th>support</th></tr>${motifs}</table>`
+             : '<div class="empty">no composite paths scored yet</div>'}
     <h3 class="sub">Growth — concepts the creature posited (${s.growth.count}/${s.growth.budget} budget)</h3>
     ${growth ? `<table><tr><th>move</th><th>obstruction</th><th>relation</th><th>persistence</th></tr>${growth}</table>`
              : '<div class="empty">no growth events — every question so far was answerable in-web</div>'}

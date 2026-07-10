@@ -702,3 +702,24 @@ Post-verification work (the report's four next steps). All committed on `main`.
   ground 10/10 at 4 taps (4-orbit + three 2-orbits); one-page fast-map (`zebu→red`,
   book provenance); assimilation 0.049, comprehension answered from the web not
   echoed. Concept-agnostic + one-way dependency + disjoint namespaces CI-tested.
+- **2026-07-11** — Motif layer (`motif.py`; glossary §0 "learned concepts are
+  motifs" made operational): the inheritance word `rel(x,z) ⊇ via(x,y) ∘
+  rel(y,z)`, so `hen has ? legs` — not taught, not transport-derivable (legs is
+  an UNCONSTRAINED attribute class, no converse loops), no witness to grow —
+  answers `two` (status `derived`, via `motif`) through the committed chain
+  `hen -kind of-> bird -has legs-> two`. Rules are EVIDENCE-SCORED off the
+  committed class maps (a composite path with agreeing direct testimony is a
+  witness, disagreeing is a violation, no direct testimony is SILENT — the case
+  the rule answers may not vote for it), committed per invariant #6 (k
+  witnesses + P2 exception budget: legs inherits through kind-of, colour does
+  not because children contradict their class), scored candidates cf-flagged on
+  the bus (invariants #4/#8), NOTHING REIFIED (answers derive at query time;
+  taught facts shadow inheritance — the penguin discipline; nearest ancestor
+  shadows farther — specificity). Forward questions only: a reverse blank's
+  seeds are exactly its committed holders (lookup already answers) and
+  enumerating inheritors is an unbounded scan (P7: refuse). `_think` order:
+  lookup → transport → interface → motif → growth. Snapshot gains `motifs`;
+  UI shows the inheritance chain on answer cards + a Ledger rules table;
+  sciencebooks taxonomy gains `duck→bird` so the pattern-book/science-book
+  overlap carries ≥2 witnesses (owl, duck). Accepted: `tests/test_motif.py`
+  (13, incl. the full-generator transcript above).

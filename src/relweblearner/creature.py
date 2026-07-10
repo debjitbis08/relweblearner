@@ -33,7 +33,10 @@ This module is that scalable substrate:
     transport composition (P3, status ``derived``), a committed contradiction
     is a nonzero-holonomy defect (invariant #9, :meth:`defects`), and a
     persistent walk-off pays for growth through the stock P1 engine (status
-    ``grown``), budgeted against query floods (P7).
+    ``grown``), budgeted against query floods (P7). Where transport cannot
+    reach — the attribute classes with no converse loops — committed MOTIF
+    rules (:mod:`~relweblearner.motif`, glossary §0: words over existing
+    edges) derive by inheritance: ``hen -kind of-> bird -has legs-> two``.
 
 The scale tradeoff, stated honestly: in ROUTINE operation a frame induced late
 applies to the ongoing stream and to whatever is still in the bounded buffer —
@@ -79,6 +82,7 @@ from pathlib import Path
 from typing import Iterable
 
 from . import curriculum as C
+from . import motif as MO
 from . import talk as T
 from . import transport as TR
 from .episodelog import EpisodeLog, InMemoryEpisodeLog
@@ -197,6 +201,7 @@ class Creature:
         self._rel_groups: dict[str, str] = {}                  # class -> constraint-group root
         self._group_webs: dict[str, TR.Web] = {}               # group -> valued Web projection
         self._cmaps: dict[str, set] = {}                       # class -> eligible (src, tgt) pairs
+        self._motifs: list[MO.MotifRule] = []                  # scored inheritance rules (projection)
         self.growth_events: list[dict] = []                    # committed P1 moves (budgeted, P7)
         self.grown_seq = 0                                     # allocator for posited concept ids
         # ------- counters (scalars, not history) -------
@@ -411,6 +416,7 @@ class Creature:
         self._rng = random.Random(self.seed)
         self._sectors = None
         self._rel_groups, self._group_webs, self._cmaps = {}, {}, {}
+        self._motifs = []
         self.growth_events = []
         self.refused_merges = []
         self.numbers = NumberSense(commit_k=self.commit_k, source_cap=self.source_cap)
@@ -791,6 +797,11 @@ class Creature:
                 sectors[r] = TR.RelationSector(r, TR.NON_HOMOGENEOUS, None, old.support, old.n_samples)
             webs = TR.build_group_webs(cmaps, sectors, groups, name=self.id)
         self._cmaps, self._rel_groups, self._group_webs = cmaps, groups, webs
+        # the motif layer shares the projection's staleness: inheritance rules
+        # are re-scored off the same committed class maps, each candidate
+        # verdict cf-flagged on the shared bus (imagined, on the record).
+        self._motifs = MO.induce(cmaps, self.commit_k, self.exception_fraction,
+                                 journal=self.bus)
         self._sectors = sectors
 
     def concept_webs(self) -> dict[str, TR.Web]:
@@ -820,6 +831,22 @@ class Creature:
              "support": round(s.support, 3), "edges": s.n_samples,
              "templates": sorted(by_class.get(r, []))}
             for r, s in sorted((self._sectors or {}).items())
+        ]
+
+    def _motif_rows(self) -> list[dict]:
+        """Scored inheritance rules for the snapshot, committed first, voiced
+        through each class's constructions so the display reads as language."""
+        self._ensure_transports()
+        by_class: dict[str, list[str]] = {}
+        for fid, f in self.frames.items():
+            by_class.setdefault(self._rel_find(fid), []).append(f.template)
+        return [
+            {"rel": r.rel, "via": r.via,
+             "rel_templates": sorted(by_class.get(r.rel, [])),
+             "via_templates": sorted(by_class.get(r.via, [])),
+             "witnesses": r.witnesses, "violations": r.violations,
+             "support": round(r.support, 3), "committed": r.committed}
+            for r in self._motifs
         ]
 
     def _numbers_census(self) -> dict:
@@ -866,9 +893,15 @@ class Creature:
         rewire is tried, and only a persistent obstruction pays for growth —
         the posited ``new-*`` node is the learner's own negative-number move
         (P1b), budgeted against query floods (P7: degrade to refusal).
-        Derivation runs only on ANTISYMMETRIC classes: an unconstrained
-        class's transport is pure gauge, and deriving along it would be the
-        P4 "algebra too strong" hallucinated inverse."""
+        TRANSPORT derivation runs only on ANTISYMMETRIC classes: an
+        unconstrained class's transport is pure gauge, and deriving along it
+        would be the P4 "algebra too strong" hallucinated inverse. A question
+        transport cannot touch may still be entailed by a committed MOTIF
+        (:mod:`~relweblearner.motif`): the inheritance word ``rel ⊇ via ∘
+        rel`` walks taught edges end to end (``hen -kind of-> bird -has
+        legs-> two``), carrying testimony the whole way, so it needs no
+        transport and answers on ANY sector — the layer for the attribute
+        classes that never accrue converse loops."""
         qclass, given, forward = res.get("rel_class"), res.get("given"), res.get("forward", True)
         if qclass is None or given is None:
             return res
@@ -881,29 +914,30 @@ class Creature:
             return res
         self._ensure_transports()
         sector = (self._sectors or {}).get(qclass)
-        if sector is None or sector.sector != TR.ANTISYMMETRIC:
-            return res
-        web = self._group_webs.get(self._rel_groups.get(qclass))
-        if web is None:
-            return res
-        target = sector.transport if forward else web.algebra.dagger(sector.transport)
-        seen = {a["answer"] for a in res["answers"]}
-        for n in TR.derive(web, given, target, max_depth=self.derive_depth):
-            if n in seen:
-                continue
-            fact = (given, n) if forward else (n, given)
-            res["answers"].append({"answer": n, "status": "derived",
-                                   "sentence": self._render_via(fact, res["frame"])})
-        if not res["answers"]:
-            # the word web cannot answer: try the P5 interface — step along the
-            # CONSTRUCTED number chain instead (order learned from counting
-            # piles, not from sentences), voicing through the question's frame.
-            w = self._interface_answer(qclass, given, forward, sector, web)
-            if w is not None:
-                fact = (given, w) if forward else (w, given)
-                res["answers"].append({"answer": w, "status": "derived", "via": "counting",
+        web = self._group_webs.get(self._rel_groups.get(qclass)) if sector else None
+        antisym = sector is not None and sector.sector == TR.ANTISYMMETRIC and web is not None
+        if antisym:
+            target = sector.transport if forward else web.algebra.dagger(sector.transport)
+            seen = {a["answer"] for a in res["answers"]}
+            for n in TR.derive(web, given, target, max_depth=self.derive_depth):
+                if n in seen:
+                    continue
+                fact = (given, n) if forward else (n, given)
+                res["answers"].append({"answer": n, "status": "derived",
                                        "sentence": self._render_via(fact, res["frame"])})
-        if not res["answers"] and given in web.nodes:
+            if not res["answers"]:
+                # the word web cannot answer: try the P5 interface — step along
+                # the CONSTRUCTED number chain instead (order learned from
+                # counting piles, not from sentences), voicing through the
+                # question's frame.
+                w = self._interface_answer(qclass, given, forward, sector, web)
+                if w is not None:
+                    fact = (given, w) if forward else (w, given)
+                    res["answers"].append({"answer": w, "status": "derived", "via": "counting",
+                                           "sentence": self._render_via(fact, res["frame"])})
+        if not res["answers"]:
+            self._motif_answers(res, qclass, given, forward)
+        if not res["answers"] and antisym and given in web.nodes:
             self._probe_growth(res, web, qclass, given, forward)
         rank = {"committed": 0, "derived": 1, "provisional": 2, "grown": 3, "rewired": 3}
         res["answers"].sort(key=lambda a: rank.get(a["status"], 4))
@@ -920,6 +954,26 @@ class Creature:
             return None
         t = sector.transport if forward else web.algebra.dagger(sector.transport)
         return self.numbers.word_step(m, potential(web), given, t)
+
+    def _motif_answers(self, res: dict, qclass: str, given: str, forward: bool) -> None:
+        """Inheritance along committed motif rules (:mod:`~relweblearner.motif`):
+        a learned concept is a WORD over existing edges, never a new algebra
+        operation (invariant #1), so ``hen -kind of-> bird -has legs-> two``
+        answers the never-taught ``hen has ? legs`` with committed testimony
+        carried end to end. Nothing is reified — the answer is derived at query
+        time and voiced through the question's own frame, with the walked chain
+        attached as its justification. Forward questions only: a reverse blank
+        is already answered by its committed direct holders, and enumerating
+        every inheritor below them is an unbounded scan (P7: refuse)."""
+        if not forward:
+            return
+        for h in MO.derive(self._motifs, self._cmaps, qclass, given,
+                           max_depth=self.derive_depth):
+            fact = (given, h["answer"])
+            res["answers"].append({"answer": h["answer"], "status": "derived",
+                                   "via": "motif", "through": h["through"],
+                                   "sentence": self._render_via(fact, res["frame"])})
+            self._trace("inherit", {given, *h["through"]}, {h["answer"]})
 
     def _number_maps(self) -> list[dict]:
         """Every committed interface map across the gauge groups, BEST first —
@@ -1114,6 +1168,7 @@ class Creature:
             "relations": self._relation_classes(),
             "relations_refused": self.refused_merges[-8:],
             "sectors": self._sector_rows(),
+            "motifs": self._motif_rows(),
             "defects": self.defects(),
             "growth": {"count": len(self.growth_events), "budget": self.growth_budget,
                        "events": self.growth_events[-10:]},
