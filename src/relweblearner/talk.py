@@ -15,7 +15,10 @@ identically however it was trained:
 ``fact_frames`` types each fact by the frames (relations) that produced it, so a
 question in one frame ("the X is ?") is answered only from facts of THAT relation
 — not every fact sharing the referent. It is optional; absent, no relation filter
-is applied.
+is applied. ``rel_of`` (optional) maps a frame id to its unified RELATION CLASS
+(:meth:`~relweblearner.creature.Creature.unify_relations`); with it, synonymous
+frames ("the X is Y" and "i see a Y X") share a class and answer each other's
+facts. Absent, each frame is its own class and behaviour is unchanged.
 
 Every function here is a pure function of that state — no learner internals, no
 storage. The writing path applies the L6 read-back discipline: a fact is only
@@ -27,6 +30,18 @@ from __future__ import annotations
 from . import curriculum as C
 
 
+def _rel(state: dict, fid: str) -> str:
+    """A frame's unified relation class (itself, if unification hasn't merged it)."""
+    return state.get("rel_of", {}).get(fid, fid)
+
+
+def _fact_classes(state: dict, fact: tuple) -> set | None:
+    """The relation classes a fact belongs to (via the frames that expressed it),
+    or ``None`` when the fact carries no relation record (no filtering)."""
+    frames = state.get("fact_frames", {}).get(fact)
+    return {_rel(state, f) for f in frames} if frames is not None else None
+
+
 def render_fact(src: str, tgt: str, state: dict, *, verify: bool = True) -> str | None:
     """Express an oriented fact ``(src, tgt)`` through a frame that ACTUALLY
     produced it (its relation), reading the draft back before returning it. Both
@@ -34,11 +49,11 @@ def render_fact(src: str, tgt: str, state: dict, *, verify: bool = True) -> str 
     ``eats`` frame ("the ant eats black"), and read-back stops a structurally-valid
     but wrong orientation. Falls back to any round-tripping frame if the fact
     carries no relation record."""
-    allowed = state.get("fact_frames", {}).get((src, tgt))
+    allowed = _fact_classes(state, (src, tgt))   # relation classes, not raw frame ids
     for f in sorted(state["frames"].values(), key=lambda fr: -len(fr.anchors)):
         if f.n_slots != 2:
             continue
-        if allowed is not None and f.id not in allowed:
+        if allowed is not None and _rel(state, f.id) not in allowed:
             continue
         src_slot = state["source_slot"].get(f.id)
         if src_slot is None:
@@ -103,12 +118,13 @@ def answer(state: dict, tokens: list[str]) -> dict:
         bi, given = blank_slots[0], other[0][1]
         src_slot = state["source_slot"].get(f.id)
         forward = src_slot is None or bi != src_slot
-        fact_frames = state.get("fact_frames")
+        qclass = _rel(state, f.id)                 # the question's relation class
+        has_types = "fact_frames" in state
         hits = [
             (src, tgt)
             for (src, tgt) in state["facts"]
             if ((forward and src == given) or (not forward and tgt == given))
-            and (fact_frames is None or f.id in fact_frames.get((src, tgt), ()))
+            and (not has_types or qclass in (_fact_classes(state, (src, tgt)) or {qclass}))
         ]
         answers = sorted(
             (

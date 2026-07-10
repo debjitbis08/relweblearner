@@ -62,6 +62,8 @@ class Creature:
         buffer_cap: int = 500,
         source_cap: int = 16,
         exemplar_cap: int = 5,
+        min_shared: int = 3,
+        agree_threshold: float = 0.8,
         created: str | None = None,
         level: int | None = None,
         store: EdgeStore | None = None,
@@ -78,6 +80,8 @@ class Creature:
         self.buffer_cap = buffer_cap
         self.source_cap = source_cap
         self.exemplar_cap = exemplar_cap
+        self.min_shared = min_shared
+        self.agree_threshold = agree_threshold
 
         # The concept web's edges are the ONE unbounded part of the geometry — they
         # live behind an indexed EdgeStore (in-memory by default; SQLite / sharded
@@ -87,6 +91,7 @@ class Creature:
         self.edges: EdgeStore = store if store is not None else InMemoryEdgeStore()
         self.frames: dict[str, C.Frame] = {}
         self.source_slot: dict[str, int] = {}                  # frame -> picture slot index
+        self._rel_parent: dict[str, str] = {}                  # union-find: frame -> relation class
         self.frontier: dict[int, dict] = {}                    # length -> {count, exemplars}
         self._buffer: list[dict] = []                          # rolling unparsed episodes
         self._since_induction = 0
@@ -116,6 +121,7 @@ class Creature:
                 source=e.get("source") or e.get("book", "stream"),
                 marks=e.get("marks"),
             )
+        self.unify_relations()   # recognise synonymous frames once evidence has accrued
         self.commit()
         return self
 
@@ -212,6 +218,82 @@ class Creature:
                 kept.append(ep)
         self._buffer = kept
 
+    # ============================================================= relation unification
+
+    def _rel_find(self, fid: str) -> str:
+        p = self._rel_parent
+        p.setdefault(fid, fid)
+        while p[fid] != fid:
+            p[fid] = p[p[fid]]
+            fid = p[fid]
+        return fid
+
+    def _rel_union(self, a: str, b: str) -> None:
+        ra, rb = self._rel_find(a), self._rel_find(b)
+        if ra != rb:
+            self._rel_parent[ra] = rb
+
+    def _rel_of(self) -> dict[str, str]:
+        return {fid: self._rel_find(fid) for fid in self.frames}
+
+    def unify_relations(self) -> int:
+        """Merge frames that express the SAME concept-web relation.
+
+        Relation identity is the edge set a frame induces: two frames are the same
+        relation iff their committed edge sets AGREE. So ``the X is Y`` and ``i see
+        a Y X`` (both animal->colour) unify, while ``the X is Y`` and ``the X eats
+        Y`` (colour vs food, disagreeing on every shared animal) never do. The
+        merge is:
+
+          * **evidence-gated** — needs >= ``min_shared`` shared committed arguments
+            agreeing at >= ``agree_threshold`` (the commitment discipline, in the
+            relation dimension), and
+          * **defect-guarded** — refused if it makes the relation non-functional (a
+            source with two committed targets is a holonomy self-loop defect; the
+            fixed algebra rejects a bad merge just as it does a false MATCH).
+
+        After unification, talk-back filters by relation CLASS, so synonymous frames
+        answer each other. Returns the number of merges performed.
+        """
+        fids = [fid for fid, f in self.frames.items() if f.n_slots == 2]
+        maps: dict[str, dict[str, set]] = {}      # frame -> {source: {committed targets}}
+        for fid in fids:
+            m: dict[str, set] = {}
+            for s, t, info in self.edges.edges_by_rel(fid):
+                if len(info["sources"]) >= self.commit_k:
+                    m.setdefault(s, set()).add(t)
+            maps[fid] = m
+        merges = 0
+        for i, a in enumerate(fids):
+            for b in fids[i + 1:]:
+                if self._rel_find(a) == self._rel_find(b):
+                    continue
+                shared = set(maps[a]) & set(maps[b])
+                if len(shared) < self.min_shared:
+                    continue
+                agree = sum(1 for s in shared if maps[a][s] == maps[b][s]) / len(shared)
+                if agree >= self.agree_threshold and self._merge_consistent(maps[a], maps[b]):
+                    self._rel_union(a, b)
+                    merges += 1
+        return merges
+
+    def _relation_classes(self) -> list[list[str]]:
+        """Frames grouped by unified relation class (templates), for display."""
+        classes: dict[str, list[str]] = {}
+        for fid, f in self.frames.items():
+            classes.setdefault(self._rel_find(fid), []).append(f.template)
+        return sorted(sorted(v) for v in classes.values())
+
+    def _merge_consistent(self, ma: dict, mb: dict) -> bool:
+        """The combined relation stays (mostly) functional — only a tolerated few
+        sources may gain a second target; more than that is a real contradiction and
+        the merge is refused (the defect guard)."""
+        union = set(ma) | set(mb)
+        if not union:
+            return False
+        conflicts = sum(1 for s in union if len(ma.get(s, set()) | mb.get(s, set())) > 1)
+        return conflicts / len(union) <= (1 - self.agree_threshold)
+
     # ============================================================= belief / queries
 
     def _status(self, fact: tuple) -> str:
@@ -231,7 +313,8 @@ class Creature:
             if len(info["sources"]) >= self.commit_k:
                 committed.add((s, t))
         return {"frames": self.frames, "facts": facts, "committed": committed,
-                "source_slot": self.source_slot, "fact_frames": fact_frames}
+                "source_slot": self.source_slot, "fact_frames": fact_frames,
+                "rel_of": self._rel_of()}
 
     def about(self, referent: str) -> dict:
         r = referent.strip().lower()
@@ -284,6 +367,8 @@ class Creature:
                 {"id": f.id, "template": f.template, "anchors": list(f.anchors), "n_slots": f.n_slots}
                 for f in sorted(self.frames.values(), key=lambda fr: fr.id)
             ],
+            "relations": self._relation_classes(),
+
             "committed": [
                 {"source": s, "target": t, "sources": sorted(info["sources"]), "sentence": T.render_fact(s, t, st)}
                 for (s, t, info) in committed_edges
@@ -320,6 +405,7 @@ class Creature:
             "language_web": {
                 "frames": {fid: [list(e) for e in f.pattern] for fid, f in self.frames.items()},
                 "source_slot": self.source_slot,
+                "relations": self._rel_of(),   # frame -> unified relation class
             },
         }
 
@@ -380,6 +466,7 @@ class Creature:
         lang = geo["language_web"]
         c.frames = {fid: C.Frame(fid, tuple(tuple(e) for e in pat)) for fid, pat in lang["frames"].items()}
         c.source_slot = {k: int(v) for k, v in lang["source_slot"].items()}
+        c._rel_parent = {fid: root for fid, root in lang.get("relations", {}).items()}
         for e in geo["concept_web"]["edges"]:
             c.edges.put(e["src"], e["tgt"], {"count": e["count"], "sources": e["sources"], "frames": e["rel"]})
         c.frontier = {int(k): v for k, v in d["frontier"].items()}

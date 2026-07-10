@@ -130,12 +130,32 @@ latency stays flat** — `about`/`answer` cost `O(neighbourhood)`, not `O(web)`,
 however large the geometry gets. Sharded across 6 files it splits evenly (~10k
 edges each). JSON geometry migrates into a store via `EdgeStore.put`.
 
+## Relation unification (`Creature.unify_relations`)
+
+Different frames can express the SAME concept-web relation — `the X is Y` and
+`i see a Y X` are both animal→colour. A relation's identity is the edge set it
+induces, so two frames unify iff their **committed edge sets agree**. Unification
+maintains a union-find over frames (their relation CLASS); it is:
+
+- **evidence-gated** — needs ≥ `min_shared` shared committed arguments agreeing at
+  ≥ `agree_threshold` (the commitment discipline, in the relation dimension);
+- **defect-guarded** — a merge that would make the relation non-functional (a
+  source with two committed targets = a holonomy self-loop defect) is refused; the
+  fixed algebra rejects a bad relation-merge exactly as it rejects a false MATCH.
+
+Talk-back then filters by relation CLASS, not raw frame id, so synonymous frames
+answer each other: a fact taught only through `i see a red moose` is answered by
+`the moose is ?`. `is`/`see` merge; `is`/`eats` (disagreeing on every shared
+animal) never do. The classes persist with the geometry. This is the same
+mention/node-merge decision as cross-book character identity (R3), on the relation
+axis; batch reference machinery is `types.py` (P2′) and `sectors.py`.
+
 ## Not yet built (next steps)
 
 - Migrating the web app to serve **named creatures** (identity in the API/UI),
   and per-creature store selection (in-memory vs on-disk vs sharded).
 - An archived/sampled episode stream alongside the store (currently episodes are
   distilled and dropped; keeping a sampled trail would aid audit/replay).
-- Cross-frame relation identity (the `is` and `see` frames express the *same*
-  colour relation) — currently each frame is its own relation; unifying them is
-  R3-adjacent entity-resolution work.
+- Relation unification up to TRANSPOSE (a frame that orients the other way
+  produces the transposed edge set) and non-functional relations — v1 handles the
+  functional, same-orientation case.

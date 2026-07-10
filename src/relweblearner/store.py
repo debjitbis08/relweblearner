@@ -51,6 +51,11 @@ class EdgeStore:
     def in_edges(self, tgt: str) -> list[tuple[str, dict]]:
         raise NotImplementedError
 
+    def edges_by_rel(self, rel: str) -> list[tuple[str, str, dict]]:
+        """All edges a given relation (frame) expresses — for relation unification.
+        Indexed by ``rel``, so it costs O(relation size), not O(web)."""
+        raise NotImplementedError
+
     def committed(self, commit_k: int, limit: int | None = None) -> list[tuple[str, str, dict]]:
         raise NotImplementedError
 
@@ -102,6 +107,9 @@ class InMemoryEdgeStore(EdgeStore):
     def in_edges(self, tgt):
         return [(s, dict(e)) for (s, t), e in self._e.items() if t == tgt]
 
+    def edges_by_rel(self, rel):
+        return [(s, t, dict(e)) for (s, t), e in self._e.items() if rel in e["frames"]]
+
     def committed(self, commit_k, limit=None):
         out = [(s, t, dict(e)) for (s, t), e in self._e.items() if len(e["sources"]) >= commit_k]
         out.sort(key=lambda r: (r[0], r[1]))
@@ -129,6 +137,7 @@ CREATE TABLE IF NOT EXISTS nodes (id INTEGER PRIMARY KEY, name TEXT UNIQUE);
 CREATE TABLE IF NOT EXISTS edges (src INTEGER, tgt INTEGER, cnt INTEGER, PRIMARY KEY (src, tgt));
 CREATE INDEX IF NOT EXISTS idx_edges_tgt ON edges (tgt);
 CREATE TABLE IF NOT EXISTS edge_rel (src INTEGER, tgt INTEGER, rel TEXT, PRIMARY KEY (src, tgt, rel));
+CREATE INDEX IF NOT EXISTS idx_edge_rel_rel ON edge_rel (rel);
 CREATE TABLE IF NOT EXISTS edge_src (src INTEGER, tgt INTEGER, source TEXT, PRIMARY KEY (src, tgt, source));
 """
 
@@ -225,6 +234,14 @@ class SqliteEdgeStore(EdgeStore):
         ).fetchall()
         return [(name, self._info(s, t[0], cnt)) for name, s, cnt in rows]
 
+    def edges_by_rel(self, rel):
+        rows = self.db.execute(
+            "SELECT ns.name, nt.name, e.src, e.tgt, e.cnt FROM edge_rel r "
+            "JOIN edges e ON e.src=r.src AND e.tgt=r.tgt "
+            "JOIN nodes ns ON ns.id=e.src JOIN nodes nt ON nt.id=e.tgt WHERE r.rel=?", (rel,)
+        ).fetchall()
+        return [(sn, tn, self._info(s, t, cnt)) for sn, tn, s, t, cnt in rows]
+
     def committed(self, commit_k, limit=None):
         q = (
             "SELECT ns.name, nt.name, e.src, e.tgt, e.cnt FROM edges e "
@@ -306,6 +323,12 @@ class ShardedEdgeStore(EdgeStore):
         out: list = []
         for sh in self.shards:
             out.extend(sh.in_edges(tgt))
+        return out
+
+    def edges_by_rel(self, rel):
+        out: list = []
+        for sh in self.shards:
+            out.extend(sh.edges_by_rel(rel))
         return out
 
     def committed(self, commit_k, limit=None):
