@@ -14,6 +14,9 @@ venv/
 results/*.png
 results/*.pdf
 
+# reading-app session data (append-only log; local state, not source)
+data/
+
 # os / editor
 .DS_Store
 *.swp

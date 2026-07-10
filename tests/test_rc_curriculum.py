@@ -62,25 +62,33 @@ def test_both_frames_recovered_and_offframe_in_frontier(base):
     assert {tuple(p["tokens"]) for p in fr} == D.BASE_FRONTIER
 
 
-def test_pollution_failure_mode_reproduced_then_fixed():
-    # REQUIRED failure-mode test (spec §1): grouping by length alone with
-    # exact-constancy and no anchor floor lets off-frame captions pollute the
-    # skeleton into ALL-SLOTS, which force-parses everything (frontier empty —
-    # the pollution is hidden as false full coverage).
-    pages = D.pollution_corpus()
-    toks = [p["tokens"] for p in pages]
-    broken = C.induce_frames(toks, min_group=5, dominance=1.0, min_anchors=0)
-    assert any(set(f.skeleton) == {"_"} for f in broken.values())  # all-slots
-    bcov, bfr = C.coverage(pages, broken)
-    assert bcov == 1.0 and bfr == []  # over-generalized: nothing rejected
+def test_anchored_induction_resists_collision_and_splitting():
+    # The anchored-subsequence model (spec §1: "constructions are motifs over the
+    # sequence web") must resist the two ways the old length+position model failed.
+    #
+    # (a) COLLISION: two DIFFERENT templates that share a word-length must not be
+    #     dumped in one bucket and cancel each other's anchors.
+    legs = [f"{a} has {n} legs".split() for a, n in
+            [("bird", "two"), ("cow", "four"), ("dog", "four"), ("cicada", "six"),
+             ("spider", "eight"), ("ant", "six")]]
+    let = ["legs let us walk".split(), "legs let us jump".split(), "legs let us run".split()]
+    off = ["i like to read".split(), "who can i read to".split()]
+    frames = C.induce_frames(legs + let + off, min_group=3)
+    templates = {f.template for f in frames.values()}
+    assert templates == {"___ has ___ legs", "legs let us ___"}  # separated, not merged
+    # the off-frame social lines are rejected to the frontier, never force-parsed
+    assert [p for p in off if C.parse(p, frames) is None] == off
 
-    # the fix — dominance>=0.8 + anchor minimum + rejection — recovers the frame
-    # and pushes exactly the off-frame captions to the frontier.
-    fixed = C.induce_frames(toks, min_group=5, dominance=0.8, min_anchors=2)
-    assert {f.skeleton for f in fixed.values()} == {("the", "_", "is", "_")}
-    fcov, ffr = C.coverage(pages, fixed)
-    assert fcov < 1.0 and len(ffr) == 4
-    assert all(p["tokens"][0] != "the" or p["tokens"][2] != "is" for p in ffr)
+    # (b) SPLITTING: ONE template whose slot varies in WIDTH must stay one frame,
+    #     the wide slot swallowing the multi-word filler whole.
+    eats = [f"the {a} eats {f}".split() for a, f in
+            [("cow", "grass"), ("chicken", "corn"), ("lion", "meat"),
+             ("horse", "a banana tree")]]
+    ef = C.induce_frames(eats, min_group=3)
+    assert {f.template for f in ef.values()} == {"the ___ eats ___"}
+    assert C.parse("the horse eats a banana tree".split(), ef) == (
+        next(iter(ef)), ("horse", "a banana tree"),
+    )
 
 
 def test_frontier_triggers_next_frame_induction():
@@ -115,7 +123,7 @@ def test_fast_map_one_page_one_tap(base):
     fact, provenance, fid = C.fast_map_page(D.novel_page(), base["frames"])
     assert fact == ("zebu", "red")
     assert provenance == {"B2"}
-    assert fid == "F5"
+    assert base["frames"][fid].anchors == ("i", "see", "a")  # the "i see a __ __" frame
 
 
 # --------------------------------------------------------------------- §6 metrics

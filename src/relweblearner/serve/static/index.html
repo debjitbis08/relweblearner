@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Primer — teach the creature to read</title>
+<style>
+  :root {
+    --paper: #f4ecdc;
+    --paper-2: #efe5d0;
+    --ink: #2b2620;
+    --ink-soft: #6a6152;
+    --rule: #d8ccb2;
+    --red: #c14330;
+    --red-soft: #e7c9c0;
+    --blue: #2f5d78;
+    --green: #4a6b45;
+    --card: #fbf6ea;
+    --shadow: rgba(60, 48, 30, 0.16);
+    --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1c1a17; --paper-2: #232019; --ink: #ece3d2; --ink-soft: #9c927f;
+      --rule: #3a352c; --red: #e0684f; --red-soft: #4a2a22; --blue: #7db4d4;
+      --green: #8fb488; --card: #23201a; --shadow: rgba(0,0,0,0.4);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: var(--serif);
+    color: var(--ink);
+    background:
+      radial-gradient(120% 80% at 50% -10%, var(--paper-2), transparent 60%),
+      repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.015) 28px),
+      var(--paper);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: clamp(18px, 4vw, 46px); }
+
+  header.masthead {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 20px; flex-wrap: wrap;
+    border-bottom: 2px solid var(--ink); padding-bottom: 14px; margin-bottom: 6px;
+  }
+  .title { display: flex; align-items: baseline; gap: 14px; }
+  .title h1 {
+    font-size: clamp(28px, 4.4vw, 46px); margin: 0; letter-spacing: -0.02em; font-weight: 600;
+  }
+  .title .mark {
+    width: 30px; height: 30px; border-radius: 50%; background: var(--red);
+    box-shadow: 0 0 0 4px var(--paper), 0 0 0 5px var(--red); flex: none;
+    transform: translateY(3px);
+  }
+  .sub { font-style: italic; color: var(--ink-soft); font-size: clamp(13px, 1.6vw, 16px); }
+  .metrics { display: flex; gap: 22px; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
+  .metrics b { display: block; font-size: 20px; color: var(--ink); font-family: var(--serif); font-weight: 600; }
+
+  .cols { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(20px, 3vw, 40px); margin-top: 26px; }
+  @media (max-width: 860px) { .cols { grid-template-columns: 1fr; } }
+
+  h2.section {
+    font-size: 13px; text-transform: uppercase; letter-spacing: 0.22em; font-weight: 600;
+    color: var(--red); margin: 0 0 14px; font-family: var(--mono);
+  }
+  h2.section::before { content: "§ "; opacity: 0.5; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--rule); border-radius: 3px;
+    padding: 20px; box-shadow: 0 2px 0 var(--shadow); margin-bottom: 22px;
+  }
+  label.f { display: block; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-soft); margin-bottom: 6px; font-family: var(--mono); }
+  input[type=text] {
+    width: 100%; font-family: var(--serif); font-size: 19px; color: var(--ink);
+    background: transparent; border: none; border-bottom: 1.5px solid var(--rule);
+    padding: 6px 2px; outline: none;
+  }
+  input[type=text]:focus { border-bottom-color: var(--red); }
+  .row { display: flex; gap: 14px; align-items: flex-end; }
+  .row .grow { flex: 1; }
+  .book-in { max-width: 190px; }
+
+  .hint { font-size: 13px; color: var(--ink-soft); font-style: italic; margin: 14px 0 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; align-items: center; }
+  .chip {
+    font-size: 18px; padding: 7px 13px; border-radius: 999px; cursor: pointer;
+    border: 1.5px solid var(--rule); background: var(--paper); color: var(--ink);
+    transition: transform .12s ease, background .12s, border-color .12s, color .12s;
+    user-select: none;
+  }
+  .chip:hover { transform: translateY(-2px); border-color: var(--ink-soft); }
+  .chip.picked {
+    background: var(--red); border-color: var(--red); color: #fff;
+    box-shadow: 0 3px 10px var(--red-soft);
+  }
+  .chip.slot { border-color: var(--blue); color: var(--blue); border-style: dashed; }
+  .chip .tap { font-family: var(--mono); font-size: 10px; opacity: .8; margin-left: 6px; }
+  .breakup { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-soft);
+    cursor: pointer; margin: 2px 0 12px; font-style: italic; }
+  .breakup input { accent-color: var(--red); }
+  .chips-empty { color: var(--ink-soft); font-style: italic; font-size: 14px; }
+
+  button {
+    font-family: var(--mono); font-size: 13px; letter-spacing: 0.05em; cursor: pointer;
+    padding: 10px 18px; border-radius: 2px; border: 1.5px solid var(--ink);
+    background: var(--ink); color: var(--paper); transition: opacity .15s, transform .1s;
+  }
+  button:hover { opacity: 0.86; }
+  button:active { transform: translateY(1px); }
+  button.ghost { background: transparent; color: var(--ink); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .obs { margin-top: 16px; font-size: 16px; min-height: 24px; }
+  .obs .lead { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+  .tag { font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 3px; vertical-align: middle; }
+  .tag.committed { background: var(--green); color: #fff; }
+  .tag.provisional { background: transparent; color: var(--blue); border: 1px solid var(--blue); }
+  .tag.frontier { background: transparent; color: var(--red); border: 1px dashed var(--red); }
+  .fact { font-style: italic; }
+  .fact b { font-style: normal; color: var(--red); }
+
+  .talk-out { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .said {
+    font-size: 20px; padding: 10px 16px; border-left: 3px solid var(--red);
+    background: var(--paper); border-radius: 0 3px 3px 0;
+    animation: rise .4s ease both;
+  }
+  .said .prov { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); font-style: normal; }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .mind { font-family: var(--mono); font-size: 13px; }
+  .frame-row { display: flex; align-items: baseline; gap: 10px; padding: 5px 0; border-bottom: 1px dotted var(--rule); }
+  .frame-row .fid { color: var(--red); }
+  .tmpl .slot { color: var(--blue); }
+  .belief { padding: 6px 0; border-bottom: 1px dotted var(--rule); display: flex; justify-content: space-between; gap: 10px; }
+  .belief .src { color: var(--ink); } .belief .tgt { color: var(--red); }
+  .belief .src, .belief .tgt { font-weight: 600; }
+  .muted { color: var(--ink-soft); }
+  .frontier-item { color: var(--ink-soft); font-style: italic; font-family: var(--serif); padding: 3px 0; }
+  .empty { color: var(--ink-soft); font-style: italic; padding: 6px 0; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 14px; }
+  .tabs button { background: transparent; color: var(--ink-soft); border: none; border-bottom: 2px solid transparent; border-radius: 0; padding: 6px 10px; }
+  .tabs button.active { color: var(--ink); border-bottom-color: var(--red); }
+  .pane { display: none; } .pane.active { display: block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div class="title">
+      <span class="mark"></span>
+      <div>
+        <h1>The Primer</h1>
+        <div class="sub">read to the creature &mdash; tap the picture &mdash; hear it think</div>
+      </div>
+    </div>
+    <div class="metrics">
+      <div><b id="m-pages">0</b>pages read</div>
+      <div><b id="m-cov">0.00</b>coverage</div>
+      <div><b id="m-assim">0.00</b>facts / page</div>
+    </div>
+  </header>
+
+  <div class="cols">
+    <!-- ============================ READING ============================ -->
+    <section>
+      <h2 class="section">Reading</h2>
+      <div class="card">
+        <div class="row">
+          <div class="grow">
+            <label class="f" for="phrase">A phrase from the book</label>
+            <input id="phrase" type="text" autocomplete="off"
+                   placeholder="the bear is red" />
+          </div>
+          <div class="book-in">
+            <label class="f" for="book">Book</label>
+            <input id="book" type="text" autocomplete="off" value="book one" />
+          </div>
+        </div>
+        <p class="hint" id="hint">Tap the word for the thing in the picture &mdash; that tap is how it grounds meaning.</p>
+        <label class="breakup"><input type="checkbox" id="breakup" /> &#9986; break it up myself &mdash; mark each filler; click a filler again to make it the picture</label>
+        <div class="chips" id="chips"><span class="chips-empty">start typing&hellip;</span></div>
+        <div style="margin-top:16px; display:flex; gap:10px; align-items:center;">
+          <button id="read-btn" disabled>Read it &rarr;</button>
+          <span class="muted" style="font-size:13px;">Enter to read</span>
+        </div>
+        <div class="obs" id="obs"></div>
+      </div>
+
+      <h2 class="section">Its Mind</h2>
+      <div class="card mind" id="mind"><div class="empty">nothing read yet.</div></div>
+    </section>
+
+    <!-- ============================ THE CREATURE ============================ -->
+    <section>
+      <h2 class="section">The Creature Talks Back</h2>
+      <div class="card">
+        <div class="tabs">
+          <button class="active" data-tab="ask">Ask it</button>
+          <button data-tab="say">What did you learn?</button>
+        </div>
+
+        <div class="pane active" id="pane-ask">
+          <label class="f" for="q">Ask a question &mdash; leave a blank with <code>?</code></label>
+          <input id="q" type="text" autocomplete="off" placeholder="the bear is ?" />
+          <div style="margin-top:12px;"><button id="ask-btn">Ask</button></div>
+          <div class="talk-out" id="ask-out"></div>
+        </div>
+
+        <div class="pane" id="pane-say">
+          <div class="row">
+            <div class="grow">
+              <label class="f" for="say-ref">About (optional)</label>
+              <input id="say-ref" type="text" autocomplete="off" placeholder="bear — or leave blank for all" />
+            </div>
+            <button id="say-btn">Tell me</button>
+          </div>
+          <div class="talk-out" id="say-out"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let chipState = {};   // token index -> "slot" | "pic"  (absent = anchor / fixed template word)
+let breakup = false;
+
+// client-side tokenizer mirroring reader.tokenize (display only; server re-validates)
+function tokenize(text) {
+  const out = [];
+  for (const raw of text.trim().split(/\s+/)) {
+    if (raw === "?" || raw === "_") { out.push(raw); continue; }
+    const m = raw.toLowerCase().match(/[^\W_]+/gu);
+    if (m) out.push(...m);
+  }
+  return out;
+}
+const toksNow = () => tokenize($("phrase").value).filter(t => t !== "?" && t !== "_");
+
+function renderChips() {
+  const toks = toksNow();
+  const box = $("chips");
+  box.innerHTML = "";
+  if (toks.length === 0) { box.innerHTML = '<span class="chips-empty">start typing&hellip;</span>'; chipState = {}; update(); return; }
+  toks.forEach((t, i) => {
+    const st = chipState[i];
+    const c = document.createElement("span");
+    c.className = "chip" + (st === "pic" ? " picked" : st === "slot" ? " slot" : "");
+    c.innerHTML = t + (st === "pic" ? '<span class="tap">◉ picture</span>' : st === "slot" ? '<span class="tap">filler</span>' : '');
+    c.onclick = () => cycle(i);
+    box.appendChild(c);
+  });
+  update();
+}
+
+function cycle(i) {
+  if (!breakup) {                              // simple mode: single-tap the picture
+    const was = chipState[i] === "pic";
+    chipState = {}; if (!was) chipState[i] = "pic";
+  } else {                                     // breakup mode: none -> filler -> filler+picture -> none
+    const s = chipState[i];
+    if (!s) chipState[i] = "slot";
+    else if (s === "slot") { for (const k in chipState) if (chipState[k] === "pic") chipState[k] = "slot"; chipState[i] = "pic"; }
+    else delete chipState[i];
+  }
+  renderChips();
+}
+
+function currentPicture() { const toks = toksNow(); for (const k in chipState) if (chipState[k] === "pic") return toks[k]; return null; }
+function currentMarks() {   // breakup mode only: each marked chip is one slot span [i, i+1]
+  if (!breakup) return null;
+  const idx = Object.keys(chipState).map(Number).filter(i => chipState[i]).sort((a, b) => a - b);
+  return idx.length ? idx.map(i => [i, i + 1]) : null;
+}
+function update() { $("read-btn").disabled = toksNow().length === 0; }
+
+$("breakup").onchange = () => {
+  breakup = $("breakup").checked;
+  chipState = {};
+  $("hint").innerHTML = breakup
+    ? "Click each varying word to mark it a <b>filler</b>; click a filler again to make it the <b>picture</b>. The rest is the fixed template."
+    : "Tap the word for the thing in the picture &mdash; that tap is how it grounds meaning.";
+  renderChips();
+};
+
+async function readIt() {
+  const text = $("phrase").value.trim();
+  if (!text) return;
+  const body = { text, picture: currentPicture(), book: $("book").value.trim() || "reading", marks: currentMarks() };
+  const r = await fetch("/api/feed", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
+  const data = await r.json();
+  if (!r.ok) { $("obs").innerHTML = `<span class="tag frontier">refused</span> ${data.detail}`; return; }
+  showObs(data.observation);
+  renderMind(data.status);
+  $("phrase").value = ""; chipState = {}; renderChips();
+  $("phrase").focus();
+}
+
+function factHTML(f) { return f ? `<span class="fact"><b>${f[0]}</b> &rarr; <b>${f[1]}</b></span>` : ""; }
+
+function showObs(o) {
+  const box = $("obs");
+  if (o.frontier) {
+    box.innerHTML = `<div class="lead">frontier</div>It didn't fit any frame I know &mdash; <span class="tag frontier">set aside to puzzle over</span>. Read a few more like it and a new frame may form.`;
+    return;
+  }
+  if (!o.fact) {
+    box.innerHTML = `<div class="lead">parsed &middot; frame ${o.frame}</div>
+      It fits the template, but the two things ran together into one slot &mdash; no fact yet.
+      <div class="muted" style="font-size:13px;margin-top:4px;">Tick <b>&#9986; break it up myself</b> and mark each filler to split them.</div>`;
+    return;
+  }
+  const st = o.status || "provisional";
+  box.innerHTML = `<div class="lead">parsed &middot; frame ${o.frame}</div>
+    Learned ${factHTML(o.fact)} <span class="tag ${st}">${st}</span>
+    ${st === "provisional" ? '<div class="muted" style="font-size:13px;margin-top:4px;">heard once &mdash; read it from another book to commit it.</div>' : ''}`;
+}
+
+function tmplHTML(t) { return t.split(" ").map(w => w === "___" ? '<span class="slot">___</span>' : w).join(" "); }
+
+function beliefLine(b) {
+  // speak the belief in the frame it was actually learned in ("bird has two legs"),
+  // not a generic "is"; highlight the target. Fall back to "src is tgt" if unrenderable.
+  const line = b.sentence
+    ? b.sentence.replace(b.target, `<span class="tgt">${b.target}</span>`).replace(b.source, `<span class="src">${b.source}</span>`)
+    : `<span class="src">${b.source}</span> is <span class="tgt">${b.target}</span>`;
+  return `<div class="belief"><span>${line}</span><span class="muted">${b.sources.join(", ")}</span></div>`;
+}
+
+function renderMind(s) {
+  $("m-pages").textContent = s.pages_read;
+  $("m-cov").textContent = s.coverage.toFixed(2);
+  $("m-assim").textContent = s.assimilation_rate.toFixed(2);
+  const parts = [];
+  parts.push(`<div class="muted" style="margin-bottom:6px;">FRAMES it has induced</div>`);
+  if (s.frames.length === 0) parts.push('<div class="empty">none yet &mdash; needs a few phrases of the same shape.</div>');
+  s.frames.forEach(f => parts.push(`<div class="frame-row"><span class="fid">${f.id}</span><span class="tmpl">${tmplHTML(f.template)}</span></div>`));
+
+  parts.push(`<div class="muted" style="margin:14px 0 6px;">BELIEFS &mdash; committed</div>`);
+  if (s.committed.length === 0) parts.push('<div class="empty">nothing committed yet.</div>');
+  s.committed.forEach(b => parts.push(beliefLine(b)));
+
+  if (s.provisional.length) {
+    parts.push(`<div class="muted" style="margin:14px 0 6px;">provisional &mdash; heard, not yet committed</div>`);
+    s.provisional.forEach(b => parts.push(beliefLine(b)));
+  }
+  if (s.frontier.length) {
+    parts.push(`<div class="muted" style="margin:14px 0 6px;">FRONTIER &mdash; what confuses it (${s.frontier.length})</div>`);
+    s.frontier.forEach(t => parts.push(`<div class="frontier-item">&ldquo;${t.join(" ")}&rdquo;</div>`));
+  }
+  $("mind").innerHTML = parts.join("");
+}
+
+async function ask() {
+  const text = $("q").value.trim(); if (!text) return;
+  const r = await fetch("/api/ask", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({text}) });
+  const d = await r.json();
+  const out = $("ask-out"); out.innerHTML = "";
+  if (d.kind === "unparsed") { out.innerHTML = `<div class="said muted">&ldquo;I can't answer that yet &mdash; ${d.reason}.&rdquo;</div>`; return; }
+  const answers = d.kind === "about" ? (d.beliefs || []).map(b => ({sentence: b.sentence, status: b.status, answer: b.target})) : (d.answers || []);
+  if (!answers.length) { out.innerHTML = `<div class="said muted">&ldquo;I don't know yet.&rdquo;</div>`; return; }
+  answers.forEach((a, i) => {
+    const div = document.createElement("div"); div.className = "said"; div.style.animationDelay = (i*70)+"ms";
+    div.innerHTML = `&ldquo;${a.sentence || a.answer}&rdquo; <span class="prov">&mdash; ${a.status}</span>`;
+    out.appendChild(div);
+  });
+}
+
+async function say() {
+  const referent = $("say-ref").value.trim() || null;
+  const r = await fetch("/api/say", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({referent}) });
+  const d = await r.json();
+  const out = $("say-out"); out.innerHTML = "";
+  if (!d.sentences.length) { out.innerHTML = `<div class="said muted">&ldquo;I haven't committed anything to say yet.&rdquo;</div>`; return; }
+  d.sentences.forEach((s, i) => {
+    const div = document.createElement("div"); div.className = "said"; div.style.animationDelay = (i*70)+"ms";
+    div.innerHTML = `&ldquo;${s.sentence}.&rdquo;`;
+    out.appendChild(div);
+  });
+}
+
+// tabs
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tabs button").forEach(x => x.classList.remove("active"));
+  document.querySelectorAll(".pane").forEach(x => x.classList.remove("active"));
+  b.classList.add("active"); $("pane-" + b.dataset.tab).classList.add("active");
+});
+
+$("phrase").addEventListener("input", renderChips);
+$("phrase").addEventListener("keydown", e => { if (e.key === "Enter") readIt(); });
+$("read-btn").onclick = readIt;
+$("ask-btn").onclick = ask;
+$("q").addEventListener("keydown", e => { if (e.key === "Enter") ask(); });
+$("say-btn").onclick = say;
+
+fetch("/api/status").then(r => r.json()).then(renderMind);
+renderChips();
+</script>
+</body>
+</html>

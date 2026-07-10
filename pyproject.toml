@@ -5,7 +5,10 @@ description = "Fixed-Algebra Growing-Web Learner"
 authors = [{ name = "debjit", email = "debjit@fastmail.fm" }]
 readme = "README.md"
 requires-python = ">=3.11,<4.0"
-dependencies = ["numpy", "networkx", "matplotlib", "sympy"]
+dependencies = ["numpy", "networkx", "matplotlib", "sympy", "fastapi (>=0.139.0,<0.140.0)", "uvicorn[standard] (>=0.51.0,<0.52.0)"]
+
+[project.scripts]
+relweb-serve = "relweblearner.serve.app:main"
 
 [tool.poetry]
 packages = [{ include = "relweblearner", from = "src" }]

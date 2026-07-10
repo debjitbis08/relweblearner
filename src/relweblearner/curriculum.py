@@ -37,42 +37,163 @@ The pipeline:
 
 from __future__ import annotations
 
+import itertools
+import math
 from collections import Counter, defaultdict
 from typing import NamedTuple
 
 from . import language as L
 
 # ============================================================ L2′ — induction
+#
+# A frame is an ANCHORED SUBSEQUENCE: an ordered pattern of fixed anchor tokens
+# with VARIABLE-WIDTH slots between them (a slot absorbs one *or more* tokens).
+# This replaces the earlier "same word-count + fixed positions" model, which
+# conflated two different templates that shared a length (``bird has two legs``
+# vs ``legs let us walk``) and split one template whose slot varied in width
+# (``the cow eats grass`` vs ``the horse eats a banana tree``). Aligning on
+# shared anchors — the spec's "constructions are motifs over the sequence web" —
+# is immune to both: templates separate by their anchor set, and a slot swallows
+# a multi-word filler whole.
+
+LIT = "L"   # a fixed anchor token:  ("L", "has")
+SLOT = "S"  # a variable-width slot (>= 1 token):  ("S",)
 
 
 class Frame(NamedTuple):
     id: str
-    skeleton: tuple            # per-position token or "_" for a slot
-    slots: tuple               # slot positions (the argument positions)
-    anchors: tuple             # fixed positions (the multi-word relation marker)
+    pattern: tuple             # ordered elements: ("L", tok) | ("S",)
+
+    @property
+    def anchors(self) -> tuple:
+        """The fixed anchor tokens — the multi-word relation marker."""
+        return tuple(e[1] for e in self.pattern if e[0] == LIT)
+
+    @property
+    def n_slots(self) -> int:
+        return sum(1 for e in self.pattern if e[0] == SLOT)
+
+    @property
+    def slots(self) -> tuple:
+        """Element indices that are slots (the argument positions)."""
+        return tuple(i for i, e in enumerate(self.pattern) if e[0] == SLOT)
+
+    @property
+    def skeleton(self) -> tuple:
+        """Per-element token or ``"_"`` for a slot (the surface skeleton; for a
+        frame with only single-token slots this is the old per-position form)."""
+        return tuple(e[1] if e[0] == LIT else "_" for e in self.pattern)
+
+    @property
+    def template(self) -> str:
+        return " ".join("___" if e[0] == SLOT else e[1] for e in self.pattern)
 
 
-def _induce_one(group: list[tuple], dominance: float, min_anchors: int):
-    """Induce a skeleton from one equal-length group by per-position dominance.
-
-    A position is FIXED (an anchor) when its most common token covers at least a
-    ``dominance`` fraction of the group, else it is a SLOT. Returns
-    ``(skeleton, slots, anchors)`` or ``None`` when the anchor count is below
-    ``min_anchors`` (the degenerate all-slot skeleton is refused, not emitted).
+def _match(pattern: tuple, tokens: list[str]):
+    """Match a token sequence against a frame pattern; slots are ``+`` (one or
+    more tokens, matched lazily so anchors bind as early as possible). Returns the
+    list of slot fillers (each a space-joined span, in slot order) or ``None``.
     """
-    n, width = len(group), len(group[0])
-    skel, slots, anchors = [], [], []
-    for i in range(width):
-        tok, cnt = Counter(s[i] for s in group).most_common(1)[0]
-        if cnt / n >= dominance:
-            skel.append(tok)
-            anchors.append(i)
+    fillers: list[str] = []
+
+    def rec(pi: int, ti: int) -> bool:
+        if pi == len(pattern):
+            return ti == len(tokens)
+        kind = pattern[pi]
+        if kind[0] == LIT:
+            return ti < len(tokens) and tokens[ti] == kind[1] and rec(pi + 1, ti + 1)
+        for take in range(1, len(tokens) - ti + 1):   # slot: >=1 token, shortest first
+            fillers.append(" ".join(tokens[ti : ti + take]))
+            if rec(pi + 1, ti + take):
+                return True
+            fillers.pop()
+        return False
+
+    return list(fillers) if rec(0, 0) else None
+
+
+def pattern_from_marks(tokens: list[str], slot_spans: list[tuple]) -> tuple:
+    """Build a frame PATTERN from a human-marked breakup of one phrase.
+
+    ``slot_spans`` are ``(start, end)`` half-open token index ranges the reader
+    marked as SLOTS (the varying fillers); every other token is an anchor. This is
+    the scaffold path (product direction): the reader supplies the segmentation the
+    model has not yet learned to induce, yielding the same :class:`Frame` pattern
+    :func:`induce_frames` produces from repetition — but from a SINGLE example, and
+    crucially able to separate ADJACENT fillers the auto-inducer would merge (mark
+    ``red`` and ``bear`` as two spans and ``i see a red bear`` becomes a two-slot
+    frame). Each span is its own slot even when spans abut; overlaps are rejected.
+    """
+    spans = sorted(tuple(s) for s in slot_spans)
+    for (a, b), (c, _d) in zip(spans, spans[1:]):
+        if b > c:
+            raise ValueError(f"overlapping slot spans: {spans}")
+    pattern: list = []
+    i, k = 0, 0
+    while i < len(tokens):
+        if k < len(spans) and i == spans[k][0]:
+            pattern.append((SLOT,))
+            i = spans[k][1]
+            k += 1
         else:
-            skel.append("_")
-            slots.append(i)
-    if len(anchors) < min_anchors:
-        return None
-    return tuple(skel), tuple(slots), tuple(anchors)
+            pattern.append((LIT, tokens[i]))
+            i += 1
+    return tuple(pattern)
+
+
+def _signature(tokens: list[str], anchor_vocab: set) -> tuple:
+    """The anchor skeleton of a sentence: anchor tokens kept as literals, maximal
+    runs of non-anchor tokens collapsed to a single variable-width slot."""
+    pattern: list = []
+    for tok in tokens:
+        if tok in anchor_vocab:
+            pattern.append((LIT, tok))
+        elif not pattern or pattern[-1] != (SLOT,):
+            pattern.append((SLOT,))
+    return tuple(pattern)
+
+
+def _promote_constant_slots(pat: tuple, member_sentences: list, dominance: float) -> tuple:
+    """Promote a SLOT back to an anchor when its fillers are a constant single
+    token across the cluster. The relative anchor threshold demotes frequent
+    fillers (good) but also a RARE frame-word (``where`` in ``where is the __``,
+    swamped by a common frame); this pass recovers it — a column that is always
+    the same word IS structure, however globally rare. Only single-token constant
+    fillers promote (a multi-word slot like ``a banana tree`` stays a slot)."""
+    slot_positions = [i for i, e in enumerate(pat) if e[0] == SLOT]
+    if not slot_positions:
+        return pat
+    fills: dict[int, list] = {si: [] for si in range(len(slot_positions))}
+    for toks in member_sentences:
+        m = _match(pat, toks)
+        if m is None:
+            continue
+        for si, f in enumerate(m):
+            fills[si].append(f)
+    new = list(pat)
+    changed = False
+    for si, elem_pos in enumerate(slot_positions):
+        vals = fills[si]
+        if not vals:
+            continue
+        top, cnt = Counter(vals).most_common(1)[0]
+        if " " not in top and cnt / len(vals) >= dominance:
+            new[elem_pos] = (LIT, top)
+            changed = True
+    return tuple(new) if changed else pat
+
+
+def _mergeable(a: tuple, b: tuple, min_anchors: int) -> bool:
+    """Two signatures belong to the same frame if they have the same element
+    length and agree on at least ``min_anchors`` anchor columns (identical literal
+    in the same position). Columns where they disagree — a literal that varies, or
+    a literal facing a slot — are the slots. This is what keeps ``_ has _ legs``
+    and ``legs let us _`` apart (0 shared anchors) while collapsing a filler that
+    was mistaken for an anchor (e.g. a reused number) into a slot."""
+    if len(a) != len(b):
+        return False
+    shared = sum(1 for ea, eb in zip(a, b) if ea[0] == LIT and eb[0] == LIT and ea[1] == eb[1])
+    return shared >= min_anchors
 
 
 def induce_frames(
@@ -81,27 +202,93 @@ def induce_frames(
     min_group: int = 10,
     dominance: float = 0.8,
     min_anchors: int = 2,
+    min_support: int | None = None,
+    anchor_frac: float = 0.1,
     prefix: str = "F",
 ) -> dict[str, Frame]:
-    """Induce one frame per length class with enough support.
+    """Induce frames by ANCHOR-ALIGNED clustering (not length bucketing).
 
-    ``dominance`` and ``min_anchors`` are the discipline that keeps off-frame
-    captions from polluting a skeleton (see module docstring); lowering the bar
-    (``dominance`` toward 0 with ``min_anchors=0``) reproduces the over-general
-    all-slot failure. Frame ids are ``f"{prefix}{width}"``.
+    1. **anchor vocabulary** — tokens recurring in >= ``min_support`` sentences.
+       ``min_support`` defaults to ``max(min_group, ceil(anchor_frac * N))`` — it
+       SCALES with the corpus, because the closed frame-word class is a large
+       *fraction* of sentences (``the``/``is`` in ~25–50%) while an open-class
+       filler is a small one (a given animal in a few %), even though on a big
+       corpus that filler's raw count is high. A purely absolute floor lets a
+       reused filler masquerade as an anchor and — via the transitive merge below
+       — bridge and collapse distinct frames; the relative floor prevents it.
+    2. **signatures** — each sentence maps to its anchor skeleton
+       (:func:`_signature`), collapsing filler runs to variable-width slots.
+    3. **merge + dominance** — signatures sharing >= ``min_anchors`` anchor
+       columns are unioned; within a cluster a column stays an anchor only if one
+       token covers >= ``dominance`` of it, else it becomes a slot. A cluster with
+       >= ``min_anchors`` surviving anchors, >= 1 slot, and >= ``min_group``
+       sentences is a frame; everything else is left for the frontier.
     """
-    by_len: dict[int, list[tuple]] = defaultdict(list)
+    sentences = [list(s) for s in sentences]
+    if not sentences:
+        return {}
+    if min_support is None:
+        min_support = max(min_group, math.ceil(anchor_frac * len(sentences)))
+
+    df: Counter = Counter()
     for s in sentences:
-        by_len[len(s)].append(tuple(s))
+        df.update(set(s))
+    anchor_vocab = {t for t, c in df.items() if c >= min_support}
+
+    sigs = [_signature(s, anchor_vocab) for s in sentences]
+    by_sig: dict[tuple, list[int]] = defaultdict(list)
+    for i, sg in enumerate(sigs):
+        by_sig[sg].append(i)
+
+    distinct = list(by_sig)
+    parent = list(range(len(distinct)))
+
+    def find(x: int) -> int:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    # Union signatures that agree on >= min_anchors anchor columns, via an inverted
+    # index instead of the O(D^2) all-pairs scan: each signature emits a key for
+    # every min_anchors-sized combination of its (position, token) anchor columns
+    # (blocked by length), and signatures colliding on a key are unioned. Two
+    # signatures share a key IFF they agree on those exact columns, so the induced
+    # clusters are identical to the pairwise :func:`_mergeable` closure — but the
+    # cost is O(D · C(anchors, min_anchors)), near-linear for real frames.
+    buckets: dict[tuple, int] = {}
+    for idx, sg in enumerate(distinct):
+        anchor_cols = [(pos, e[1]) for pos, e in enumerate(sg) if e[0] == LIT]
+        for combo in itertools.combinations(anchor_cols, min_anchors):
+            key = (len(sg),) + combo
+            other = buckets.setdefault(key, idx)
+            if other != idx:
+                parent[find(idx)] = find(other)
+
+    clusters: dict[int, list[int]] = defaultdict(list)
+    for idx, sg in enumerate(distinct):
+        clusters[find(idx)].extend(by_sig[sg])
+
     frames: dict[str, Frame] = {}
-    for width, group in sorted(by_len.items()):
-        if len(group) < min_group:
+    seen: set = set()
+    for members in clusters.values():
+        if len(members) < min_group:
             continue
-        res = _induce_one(group, dominance, min_anchors)
-        if res is not None:
-            skel, slots, anchors = res
-            fid = f"{prefix}{width}"
-            frames[fid] = Frame(fid, skel, slots, anchors)
+        member_sigs = [sigs[i] for i in members]
+        width = len(member_sigs[0])
+        pattern: list = []
+        for col in range(width):
+            top, cnt = Counter(sg[col] for sg in member_sigs).most_common(1)[0]
+            pattern.append(top if top[0] == LIT and cnt / len(member_sigs) >= dominance else (SLOT,))
+        pat = tuple(pattern)
+        pat = _promote_constant_slots(pat, [sentences[i] for i in members], dominance)
+        n_anchors = sum(1 for e in pat if e[0] == LIT)
+        n_slots = sum(1 for e in pat if e[0] == SLOT)
+        if n_anchors < min_anchors or n_slots < 1 or pat in seen:
+            continue
+        seen.add(pat)
+        fid = f"{prefix}{len(frames)}_{'_'.join(e[1] for e in pat if e[0] == LIT)}"
+        frames[fid] = Frame(fid, pat)
     return frames
 
 
@@ -110,12 +297,11 @@ def parse(tokens: list[str], frames: dict[str, Frame]):
     with the most anchors wins a tie). Returns ``(frame_id, filler_tuple)`` or
     ``None`` (rejected to the frontier — a language-layer defect, never a crash).
     """
-    toks = tuple(tokens)
-    for f in sorted(frames.values(), key=lambda fr: -len(fr.anchors)):
-        if len(toks) == len(f.skeleton) and all(
-            s == "_" or s == t for s, t in zip(f.skeleton, toks)
-        ):
-            return f.id, tuple(toks[i] for i in f.slots)
+    toks = list(tokens)
+    for f in sorted(frames.values(), key=lambda fr: (-len(fr.anchors), fr.id)):
+        m = _match(f.pattern, toks)
+        if m is not None:
+            return f.id, tuple(m)
     return None
 
 

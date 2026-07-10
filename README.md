@@ -51,6 +51,33 @@ poetry install
 poetry run pytest        # run the acceptance suite
 ```
 
+## The reading app (hand-training from books)
+
+The first **action layer**: a web app where you read phrases from books to the
+creature, tap the pictured referent, and it reads, commits beliefs and talks
+back. It runs the R2 curriculum-reading pipeline incrementally and statefully —
+`src/relweblearner/reader.py` (the `Reader` session) served by a thin FastAPI app
+in `src/relweblearner/serve/`. State is an append-only JSONL log replayed on
+start, so the session survives restarts and the whole thing ships as one
+container. See [`docs/app-reading.md`](docs/app-reading.md).
+
+```bash
+poetry run relweb-serve            # -> http://127.0.0.1:8000
+# deploy-ready: docker build -t relweb . && docker run -p 8000:8000 -v relweb-data:/data relweb
+```
+
+## Scale substrate (larger-corpus experimentation)
+
+For experiments beyond hand-training, `creature.Creature` is a **named identity**
+whose persisted state is its **geometry** — the web (concept nodes + algebra-valued
+edges, and the language-web frames); the algebra stays frozen in code. Episodes
+stream through `observe()` and are distilled into that geometry, not retained. The
+geometry grows with what is *learned* (distinct structure), independent of the
+*episode count* — repetition is free, novelty costs; it saturates on a closed world
+and grows on an open one. `datasets/patternbooks.py` is the corpus firehose and
+`experiments/ec_scale.py` distils 100k episodes in ~2s. Induction is near-linear.
+See `docs/scale-substrate.md`.
+
 ## Status
 
 - **P0 — core substrate (re-founded on the event-sourced substrate): complete.**
