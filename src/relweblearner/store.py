@@ -18,9 +18,22 @@ commitment cost O(matches), not O(edges):
     so no single process or file holds the whole geometry (forward queries hit one
     shard; reverse queries fan out).
 
-Edge info is a uniform dict ``{"count": int, "sources": set[str], "frames":
-set[str]}``. ``sources`` is capped (commitment needs only >= commit_k distinct
-origins), keeping per-edge provenance O(1) and the whole store O(edges).
+Edge info is a uniform dict ``{"count": int, "sources": dict[str, int],
+"frames": set[str]}``. ``sources`` maps each provenance origin to the number of
+times *it* taught this edge — a per-(edge, source) counter, not just a set. The
+distinct-source count (``len(sources)``) is what commitment reads (``>= commit_k``);
+the per-source tallies make belief a **sum of separable per-source contributions**,
+so a source can be *retracted by decrement* (:meth:`EdgeStore.retract_source`)
+rather than by replaying an episode log. A store-wide ``source -> {edges}`` inverse
+index makes that retraction O(edges-that-source-touched), not O(web).
+
+``sources`` is still capped at ``source_cap`` *distinct* origins per edge (an
+existing origin always increments; only a *new* origin past the cap is dropped),
+keeping per-edge provenance O(1). Honest seam: within the cap, decrement-retraction
+is exact; a source dropped by the cap is invisible to retraction — harmless for the
+commitment regime this serves (``source_cap`` >> ``commit_k``, and a fabricated
+edge starts with an empty source set, so a k-collusion is always captured), but it
+is the point past which the store can no longer change its mind about that edge.
 """
 
 from __future__ import annotations
@@ -30,6 +43,15 @@ from pathlib import Path
 from typing import Iterator
 
 _SEP = "\x1f"  # unit separator for group_concat (never occurs in tokens/sources)
+
+
+def _as_source_counts(sources) -> dict:
+    """Coerce a ``sources`` payload to per-source counts. Accepts the new dict
+    form ``{source: count}`` as-is; a legacy set/list of source names maps each to
+    a count of 1 (older exports predate per-source tallies)."""
+    if isinstance(sources, dict):
+        return {s: int(n) for s, n in sources.items()}
+    return {s: 1 for s in sources}
 
 
 class EdgeStore:
@@ -43,6 +65,17 @@ class EdgeStore:
         raise NotImplementedError
 
     def get(self, src: str, tgt: str) -> dict | None:
+        raise NotImplementedError
+
+    def retract_source(self, source: str) -> int:
+        """Un-observe every edge ``source`` taught: a CRDT decrement-join that
+        removes ``source``'s summand from each edge's provenance (and its tally
+        from the edge count). An edge left with no provenance is deleted — a
+        belief with no source is no belief. Returns the number of edges touched.
+
+        This is retraction WITHOUT an episode log: the aggregates alone carry
+        enough to re-derive belief as if ``source`` had never spoken (invariant
+        #5/#6, recovered at aggregate granularity — (source, claim), not episode)."""
         raise NotImplementedError
 
     def out_edges(self, src: str) -> list[tuple[str, dict]]:
@@ -84,18 +117,39 @@ class InMemoryEdgeStore(EdgeStore):
 
     def __init__(self):
         self._e: dict[tuple, dict] = {}
+        self._by_source: dict[str, set[tuple]] = {}   # inverse index: source -> {edge keys}
 
     def bump(self, src, tgt, rel, source, source_cap):
         e = self._e.get((src, tgt))
         if e is None:
-            e = self._e[(src, tgt)] = {"count": 0, "sources": set(), "frames": set()}
+            e = self._e[(src, tgt)] = {"count": 0, "sources": {}, "frames": set()}
         e["count"] += 1
         e["frames"].add(rel)
-        if len(e["sources"]) < source_cap:
-            e["sources"].add(source)
+        srcs = e["sources"]
+        if source in srcs:                                  # existing origin: always tally
+            srcs[source] += 1
+        elif len(srcs) < source_cap:                        # new origin: admit only under the cap
+            srcs[source] = 1
+            self._by_source.setdefault(source, set()).add((src, tgt))
+        # else: cap reached — this new origin is dropped (see module docstring)
 
     def put(self, src, tgt, info):
-        self._e[(src, tgt)] = {"count": info["count"], "sources": set(info["sources"]), "frames": set(info["frames"])}
+        srcs = _as_source_counts(info["sources"])
+        self._e[(src, tgt)] = {"count": info["count"], "sources": dict(srcs), "frames": set(info["frames"])}
+        for so in srcs:
+            self._by_source.setdefault(so, set()).add((src, tgt))
+
+    def retract_source(self, source):
+        touched = 0
+        for key in self._by_source.pop(source, set()):
+            e = self._e.get(key)
+            if e is None:
+                continue
+            e["count"] -= e["sources"].pop(source, 0)       # decrement this source's summand
+            touched += 1
+            if not e["sources"]:                            # no provenance left -> not a belief
+                del self._e[key]
+        return touched
 
     def get(self, src, tgt):
         e = self._e.get((src, tgt))
@@ -138,7 +192,8 @@ CREATE TABLE IF NOT EXISTS edges (src INTEGER, tgt INTEGER, cnt INTEGER, PRIMARY
 CREATE INDEX IF NOT EXISTS idx_edges_tgt ON edges (tgt);
 CREATE TABLE IF NOT EXISTS edge_rel (src INTEGER, tgt INTEGER, rel TEXT, PRIMARY KEY (src, tgt, rel));
 CREATE INDEX IF NOT EXISTS idx_edge_rel_rel ON edge_rel (rel);
-CREATE TABLE IF NOT EXISTS edge_src (src INTEGER, tgt INTEGER, source TEXT, PRIMARY KEY (src, tgt, source));
+CREATE TABLE IF NOT EXISTS edge_src (src INTEGER, tgt INTEGER, source TEXT, cnt INTEGER DEFAULT 1, PRIMARY KEY (src, tgt, source));
+CREATE INDEX IF NOT EXISTS idx_edge_src_source ON edge_src (source);
 """
 
 
@@ -182,9 +237,14 @@ class SqliteEdgeStore(EdgeStore):
             (s, t),
         )
         self.db.execute("INSERT OR IGNORE INTO edge_rel(src,tgt,rel) VALUES(?,?,?)", (s, t, rel))
-        n = self.db.execute("SELECT COUNT(*) FROM edge_src WHERE src=? AND tgt=?", (s, t)).fetchone()[0]
-        if n < source_cap:
-            self.db.execute("INSERT OR IGNORE INTO edge_src(src,tgt,source) VALUES(?,?,?)", (s, t, source))
+        # existing origin always tallies; a new origin is admitted only under the cap
+        row = self.db.execute("SELECT cnt FROM edge_src WHERE src=? AND tgt=? AND source=?", (s, t, source)).fetchone()
+        if row is not None:
+            self.db.execute("UPDATE edge_src SET cnt=cnt+1 WHERE src=? AND tgt=? AND source=?", (s, t, source))
+        else:
+            n = self.db.execute("SELECT COUNT(*) FROM edge_src WHERE src=? AND tgt=?", (s, t)).fetchone()[0]
+            if n < source_cap:
+                self.db.execute("INSERT INTO edge_src(src,tgt,source,cnt) VALUES(?,?,?,1)", (s, t, source))
 
     def put(self, src, tgt, info):
         s, t = self._node_id(src), self._node_id(tgt)
@@ -192,20 +252,34 @@ class SqliteEdgeStore(EdgeStore):
                         "ON CONFLICT(src,tgt) DO UPDATE SET cnt=?", (s, t, info["count"], info["count"]))
         self.db.executemany("INSERT OR IGNORE INTO edge_rel(src,tgt,rel) VALUES(?,?,?)",
                             [(s, t, r) for r in info["frames"]])
-        self.db.executemany("INSERT OR IGNORE INTO edge_src(src,tgt,source) VALUES(?,?,?)",
-                            [(s, t, so) for so in info["sources"]])
+        self.db.executemany("INSERT OR REPLACE INTO edge_src(src,tgt,source,cnt) VALUES(?,?,?,?)",
+                            [(s, t, so, n) for so, n in _as_source_counts(info["sources"]).items()])
+
+    def retract_source(self, source):
+        # find the edges this source taught via the source index, decrement, and
+        # drop any edge left with no provenance — no episode log consulted.
+        rows = self.db.execute("SELECT src, tgt, cnt FROM edge_src WHERE source=?", (source,)).fetchall()
+        touched = 0
+        for s, t, cnt in rows:
+            self.db.execute("DELETE FROM edge_src WHERE src=? AND tgt=? AND source=?", (s, t, source))
+            self.db.execute("UPDATE edges SET cnt=cnt-? WHERE src=? AND tgt=?", (cnt, s, t))
+            touched += 1
+            if self.db.execute("SELECT COUNT(*) FROM edge_src WHERE src=? AND tgt=?", (s, t)).fetchone()[0] == 0:
+                self.db.execute("DELETE FROM edges WHERE src=? AND tgt=?", (s, t))
+                self.db.execute("DELETE FROM edge_rel WHERE src=? AND tgt=?", (s, t))
+        return touched
 
     def _info(self, s: int, t: int, cnt: int) -> dict:
         rels = self.db.execute(
             "SELECT group_concat(rel,?) FROM edge_rel WHERE src=? AND tgt=?", (_SEP, s, t)
         ).fetchone()[0]
         srcs = self.db.execute(
-            "SELECT group_concat(source,?) FROM edge_src WHERE src=? AND tgt=?", (_SEP, s, t)
-        ).fetchone()[0]
+            "SELECT source, cnt FROM edge_src WHERE src=? AND tgt=?", (s, t)
+        ).fetchall()
         return {
             "count": cnt,
             "frames": set(rels.split(_SEP)) if rels else set(),
-            "sources": set(srcs.split(_SEP)) if srcs else set(),
+            "sources": {so: n for so, n in srcs},
         }
 
     def get(self, src, tgt):
@@ -315,6 +389,11 @@ class ShardedEdgeStore(EdgeStore):
 
     def get(self, src, tgt):
         return self._shard(src).get(src, tgt)
+
+    def retract_source(self, source):
+        # a source teaches edges on many concepts -> its summands are spread across
+        # shards, so retraction fans out (like any global scan here).
+        return sum(sh.retract_source(source) for sh in self.shards)
 
     def out_edges(self, src):
         return self._shard(src).out_edges(src)

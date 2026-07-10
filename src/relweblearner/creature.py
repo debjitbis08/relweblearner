@@ -35,7 +35,9 @@ hand-trained one.
 from __future__ import annotations
 
 import json
+import random
 import re
+from collections import Counter
 from pathlib import Path
 from typing import Iterable
 
@@ -64,6 +66,8 @@ class Creature:
         exemplar_cap: int = 5,
         min_shared: int = 3,
         agree_threshold: float = 0.8,
+        seed: int = 0,
+        reservoir_stratify: bool = True,
         created: str | None = None,
         level: int | None = None,
         store: EdgeStore | None = None,
@@ -82,6 +86,9 @@ class Creature:
         self.exemplar_cap = exemplar_cap
         self.min_shared = min_shared
         self.agree_threshold = agree_threshold
+        self.seed = seed
+        self.reservoir_stratify = reservoir_stratify
+        self._rng = random.Random(seed)
 
         # The concept web's edges are the ONE unbounded part of the geometry — they
         # live behind an indexed EdgeStore (in-memory by default; SQLite / sharded
@@ -93,7 +100,8 @@ class Creature:
         self.source_slot: dict[str, int] = {}                  # frame -> picture slot index
         self._rel_parent: dict[str, str] = {}                  # union-find: frame -> relation class
         self.frontier: dict[int, dict] = {}                    # length -> {count, exemplars}
-        self._buffer: list[dict] = []                          # rolling unparsed episodes
+        self._buffer: list[dict] = []                          # reservoir sample of unparsed episodes
+        self._buffer_seen = 0                                  # unparsed episodes offered to the reservoir
         self._since_induction = 0
         # ------- counters (scalars, not history) -------
         self.episodes_seen = 0
@@ -143,9 +151,7 @@ class Creature:
             return {"parsed": True, "frontier": False, "frame": fid, "fact": fact, "status": self._status(fact)}
         self.unparsed += 1
         self._bump_frontier(ep["tokens"])
-        self._buffer.append(ep)
-        if len(self._buffer) > self.buffer_cap:
-            self._buffer.pop(0)
+        self._reservoir_add(ep)
         self._since_induction += 1
         if self._since_induction >= self.induction_interval:
             self._induce()
@@ -158,6 +164,70 @@ class Creature:
                 if fill == picture:
                     self.source_slot[fid] = i
                     break
+
+    def _cluster_key(self, ep: dict):
+        """The retention cluster an unparsed episode belongs to. Frame induction
+        blocks strictly by length (:func:`curriculum._mergeable` merges only
+        equal-length signatures), so length is the principled key: fairness across
+        lengths guarantees no length can monopolise. The natural refinement — a
+        length-AND-anchor signature (the Referee's note) — would sub-divide a
+        length once anchors are known; deferred because anchors are exactly what
+        induction has yet to find for a still-frontier pattern."""
+        return len(ep["tokens"])
+
+    def _reservoir_add(self, ep: dict) -> None:
+        """Retain a sample of the UN-ASSIMILATED stream, fairly across clusters.
+
+        Only unparsed (frontier) episodes ever reach here — parsed ones are already
+        distilled into geometry (``_absorb``), so this buffer is *structurally*
+        frontier-priority: memory keeps what it could not yet understand, the only
+        text that is irreplaceable (parsed text regenerates via ``write``; distilled
+        facts do not need it). The reservoir is the retroactivity budget: a frame
+        induced late can only ever re-parse what the buffer still holds.
+
+        Within the frontier, retention is CLUSTER-FAIR (Zeigarnik with an anti-
+        monopoly guard): a firehose of one kind of noise must not evict a rare but
+        learnable pattern below its induction threshold. An under-represented
+        cluster is never displaced — a newcomer under its fair share steals a slot
+        from whichever cluster is over share; a cluster already at share churns only
+        within itself. With a single cluster this reduces to Vitter's Algorithm R
+        (uniform), so the common case is unbiased.
+
+        Not load-bearing for retraction (that lives in the edge aggregates); purely
+        the induction/audit substrate."""
+        self._buffer_seen += 1
+        if len(self._buffer) < self.buffer_cap:
+            self._buffer.append(ep)
+            return
+        if not self.reservoir_stratify:                    # pure Algorithm R (uniform)
+            j = self._rng.randrange(self._buffer_seen)
+            if j < self.buffer_cap:
+                self._buffer[j] = ep
+            return
+
+        key = self._cluster_key(ep)
+        counts = Counter(self._cluster_key(e) for e in self._buffer)
+        n_clusters = len(counts) + (0 if key in counts else 1)
+        fair = max(1, self.buffer_cap // n_clusters)
+        if counts.get(key, 0) < fair:
+            # under fair share: protect it — take a slot from an over-share cluster
+            # (never from another under-share one); else fall back to Algorithm R.
+            over = [k for k in counts if counts[k] > fair]
+            if over:
+                hog = max(over, key=lambda k: counts[k])
+                pool = [i for i, e in enumerate(self._buffer) if self._cluster_key(e) == hog]
+                self._buffer[self._rng.choice(pool)] = ep
+            else:
+                j = self._rng.randrange(self._buffer_seen)
+                if j < self.buffer_cap:
+                    self._buffer[j] = ep
+        else:
+            # ep's cluster is already at/over fair share: churn WITHIN it only, so it
+            # can never evict a different (possibly rarer) cluster.
+            j = self._rng.randrange(self._buffer_seen)
+            if j < self.buffer_cap:
+                pool = [i for i, e in enumerate(self._buffer) if self._cluster_key(e) == key]
+                self._buffer[self._rng.choice(pool)] = ep
 
     def _bump_frontier(self, tokens) -> None:
         k = len(tokens)
@@ -216,6 +286,10 @@ class Creature:
                     f["count"] -= 1
             else:
                 kept.append(ep)
+        # episodes that now parse have left the unparsed stream; drop them from the
+        # reservoir and its stream counter so it stays a sample of the STILL-unparsed
+        # tail (approximate under deletion — the honest caveat of a bounded sample).
+        self._buffer_seen = max(len(kept), self._buffer_seen - (len(self._buffer) - len(kept)))
         self._buffer = kept
 
     # ============================================================= relation unification
@@ -343,6 +417,28 @@ class Creature:
             edges = self.edges.committed(self.commit_k, limit=max(limit * 3, limit))
         return T.say(self._state_for(edges), referent, limit)
 
+    # ============================================================= retraction
+
+    def retract_source(self, source: str) -> dict:
+        """Un-observe everything ``source`` taught — a decrement-join over the
+        edge aggregates, no episode log consulted (invariant #5/#6).
+
+        Belief here is a monotone join of per-source summands, so retraction is
+        subtraction: remove ``source``'s tally from each edge it touched, and drop
+        any edge left with no provenance. A k-source collusion un-commits the
+        moment one colluder is retracted (its distinct-source count falls below
+        ``commit_k``); every honestly-multiply-sourced fact is untouched.
+
+        Granularity is (source, claim), not per-episode — that WAS an episode's
+        whole epistemic content — so "this source was wrong" retracts cleanly,
+        while "this one page of an otherwise-good source was wrong" does not."""
+        before = self.edges.num_committed(self.commit_k)
+        touched = self.edges.retract_source(source)
+        after = self.edges.num_committed(self.commit_k)
+        return {"source": source, "edges_touched": touched,
+                "committed_before": before, "committed_after": after,
+                "uncommitted": before - after}
+
     # ============================================================= metrics / snapshot
 
     def snapshot(self, committed_limit: int = 200) -> dict:
@@ -399,7 +495,7 @@ class Creature:
         for s, t, ev in sorted(self.edges.iter_edges()):
             node_set.update((s, t))
             edges.append({"src": s, "tgt": t, "rel": sorted(ev["frames"]),
-                          "count": ev["count"], "sources": sorted(ev["sources"])})
+                          "count": ev["count"], "sources": dict(sorted(ev["sources"].items()))})
         return {
             "concept_web": {"nodes": sorted(node_set), "edges": edges},
             "language_web": {
@@ -446,11 +542,12 @@ class Creature:
                 "commit_k": self.commit_k, "min_group": self.min_group, "dominance": self.dominance,
                 "min_anchors": self.min_anchors, "induction_interval": self.induction_interval,
                 "buffer_cap": self.buffer_cap, "source_cap": self.source_cap, "exemplar_cap": self.exemplar_cap,
+                "seed": self.seed, "reservoir_stratify": self.reservoir_stratify,
             },
             "counters": {"episodes_seen": self.episodes_seen, "parsed": self.parsed, "unparsed": self.unparsed},
             "geometry": self.geometry(),
             "frontier": {str(k): v for k, v in self.frontier.items()},
-            "working": {"buffer": self._buffer},   # ephemeral induction reservoir
+            "working": {"buffer": self._buffer, "buffer_seen": self._buffer_seen},   # induction reservoir + its stream counter
         }
 
     def save(self, path: str | Path) -> None:
@@ -470,7 +567,9 @@ class Creature:
         for e in geo["concept_web"]["edges"]:
             c.edges.put(e["src"], e["tgt"], {"count": e["count"], "sources": e["sources"], "frames": e["rel"]})
         c.frontier = {int(k): v for k, v in d["frontier"].items()}
-        c._buffer = list(d.get("working", {}).get("buffer", []))
+        working = d.get("working", {})
+        c._buffer = list(working.get("buffer", []))
+        c._buffer_seen = working.get("buffer_seen", len(c._buffer))
         return c
 
     @classmethod
