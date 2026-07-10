@@ -22,7 +22,7 @@ from pydantic import BaseModel
 
 from .. import curriculum as C
 from ..creature import Creature, _slug
-from ..episodelog import JsonlEpisodeLog
+from ..episodelog import JsonlEpisodeLog, creature_lock
 from ..reader import tokenize
 
 NAME = os.environ.get("RELWEB_CREATURE", "scholar")
@@ -61,6 +61,7 @@ def _fresh_creature() -> Creature:
     if DATA.exists():
         m = DATA.stat().st_mtime
         if m > _mtime:
+            _LOG.refresh()                        # the trainer appended: resync the counter
             _creature = Creature.load(DATA, log=_LOG)
             _mtime = m
     return _creature
@@ -96,6 +97,57 @@ def mindmap() -> dict:
     return _fresh_creature().mind_map()
 
 
+@app.get("/api/web")
+def web(focus: str | None = None, limit: int = 40) -> dict:
+    """A bounded ego-graph around ``focus`` (or a committed seed) — the web
+    explorer's data: neighbours, relation markers, committed/grown status."""
+    return _fresh_creature().web_view(focus, limit=limit)
+
+
+@app.get("/api/chains")
+def chains() -> dict:
+    """The learned GAUGE GROUPS, made legible: for each constraint group of the
+    concept web, its relation classes (sector, transport, templates), its nodes
+    ordered by holonomy coordinate (a chain group IS a number line), and its
+    nonzero-holonomy defects. This is the geometry the creature actually
+    reasons with — transport runs along these rails."""
+    from ..holonomy import defects as _defects
+    from ..holonomy import potential
+
+    c = _fresh_creature()
+    webs = c.concept_webs()
+    rows = {r["class"]: r for r in c._sector_rows()}
+    groups = []
+    for gid, w in sorted(webs.items()):
+        phi = potential(w)
+        comps, seen = [], set()
+        for root in sorted(w.nodes, key=repr):
+            if root in seen:
+                continue
+            comp, stack = [], [root]
+            seen.add(root)
+            while stack:
+                u = stack.pop()
+                comp.append(u)
+                for v, _g, _e in w.neighbors(u):
+                    if v not in seen:
+                        seen.add(v)
+                        stack.append(v)
+            comps.append(sorted(comp, key=lambda n: (phi.get(n, 0), str(n))))
+        comps.sort(key=len, reverse=True)
+        groups.append({
+            "group": gid,
+            "classes": [rows[r] for r in sorted(c._rel_groups)
+                        if c._rel_groups[r] == gid and r in rows],
+            "components": [[{"id": n, "coord": phi.get(n, 0)} for n in comp]
+                           for comp in comps[:6]],
+            "n_components": len(comps),
+            "defects": [{"u": d.edge.u, "v": d.edge.v, "class": d.edge.rel,
+                         "residual": d.residual} for d in _defects(w)][:12],
+        })
+    return {"groups": groups}
+
+
 @app.get("/api/tokenize")
 def tok(text: str) -> dict:
     """Tokenise a phrase so the UI can render one chip per word for tapping the
@@ -125,11 +177,17 @@ def feed(body: FeedIn) -> dict:
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
         global _mtime
-        c = _fresh_creature()                     # apply teaching on top of the latest trained state
-        observation = c.observe(tokens, picture=pic, source=body.book, marks=marks)
-        c.commit()
-        c.save(DATA)
-        _mtime = DATA.stat().st_mtime             # our own write; don't treat it as an external change
+        # cross-process exclusion against the cron trainer (same lock the
+        # trainer holds for its whole run): refuse politely, never interleave.
+        with creature_lock(DATA.parent, blocking=False) as held:
+            if not held:
+                raise HTTPException(status_code=409,
+                                    detail="a training run is writing this creature; try again shortly")
+            c = _fresh_creature()                 # apply teaching on top of the latest trained state
+            observation = c.observe(tokens, picture=pic, source=body.book, marks=marks)
+            c.commit()
+            c.save(DATA)
+            _mtime = DATA.stat().st_mtime         # our own write; don't treat it as an external change
         return {"observation": observation, "status": c.snapshot()}
 
 

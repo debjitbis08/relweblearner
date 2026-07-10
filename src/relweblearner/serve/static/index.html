@@ -1,606 +1,601 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>The Primer — teach the creature to read</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>relweb — the creature’s console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62,500..900;125,400..800&family=Spline+Sans+Mono:ital,wght@0,300..700;1,340&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --paper: #f4ecdc;
-    --paper-2: #efe5d0;
-    --ink: #2b2620;
-    --ink-soft: #6a6152;
-    --rule: #d8ccb2;
-    --red: #c14330;
-    --red-soft: #e7c9c0;
-    --blue: #2f5d78;
-    --green: #4a6b45;
-    --card: #fbf6ea;
-    --shadow: rgba(60, 48, 30, 0.16);
-    --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
-    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #1c1a17; --paper-2: #232019; --ink: #ece3d2; --ink-soft: #9c927f;
-      --rule: #3a352c; --red: #e0684f; --red-soft: #4a2a22; --blue: #7db4d4;
-      --green: #8fb488; --card: #23201a; --shadow: rgba(0,0,0,0.4);
-    }
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; }
-  body {
-    font-family: var(--serif);
-    color: var(--ink);
-    background:
-      radial-gradient(120% 80% at 50% -10%, var(--paper-2), transparent 60%),
-      repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.015) 28px),
-      var(--paper);
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-  }
-  a { color: inherit; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: clamp(18px, 4vw, 46px); }
+/* ————————————————————————————— the instrument ————————————————————————————
+   A lab console for a symbolic learner. The design rule: BELIEF STATUS IS
+   COLOR — committed / provisional / derived / counted / grown / defect keep
+   one fixed hue everywhere (answers, edges, ledgers, chains).            */
+:root{
+  --bg:#0e0d10; --panel:#151318; --panel2:#1b1820; --well:#0b0a0d;
+  --line:#292531; --line2:#37323f;
+  --ink:#ece7db; --dim:#948d9f; --faint:#5f5969;
+  --committed:#b5e04a; --provisional:#e0b34a; --derived:#4ac9e0;
+  --counted:#3fe0a8; --grown:#c07ef2; --defect:#f2607e; --unknown:#6f6880;
+  --mono:"Spline Sans Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  --sans:"Archivo",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:dark}
+body{
+  background:var(--bg) fixed;
+  background-image:
+    radial-gradient(1100px 500px at 70% -10%, rgba(124,94,190,.07), transparent 60%),
+    radial-gradient(700px 400px at 0% 110%, rgba(74,201,224,.05), transparent 60%),
+    repeating-linear-gradient(0deg, transparent 0 23px, rgba(255,255,255,.014) 23px 24px);
+  color:var(--ink); font:14px/1.45 var(--mono);
+  min-height:100vh; padding:14px 16px 40px;
+}
+::selection{background:rgba(181,224,74,.25)}
+h1,h2,h3,.lbl{font-family:var(--sans)}
+button,input{font:inherit;color:inherit}
+a{color:var(--derived)}
 
-  header.masthead {
-    display: flex; align-items: baseline; justify-content: space-between;
-    gap: 20px; flex-wrap: wrap;
-    border-bottom: 2px solid var(--ink); padding-bottom: 14px; margin-bottom: 6px;
-  }
-  .title { display: flex; align-items: baseline; gap: 14px; }
-  .title h1 {
-    font-size: clamp(28px, 4.4vw, 46px); margin: 0; letter-spacing: -0.02em; font-weight: 600;
-  }
-  .title .mark {
-    width: 30px; height: 30px; border-radius: 50%; background: var(--red);
-    box-shadow: 0 0 0 4px var(--paper), 0 0 0 5px var(--red); flex: none;
-    transform: translateY(3px);
-  }
-  .sub { font-style: italic; color: var(--ink-soft); font-size: clamp(13px, 1.6vw, 16px); }
-  .metrics { display: flex; gap: 22px; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
-  .metrics b { display: block; font-size: 20px; color: var(--ink); font-family: var(--serif); font-weight: 600; }
+/* header ————————————————————————————————————————— */
+header{display:flex;flex-wrap:wrap;gap:10px 26px;align-items:flex-end;
+  border-bottom:1px solid var(--line2);padding-bottom:12px;margin-bottom:14px}
+.brand h1{font-variation-settings:"wdth" 125;font-weight:800;font-size:19px;
+  letter-spacing:.14em;text-transform:uppercase}
+.brand h1 em{color:var(--committed);font-style:normal}
+.brand .who{color:var(--dim);font-size:12px;margin-top:2px}
+.brand .who b{color:var(--ink)}
+#vitals{display:flex;flex-wrap:wrap;gap:0;margin-left:auto}
+.vital{padding:0 16px;border-left:1px solid var(--line);min-width:76px}
+.vital:first-child{border-left:0}
+.vital .n{font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.vital .k{font-family:var(--sans);font-variation-settings:"wdth" 62;font-weight:600;
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint)}
+.vital.alert .n{color:var(--defect)}
+.vital.ok .n{color:var(--committed)}
+#legend{width:100%;display:flex;gap:14px;flex-wrap:wrap;font-size:10.5px;color:var(--dim);padding-top:6px}
+#legend i{font-style:normal;display:inline-flex;align-items:center;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
 
-  .cols { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(20px, 3vw, 40px); margin-top: 26px; }
-  @media (max-width: 860px) { .cols { grid-template-columns: 1fr; } }
+/* layout ————————————————————————————————————————— */
+main{display:grid;grid-template-columns:minmax(330px,390px) 1fr;gap:14px;align-items:start}
+@media (max-width:980px){main{grid-template-columns:1fr}}
+section.panel{background:var(--panel);border:1px solid var(--line);border-radius:4px;
+  padding:12px 14px 14px;margin-bottom:14px;position:relative}
+section.panel::before{content:"";position:absolute;inset:0 auto auto 0;width:100%;height:2px;
+  background:linear-gradient(90deg,var(--line2),transparent 70%)}
+.ptitle{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.ptitle h2{font-variation-settings:"wdth" 62;font-weight:700;font-size:12px;
+  letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
+.ptitle .hint{font-size:10.5px;color:var(--faint);margin-left:auto;text-align:right}
 
-  h2.section {
-    font-size: 13px; text-transform: uppercase; letter-spacing: 0.22em; font-weight: 600;
-    color: var(--red); margin: 0 0 14px; font-family: var(--mono);
-  }
-  h2.section::before { content: "§ "; opacity: 0.5; }
+/* teach ————————————————————————————————————————— */
+#tmpl-row{display:flex;gap:6px;flex-wrap:wrap;max-height:74px;overflow-y:auto;margin-bottom:8px}
+.tmpl{border:1px solid var(--line2);background:var(--panel2);border-radius:3px;
+  font-size:11px;color:var(--dim);padding:2px 7px;cursor:pointer;white-space:nowrap}
+.tmpl:hover{color:var(--ink);border-color:var(--faint)}
+.tmpl .slot{color:var(--provisional)}
+.inrow{display:flex;gap:8px}
+input[type=text]{flex:1;background:var(--well);border:1px solid var(--line2);border-radius:3px;
+  padding:7px 10px;outline:none;caret-color:var(--committed)}
+input[type=text]:focus{border-color:var(--faint)}
+input[type=text]::placeholder{color:var(--faint)}
+button.b{background:var(--panel2);border:1px solid var(--line2);border-radius:3px;
+  padding:7px 14px;cursor:pointer;font-family:var(--sans);font-variation-settings:"wdth" 62;
+  font-weight:700;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim)}
+button.b:hover:not(:disabled){color:var(--ink);border-color:var(--faint)}
+button.b.go{color:var(--bg);background:var(--committed);border-color:var(--committed)}
+button.b.go:hover:not(:disabled){filter:brightness(1.1);color:var(--bg)}
+button.b:disabled{opacity:.35;cursor:default}
+#chips{display:flex;gap:6px;flex-wrap:wrap;min-height:30px;padding:8px 0 2px}
+.chip{border:1px solid var(--line2);border-radius:3px;padding:3px 9px;cursor:pointer;
+  background:var(--panel2);transition:border-color .1s}
+.chip:hover{border-color:var(--faint)}
+.chip.pic{border-color:var(--committed);color:var(--committed);box-shadow:0 0 0 1px rgba(181,224,74,.35)}
+.chip.mark{border-color:var(--provisional);color:var(--provisional);border-style:dashed}
+.chiphelp{font-size:10.5px;color:var(--faint);margin:2px 0 8px}
+.bookrow{display:flex;gap:8px;align-items:center;font-size:11.5px;color:var(--dim)}
+.bookrow input{max-width:150px;padding:4px 8px}
+#receipt{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px;font-size:12.5px;
+  display:flex;flex-direction:column;gap:5px;max-height:170px;overflow-y:auto}
+.rc{display:flex;gap:8px;align-items:baseline;animation:in .18s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(-3px)}to{opacity:1}}
+.rc .t{color:var(--faint);font-size:10px;flex:none}
+.warn{color:var(--defect)}
 
-  .card {
-    background: var(--card); border: 1px solid var(--rule); border-radius: 3px;
-    padding: 20px; box-shadow: 0 2px 0 var(--shadow); margin-bottom: 22px;
-  }
-  label.f { display: block; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--ink-soft); margin-bottom: 6px; font-family: var(--mono); }
-  input[type=text] {
-    width: 100%; font-family: var(--serif); font-size: 19px; color: var(--ink);
-    background: transparent; border: none; border-bottom: 1.5px solid var(--rule);
-    padding: 6px 2px; outline: none;
-  }
-  input[type=text]:focus { border-bottom-color: var(--red); }
-  .row { display: flex; gap: 14px; align-items: flex-end; }
-  .row .grow { flex: 1; }
-  .book-in { max-width: 190px; }
+/* status chips (the epistemology, everywhere) ————— */
+.st{display:inline-block;border-radius:2px;padding:0 6px;font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;font-family:var(--sans);font-variation-settings:"wdth" 62;font-weight:700}
+.st.committed{color:var(--bg);background:var(--committed)}
+.st.provisional{color:var(--bg);background:var(--provisional)}
+.st.derived{color:var(--bg);background:var(--derived)}
+.st.counted{color:var(--bg);background:var(--counted)}
+.st.grown,.st.rewired{color:var(--bg);background:var(--grown)}
+.st.defect,.st.poison{color:var(--bg);background:var(--defect)}
+.st.unknown{color:var(--ink);background:var(--unknown)}
 
-  .hint { font-size: 13px; color: var(--ink-soft); font-style: italic; margin: 14px 0 8px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; align-items: center; }
-  .chip {
-    font-size: 18px; padding: 7px 13px; border-radius: 999px; cursor: pointer;
-    border: 1.5px solid var(--rule); background: var(--paper); color: var(--ink);
-    transition: transform .12s ease, background .12s, border-color .12s, color .12s;
-    user-select: none;
-  }
-  .chip:hover { transform: translateY(-2px); border-color: var(--ink-soft); }
-  .chip.picked {
-    background: var(--red); border-color: var(--red); color: #fff;
-    box-shadow: 0 3px 10px var(--red-soft);
-  }
-  .chip.slot { border-color: var(--blue); color: var(--blue); border-style: dashed; }
-  .chip .tap { font-family: var(--mono); font-size: 10px; opacity: .8; margin-left: 6px; }
-  .breakup { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-soft);
-    cursor: pointer; margin: 2px 0 12px; font-style: italic; }
-  .breakup input { accent-color: var(--red); }
-  .chips-empty { color: var(--ink-soft); font-style: italic; font-size: 14px; }
+/* probe ————————————————————————————————————————— */
+#transcript{display:flex;flex-direction:column;gap:10px;margin-top:10px;max-height:52vh;overflow-y:auto}
+.qa{border-left:2px solid var(--line2);padding-left:10px;animation:in .18s ease-out}
+.qa .q{color:var(--dim);font-size:12px}
+.qa .q::before{content:"» ";color:var(--faint)}
+.acard{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;padding:4px 0 0}
+.acard .w{font-size:16px;font-weight:600;cursor:pointer}
+.acard .w:hover{text-decoration:underline dotted}
+.acard .sent{color:var(--dim);font-size:12px;font-style:italic}
+.acard .src{color:var(--faint);font-size:10.5px}
+.refusal{color:var(--defect);font-size:12px;padding-top:2px}
 
-  button {
-    font-family: var(--mono); font-size: 13px; letter-spacing: 0.05em; cursor: pointer;
-    padding: 10px 18px; border-radius: 2px; border: 1.5px solid var(--ink);
-    background: var(--ink); color: var(--paper); transition: opacity .15s, transform .1s;
-  }
-  button:hover { opacity: 0.86; }
-  button:active { transform: translateY(1px); }
-  button.ghost { background: transparent; color: var(--ink); }
-  button:disabled { opacity: 0.4; cursor: not-allowed; }
+/* right column: tabs ———————————————————————————— */
+#tabs{display:flex;gap:2px;margin-bottom:-1px;position:relative;z-index:1}
+#tabs button{background:var(--panel);border:1px solid var(--line);border-bottom:0;border-radius:4px 4px 0 0;
+  padding:7px 16px;cursor:pointer;color:var(--faint);font-family:var(--sans);
+  font-variation-settings:"wdth" 62;font-weight:700;font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+#tabs button.on{color:var(--ink);background:var(--panel2);border-color:var(--line2)}
+.tabpane{display:none;background:var(--panel2);border:1px solid var(--line2);border-radius:0 4px 4px 4px;
+  padding:14px;min-height:480px}
+.tabpane.on{display:block}
 
-  .obs { margin-top: 16px; font-size: 16px; min-height: 24px; }
-  .obs .lead { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
-  .tag { font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 3px; vertical-align: middle; }
-  .tag.committed { background: var(--green); color: #fff; }
-  .tag.provisional { background: transparent; color: var(--blue); border: 1px solid var(--blue); }
-  .tag.frontier { background: transparent; color: var(--red); border: 1px dashed var(--red); }
-  .fact { font-style: italic; }
-  .fact b { font-style: normal; color: var(--red); }
+/* web explorer ————————————————————————————————— */
+#web-ctl{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+#web-ctl input{max-width:220px}
+#web-note{color:var(--faint);font-size:11px}
+#websvg{width:100%;height:520px;display:block;background:var(--well);border:1px solid var(--line);border-radius:3px}
+#websvg text{font:12px var(--mono);fill:var(--ink)}
+#websvg .rel{font-size:9.5px;fill:var(--faint)}
+#websvg .nd{cursor:pointer}
+#websvg .nd:hover text{fill:var(--committed)}
+#websvg .focus text{font-size:15px;font-weight:600;fill:var(--committed)}
 
-  .talk-out { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
-  .said {
-    font-size: 20px; padding: 10px 16px; border-left: 3px solid var(--red);
-    background: var(--paper); border-radius: 0 3px 3px 0;
-    animation: rise .4s ease both;
-  }
-  .said .prov { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); font-style: normal; }
-  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+/* chains ———————————————————————————————————————— */
+.gcard{border:1px solid var(--line);border-radius:3px;background:var(--panel);
+  padding:10px 12px;margin-bottom:12px}
+.gcard .ghead{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;margin-bottom:8px}
+.gcard .ghead .gt{color:var(--ink);font-size:12.5px}
+.gcard .ghead .tp{color:var(--faint);font-size:11px}
+.rail{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:10px 2px 6px}
+.tick{display:flex;flex-direction:column;align-items:center;min-width:64px;position:relative}
+.tick::before{content:"";position:absolute;top:14px;left:0;right:0;height:1px;background:var(--line2)}
+.tick:first-child::before{left:50%}.tick:last-child::before{right:50%}
+.tick .pin{width:7px;height:7px;border-radius:50%;background:var(--dim);z-index:1;margin-bottom:6px;margin-top:11px}
+.tick .co{font-size:9px;color:var(--faint)}
+.tick .nn{font-size:12px;padding:1px 4px;max-width:120px;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.tick .nn:hover{color:var(--committed)}
+.tick .nn.grown{color:var(--grown)}
+.tick .more{font-size:10px;color:var(--faint)}
+.dfl{color:var(--defect);font-size:12px;padding:2px 0}
+.sector-badge{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--sans);
+  font-variation-settings:"wdth" 62;font-weight:700;padding:0 6px;border-radius:2px;border:1px solid var(--line2);color:var(--dim)}
+.sector-badge.antisymmetric{color:var(--derived);border-color:var(--derived)}
+.sector-badge.symmetric{color:var(--committed);border-color:var(--committed)}
+.sector-badge.non-homogeneous{color:var(--provisional);border-color:var(--provisional)}
 
-  .mind { font-family: var(--mono); font-size: 13px; }
-  .frame-row { display: flex; align-items: baseline; gap: 10px; padding: 5px 0; border-bottom: 1px dotted var(--rule); }
-  .frame-row .fid { color: var(--red); }
-  .tmpl .slot { color: var(--blue); }
-  .belief { padding: 6px 0; border-bottom: 1px dotted var(--rule); display: flex; justify-content: space-between; gap: 10px; }
-  .belief .src { color: var(--ink); } .belief .tgt { color: var(--red); }
-  .belief .src, .belief .tgt { font-weight: 600; }
-  .muted { color: var(--ink-soft); }
-  .frontier-item { color: var(--ink-soft); font-style: italic; font-family: var(--serif); padding: 3px 0; }
-  .empty { color: var(--ink-soft); font-style: italic; padding: 6px 0; }
-  /* scalable mind: constant-size summary + bounded previews, not a full dump */
-  .mind-summary { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-  .stat { font-family: var(--mono); font-size: 12px; color: var(--ink-soft);
-    border: 1px solid var(--rule); border-radius: 2px; padding: 4px 9px; }
-  .stat b { color: var(--ink); font-weight: 600; }
-  .mind-head { display: flex; justify-content: space-between; align-items: baseline;
-    margin: 16px 0 6px; border-bottom: 1px solid var(--rule); padding-bottom: 4px; }
-  .mind-head .lbl { color: var(--ink-soft); font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
-  .mind-head .cnt { color: var(--red); font-family: var(--mono); font-size: 11px; }
-  .more { color: var(--ink-soft); font-style: italic; font-size: 12px; padding: 6px 0; }
-  .flen { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip-f { font-family: var(--mono); font-size: 12px; color: var(--ink-soft);
-    border: 1px dashed var(--rule); border-radius: 2px; padding: 3px 7px; }
-  /* the visual concept web (bounded ego-graph) */
-  .web-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
-  .web-head .foc { font-family: var(--mono); color: var(--red); font-size: 13px; }
-  .web-jump { display: flex; gap: 8px; align-items: baseline; }
-  .web-jump input { width: 180px; font-size: 16px; }
-  /* "the mind's geometry" — a learned latent-space map, not a node-link graph */
-  #mm-svg { width: 100%; height: auto; display: block; border-radius: 4px; cursor: crosshair;
-    background: #12100e; box-shadow: inset 0 0 60px rgba(0,0,0,0.6); }
-  .mm-edge { stroke: #6a6152; stroke-width: 0.8; opacity: .07; }
-  .mm-edge.lit { opacity: .7; stroke-width: 1.3; }
-  .mm-core { transition: opacity .15s; }
-  .mm-core circle { stroke: rgba(255,255,255,0.28); stroke-width: 0.6; }
-  .mm-core text { font-family: var(--mono); font-size: 9.5px; fill: #efe5d0; pointer-events: none;
-    text-anchor: middle; opacity: 0; transition: opacity .12s; paint-order: stroke; stroke: #12100e; stroke-width: 2.5px; }
-  .mm-core.lbl text { opacity: .82; }
-  .mm-core:hover text, .mm-core.lit text { opacity: 1; }
-  #mm-scene.dim .mm-core { opacity: .28; } #mm-scene.dim .mm-glow { opacity: .25; }
-  #mm-scene.dim .mm-core.lit { opacity: 1; }
-  .mm-empty { fill: #9c927f; font-style: italic; font-family: var(--serif); font-size: 15px; }
-  .web-legend { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap; align-items: center; }
-  .web-legend .bar { display: inline-block; width: 70px; height: 9px; border-radius: 5px; vertical-align: middle; margin: 0 5px;
-    background: linear-gradient(90deg, #4b3fa0, #2f9e8f, #e8b04b, #e0684f); }
-  .tabs { display: flex; gap: 4px; margin-bottom: 14px; }
-  .tabs button { background: transparent; color: var(--ink-soft); border: none; border-bottom: 2px solid transparent; border-radius: 0; padding: 6px 10px; }
-  .tabs button.active { color: var(--ink); border-bottom-color: var(--red); }
-  .pane { display: none; } .pane.active { display: block; }
+/* numbers ——————————————————————————————————————— */
+.nmeta{display:flex;gap:16px;flex-wrap:wrap;color:var(--dim);font-size:12px;margin-bottom:6px}
+.numline{display:flex;overflow-x:auto;padding:26px 4px 8px}
+.ntick{min-width:74px;display:flex;flex-direction:column;align-items:center;position:relative}
+.ntick::before{content:"";position:absolute;top:8px;left:0;right:0;height:2px;background:var(--line2)}
+.ntick .pin{width:9px;height:9px;border-radius:50%;background:var(--counted);z-index:1;margin-bottom:8px;margin-top:4px}
+.ntick.unnamed .pin{background:var(--unknown)}
+.ntick .word{font-size:13px;font-weight:600}
+.ntick.unnamed .word{color:var(--faint);font-style:italic;font-weight:400}
+.ntick .pos{font-size:9.5px;color:var(--faint)}
+.nnote{color:var(--faint);font-size:11.5px}
+
+/* ledger ———————————————————————————————————————— */
+table{width:100%;border-collapse:collapse;font-size:12px;margin:4px 0 16px}
+th{font-family:var(--sans);font-variation-settings:"wdth" 62;font-weight:700;font-size:10px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--faint);text-align:left;
+  border-bottom:1px solid var(--line2);padding:3px 10px 5px 0}
+td{border-bottom:1px solid var(--line);padding:4px 10px 4px 0;vertical-align:top}
+td.num{font-variant-numeric:tabular-nums}
+.tmplcell{color:var(--dim)}
+.tmplcell .slot{color:var(--provisional)}
+h3.sub{font-variation-settings:"wdth" 62;font-weight:700;font-size:11px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--dim);margin:14px 0 4px;font-family:var(--sans)}
+.pillrow{display:flex;gap:6px;flex-wrap:wrap;font-size:11px}
+.pill{border:1px solid var(--line2);border-radius:10px;padding:1px 9px;color:var(--dim)}
+.empty{color:var(--faint);font-size:12px;font-style:italic;padding:6px 0}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header class="masthead">
-    <div class="title">
-      <span class="mark"></span>
-      <div>
-        <h1>The Primer</h1>
-        <div class="sub">read to the creature &mdash; tap the picture &mdash; hear it think</div>
-      </div>
-    </div>
-    <div class="metrics">
-      <div><b id="m-pages">0</b>episodes read</div>
-      <div><b id="m-facts">0</b>facts known</div>
-      <div><b id="m-cov">0.00</b>coverage</div>
-      <div><b id="m-assim">0.00</b>facts / ep</div>
-    </div>
-  </header>
 
-  <div class="cols">
-    <!-- ============================ READING ============================ -->
-    <section>
-      <h2 class="section">Reading</h2>
-      <div class="card">
-        <div class="row">
-          <div class="grow">
-            <label class="f" for="phrase">A phrase from the book</label>
-            <input id="phrase" type="text" autocomplete="off"
-                   placeholder="the bear is red" />
-          </div>
-          <div class="book-in">
-            <label class="f" for="book">Book</label>
-            <input id="book" type="text" autocomplete="off" value="book one" />
-          </div>
-        </div>
-        <p class="hint" id="hint">Tap the word for the thing in the picture &mdash; that tap is how it grounds meaning.</p>
-        <label class="breakup"><input type="checkbox" id="breakup" /> &#9986; break it up myself &mdash; mark each filler; click a filler again to make it the picture</label>
-        <div class="chips" id="chips"><span class="chips-empty">start typing&hellip;</span></div>
-        <div style="margin-top:16px; display:flex; gap:10px; align-items:center;">
-          <button id="read-btn" disabled>Read it &rarr;</button>
-          <span class="muted" style="font-size:13px;">Enter to read</span>
-        </div>
-        <div class="obs" id="obs"></div>
-      </div>
-
-      <h2 class="section">Its Mind</h2>
-      <div class="card mind" id="mind"><div class="empty">nothing read yet.</div></div>
-    </section>
-
-    <!-- ============================ THE CREATURE ============================ -->
-    <section>
-      <h2 class="section">The Creature Talks Back</h2>
-      <div class="card">
-        <div class="tabs">
-          <button class="active" data-tab="ask">Ask it</button>
-          <button data-tab="say">What did you learn?</button>
-        </div>
-
-        <div class="pane active" id="pane-ask">
-          <label class="f" for="q">Ask a question &mdash; leave a blank with <code>?</code></label>
-          <input id="q" type="text" autocomplete="off" placeholder="the bear is ?" />
-          <div style="margin-top:12px;"><button id="ask-btn">Ask</button></div>
-          <div class="talk-out" id="ask-out"></div>
-        </div>
-
-        <div class="pane" id="pane-say">
-          <div class="row">
-            <div class="grow">
-              <label class="f" for="say-ref">About (optional)</label>
-              <input id="say-ref" type="text" autocomplete="off" placeholder="bear — or leave blank for all" />
-            </div>
-            <button id="say-btn">Tell me</button>
-          </div>
-          <div class="talk-out" id="say-out"></div>
-        </div>
-      </div>
-    </section>
+<header>
+  <div class="brand">
+    <h1>relweb <em>·</em> creature console</h1>
+    <div class="who">observing <b id="who">…</b> <span id="who2"></span></div>
   </div>
+  <div id="vitals"></div>
+  <div id="legend">
+    <i><span class="dot" style="background:var(--committed)"></span>committed (≥k sources)</i>
+    <i><span class="dot" style="background:var(--provisional)"></span>provisional</i>
+    <i><span class="dot" style="background:var(--derived)"></span>derived by transport</i>
+    <i><span class="dot" style="background:var(--counted)"></span>derived by counting</i>
+    <i><span class="dot" style="background:var(--grown)"></span>grown (posited)</i>
+    <i><span class="dot" style="background:var(--defect)"></span>defect / poison</i>
+  </div>
+</header>
 
-  <!-- ==================== THE MIND'S GEOMETRY (learned latent space) ==================== -->
-  <section>
-    <h2 class="section">The Mind's Geometry</h2>
-    <div class="card">
-      <div class="web-head">
-        <div>Each concept sits where the algebra <em>computes</em> it belongs &mdash; not a drawn layout<span class="foc" id="web-focus"></span></div>
-        <div class="web-jump">
-          <input id="web-q" type="text" autocomplete="off" placeholder="find a concept — e.g. dog" />
-          <button id="web-go" class="ghost">Find</button>
-        </div>
-      </div>
-      <svg id="mm-svg" viewBox="0 0 600 460" role="img" aria-label="the creature's learned concept space"></svg>
-      <div class="web-legend">
-        <span>position = relational distance (close = related)</span>
-        <span>colour<span class="bar"></span>a learned axis</span>
-        <span>size = how connected</span>
-        <span>hover a concept to see its ties</span>
-      </div>
+<main>
+<div class="col">
+  <section class="panel" id="teach">
+    <div class="ptitle"><h2>Teach</h2><span class="hint">click a construction to reuse it<br>click word = tap · shift-click = slot mark</span></div>
+    <div id="tmpl-row"></div>
+    <div class="inrow">
+      <input type="text" id="feed-in" placeholder="the bear is red   (Enter to read)" autocomplete="off">
+      <button class="b go" id="feed-btn" disabled>read</button>
     </div>
+    <div id="chips"></div>
+    <div class="chiphelp" id="chiphelp"></div>
+    <div class="bookrow">provenance <input type="text" id="book-in" value="hand" title="the source this page counts as — facts commit at k distinct sources"> <span id="commitk"></span></div>
+    <div id="receipt"></div>
+  </section>
+
+  <section class="panel" id="probe">
+    <div class="ptitle"><h2>Probe</h2><span class="hint">blank with ? — or a lone word for all beliefs</span></div>
+    <div class="inrow">
+      <input type="text" id="ask-in" placeholder="the bear is ?" autocomplete="off">
+      <button class="b go" id="ask-btn">ask</button>
+      <button class="b" id="say-btn" title="volunteer committed facts, read back before speaking">speak</button>
+    </div>
+    <div id="transcript"></div>
   </section>
 </div>
 
+<div class="col">
+  <div id="tabs">
+    <button data-t="web" class="on">Web</button>
+    <button data-t="chains">Chains</button>
+    <button data-t="numbers">Numbers</button>
+    <button data-t="ledger">Ledger</button>
+  </div>
+  <div class="tabpane on" id="tab-web">
+    <div id="web-ctl">
+      <input type="text" id="web-in" placeholder="focus a concept…">
+      <button class="b" id="web-go">focus</button>
+      <span id="web-note"></span>
+    </div>
+    <svg id="websvg" viewBox="0 0 1000 520" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
+  <div class="tabpane" id="tab-chains"></div>
+  <div class="tabpane" id="tab-numbers"></div>
+  <div class="tabpane" id="tab-ledger"></div>
+</div>
+</main>
+
 <script>
-const $ = (id) => document.getElementById(id);
-let chipState = {};   // token index -> "slot" | "pic"  (absent = anchor / fixed template word)
-let breakup = false;
+"use strict";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+const J = (u, body) => fetch(u, body ? {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)} : undefined)
+  .then(async r => { if (!r.ok) throw new Error((await r.json()).detail || r.statusText); return r.json(); });
+const tmplHTML = t => esc(t).split(" ").map(w => w === "___" ? '<span class="slot">___</span>' : w).join(" ");
 
-// client-side tokenizer mirroring reader.tokenize (display only; server re-validates)
-function tokenize(text) {
-  const out = [];
-  for (const raw of text.trim().split(/\s+/)) {
-    if (raw === "?" || raw === "_") { out.push(raw); continue; }
-    const m = raw.toLowerCase().match(/[^\W_]+/gu);
-    if (m) out.push(...m);
-  }
-  return out;
+let STATUS = null;
+
+/* ————— header vitals ————— */
+function vital(k, n, cls){ return `<div class="vital ${cls||""}"><div class="n">${n}</div><div class="k">${k}</div></div>`; }
+function renderVitals(s){
+  STATUS = s;
+  $("who").textContent = s.identity.name;
+  $("who2").textContent = (s.identity.created ? "· since " + s.identity.created : "") +
+    (s.ledger && s.ledger.passed_stages.length ? ` · ${s.ledger.passed_stages.length} stages mastered` : "");
+  const d = s.defects || {count:0}, g = s.growth || {count:0,budget:0};
+  $("vitals").innerHTML =
+    vital("episodes", s.episodes_seen.toLocaleString()) +
+    vital("committed", s.committed_count, "ok") +
+    vital("frames", s.model_size.frames) +
+    vital("relations", s.relations.length) +
+    vital("defects", d.count, d.count ? "alert" : "") +
+    vital("grown", `${g.count}<span style="color:var(--faint)">/${g.budget}</span>`) +
+    vital("log", (s.log ? s.log.entries : 0).toLocaleString()) +
+    vital("coverage", Math.round(s.coverage*100) + "%");
+  $("commitk").textContent = "· facts commit at ≥ 2 distinct sources";
+  renderTemplates(s);
 }
-const toksNow = () => tokenize($("phrase").value).filter(t => t !== "?" && t !== "_");
+function refreshStatus(){ return J("/api/status").then(renderVitals).catch(()=>{}); }
 
-function renderChips() {
-  const toks = toksNow();
-  const box = $("chips");
-  box.innerHTML = "";
-  if (toks.length === 0) { box.innerHTML = '<span class="chips-empty">start typing&hellip;</span>'; chipState = {}; update(); return; }
-  toks.forEach((t, i) => {
-    const st = chipState[i];
-    const c = document.createElement("span");
-    c.className = "chip" + (st === "pic" ? " picked" : st === "slot" ? " slot" : "");
-    c.innerHTML = t + (st === "pic" ? '<span class="tap">◉ picture</span>' : st === "slot" ? '<span class="tap">filler</span>' : '');
-    c.onclick = () => cycle(i);
-    box.appendChild(c);
+/* ————— teach ————— */
+function renderTemplates(s){
+  const frames = (s.frames||[]).slice().sort((a,b)=>a.template.localeCompare(b.template));
+  $("tmpl-row").innerHTML = frames.map(f =>
+    `<span class="tmpl" data-t="${esc(f.template)}" title="frame ${esc(f.id)}">${tmplHTML(f.template)}</span>`).join("") ||
+    '<span class="empty">no constructions induced yet — repetition with substitution grows them</span>';
+  document.querySelectorAll(".tmpl").forEach(el => el.onclick = () => {
+    $("feed-in").value = el.dataset.t.replaceAll("___", "…");
+    $("feed-in").focus(); onFeedInput();
   });
-  update();
 }
-
-function cycle(i) {
-  if (!breakup) {                              // simple mode: single-tap the picture
-    const was = chipState[i] === "pic";
-    chipState = {}; if (!was) chipState[i] = "pic";
-  } else {                                     // breakup mode: none -> filler -> filler+picture -> none
-    const s = chipState[i];
-    if (!s) chipState[i] = "slot";
-    else if (s === "slot") { for (const k in chipState) if (chipState[k] === "pic") chipState[k] = "slot"; chipState[i] = "pic"; }
-    else delete chipState[i];
-  }
-  renderChips();
+let TOKS = [], PIC = null, MARKS = new Set(), tokTimer = null;
+function onFeedInput(){
+  clearTimeout(tokTimer);
+  tokTimer = setTimeout(async () => {
+    const text = $("feed-in").value.trim();
+    if (!text){ TOKS=[]; renderChips(); return; }
+    try { TOKS = (await J("/api/tokenize?text=" + encodeURIComponent(text))).tokens; }
+    catch { TOKS = []; }
+    PIC = null; MARKS.clear(); renderChips();
+  }, 180);
 }
-
-function currentPicture() { const toks = toksNow(); for (const k in chipState) if (chipState[k] === "pic") return toks[k]; return null; }
-function currentMarks() {   // breakup mode only: each marked chip is one slot span [i, i+1]
-  if (!breakup) return null;
-  const idx = Object.keys(chipState).map(Number).filter(i => chipState[i]).sort((a, b) => a - b);
-  return idx.length ? idx.map(i => [i, i + 1]) : null;
-}
-function update() { $("read-btn").disabled = toksNow().length === 0; }
-
-$("breakup").onchange = () => {
-  breakup = $("breakup").checked;
-  chipState = {};
-  $("hint").innerHTML = breakup
-    ? "Click each varying word to mark it a <b>filler</b>; click a filler again to make it the <b>picture</b>. The rest is the fixed template."
-    : "Tap the word for the thing in the picture &mdash; that tap is how it grounds meaning.";
-  renderChips();
-};
-
-async function readIt() {
-  const text = $("phrase").value.trim();
-  if (!text) return;
-  const body = { text, picture: currentPicture(), book: $("book").value.trim() || "reading", marks: currentMarks() };
-  const r = await fetch("/api/feed", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
-  const data = await r.json();
-  if (!r.ok) { $("obs").innerHTML = `<span class="tag frontier">refused</span> ${data.detail}`; return; }
-  showObs(data.observation);
-  renderMind(data.status);
-  const fact = data.observation && data.observation.fact;
-  if (fact) focusOrLoad(fact[0]);        // pan the web to what it just learned
-  $("phrase").value = ""; chipState = {}; renderChips();
-  $("phrase").focus();
-}
-
-function factHTML(f) { return f ? `<span class="fact"><b>${f[0]}</b> &rarr; <b>${f[1]}</b></span>` : ""; }
-
-function showObs(o) {
-  const box = $("obs");
-  if (o.frontier) {
-    box.innerHTML = `<div class="lead">frontier</div>It didn't fit any frame I know &mdash; <span class="tag frontier">set aside to puzzle over</span>. Read a few more like it and a new frame may form.`;
-    return;
-  }
-  if (!o.fact) {
-    box.innerHTML = `<div class="lead">parsed &middot; frame ${o.frame}</div>
-      It fits the template, but the two things ran together into one slot &mdash; no fact yet.
-      <div class="muted" style="font-size:13px;margin-top:4px;">Tick <b>&#9986; break it up myself</b> and mark each filler to split them.</div>`;
-    return;
-  }
-  const st = o.status || "provisional";
-  box.innerHTML = `<div class="lead">parsed &middot; frame ${o.frame}</div>
-    Learned ${factHTML(o.fact)} <span class="tag ${st}">${st}</span>
-    ${st === "provisional" ? '<div class="muted" style="font-size:13px;margin-top:4px;">heard once &mdash; read it from another book to commit it.</div>' : ''}`;
-}
-
-function tmplHTML(t) { return t.split(" ").map(w => w === "___" ? '<span class="slot">___</span>' : w).join(" "); }
-
-function beliefLine(b) {
-  // speak the belief in the frame it was actually learned in ("bird has two legs"),
-  // not a generic "is"; highlight the target. Fall back to "src is tgt" if unrenderable.
-  const line = b.sentence
-    ? b.sentence.replace(b.target, `<span class="tgt">${b.target}</span>`).replace(b.source, `<span class="src">${b.source}</span>`)
-    : `<span class="src">${b.source}</span> is <span class="tgt">${b.target}</span>`;
-  return `<div class="belief"><span>${line}</span><span class="muted">${b.sources.join(", ")}</span></div>`;
-}
-
-// A large mind can hold thousands of frames and millions of facts, so the panel
-// NEVER dumps the whole model: it shows authoritative TOTALS (from the snapshot's
-// counts, not array lengths) plus a fixed-size preview of each section. Deep lookup
-// of a specific concept is the "Ask it" / "About" box, which is server-indexed.
-const PREVIEW = { frames: 8, committed: 10, provisional: 6, flen: 12 };
-
-function mindHead(label, total, shown) {
-  const c = (shown < total) ? `${total} · showing ${shown}` : `${total}`;
-  return `<div class="mind-head"><span class="lbl">${label}</span><span class="cnt">${c}</span></div>`;
-}
-
-function renderMind(s) {
-  // native Creature snapshot: episodes streamed (not pages logged), bounded model_size
-  $("m-pages").textContent = s.episodes_seen;
-  $("m-facts").textContent = s.committed_count;   // "known" = committed, not provisional
-  $("m-cov").textContent = s.coverage.toFixed(2);
-  $("m-assim").textContent = s.assimilation_rate.toFixed(2);
-
-  const ms = s.model_size;
-  const frontierTotal = Object.values(s.frontier).reduce((a, c) => a + c.count, 0);
-  const parts = [];
-
-  // headline: constant-size stat chips (the shape of the whole mind at a glance)
-  parts.push(`<div class="mind-summary">
-    <span class="stat"><b>${ms.frames}</b> frames</span>
-    <span class="stat"><b>${s.committed_count}</b> facts</span>
-    <span class="stat"><b>${s.provisional_count}</b> provisional</span>
-    <span class="stat"><b>${frontierTotal}</b> frontier</span>
-    <span class="stat"><b>${ms.buffer}</b> buffered</span></div>`);
-
-  // FRAMES — bounded preview
-  const fShown = Math.min(PREVIEW.frames, s.frames.length);
-  parts.push(mindHead("frames induced", ms.frames, fShown));
-  if (!s.frames.length) parts.push('<div class="empty">none yet &mdash; needs a few phrases of the same shape.</div>');
-  s.frames.slice(0, PREVIEW.frames).forEach(f => parts.push(`<div class="frame-row"><span class="fid">${f.id}</span><span class="tmpl">${tmplHTML(f.template)}</span></div>`));
-  if (ms.frames > fShown) parts.push(`<div class="more">+${ms.frames - fShown} more frames</div>`);
-
-  // BELIEFS committed — bounded preview + pointer to the indexed lookup
-  const cShown = Math.min(PREVIEW.committed, s.committed.length);
-  parts.push(mindHead("beliefs committed", s.committed_count, cShown));
-  if (!s.committed_count) parts.push('<div class="empty">nothing committed yet.</div>');
-  s.committed.slice(0, PREVIEW.committed).forEach(b => parts.push(beliefLine(b)));
-  if (s.committed_count > cShown) parts.push(`<div class="more">+${s.committed_count - cShown} more &mdash; look one up with <b>Ask it</b> / <b>About</b> &rarr;</div>`);
-
-  // PROVISIONAL — bounded preview
-  if (s.provisional_count) {
-    const pShown = Math.min(PREVIEW.provisional, s.provisional.length);
-    parts.push(mindHead("provisional (heard, not committed)", s.provisional_count, pShown));
-    s.provisional.slice(0, PREVIEW.provisional).forEach(b => parts.push(beliefLine(b)));
-    if (s.provisional_count > pShown) parts.push(`<div class="more">+${s.provisional_count - pShown} more</div>`);
-  }
-
-  // FRONTIER — a compact per-length census (chips), never a per-line dump
-  const flen = Object.keys(s.frontier).sort((a, b) => s.frontier[b].count - s.frontier[a].count);
-  if (flen.length) {
-    parts.push(mindHead("frontier (can't yet frame)", frontierTotal, frontierTotal));
-    parts.push(`<div class="flen">${flen.slice(0, PREVIEW.flen).map(k => `<span class="chip-f">len ${k} &middot; ${s.frontier[k].count}</span>`).join("")}</div>`);
-    const ex = s.frontier[flen[0]].exemplars;
-    if (ex && ex.length) parts.push(`<div class="frontier-item">e.g. &ldquo;${ex[0]}&rdquo;</div>`);
-  }
-
-  $("mind").innerHTML = parts.join("");
-}
-
-// ---------- the mind's geometry: concepts in their LEARNED coordinates ----------
-function esc(s) { return String(s).replace(/[&<>'"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[c])); }
-
-const MM_W = 600, MM_H = 460, MM_PAD = 36;
-let MIND = null;
-// a learned semantic axis, coloured indigo -> teal -> gold -> warm red
-const CSTOPS = [[75, 63, 160], [47, 158, 143], [232, 176, 75], [224, 104, 79]];
-function colorFor(c) {
-  const t = Math.max(0, Math.min(1, c)) * (CSTOPS.length - 1), i = Math.min(Math.floor(t), CSTOPS.length - 2), f = t - i;
-  const a = CSTOPS[i], b = CSTOPS[i + 1];
-  return `rgb(${Math.round(a[0] + (b[0] - a[0]) * f)},${Math.round(a[1] + (b[1] - a[1]) * f)},${Math.round(a[2] + (b[2] - a[2]) * f)})`;
-}
-const mmX = x => MM_PAD + x * (MM_W - 2 * MM_PAD);
-const mmY = y => MM_PAD + (1 - y) * (MM_H - 2 * MM_PAD);
-
-async function loadMind(highlight) {
-  try { const g = await (await fetch("/api/mindmap")).json(); buildMind(g); if (highlight) findConcept(highlight); }
-  catch (e) { /* keep current */ }
-}
-
-function buildMind(g) {
-  const svg = $("mm-svg"); MIND = g;
-  if (!g.points || !g.points.length) {
-    svg.innerHTML = `<rect width="${MM_W}" height="${MM_H}" fill="#12100e"/><text x="${MM_W / 2}" y="${MM_H / 2}" text-anchor="middle" class="mm-empty">${(g && g.note) || "read more — a geometry forms as it learns"}</text>`;
-    $("web-focus").textContent = ""; return;
-  }
-  const P = g.points, maxDeg = Math.max(1, ...P.map(p => p.deg));
-  $("web-focus").textContent = ` — ${g.n_component} concepts in one connected space`;
-  const parts = [`<defs><filter id="mmglow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7"/></filter>`
-    + `<radialGradient id="mmvig" cx="50%" cy="42%" r="75%"><stop offset="58%" stop-color="transparent"/><stop offset="100%" stop-color="rgba(0,0,0,0.5)"/></radialGradient></defs>`,
-    `<rect width="${MM_W}" height="${MM_H}" fill="#12100e"/>`, '<g id="mm-scene">'];
-  // blurred glow layer -> the "terrain" / nebula of the mind
-  parts.push('<g class="mm-glow" filter="url(#mmglow)">');
-  P.forEach(p => { const r = 6 + 16 * Math.sqrt(p.deg / maxDeg); parts.push(`<circle cx="${mmX(p.x).toFixed(1)}" cy="${mmY(p.y).toFixed(1)}" r="${r.toFixed(1)}" fill="${colorFor(p.c)}" opacity="0.5"/>`); });
-  parts.push('</g>');
-  // faint relational threads (structure hinted, not drawn as a graph)
-  parts.push('<g id="mm-edges">');
-  g.edges.forEach((e, i) => { const a = P[e.s], b = P[e.t]; parts.push(`<line id="me${i}" class="mm-edge" x1="${mmX(a.x).toFixed(1)}" y1="${mmY(a.y).toFixed(1)}" x2="${mmX(b.x).toFixed(1)}" y2="${mmY(b.y).toFixed(1)}"/>`); });
-  parts.push('</g>');
-  // luminous cores + hub labels
-  const hubs = new Set([...P.keys()].sort((a, b) => P[b].deg - P[a].deg).slice(0, Math.min(18, P.length)));
-  parts.push('<g id="mm-cores">');
-  P.forEach((p, i) => { const r = 2.2 + 3.6 * Math.sqrt(p.deg / maxDeg), x = mmX(p.x).toFixed(1), y = mmY(p.y);
-    parts.push(`<g class="mm-core ${hubs.has(i) ? 'lbl' : ''}" data-i="${i}"><circle cx="${x}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${colorFor(p.c)}"/><text x="${x}" y="${(y - r - 3).toFixed(1)}">${esc(p.id)}</text></g>`); });
-  parts.push('</g>');
-  parts.push(`<rect width="${MM_W}" height="${MM_H}" fill="url(#mmvig)" pointer-events="none"/></g>`);
-  svg.innerHTML = parts.join("");
-  wireMind(g, P);
-}
-
-function litNode(i, g, P) {
-  const scene = document.getElementById("mm-scene");
-  scene.classList.add("dim");
-  document.querySelector(`.mm-core[data-i="${i}"]`).classList.add("lit");
-  P._nbr[i].forEach(ei => {
-    const l = document.getElementById("me" + ei); if (l) l.classList.add("lit");
-    const e = g.edges[ei];
-    document.querySelector(`.mm-core[data-i="${e.s}"]`).classList.add("lit");
-    document.querySelector(`.mm-core[data-i="${e.t}"]`).classList.add("lit");
-  });
-  $("web-focus").textContent = ` — ${P[i].id} · ${P[i].deg} tie${P[i].deg === 1 ? "" : "s"} · ${P[i].kind}`;
-}
-function clearLit(g) {
-  document.getElementById("mm-scene").classList.remove("dim");
-  document.querySelectorAll(".mm-core.lit").forEach(n => n.classList.remove("lit"));
-  document.querySelectorAll(".mm-edge.lit").forEach(n => n.classList.remove("lit"));
-  $("web-focus").textContent = ` — ${g.n_component} concepts in one connected space`;
-}
-function wireMind(g, P) {
-  P._nbr = P.map(() => new Set());
-  g.edges.forEach((e, i) => { P._nbr[e.s].add(i); P._nbr[e.t].add(i); });
-  document.querySelectorAll("#mm-cores .mm-core").forEach(el => {
+function renderChips(){
+  $("feed-btn").disabled = TOKS.length === 0;
+  $("chips").innerHTML = TOKS.map((t,i) =>
+    `<span class="chip ${PIC===i?"pic":""} ${MARKS.has(i)?"mark":""}" data-i="${i}">${esc(t)}</span>`).join("");
+  $("chiphelp").textContent = TOKS.length
+    ? (PIC!=null ? `tap: “${TOKS[PIC]}” is the pictured referent (orients the fact)` : "no tap — the fact keeps token order")
+    : "";
+  document.querySelectorAll("#chips .chip").forEach(el => el.onclick = (ev) => {
     const i = +el.dataset.i;
-    el.addEventListener("mouseenter", () => litNode(i, g, P));
-    el.addEventListener("mouseleave", () => clearLit(g));
-    el.addEventListener("click", () => { $("say-ref").value = P[i].id; });
+    if (ev.shiftKey){ MARKS.has(i) ? MARKS.delete(i) : MARKS.add(i); }
+    else { PIC = (PIC === i) ? null : i; }
+    renderChips();
   });
 }
-
-function findConcept(id) {
-  if (!MIND || !MIND.points) return;
-  id = String(id || "").toLowerCase().trim();
-  const i = MIND.points.findIndex(p => p.id === id);
-  if (i < 0) return;
-  litNode(i, MIND, MIND.points);
-  setTimeout(() => clearLit(MIND), 2000);
+function receipt(html, warn){
+  const el = document.createElement("div");
+  el.className = "rc" + (warn ? " warn" : "");
+  el.innerHTML = `<span class="t">${new Date().toLocaleTimeString()}</span><span>${html}</span>`;
+  $("receipt").prepend(el);
+  while ($("receipt").children.length > 12) $("receipt").lastChild.remove();
 }
-function focusOrLoad(id) {
-  const q = String(id || "").toLowerCase().trim();
-  if (MIND && MIND.points && MIND.points.some(p => p.id === q)) findConcept(q); else loadMind(q);
+async function feed(){
+  const text = $("feed-in").value.trim();
+  if (!text || TOKS.length === 0) return;
+  const body = { text, book: $("book-in").value.trim() || "hand" };
+  if (PIC != null) body.picture = TOKS[PIC];
+  if (MARKS.size) body.marks = [...MARKS].sort((a,b)=>a-b).map(i => [i, i+1]);
+  const nTok = TOKS.length;
+  try {
+    const r = await J("/api/feed", body);
+    const o = r.observation;
+    if (o.parsed){
+      const fr = (r.status.frames.find(f => f.id === o.frame) || {template: o.frame}).template;
+      receipt(`parsed in <span class="tmplcell">${tmplHTML(fr)}</span>
+        → <b>${esc(o.fact[0])}</b> → <b>${esc(o.fact[1])}</b> <span class="st ${o.status}">${o.status}</span>`);
+    } else {
+      receipt(`unparsed → frontier (length ${nTok}); repeats with substitution will induce a frame`);
+    }
+    renderVitals(r.status);
+    $("feed-in").value = ""; TOKS=[]; PIC=null; MARKS.clear(); renderChips();
+    if (activeTab === "web") loadWeb(lastFocus);
+  } catch (e) { receipt(esc(e.message), true); }
 }
+$("feed-in").addEventListener("input", onFeedInput);
+$("feed-in").addEventListener("keydown", e => { if (e.key === "Enter") feed(); });
+$("feed-btn").onclick = feed;
 
-async function ask() {
-  const text = $("q").value.trim(); if (!text) return;
-  const r = await fetch("/api/ask", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({text}) });
-  const d = await r.json();
-  const out = $("ask-out"); out.innerHTML = "";
-  if (d.kind === "unparsed") { out.innerHTML = `<div class="said muted">&ldquo;I can't answer that yet &mdash; ${d.reason}.&rdquo;</div>`; return; }
-  const focus = d.referent || d.given;
-  if (focus) focusOrLoad(focus.split(" ").pop());  // show the concept just asked about
-  const answers = d.kind === "about" ? (d.beliefs || []).map(b => ({sentence: b.sentence, status: b.status, answer: b.target})) : (d.answers || []);
-  if (!answers.length) { out.innerHTML = `<div class="said muted">&ldquo;I don't know yet.&rdquo;</div>`; return; }
-  answers.forEach((a, i) => {
-    const div = document.createElement("div"); div.className = "said"; div.style.animationDelay = (i*70)+"ms";
-    div.innerHTML = `&ldquo;${a.sentence || a.answer}&rdquo; <span class="prov">&mdash; ${a.status}</span>`;
-    out.appendChild(div);
-  });
+/* ————— probe ————— */
+function statusChip(a){
+  let cls = a.status;
+  if (a.via === "counting") cls = "counted";
+  return `<span class="st ${cls}">${cls}</span>`;
 }
-
-async function say() {
-  const referent = $("say-ref").value.trim() || null;
-  if (referent) focusOrLoad(referent);
-  const r = await fetch("/api/say", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({referent}) });
-  const d = await r.json();
-  const out = $("say-out"); out.innerHTML = "";
-  if (!d.sentences.length) { out.innerHTML = `<div class="said muted">&ldquo;I haven't committed anything to say yet.&rdquo;</div>`; return; }
-  d.sentences.forEach((s, i) => {
-    const div = document.createElement("div"); div.className = "said"; div.style.animationDelay = (i*70)+"ms";
-    div.innerHTML = `&ldquo;${s.sentence}.&rdquo;`;
-    out.appendChild(div);
-  });
+function answerCards(r){
+  if (r.kind === "about"){
+    if (!r.beliefs.length) return `<div class="refusal">nothing believed about “${esc(r.referent)}” yet</div>`;
+    return r.beliefs.map(b => `<div class="acard">
+        <span class="w" data-c="${esc(b.target)}">${esc(b.target)}</span>
+        <span class="st ${b.status}">${b.status}</span>
+        ${b.sentence ? `<span class="sent">“${esc(b.sentence)}”</span>` : ""}
+        <span class="src">${b.sources.length} source${b.sources.length===1?"":"s"}: ${esc(b.sources.slice(0,4).join(", "))}${b.sources.length>4?"…":""}</span>
+      </div>`).join("");
+  }
+  if (r.kind !== "answer") return `<div class="refusal">${esc(r.reason || "refused")}</div>`;
+  if (!r.answers.length)
+    return `<div class="refusal">${r.refused ? esc(r.refused) + " (degraded to refusal)" : "unknown — not taught, not derivable, no witness to grow"}</div>`;
+  return r.answers.map(a => `<div class="acard">
+      <span class="w" data-c="${esc(a.answer)}">${esc(a.answer)}</span>
+      ${statusChip(a)}
+      ${a.sentence ? `<span class="sent">“${esc(a.sentence)}”</span>` : ""}
+    </div>`).join("");
 }
-
-// tabs
-document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
-  document.querySelectorAll(".tabs button").forEach(x => x.classList.remove("active"));
-  document.querySelectorAll(".pane").forEach(x => x.classList.remove("active"));
-  b.classList.add("active"); $("pane-" + b.dataset.tab).classList.add("active");
-});
-
-$("phrase").addEventListener("input", renderChips);
-$("phrase").addEventListener("keydown", e => { if (e.key === "Enter") readIt(); });
-$("read-btn").onclick = readIt;
+function pushQA(q, html){
+  const el = document.createElement("div");
+  el.className = "qa";
+  el.innerHTML = `<div class="q">${esc(q)}</div>${html}`;
+  $("transcript").prepend(el);
+  while ($("transcript").children.length > 24) $("transcript").lastChild.remove();
+  el.querySelectorAll(".w").forEach(w => w.onclick = () => { setTab("web"); loadWeb(w.dataset.c); });
+}
+async function ask(){
+  const q = $("ask-in").value.trim();
+  if (!q) return;
+  try { pushQA(q, answerCards(await J("/api/ask", {text:q}))); }
+  catch(e){ pushQA(q, `<div class="refusal">${esc(e.message)}</div>`); }
+  $("ask-in").value = "";
+  refreshStatus();       // a probe can GROW (posit a concept) — keep vitals honest
+}
+async function say(){
+  try {
+    const r = await J("/api/say", {referent:null});
+    pushQA("(speak: committed facts, read back before voicing)",
+      r.sentences.length
+        ? r.sentences.map(s => `<div class="acard"><span class="sent">“${esc(s.sentence)}”</span></div>`).join("")
+        : `<div class="refusal">nothing committed to say yet</div>`);
+  } catch(e){ pushQA("(speak)", `<div class="refusal">${esc(e.message)}</div>`); }
+}
+$("ask-in").addEventListener("keydown", e => { if (e.key === "Enter") ask(); });
 $("ask-btn").onclick = ask;
-$("q").addEventListener("keydown", e => { if (e.key === "Enter") ask(); });
 $("say-btn").onclick = say;
 
-// the web: find a concept by name (highlights + centers it)
-$("web-go").onclick = () => focusOrLoad($("web-q").value);
-$("web-q").addEventListener("keydown", e => { if (e.key === "Enter") focusOrLoad($("web-q").value); });
+/* ————— tabs ————— */
+let activeTab = "web";
+function setTab(t){
+  activeTab = t;
+  document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  document.querySelectorAll(".tabpane").forEach(p => p.classList.toggle("on", p.id === "tab-" + t));
+  if (t === "web") loadWeb(lastFocus);
+  if (t === "chains") loadChains();
+  if (t === "numbers") renderNumbers();
+  if (t === "ledger") renderLedger();
+}
+document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => setTab(b.dataset.t));
 
-fetch("/api/status").then(r => r.json()).then(renderMind);
-loadMind();          // draw the mind's learned geometry
-renderChips();
+/* ————— web explorer (ego graph) ————— */
+let lastFocus = null;
+async function loadWeb(focus){
+  let g;
+  try { g = await J("/api/web?limit=26" + (focus ? "&focus=" + encodeURIComponent(focus) : "")); }
+  catch { return; }
+  lastFocus = g.focus;
+  $("web-in").value = g.focus || "";
+  $("web-note").textContent = g.focus
+    ? `${g.edges.length} edges around “${g.focus}”` + (g.truncated ? " (truncated)" : "")
+    : "nothing committed yet — teach something first";
+  drawWeb(g);
+}
+function drawWeb(g){
+  const svg = $("websvg"); svg.innerHTML = "";
+  if (!g.focus) return;
+  const W = 1000, H = 520, cx = W/2, cy = H/2;
+  const outs = g.edges.filter(e => e.source === g.focus);
+  const ins  = g.edges.filter(e => e.target === g.focus && e.source !== g.focus);
+  const place = (list, side) => list.map((e, i) => {
+    const n = list.length, span = Math.min(Math.PI*1.15, .5 + n*.28);
+    const a = (n === 1 ? 0 : (i/(n-1) - .5)) * span;
+    const r = 175 + (i % 2) * 55;
+    return { e, x: cx + side * Math.cos(a) * r * 2.1, y: cy + Math.sin(a) * r,
+             other: side > 0 ? e.target : e.source };
+  });
+  const P = [...place(outs, +1), ...place(ins, -1)];
+  const NS = "http://www.w3.org/2000/svg";
+  const mk = (t, at) => { const el = document.createElementNS(NS, t); for (const k in at) el.setAttribute(k, at[k]); return el; };
+  for (const p of P){
+    const grown = /^new-/.test(p.other);
+    const col = grown ? "var(--grown)" : p.e.committed ? "var(--committed)" : "var(--provisional)";
+    svg.appendChild(mk("line", {x1:cx, y1:cy, x2:p.x, y2:p.y, stroke:col,
+      "stroke-width": p.e.committed ? 1.6 : 1, "stroke-dasharray": (p.e.committed && !grown) ? "" : "4 4", opacity:.55}));
+    const tl = mk("text", {x:(cx+p.x)/2, y:(cy+p.y)/2 - 4, "text-anchor":"middle", class:"rel"});
+    tl.textContent = p.e.rel; svg.appendChild(tl);
+  }
+  for (const p of P){
+    const grown = /^new-/.test(p.other);
+    const nd = mk("g", {class:"nd"});
+    const t = mk("text", {x:p.x, y:p.y, "text-anchor":"middle"});
+    t.textContent = p.other;
+    if (grown) t.setAttribute("fill", "var(--grown)");
+    else if (!p.e.committed) t.setAttribute("fill", "var(--dim)");
+    nd.appendChild(t);
+    nd.onclick = () => loadWeb(p.other);
+    svg.appendChild(nd);
+  }
+  const f = mk("g", {class:"focus"});
+  const ft = mk("text", {x:cx, y:cy, "text-anchor":"middle"});
+  ft.textContent = g.focus; f.appendChild(ft); svg.appendChild(f);
+}
+$("web-go").onclick = () => loadWeb($("web-in").value.trim() || null);
+$("web-in").addEventListener("keydown", e => { if (e.key === "Enter") $("web-go").onclick(); });
+
+/* ————— chains (the gauge groups) ————— */
+async function loadChains(){
+  let d;
+  try { d = await J("/api/chains"); } catch { return; }
+  const pane = $("tab-chains");
+  if (!d.groups.length){
+    pane.innerHTML = '<div class="empty">no composable relation classes yet — teach converse pairs (“five comes after four” / “four is before five”)</div>';
+    return;
+  }
+  pane.innerHTML = d.groups.map(g => {
+    const head = g.classes.map(c =>
+      `<span class="gt">${c.templates.map(tmplHTML).join(" · ")}</span>
+       <span class="sector-badge ${esc(c.sector)}">${esc(c.sector)}</span>
+       <span class="tp">g=${c.transport === null ? "—" : (c.transport>0?"+":"")+c.transport} · ${c.edges} edges</span>`).join(" &nbsp; ");
+    const rails = g.components.map(comp => {
+      const byCoord = new Map();
+      for (const n of comp){
+        if (!byCoord.has(n.coord)) byCoord.set(n.coord, []);
+        byCoord.get(n.coord).push(n.id);
+      }
+      const coords = [...byCoord.keys()].sort((a,b)=>a-b).slice(0, 40);
+      return `<div class="rail">` + coords.map(c => {
+        const nodes = byCoord.get(c);
+        return `<div class="tick"><div class="pin"></div>
+          ${nodes.slice(0,4).map(n => `<span class="nn ${/^new-/.test(n)?"grown":""}" data-c="${esc(n)}">${esc(n)}</span>`).join("")}
+          ${nodes.length>4 ? `<span class="more">+${nodes.length-4}</span>` : ""}
+          <span class="co">φ=${c}</span></div>`;
+      }).join("") + `</div>`;
+    }).join("");
+    const defs = g.defects.map(x =>
+      `<div class="dfl">⚠ ${esc(x.u)} —(${esc(x.class)})→ ${esc(x.v)} · holonomy residual ${x.residual>0?"+":""}${x.residual} <span class="st defect">defect</span></div>`).join("");
+    const extra = g.n_components > g.components.length
+      ? `<div class="nnote">…and ${g.n_components - g.components.length} more components</div>` : "";
+    return `<div class="gcard"><div class="ghead">${head}</div>${rails}${defs}${extra}</div>`;
+  }).join("");
+  pane.querySelectorAll(".nn").forEach(el => el.onclick = () => { setTab("web"); loadWeb(el.dataset.c); });
+}
+
+/* ————— numbers (the constructed chain + the map) ————— */
+function renderNumbers(){
+  const pane = $("tab-numbers"), n = STATUS && STATUS.numbers;
+  if (!n || !n.classes){
+    pane.innerHTML = '<div class="empty">no counting experience yet — the constructed chain grows from bare pairing play (no numeral is ever input)</div>';
+    return;
+  }
+  let html = `<div class="nmeta">
+    <span>${n.classes} constructed classes (from wordless play)</span>
+    ${n.map ? `<span>interface map: orientation ${n.map.orientation>0?"+1":"−1"}, offset ${n.map.offset}</span>
+               <span>${n.map.poison ? `<span class="st poison">${n.map.poison} poison naming${n.map.poison>1?"s":""}</span>` : "no poison"}</span>`
+            : `<span class="st unknown">no committed word↔class map yet (needs ≥ k consistent named words)</span>`}
+  </div>`;
+  const named = n.map ? n.map.named : {};
+  const byPos = {}; Object.entries(named).forEach(([w,p]) => byPos[p] = w);
+  html += `<div class="numline">`;
+  for (let p = 1; p <= n.classes; p++){
+    const w = byPos[p];
+    html += `<div class="ntick ${w?"":"unnamed"}"><div class="pin"></div>
+      <span class="word">${w ? esc(w) : "(unnamed)"}</span><span class="pos">class ${p}</span></div>`;
+  }
+  html += `</div>
+  <div class="nnote">each tick is a CLASS of piles that saturate against one another (a derived MATCH quotient);
+  succession came from ONEMORE leftovers. A named tick is a committed word↔class identification —
+  a word can sit here without ever appearing in an order sentence.</div>`;
+  if (n.contradictions.length)
+    html += n.contradictions.map(c => `<div class="dfl">⚠ ${esc(c[0])} — ${esc(c[1])}</div>`).join("");
+  pane.innerHTML = html;
+}
+
+/* ————— ledger ————— */
+function renderLedger(){
+  const s = STATUS; if (!s) return;
+  const pane = $("tab-ledger");
+  const sect = (s.sectors||[]).map(r => `<tr>
+      <td class="tmplcell">${r.templates.map(tmplHTML).join("<br>")}</td>
+      <td><span class="sector-badge ${esc(r.sector)}">${esc(r.sector)}</span></td>
+      <td class="num">${r.transport === null ? "—" : (r.transport>0?"+":"")+r.transport}</td>
+      <td class="num">${r.edges}</td><td class="num">${r.support}</td></tr>`).join("");
+  const growth = (s.growth.events||[]).map(e => `<tr>
+      <td><span class="st ${e.move==="grow"?"grown":"rewired"}">${e.move}</span></td>
+      <td>${esc(e.given)} → <b>${esc(e.answer)}</b></td>
+      <td class="tmplcell">${esc((e.anchors||[]).join(" "))}</td>
+      <td class="num">${e.rounds} rounds</td></tr>`).join("");
+  const refused = (s.relations_refused||[]).map(r => `<tr>
+      <td>${esc(r.a)} + ${esc(r.b)}</td><td class="warn">${esc(r.reason)}</td></tr>`).join("");
+  const frontier = Object.entries(s.frontier||{}).sort((a,b)=>b[1].count-a[1].count).slice(0,8)
+    .map(([len,f]) => `<tr><td class="num">${len} tokens</td><td class="num">${f.count}</td>
+      <td class="tmplcell">${esc(f.exemplars[0]||"")}</td></tr>`).join("");
+  pane.innerHTML = `
+    <h3 class="sub">Relation classes — inferred transports</h3>
+    ${sect ? `<table><tr><th>constructions (unified)</th><th>sector</th><th>g</th><th>edges</th><th>support</th></tr>${sect}</table>`
+           : '<div class="empty">no relations yet</div>'}
+    <h3 class="sub">Growth — concepts the creature posited (${s.growth.count}/${s.growth.budget} budget)</h3>
+    ${growth ? `<table><tr><th>move</th><th>obstruction</th><th>relation</th><th>persistence</th></tr>${growth}</table>`
+             : '<div class="empty">no growth events — every question so far was answerable in-web</div>'}
+    <h3 class="sub">Refused merges — rehearsal-refusals with reasons</h3>
+    ${refused ? `<table><tr><th>candidate</th><th>reason</th></tr>${refused}</table>`
+              : '<div class="empty">none refused</div>'}
+    <h3 class="sub">Frontier — what it cannot parse yet (the induction queue)</h3>
+    ${frontier ? `<table><tr><th>shape</th><th>count</th><th>exemplar</th></tr>${frontier}</table>`
+               : '<div class="empty">frontier empty</div>'}
+    <h3 class="sub">Provenance</h3>
+    <div class="pillrow">
+      <span class="pill">episode log: ${s.log.entries.toLocaleString()} entries, ${s.log.excluded} excluded</span>
+      <span class="pill">trace bus: ${s.bus.total.toLocaleString()} acts (${s.bus.cf} counterfactual)</span>
+      ${(s.ledger ? s.ledger.read_sources : []).map(r => `<span class="pill">read: ${esc(r)}</span>`).join("")}
+    </div>`;
+}
+
+/* ————— boot ————— */
+refreshStatus().then(() => loadWeb(null));
+setInterval(refreshStatus, 60000);
 </script>
 </body>
 </html>

@@ -1108,6 +1108,8 @@ class Creature:
                        "events": self.growth_events[-10:]},
             "numbers": self._numbers_census(),
             "bus": vars(self.bus.counts()).copy(),
+            "ledger": {"read_sources": sorted(self.read_sources),
+                       "passed_stages": sorted(self.passed_stages)},
 
             "committed": [
                 {"source": s, "target": t, "sources": sorted(info["sources"]), "sentence": T.render_fact(s, t, st)}

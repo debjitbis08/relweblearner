@@ -35,9 +35,36 @@ seam, deferred to the trace-emission work.
 
 from __future__ import annotations
 
+import fcntl
 import json
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator
+
+
+@contextmanager
+def creature_lock(directory: str | Path, blocking: bool = True):
+    """Cross-process mutual exclusion for one creature's log + checkpoint.
+
+    The trainer (cron tick) and the serving app are separate processes writing
+    the same JSONL log and checkpoint; interleaved appends would mint colliding
+    sequence numbers. Both take this lock — the trainer BLOCKING for the whole
+    run, the server NON-blocking per feed (yielding ``False`` means training is
+    underway right now; refuse politely rather than corrupt). Advisory
+    ``flock`` on ``<directory>/.lock`` — POSIX-only, like the cron script."""
+    path = Path(directory) / ".lock"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fh = path.open("w")
+    try:
+        try:
+            fcntl.flock(fh, fcntl.LOCK_EX | (0 if blocking else fcntl.LOCK_NB))
+        except BlockingIOError:
+            yield False
+            return
+        yield True
+        fcntl.flock(fh, fcntl.LOCK_UN)
+    finally:
+        fh.close()
 
 
 class EpisodeLog:
@@ -181,6 +208,21 @@ class JsonlEpisodeLog(EpisodeLog):
         self._write({"op": "exclude", "seq": seq, "reason": reason})
         self._fh.flush()
         self._excluded[seq] = reason
+
+    def refresh(self) -> None:
+        """Re-scan the file for entries another PROCESS appended (the trainer
+        writing under a running server), so this handle's next sequence number
+        never collides. Content sync is already replay's job (checkpoint +
+        tail); this keeps only the counter and exclusion set honest."""
+        with self.path.open("r", encoding="utf-8") as fh:
+            for line in fh:
+                if not line.strip():
+                    continue
+                rec = json.loads(line)
+                if rec["op"] == "entry":
+                    self._count = max(self._count, rec["seq"] + 1)
+                else:
+                    self._excluded[rec["seq"]] = rec.get("reason", "")
 
     def excluded(self) -> set[int]:
         return set(self._excluded)

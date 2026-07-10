@@ -28,7 +28,7 @@ from pathlib import Path
 from .creature import Creature, _slug
 from .datasets import registry as R
 from .datasets import syllabus as SYL
-from .episodelog import JsonlEpisodeLog
+from .episodelog import JsonlEpisodeLog, creature_lock
 
 # real prose needs a wide induction window; the slot cap keeps clause-wide real
 # slots out of the concept web while grounded single-token facts commit cleanly.
@@ -131,6 +131,13 @@ def report_card(stage: dict, ingested: list, report: dict, passed: bool) -> None
 
 def run_curriculum(name: str, *, reset: bool, drain: bool, max_stages: int) -> Creature:
     registry, stages = R.load_registry(), R.load_stages()
+    with creature_lock(_store_path(name).parent):   # exclude the serving app's writes
+        return _run_curriculum_locked(name, registry, stages,
+                                      reset=reset, drain=drain, max_stages=max_stages)
+
+
+def _run_curriculum_locked(name: str, registry, stages, *, reset: bool,
+                           drain: bool, max_stages: int) -> Creature:
     c = load_or_create(name, reset=reset, **_PARAMS)
     path = _store_path(name)
     advanced = 0
