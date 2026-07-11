@@ -84,6 +84,12 @@ class Lookup:
         targets.sort(key=lambda x: (-x[1], x[0]))
         return targets[0][0]
 
+    def answer_set(self, rel: str, s: str) -> set:
+        """Every answer the system holds for ``(rel, s)`` — committed plus
+        whatever it derives — for the many-valued retrieval metric (F6)."""
+        return ({t for r, s2, t in self.kb.committed if r == rel and s2 == s}
+                | {t for r, s2, t in self.derived if r == rel and s2 == s})
+
     def flags(self) -> list[dict]:
         """Committed double-targets in functional relations (D1), plus
         derived-vs-committed disagreements where the system derives (D2)."""

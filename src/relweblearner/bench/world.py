@@ -99,15 +99,19 @@ def _r_skip_rev(x, y):    return ([x, "lies", "two", "shy", "of", y], x)
 def _r_color(x, c):       return (["the", x, "looks", c], x)
 def _r_likes(x, y):       return ([x, "plays", "with", y], x)
 def _r_near(x, y):        return ([x, "stands", "near", y], x)
+def _r_fstep(x, y):       return ([x, "drifts", "toward", y], x)     # P8: forged family
+def _r_fskip(x, y):       return ([x, "vaults", "beyond", y], x)
 
 RENDER = {"step+": _r_step_fwd, "step-": _r_step_rev,
           "skip+": _r_skip_fwd, "skip-": _r_skip_rev,
-          "color": _r_color, "likes": _r_likes, "near": _r_near}
+          "color": _r_color, "likes": _r_likes, "near": _r_near,
+          "fstep": _r_fstep, "fskip": _r_fskip}
 
 # How each relation is ASKED (the second slot blanked).
 ASK = {"step+": "{s} comes right after ?", "step-": "{s} is just before ?",
        "skip+": "{s} sits two past ?", "skip-": "{s} lies two shy of ?",
-       "color": "the {s} looks ?", "likes": "{s} plays with ?"}
+       "color": "the {s} looks ?", "likes": "{s} plays with ?",
+       "fstep": "{s} drifts toward ?", "fskip": "{s} vaults beyond ?"}
 
 
 @dataclass
@@ -323,6 +327,43 @@ def generate(seed: int = 0) -> World:
             probes.append(s)
     forged = {"rule": ("step+", "near", "near"),
               "forged_subjects": forged_subjects, "probes": probes}
+
+    # ---------------- v3: the COHERENT forgery (P8)
+    # The liars fabricate a wholly consistent phantom world: fresh entities
+    # in a chain, a forged step family and a forged skip family whose
+    # triangles all close. Nothing contradicts anything — coherence is not
+    # correspondence, so the composition gate is PREDICTED to admit the
+    # structure with zero defects, and the creature to DERIVE the held-out
+    # fabricated facts (P8 probes; the correspondence-honest answer is
+    # refusal). The recovery story is provenance, not geometry: retracting
+    # the liars must erase the whole phantom component exactly.
+    prng = random.Random((seed << 16) + 13)
+    phantoms = _names(prng, 6, avoid=tuple(chain) + tuple(strangers))
+    p8pages: list[tuple[dict, tuple | None]] = []
+    fskip_holdout = prng.randrange(len(phantoms) - 2)
+    for i in range(len(phantoms) - 1):
+        x, y = phantoms[i + 1], phantoms[i]
+        for book in ("liar-a", "liar-b"):
+            tokens, pic = _r_fstep(x, y)
+            for _ in range(REPEATS):
+                p8pages.append(({"book": book, "tokens": list(tokens),
+                                 "picture": pic, "marks": None}, ("fstep", x, y)))
+    for i in range(len(phantoms) - 2):
+        if i == fskip_holdout:
+            continue                                       # the derivation probe
+        x, y = phantoms[i + 2], phantoms[i]
+        for book in ("liar-a", "liar-b"):
+            tokens, pic = _r_fskip(x, y)
+            for _ in range(REPEATS):
+                p8pages.append(({"book": book, "tokens": list(tokens),
+                                 "picture": pic, "marks": None}, ("fskip", x, y)))
+    prng.shuffle(p8pages)
+    episodes += [p for p, _g in p8pages]
+    gold += [g for _p, g in p8pages]
+    ask("P8-coherent-forgery", "fskip", phantoms[fskip_holdout + 2], None)
+    forged["p8"] = {"phantoms": phantoms,
+                    "probe_subject": phantoms[fskip_holdout + 2],
+                    "fabricated_answer": phantoms[fskip_holdout]}
 
     return World(seed=seed, chain=chain, episodes=episodes, gold=gold,
                  queries=queries, d1=d1, d2=d2, forged=forged)

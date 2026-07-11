@@ -169,6 +169,48 @@ rose 0.80 → 1.00 for a mundane reason stated plainly — the v2 stream is
 longer, so seed 1's rare skip⁻ frame now clears the induction threshold
 (the data-hunger variance is real; v2 just sits past it).
 
+## Bench v3 run (2026-07-12, referee round 2): 50 seeds, the coherent forgery, tightened metrics
+
+Plan §6⅞(b,c), predictions frozen first; `results/bench-v3/`. All capability
+families reproduce at 50 seeds (RelWeb 1.00 on F1–F4/F6; the old F4
+data-hunger variance is gone at this stream length). What the larger sample
+and tightened metrics surfaced:
+
+- **P8 coherent forgery: exactly as predicted, 50/50 seeds.** RelWeb admits
+  the liars' consistent phantom structure through the gate (1.00), carries
+  ZERO extra defects (coherence is invisible from inside — §16, now a
+  number), and **derives the held-out fabricated fact** (1.00); the
+  statistical miner does the same; lookup and oracle-rules refuse only
+  because they hold no rules for it. Recovery is provenance, not geometry:
+  after liar retraction the probe refuses again on 50/50 seeds and the full
+  committed-belief set matches the liar-free control (1.00). P7's claim is
+  therefore held to its narrow form: the gate rejects **algebraically
+  incompatible** forgeries; a coherent one passes, measured.
+- **D2 at n=50: relweb 1.00, miner 0.84, oracle-rules 0.66.** The
+  noise-fragility of statistical conflict detection is bigger than the
+  5-seed estimate suggested; holonomy detection (now scored causally:
+  lie-arm defects vs the same seed's clean projection, plus post-retraction
+  clearance) stays at 1.00. Localization re-estimates at 0.68 — the 5-seed
+  figures (0.40, then 0.20) were small-sample noise in both directions.
+- **The miner false-alarms on clean worlds: 24 flags across 50 clean arms
+  (RelWeb: 0).** Its derived-conflict rule misfires without any adversary
+  present — invisible at 5 seeds.
+- **Admissions are now audited directly**: every gate-accepted composition
+  on every clean arm checks out against the world's true offsets — and the
+  audit itself needed fixing en route: the gate legitimately accepts
+  ENTAILED compositions (step⁺ = skip⁺ ∘ step⁻, i.e. +1 = +2 − 1), which a
+  shape whitelist would have miscounted as junk. "No false admissions" is a
+  measurement now, not an inference from absent alarms.
+- **One new honest imperfection: RelWeb F5 refusal = 0.99 ± 0.05.** On seed
+  11 the MOTIF layer (inheritance, not transport) induced a coincidental
+  rule and derived a never-taught color — a hallucination the transport
+  discipline would refuse, at 1/150 probes. The motif layer's statistical
+  induction is a measured precision limit, recorded here rather than
+  patched under the freeze.
+- F6 rescored as set retrieval: precision/recall ≈ 1.00 for all systems
+  (the miner drops a point of precision); U1 extended to full belief-set
+  comparison: 1.00 over 50 seeds.
+
 ## GraphLog run (2026-07-12): the external benchmark, and the algebra's measured limit
 
 GraphLog v1.1 (Sinha et al., ICML 2020), 7 worlds spanning the ℤ-embedding
