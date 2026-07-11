@@ -274,7 +274,21 @@ def wonders() -> dict:
 
 @app.post("/api/ask")
 def ask(body: AskIn) -> dict:
-    return _fresh_creature().answer(body.text)
+    """Answer a question. Reading is pure (:meth:`Creature.query` never touches
+    the episode log, so asking can never race a training run); only a parsed
+    MISS has on-the-record effects — the growth probe and the wonder mint —
+    and those re-run as a command through the same locked write path as
+    feed/retract/correct. If a training run holds the lock, the pure answer is
+    returned as-is: the miss stays off the record until asked again (re-asks
+    dedup by wid, so nothing is lost but the timestamp)."""
+    res = _fresh_creature().query(body.text)
+    if res.get("kind") != "answer" or res.get("known"):
+        return res                       # answered (or unparsed): nothing to record
+    try:
+        recorded, _c = _write_locked(lambda c: c.answer(body.text))
+        return recorded
+    except HTTPException:
+        return res                       # trainer is writing: answer, record nothing
 
 
 @app.post("/api/say")

@@ -90,6 +90,22 @@ def test_unanswered_parsed_question_mints_a_wonder():
     assert w["sought"] == 0                     # never attempted yet
 
 
+def test_query_is_pure_and_answer_is_the_command():
+    """The read/write split behind /api/ask: ``query`` runs the whole
+    derivation but appends NOTHING to the episode log — no wonder mint, no
+    growth act — while ``answer`` (the command form) puts the same miss on
+    the record."""
+    c = _teach(_creature())
+    n = len(c.log)
+    r = c.query("the spider is ?")               # a parsed miss, read-only
+    assert not r.get("known")
+    assert len(c.log) == n                       # nothing on the record
+    assert not _open(c, qkind="unknown", subject="spider")
+    c.answer("the spider is ?")                  # the command form mints
+    assert len(c.log) == n + 1
+    assert len(_open(c, qkind="unknown", subject="spider")) == 1
+
+
 def test_reasking_dedups_and_junk_mints_nothing():
     c = _teach(_creature())
     c.answer("the spider is ?")

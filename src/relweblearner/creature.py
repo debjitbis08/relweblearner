@@ -1602,8 +1602,12 @@ class Creature:
         st["fact_frames"] = {fact: {frame_id}}
         return T.render_fact(fact[0], fact[1], st)
 
-    def _think(self, res: dict) -> dict:
+    def _think(self, res: dict, grow: bool = True) -> dict:
         """Push a parsed question through the ALGEBRA when lookup is not enough.
+
+        ``grow=False`` is the pure-read mode (:meth:`query`): every derivation
+        still runs, but the growth probe — the one move here that commits an
+        act to the episode log — is skipped.
 
         The talk layer only returns facts the creature was told. Thinking is
         transport: compose committed edge values through the question's
@@ -1661,7 +1665,7 @@ class Creature:
                                            "sentence": self._render_via(fact, res["frame"])})
         if not res["answers"]:
             self._motif_answers(res, qclass, given, forward)
-        if not res["answers"] and antisym and given in web.nodes:
+        if grow and not res["answers"] and antisym and given in web.nodes:
             self._probe_growth(res, web, qclass, given, forward)
         rank = {"committed": 0, "derived": 1, "provisional": 2, "grown": 3, "rewired": 3}
         res["answers"].sort(key=lambda a: rank.get(a["status"], 4))
@@ -1796,7 +1800,26 @@ class Creature:
         self._trace("about", {r}, {f"beliefs:{len(res['beliefs'])}"})
         return res
 
+    def query(self, phrase: str) -> dict:
+        """Answer a question WITHOUT touching the record — the pure read half
+        of :meth:`answer`. Lookup, transport, motif and interface derivation
+        all run; the two on-the-record moves do not (a P1 growth act is never
+        committed, a parsed miss never mints a wonder), so a query appends
+        nothing to the episode log and can be served concurrently with a
+        writer. A read-only surface (the API's ``/api/ask``) reads through
+        this; :meth:`answer` remains the command form."""
+        return self._answer_impl(phrase, record=False)
+
     def answer(self, phrase: str) -> dict:
+        """:meth:`query` plus the on-the-record moves — a COMMAND, not a read.
+        An unanswered-but-derivable question may pay for growth (P1) and a
+        parsed miss goes on the record as a wonder (PQ); both are acts
+        appended to the episode log. A caller must therefore own the creature
+        — hold its write locks and follow with commit/save — exactly as for
+        :meth:`observe`; anything read-only wants :meth:`query`."""
+        return self._answer_impl(phrase, record=True)
+
+    def _answer_impl(self, phrase: str, *, record: bool) -> dict:
         from .reader import tokenize
         tokens = tokenize(phrase)
         # load the neighbourhood of each content token (the given filler is among
@@ -1811,11 +1834,11 @@ class Creature:
                 edges += [(s, v, i) for s, i in self.edges.in_edges(v)]
         res = T.answer(self._state_for(self._surface_edges(edges)), tokens)
         if res.get("kind") == "answer":
-            res = self._think(res)                # lookup first, then transport (P3/P1)
+            res = self._think(res, grow=record)   # lookup first, then transport (P3/P1)
             marks = ({f"{a['status']}:{a['answer']}" for a in res["answers"][:3]}
                      or {"unknown"})
             self._trace("answer", {res.get("given") or "?"}, marks)
-            if not res.get("known"):
+            if record and not res.get("known"):
                 self._mint_wonder(res, tokens)    # a parsed miss goes on the record (PQ)
         else:
             self._trace("answer", {"?"}, {res.get("kind", "unparsed")})

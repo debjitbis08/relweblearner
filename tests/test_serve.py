@@ -92,6 +92,36 @@ def test_feed_refuses_while_the_trainer_holds_the_lock(served):
     assert r["observation"]["parsed"]
 
 
+def test_ask_reads_purely_and_records_a_miss_through_the_locked_path(served):
+    """The /api/ask fix: answering is a pure read (no log append — a hit can
+    never race a training run), and only a parsed miss goes on the record,
+    through the same locked commit/save path as feed/retract/correct."""
+    n0 = len(served._LOG)
+    r = served.ask(served.AskIn(text="eight comes after ?"))   # a hit
+    assert r["answers"][0]["answer"] == "seven"
+    assert len(served._LOG) == n0                              # pure read: log untouched
+
+    r = served.ask(served.AskIn(text="omega comes after ?"))   # a parsed miss
+    assert r["kind"] == "answer" and not r.get("known")
+    assert len(served._LOG) == n0 + 1                          # the wonder is on the record
+    # and PERSISTED: the served creature's checkpoint keeps pace with the log
+    assert served._fresh_creature().log_position == len(served._LOG)
+
+
+def test_ask_never_writes_while_the_trainer_holds_the_lock(served):
+    """Asking during a training run still answers (degrade to a pure read, not
+    a 409) but appends nothing under the trainer's feet — the sequence-number
+    collision the unlocked endpoint used to allow. The miss goes on the record
+    on the next ask after the lock is released (wonders dedup by wid)."""
+    n0 = len(served._LOG)
+    with creature_lock(served.DATA.parent):        # simulate a running training tick
+        r = served.ask(served.AskIn(text="psi comes after ?"))
+        assert r["kind"] == "answer" and not r.get("known")    # answered, read-only
+        assert len(served._LOG) == n0                          # nothing appended
+    served.ask(served.AskIn(text="psi comes after ?"))         # lock free: now recorded
+    assert len(served._LOG) == n0 + 1
+
+
 def test_api_corrects_a_mistake_in_place(served):
     """A wrong fact taught through the app is fixed without a retrain: retract
     the claim, or correct it, through the API — durable, claim-granular."""
