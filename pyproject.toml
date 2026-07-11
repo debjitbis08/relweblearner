@@ -15,6 +15,7 @@ relweb-correct = "relweblearner.correct:main"
 relweb-wonder = "relweblearner.wonder:main"
 relweb-version = "relweblearner.version:main"
 relweb-eval = "relweblearner.evaluate:main"
+relweb-bench = "relweblearner.bench.run:main"
 
 [tool.poetry]
 packages = [{ include = "relweblearner", from = "src" }]

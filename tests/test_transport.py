@@ -200,3 +200,54 @@ def test_posits_and_transports_survive_reload():
     held = _maths_creature(drop_tokens=[["nine", "is", "before", "ten"]])
     held2 = Creature.from_dict(held.to_dict())
     assert _ask(held2, "nine is before ?") == ("ten", "derived")
+
+
+# ------------------------------------------------- adversarial classification
+
+
+def test_one_lying_pair_cannot_weld_two_gauge_groups():
+    """A single committed pair whose converse lands in another class is not
+    loop evidence enough to union their gauge groups (the floor the infer()
+    docstring promises). Welding is catastrophic: the groups' magnitudes are
+    mutually gauged, so a weld poisons every transport in both."""
+    step_f = {(f"n{i + 1}", f"n{i}") for i in range(8)}
+    step_r = {(f"n{i}", f"n{i + 1}") for i in range(8)}
+    skip_f = {(f"n{i + 2}", f"n{i}") for i in range(7)}
+    skip_r = {(f"n{i}", f"n{i + 2}") for i in range(7)}
+    # the lie: one step edge over a true skip pair — its converse is in skip+
+    cmaps = {"step+": step_f | {("n3", "n1")}, "step-": step_r,
+             "skip+": skip_f, "skip-": skip_r}
+    sectors, groups = TR.infer(cmaps)
+    assert groups["step+"] == groups["step-"]
+    assert groups["skip+"] == groups["skip-"]
+    assert groups["step+"] != groups["skip+"]        # ONE pair must not weld
+    assert all(s.sector == TR.ANTISYMMETRIC for s in sectors.values())
+
+
+def test_one_lie_does_not_demote_a_true_class_to_motif():
+    """One committed lie can smear residuals over several fundamental cycles
+    (whenever the BFS tree routes through it), so counting raw defects can
+    read a single adversarial page as class-wide incoherence. The demotion
+    check must attribute defects to culprits first: a true class survives one
+    lie (which stays VISIBLE as a defect), while a genuinely non-homogeneous
+    class still demotes."""
+    step_f = {(f"n{i + 1:02d}", f"n{i:02d}") for i in range(11) if i != 3}
+    step_r = {(f"n{i:02d}", f"n{i + 1:02d}") for i in range(11) if i not in (1, 6, 8)}
+    cmaps = {"step+": step_f | {("n04", "n09")}, "step-": step_r}
+    sectors, groups = TR.infer(cmaps)
+    assert sectors["step+"].sector == TR.ANTISYMMETRIC
+    webs = TR.build_group_webs(cmaps, sectors, groups)
+    assert TR.non_homogeneous_by_defect(cmaps, webs) == set()
+    assert TR.defect_report(webs)["count"] >= 1     # the lie is still on display
+
+    # control: a class whose OWN edges disagree everywhere (three disjoint
+    # triangles, all transports forced to the same gauge value) has no single
+    # culprit and is demoted as before.
+    tri = set()
+    for t in range(3):
+        a, b, c = f"t{t}a", f"t{t}b", f"t{t}c"
+        tri |= {(a, b), (b, c), (a, c)}
+    cmaps2 = {"double": tri}
+    s2, g2 = TR.infer(cmaps2)
+    webs2 = TR.build_group_webs(cmaps2, s2, g2)
+    assert TR.non_homogeneous_by_defect(cmaps2, webs2) == {"double"}

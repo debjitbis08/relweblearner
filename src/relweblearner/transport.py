@@ -119,7 +119,12 @@ def infer(cmaps: dict[str, set], exception_fraction: float = 0.2):
     for (a, b), w in link_w.items():
         if a in motif or b in motif:
             continue
-        floor = max(1, round(exception_fraction * min(n_edges[a], n_edges[b])))
+        # floor >= 2: the docstring's own rule, enforced. With a floor of 1
+        # (which max(1, ...) yields for any class under ~8 edges) a SINGLE
+        # committed pair — one k-corroborated lie whose converse happens to
+        # land in another class — welds two gauge groups, and a weld poisons
+        # every transport in both (their magnitudes are mutually gauged).
+        floor = max(2, round(exception_fraction * min(n_edges[a], n_edges[b])))
         if w // 2 >= floor:                       # w counts both directions per pair
             adj[a].add(b)
             adj[b].add(a)
@@ -326,18 +331,64 @@ def simulate_fission(
     return {"commit": True, "degrades": False, "defect_delta": delta, "reason": "clean"}
 
 
+def _web_without(web: Web, drop: set) -> Web:
+    """A fresh, journal-free copy of ``web`` minus the ``(u, v, rel)`` keys in
+    ``drop`` — trial bookkeeping for :func:`non_homogeneous_by_defect`, never
+    belief (converses re-derive from the primaries, as always)."""
+    w = Web(web.algebra, name=f"{web.name}:trial")
+    for e in web.edges():
+        if (e.u, e.v, e.rel) not in drop:
+            w.add_edge(e.u, e.v, e.rel, e.value)
+    return w
+
+
 def non_homogeneous_by_defect(
     cmaps: dict[str, set], webs: dict[str, Web], exception_fraction: float = 0.2
 ) -> set:
     """Classes whose edges are defective beyond the exception budget: no
     constant transport explains them (P2's ``double`` verdict, read off the
     actual holonomy rather than a residual fit). The caller demotes these to
-    motifs and rebuilds; a sub-budget defect stays VISIBLE as a defect."""
+    motifs and rebuilds; a sub-budget defect stays VISIBLE as a defect.
+
+    Counting raw defects is not enough: one lying edge that lands ON the BFS
+    spanning tree smears its residual across every fundamental cycle through
+    it, so a single adversarial page could read as class-wide incoherence and
+    demote a true transport — precisely what the exception rule forbids ("one
+    mislabeled example cannot flip the classification"). So when the naive
+    count exceeds a class's budget, the defects are attributed first: CULPRIT
+    edges are peeled greedily (each removal charged to the culprit's own
+    class, removals capped by the summed budgets), and a class is demoted only
+    if culprits-plus-remaining-defects still exceed its budget. A lie explains
+    all its cycles with one peel and stays a reported defect; a genuinely
+    non-homogeneous class (``double``) loses at most one defect per peel and
+    still demotes. Trial webs are plain bookkeeping (no journal): the peel
+    imagines nothing the record needs."""
     bad: set = set()
     for w in webs.values():
-        per = Counter(d.edge.rel for d in defects(w))
-        for r, c in per.items():
-            if c > exception_fraction * max(1, len(cmaps.get(r, ()))):
+        ds = defects(w)
+        if not ds:
+            continue
+        budget = {r: exception_fraction * max(1, len(cmaps.get(r, ())))
+                  for r in {e.rel for e in w.edges()}}
+        naive = Counter(d.edge.rel for d in ds)
+        if not any(c > budget.get(r, exception_fraction) for r, c in naive.items()):
+            continue
+        cap = int(sum(budget.values())) + 1
+        trial, charged = w, Counter()
+        while ds and sum(charged.values()) < cap:
+            best_e, best_n = None, len(ds)
+            for e in sorted(trial.edges(), key=lambda e: (repr(e.u), repr(e.v), e.rel)):
+                n = len(defects(_web_without(trial, {(e.u, e.v, e.rel)})))
+                if n < best_n:
+                    best_e, best_n = e, n
+            if best_e is None:
+                break                              # no single edge explains anything more
+            trial = _web_without(trial, {(best_e.u, best_e.v, best_e.rel)})
+            charged[best_e.rel] += 1
+            ds = defects(trial)
+        remaining = Counter(d.edge.rel for d in ds)
+        for r in set(charged) | set(remaining):
+            if charged[r] + remaining[r] > budget.get(r, exception_fraction):
                 bad.add(r)
     return bad
 
