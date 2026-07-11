@@ -112,20 +112,24 @@ def _mine_compositions(cmaps: dict[str, set], eligible: list,
 
 def _solve(classes: list, links: list, comps: list, symmetric: set,
            motif: set) -> tuple[dict, object]:
-    """The homogeneous loop-constraint system, solved by propagation.
+    """The homogeneous loop-constraint system, solved exactly.
 
-    Variables: one transport per live class. Equations: ``g_b = -g_a`` per
-    converse link, ``g_h = g_a + g_b`` per accepted composition, ``g_s = 0``
-    per symmetric class. The system is homogeneous, so each constraint
-    component carries one free scale; a conflict forces that scale to 0 (the
-    old odd-cycle rule, generalized). Solutions are scaled to minimal
-    integers with the alphabetically-first nonzero class positive — the same
-    gauge convention as before, which the 2-cycle-only case reproduces
-    exactly (±1). Where propagation stalls (an underdetermined composition),
-    the first unknown is re-seeded: any solution of a homogeneous
-    underdetermined system is a valid gauge choice, and the seed order makes
-    it deterministic. Returns ``(coeff, find)``: integer transport per live
-    class and the component-root function."""
+    Variables: one transport per live class. Equations: ``g_a + g_b = 0`` per
+    converse link, ``g_h - g_a - g_b = 0`` per accepted composition (``a = b``
+    folds to ``g_h - 2 g_a = 0``), ``g_s = 0`` per symmetric class. Gaussian
+    elimination over Q gives the nullspace; the returned assignment is the
+    GENERIC nullspace point ``sum_k basis_k * B^k`` (B large), so two classes
+    share a transport only when every solution forces them to — a naive
+    seed-and-propagate both manufactures false collisions (degenerate seeds)
+    and reads its own wrong guesses as conflicts (a variable FORCED by
+    simultaneous equations, e.g. ``g1+g2=g3, g1+g3=g2`` forcing ``g1=0``,
+    cannot be found by 2-of-3 propagation). Forced-zero variables come out 0
+    exactly — the old odd-cycle rule is the special case where the whole
+    component's nullspace vanishes on those coordinates. Per constraint
+    component the solution is scaled to minimal integers with the
+    alphabetically-first nonzero class positive, reproducing the 2-cycle-only
+    convention (±1) exactly. Returns ``(coeff, find)``: integer transport per
+    live class and the component-root function."""
     from fractions import Fraction
     from math import gcd, lcm
 
@@ -146,64 +150,72 @@ def _solve(classes: list, links: list, comps: list, symmetric: set,
             if find(h) != find(x):
                 parent[find(h)] = find(x)
 
-    members: dict[str, list] = defaultdict(list)
-    for r in live:
-        members[find(r)].append(r)
+    idx = {r: i for i, r in enumerate(sorted(live))}
+    rows: list[list[Fraction]] = []
 
+    def _row(coeffs: dict) -> list[Fraction]:
+        row = [Fraction(0)] * len(idx)
+        for cls, k in coeffs.items():
+            row[idx[cls]] += k
+        return row
+
+    for a, b in links:
+        rows.append(_row({a: 1, b: 1}))
+    for h, a, b in comps:
+        k: dict[str, int] = {}
+        for cls, kk in ((h, 1), (a, -1), (b, -1)):
+            k[cls] = k.get(cls, 0) + kk
+        rows.append(_row(k))
+    for s in sorted(symmetric):
+        if s in idx:
+            rows.append(_row({s: 1}))
+
+    # reduced row echelon form
+    pivots: list[int] = []
+    r = 0
+    for col in range(len(idx)):
+        piv = next((i for i in range(r, len(rows)) if rows[i][col] != 0), None)
+        if piv is None:
+            continue
+        rows[r], rows[piv] = rows[piv], rows[r]
+        rows[r] = [x / rows[r][col] for x in rows[r]]
+        for i in range(len(rows)):
+            if i != r and rows[i][col] != 0:
+                f = rows[i][col]
+                rows[i] = [x - f * y for x, y in zip(rows[i], rows[r])]
+        pivots.append(col)
+        r += 1
+
+    free = [c for c in range(len(idx)) if c not in pivots]
+    generic = [Fraction(0)] * len(idx)
+    for k, fc in enumerate(free):
+        scale = Fraction(1009 ** k)
+        generic[fc] += scale
+        for i, pc in enumerate(pivots):
+            generic[pc] += -rows[i][fc] * scale
+
+    members: dict[str, list] = defaultdict(list)
+    for cls in live:
+        members[find(cls)].append(cls)
     coeff: dict[str, int] = {}
     for root in sorted(members):
         ms = sorted(members[root])
-        clinks = [(a, b) for a, b in links if find(a) == root]
-        ccomps = [(h, a, b) for h, a, b in comps if find(h) == root]
-        c: dict[str, Fraction] = {m: Fraction(0) for m in ms if m in symmetric}
-        conflict = False
-        while not conflict and len(c) < len(ms):
-            c[next(m for m in ms if m not in c)] = Fraction(1)
-            changed = True
-            while changed and not conflict:
-                changed = False
-                for a, b in clinks:
-                    for x, y in ((a, b), (b, a)):
-                        if x in c:
-                            v = -c[x]
-                            if y not in c:
-                                c[y], changed = v, True
-                            elif c[y] != v:
-                                conflict = True
-                for h, a, b in ccomps:
-                    # g_h - g_a - g_b = 0, as coefficients per DISTINCT class
-                    # (a == b folds to -2, so g_h = 2*g_a solves either way)
-                    k: dict[str, int] = {}
-                    for cls, kk in ((h, 1), (a, -1), (b, -1)):
-                        k[cls] = k.get(cls, 0) + kk
-                    unknown = [cls for cls, kk in k.items() if kk and cls not in c]
-                    if len(unknown) > 1:
-                        continue
-                    if not unknown:
-                        if sum(kk * c[cls] for cls, kk in k.items() if kk) != 0:
-                            conflict = True
-                        continue
-                    u = unknown[0]
-                    rest = sum(kk * c[cls] for cls, kk in k.items() if kk and cls != u)
-                    c[u], changed = Fraction(-rest, k[u]), True
-                if any(m in symmetric and c.get(m, Fraction(0)) != 0 for m in ms):
-                    conflict = True
-        if conflict:
-            c = {m: Fraction(0) for m in ms}      # over-constrained: magnitude 0
-        nz = [v for m in ms if (v := c.get(m, Fraction(0))) != 0]
+        vals = {m: generic[idx[m]] for m in ms}
+        nz = [v for m in ms if (v := vals[m]) != 0]
         if nz:
-            scale = Fraction(gcd(*(abs(v.numerator) for v in nz)),
-                             lcm(*(v.denominator for v in nz)))
-            if next(v for m in ms if (v := c.get(m, Fraction(0))) != 0) < 0:
-                scale = -scale
-            c = {m: v / scale for m, v in c.items()}
+            mul = lcm(*(v.denominator for v in nz))        # clear denominators...
+            div = gcd(*(abs(int(v * mul)) for v in nz))    # ...THEN minimalize
+            s = Fraction(div, mul)
+            if next(v for m in ms if (v := vals[m]) != 0) < 0:
+                s = -s
+            vals = {m: v / s for m, v in vals.items()}
         for m in ms:
-            coeff[m] = int(c.get(m, Fraction(0)))
+            coeff[m] = int(vals[m])
     return coeff, find
 
 
 def infer(cmaps: dict[str, set], exception_fraction: float = 0.2,
-          compositions: bool = True):
+          compositions: bool = True, trace: dict | None = None):
     """Per-relation-class transports over Z from LOOP evidence.
 
     ``cmaps`` maps relation class → set of eligible ``(source, target)``
@@ -301,27 +313,30 @@ def infer(cmaps: dict[str, set], exception_fraction: float = 0.2,
 
     sectors, groups = assemble([])
     if not compositions:
+        if trace is not None:
+            trace["accepted"] = []
         return sectors, groups
 
     eligible = [r for r in classes if r not in motif]
     accepted: list[tuple] = []
-    base_count, base_anti = None, None
-    for h, a, b in _mine_compositions(cmaps, eligible, exception_fraction):
-        # extend KNOWN structure: both body classes must already carry a
-        # constrained transport. An UNCONSTRAINED head is fine — being
-        # constrained by the composition is the point (a skip class whose
-        # converse frame never induced still joins the step group here).
-        if any(sectors[x].sector not in (ANTISYMMETRIC, SYMMETRIC) for x in (a, b)):
-            continue
-        if sectors[h].sector == NON_HOMOGENEOUS:
-            continue
-        if base_count is None:
-            base_webs = build_group_webs(cmaps, sectors, groups, name="infer:gate")
-            base_count = defect_report(base_webs)["count"]
-            base_anti = {r for r, s in sectors.items() if s.sector == ANTISYMMETRIC}
+    base_webs = build_group_webs(cmaps, sectors, groups, name="infer:gate")
+    base_count = defect_report(base_webs)["count"]
+    base_anti = {r for r, s in sectors.items() if s.sector == ANTISYMMETRIC}
+
+    def admit(h: str, a: str, b: str) -> bool:
+        nonlocal sectors, groups, base_webs, base_count, base_anti
+        # UNCONSTRAINED classes may enter anywhere in the constraint —
+        # compositions must be able to BOOTSTRAP structure on a corpus with
+        # no converse evidence at all (GraphLog has zero 2-cycles); the
+        # residual scale of an underdetermined component is gauge, re-solved
+        # fresh on every trial, so nothing wedges. Only motifs are barred.
+        if any(sectors[x].sector == NON_HOMOGENEOUS for x in (h, a, b)):
+            return False
         ts, tg = assemble(accepted + [(h, a, b)])
         if any(ts[r].sector != ANTISYMMETRIC for r in base_anti):
-            continue                              # degrades a live group: refused
+            return False                          # degrades a live group: refused
+        if any(ts[x].transport == 0 and x not in symmetric for x in (h, a, b)):
+            return False                          # forces its own class to 0: junk
         twebs = build_group_webs(cmaps, ts, tg, name="infer:gate")
         tcount = defect_report(twebs)["count"]
         budget = exception_fraction * max(1, n_edges[h])
@@ -333,16 +348,40 @@ def infer(cmaps: dict[str, set], exception_fraction: float = 0.2,
             # itself brings over-budget new ones. Past PEEL_EDGE_CAP the peel
             # is skipped and the raw delta stands — refusal, never corruption.
             if sum(len(w.edges()) for w in twebs.values()) > PEEL_EDGE_CAP:
-                continue
+                return False
             cap = int(exception_fraction * sum(n_edges.values())) + 1
             base_cul = sum(sum(_peel(w, cap).values()) for w in base_webs.values())
             trial_cul = sum(sum(_peel(w, cap).values()) for w in twebs.values())
             if trial_cul - base_cul > budget:
-                continue                          # over-budget new culprits: refused
+                return False                      # over-budget new culprits: refused
         accepted.append((h, a, b))
         sectors, groups = ts, tg
         base_webs, base_count = twebs, tcount
         base_anti = {r for r, s in sectors.items() if s.sector == ANTISYMMETRIC}
+        return True
+
+    # FIXPOINT passes: an interlocking rule system (GraphLog: ~20 rules over
+    # 20 classes) cannot be admitted greedily in one sweep — a true candidate
+    # exposes cycles that only OTHER not-yet-accepted rules explain, so its
+    # immediate defect delta reads over budget. Iterate over the refused
+    # candidates until a full pass admits nothing: each accepted constraint
+    # explains cycles that lower the next one's bill. Deterministic
+    # (support-sorted order within each pass), monotone (accepted is
+    # append-only), and the single-composition case reduces to the old
+    # one-sweep behavior exactly.
+    pending = _mine_compositions(cmaps, eligible, exception_fraction)
+    changed = True
+    while changed and pending:
+        changed = False
+        remaining = []
+        for h, a, b in pending:
+            if admit(h, a, b):
+                changed = True
+            else:
+                remaining.append((h, a, b))
+        pending = remaining
+    if trace is not None:
+        trace["accepted"] = list(accepted)
     return sectors, groups
 
 

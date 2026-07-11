@@ -76,47 +76,58 @@ def build_cmaps(graphs: list[dict]) -> dict[str, set]:
     return dict(cmaps)
 
 
-def learn_transports(graphs: list[dict]) -> dict[str, int]:
-    """Discovered transports: TR.infer (composition mining + defect gate) over
-    the pooled maps; only classes CONSTRAINED into a multi-class component
-    carry meaning (a lone class's gauge value says nothing about others)."""
+def learn_transports(graphs: list[dict]) -> dict[str, tuple]:
+    """Discovered transports as ``rel -> (component, g)``: TR.infer
+    (composition mining + defect gate) over the pooled maps. Only classes
+    CONSTRAINED into a multi-class component carry meaning, and transports
+    are comparable only WITHIN a component — the groups are mutually ungauged
+    (P4'), so the component tag rides along and the predictor never composes
+    across a gauge boundary (doing so is precisely the false-inverse
+    manufacture the theory forbids)."""
     cmaps = build_cmaps(graphs)
     sectors, groups = TR.infer(cmaps)
     members = Counter(groups.values())
-    return {r: s.transport for r, s in sectors.items()
+    return {r: (groups[r], s.transport) for r, s in sectors.items()
             if s.transport is not None and members[groups[r]] > 1
             and s.sector in (TR.ANTISYMMETRIC, TR.SYMMETRIC)}
 
 
-def transport_predict(rec: dict, g_of: dict[str, int], majority: str) -> str:
-    """BFS potential over the instance edges whose class has a learned
-    transport; predict the relation sitting exactly at phi(v) - phi(u).
-    Sign and scale are internally consistent by construction, so the global
-    gauge choice cancels. Ties break by training frequency via ``majority``
-    ordering being used only as the final fallback."""
+def transport_predict(rec: dict, g_of: dict[str, tuple], majority: str,
+                      prior: Counter) -> str:
+    """Path voting per GAUGE COMPONENT: within each component, enumerate
+    paths u→v (length ≤ MAX_PATH) over that component's edges only, compose
+    the transports, and vote for every in-component relation sitting exactly
+    at the composed value. The geometry names the candidate set; the training
+    prior ranks within it (forced transport collisions are the pre-registered
+    degeneracy of the abelian embedding: where two relations share a
+    transport, no geometry can split them, and the prior is the honest
+    fallback). Components never mix — their gauges are independent, so a
+    cross-component sum is meaningless by construction."""
     u0, v0, _ = rec["query"]
-    adj: dict[int, list] = defaultdict(list)
-    for u, v, rel in rec["edges"]:
-        g = g_of.get(rel)
-        if g is None:
-            continue
-        adj[u].append((v, g))
-        adj[v].append((u, -g))
-    phi = {u0: 0}
-    frontier = [u0]
-    while frontier:
-        nxt = []
-        for x in frontier:
-            for y, g in adj[x]:
-                if y not in phi:
-                    phi[y] = phi[x] + g
-                    nxt.append(y)
-        frontier = nxt
-    if v0 not in phi:
+    by_comp: dict[str, dict] = defaultdict(dict)
+    for r, (comp, g) in g_of.items():
+        by_comp[comp][r] = g
+    votes: Counter = Counter()
+    for comp, rels in by_comp.items():
+        adj: dict[int, list] = defaultdict(list)
+        for u, v, rel in rec["edges"]:
+            if rel in rels:
+                adj[u].append((v, rels[rel]))
+        stack = [(u0, 0, 0)]
+        while stack:
+            node, total, depth = stack.pop()
+            if node == v0 and depth:
+                for r, g in rels.items():
+                    if g == total:
+                        votes[r] += 1
+                continue
+            if depth >= MAX_PATH:
+                continue
+            for y, g in adj[node]:
+                stack.append((y, total + g, depth + 1))
+    if not votes:
         return majority
-    val = phi[v0]
-    hits = sorted(r for r, g in g_of.items() if g == val)
-    return hits[0] if hits else majority
+    return max(votes, key=lambda r: (votes[r], prior[r], r))
 
 
 # ------------------------------------------------------------------ CYK miner
@@ -142,7 +153,8 @@ def mine_rules(graphs: list[dict], min_support: int = 2,
                         votes[(rel, r2)][r3] += 1
     rules: dict[tuple, str] = {}
     for body, heads in votes.items():
-        head, n = heads.most_common(1)[0]
+        head = max(heads, key=lambda h: (heads[h], h))     # deterministic ties
+        n = heads[head]
         if n >= min_support and n / sum(heads.values()) >= min_conf:
             rules[body] = head
     return rules
@@ -169,7 +181,9 @@ def cyk_predict(rec: dict, rules: dict[tuple, str], majority: str,
             continue
         for y, rel in out_idx[node]:
             stack.append((y, labels + [rel]))
-    return results.most_common(1)[0][0] if results else majority
+    if not results:
+        return majority
+    return max(results, key=lambda r: (results[r], r))     # deterministic ties
 
 
 def _reduce(labels: tuple, rules: dict[tuple, str], _memo=None) -> set:
@@ -241,14 +255,30 @@ def z_diagnostic(rules: dict[tuple, str]) -> dict:
 
 # ------------------------------------------------------------------ runner
 
+def oracle_transports(rules: dict[tuple, str]) -> dict[str, tuple]:
+    """The abelian CEILING: the true rules solved over Z exactly (generic
+    nullspace point, per-component tags) — the best assignment any
+    Z-transport system could reach with perfect discovery. Where even this
+    predicts at chance, GraphLog's rule system is structurally outside the
+    frozen abelian algebra, and no amount of better mining or gating can
+    help — the pre-registered algebra limit, measured."""
+    rels = sorted({x for k, v in rules.items() for x in (*k, v)})
+    comps = [(v, a, b) for (a, b), v in sorted(rules.items())]
+    coeff, find = TR._solve(rels, [], comps, set(), set())
+    return {r: (find(r), g) for r, g in coeff.items()}
+
+
 def run_world(name: str, n_train: int) -> dict:
     w = load_world(name, n_train)
-    majority = Counter(r["target"] for r in w["train"]).most_common(1)[0][0]
+    prior = Counter(r["target"] for r in w["train"])
+    majority = max(prior, key=lambda r: (prior[r], r))
     g_of = learn_transports(w["train"])
+    g_true = oracle_transports(w["rules"])
     mined = mine_rules(w["train"])
     systems = {
         "majority": lambda rec: majority,
-        "transport": lambda rec: transport_predict(rec, g_of, majority),
+        "transport": lambda rec: transport_predict(rec, g_of, majority, prior),
+        "transport-oracle": lambda rec: transport_predict(rec, g_true, majority, prior),
         "cyk-miner": lambda rec: cyk_predict(rec, mined, majority),
         "cyk-oracle": lambda rec: cyk_predict(rec, w["rules"], majority),
     }
@@ -284,12 +314,14 @@ def main() -> None:
     lines = ["# GraphLog (external): transport core vs rule mining", "",
              f"{len(results)} worlds, {args.n_train} training instances each, "
              f"full test splits; {time.time() - t0:.0f}s.", "",
-             "| world | majority | transport | cyk-miner | cyk-oracle | "
-             "Z-collisions | transports learned |", "|---|---|---|---|---|---|---|"]
+             "| world | majority | transport | transport-oracle | cyk-miner | "
+             "cyk-oracle | Z-collisions | transports learned |",
+             "|---|---|---|---|---|---|---|---|"]
     for r in results:
         a = r["accuracy"]
         lines.append(
             f"| {r['world']} | {a['majority']:.3f} | {a['transport']:.3f} | "
+            f"{a['transport-oracle']:.3f} | "
             f"{a['cyk-miner']:.3f} | {a['cyk-oracle']:.3f} | "
             f"{r['z_diagnostic']['collisions']} | "
             f"{len(r['learned_transports'])}/{r['z_diagnostic']['n_rels']} |")

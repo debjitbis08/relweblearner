@@ -145,6 +145,107 @@ the demonstrated differentiators are noise-robust detection (D2) and now
 junk-robust *admission* (the gate), both properties of reading only
 committed geometry.
 
+## Bench v2 run (2026-07-12): the poisoned-composition arm lands on its predictions
+
+The P7 attack (plan §6½, frozen before the run; `results/bench-v2/`):
+self-licensing forged composition evidence — three stranger `near`-chains
+capped with forged `step⁺` facts, engineered so the only applicable body
+pairs for a PCA-confidence miner are the forged heads.
+
+| system | junk rule admitted | refusal accuracy (clean chains) |
+|---|---|---|
+| lookup | 0.00 | 1.00 |
+| **induced-rules** | **1.00** | **0.00** |
+| oracle-rules | 0.00 | 1.00 |
+| **relweb** | **0.00** | **1.00** |
+
+Exactly the pre-registered outcome, 5/5 seeds: the statistical miner
+inducts `step⁺ = near∘near` at confidence 1.0 and derives step-garbage on
+every clean chain; the defect gate refuses the same candidate because
+admitting it would zero a live gauge group. "Miner proposes, geometry
+disposes" now holds at benchmark level under an adversarial forgery, not
+just in unit stressors. All v1 families and probes reproduce unchanged; F4
+rose 0.80 → 1.00 for a mundane reason stated plainly — the v2 stream is
+longer, so seed 1's rare skip⁻ frame now clears the induction threshold
+(the data-hunger variance is real; v2 just sits past it).
+
+## GraphLog run (2026-07-12): the external benchmark, and the algebra's measured limit
+
+GraphLog v1.1 (Sinha et al., ICML 2020), 7 worlds spanning the ℤ-embedding
+diagnostic, 150 training instances each, full 1000-query test splits
+(`results/graphlog/`, `relweb-graphlog`; predictions frozen in plan §6¾).
+The adapter evaluates the geometry core on gold triples — the language
+pipeline is out of scope here by design.
+
+| world | majority | transport | **transport-oracle** | cyk-miner | cyk-oracle | Z-collisions |
+|---|---|---|---|---|---|---|
+| rule_43 | 0.004 | 0.004 | 0.050 | 0.451 | 0.585 | 31 |
+| rule_44 | 0.000 | 0.123 | 0.248 | 0.639 | 0.785 | 31 |
+| rule_21 | 0.048 | **0.515** | 0.576 | 0.763 | 0.878 | 45 |
+| rule_22 | 0.029 | 0.029 | 0.455 | 0.807 | 0.873 | 45 |
+| rule_19 | 0.050 | 0.060 | 0.415 | 0.685 | 0.807 | 45 |
+| rule_18 | 0.010 | 0.010 | 0.263 | 0.414 | 0.515 | 46 |
+| rule_0 | 0.002 | 0.034 | 0.022 | 0.423 | 0.484 | 136 |
+
+**The headline number is `transport-oracle`: the abelian ceiling.** It is
+the TRUE rules, exactly solved over ℤ (generic nullspace point,
+per-component gauges), predicting with perfect discovery — the best any
+frozen-abelian-ℤ transport system can possibly do. It spans 0.02–0.58 and
+sits far below the path-reduction ceiling (cyk-oracle, 0.48–0.88) on every
+world. GraphLog's rule systems are essentially non-abelian: **the binding
+constraint is the algebra, not the discovery machinery.** This is the
+pre-registered structural limit, now carrying a hard number per world.
+
+Predictions scored:
+
+- *"transport ≤ cyk-miner everywhere"* — **confirmed 7/7** (the miner's
+  rewrite rules are strictly more expressive; it wins 0.41–0.81).
+- *"cyk-oracle well below 1.0"* — **confirmed** (path ambiguity is real).
+- *"transport beats majority on every non-degenerate world"* — **missed**:
+  on rule_43, rule_22, rule_18 the learned transports predict at majority.
+- *"best on rule_43/44 (fewest collisions)"* — **missed, instructively**:
+  rule_43 has the LOWEST ceiling (0.05) despite the fewest forced
+  collisions. The global collision count is a weak instrument; what matters
+  is how the query distribution lands on the solution space's separable
+  directions. The direct ceiling measurement replaces the diagnostic as the
+  right tool.
+- Where discovery had a ceiling to reach, it reached most of it: rule_21
+  recovers 0.515 of a 0.576 ceiling (89%) with all 19 transports placed in
+  the right gauge components — from 3-cycle evidence alone, since GraphLog
+  contains **zero converse pairs**. Recovery is uneven elsewhere (rule_22:
+  6% of ceiling) — discovery quality varies with how the mined subset
+  constrains the solution space, and that variance is real and reported.
+
+**What the external data fixed in the learner.** Two genuine defects
+surfaced only at GraphLog density, both now in `transport.py` with the
+internal bench re-verified byte-identical after each change:
+
+1. `_solve`'s seed-and-propagate was INCOMPLETE: a variable forced by
+   simultaneous equations (``g1+g2=g3, g1+g3=g2`` forces ``g1=0``) cannot be
+   found by 2-of-3 propagation, so the solver seeded it, read its own guess
+   back as a conflict, and zeroed whole components — silently, on any
+   sufficiently dense constraint system. Replaced with exact Gaussian
+   elimination and a GENERIC nullspace point (classes collide only when
+   forced). Tree-like constraint systems — everything the internal bench
+   generates — never trip this, which is precisely why external data was
+   needed to find it.
+2. The admission gate went through the same fixpoint-and-bootstrap hardening
+   (interlocking rule systems admit in passes; unconstrained classes may
+   bootstrap), and prediction was made component-aware — composing
+   transports across mutually-ungauged groups is the false-inverse
+   manufacture P4′ forbids, and the first adapter did it.
+
+**Verdict.** On its own algebra's terms the geometry core does what it
+claims — discovers structure through the gate (up to 19/19 transports, no
+converse evidence needed) and predicts near its representational ceiling on
+the worlds where that ceiling is nontrivial. But the ceiling itself is low:
+GraphLog composition is non-abelian, and the honest statement for the
+README is that the frozen ℤ algebra does not extend to it. The motivated
+next step is the one the theory doc already names as P4′: richer frozen
+carriers (ℤⁿ, permutation/matrix monoids — the free-monoid limit of which
+IS the rule rewriting that scores 0.8 here), swapped behind the same
+interface and gated by the same defect discipline.
+
 ## What this does not settle
 
 Internal validity only: a synthetic, closed, 12-entity world authored by the

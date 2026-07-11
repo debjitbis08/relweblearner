@@ -64,8 +64,15 @@ detection and junk-robust admission, both properties of reading only
 committed geometry. So the defensible claim today: an event-sourced,
 provenance-aware relational learner with exact inference, geometry-gated
 structure discovery (converses and binary compositions so far), noise-robust
-inconsistency detection, and exact unlearning. The bet stays on the wall;
-the evidence now covers that much of it.
+inconsistency detection, and exact unlearning. On the external GraphLog
+benchmark the same machinery discovers up to 19/19 relation transports from
+composition evidence alone (the data has no converse pairs at all) and
+predicts near its representational ceiling — but that ceiling is low,
+because GraphLog's rule systems are non-abelian and the frozen ℤ algebra
+provably cannot represent them (measured per world: the true rules, exactly
+solved, top out at 0.02–0.58 where non-abelian rule rewriting reaches
+0.48–0.88). The bet stays on the wall; the evidence now covers that much of
+it, and the next stake is a richer frozen algebra behind the same interface.
 
 What the bet buys, concretely:
 
