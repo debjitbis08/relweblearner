@@ -295,6 +295,49 @@ carriers (ℤⁿ, permutation/matrix monoids — the free-monoid limit of which
 IS the rule rewriting that scores 0.8 here), swapped behind the same
 interface and gated by the same defect discipline.
 
+## Held-out GraphLog validation (2026-07-12): 44 untouched worlds, frozen implementation
+
+The seven development worlds found bugs and drove fixes, so they stopped
+being validation data (plan §6⅞a). The implementation was frozen at
+f4b1a82 and every remaining train-split world ran untouched
+(`results/graphlog-heldout/`, 44 worlds, full test splits, 3313s). No code
+changed after observing these numbers.
+
+Medians across the 44 worlds: majority 0.007, **transport 0.068**,
+additive-oracle reference 0.224, cyk-miner 0.717, cyk-oracle 0.827. The
+held-out set includes a harsher degeneracy tier than development suggested
+(eleven worlds carry 136–171 forced collisions; their additive reference is
+at or near floor).
+
+Pre-registered predictions, scored:
+
+- *"transport ≤ cyk-miner on every world"* — **confirmed 44/44**.
+- *"median uplift recovery < 50%, a minority above 80%"* — **confirmed**:
+  over the 33 worlds with meaningful additive-oracle uplift, median
+  recovery is 0.28, six worlds exceed 80% (best: rule_23 at 0.57 accuracy
+  against a 0.76 reference; rule_34 slightly above its reference), eleven
+  sit under 10%. Discovery is real and remains inconsistent, exactly as the
+  development data indicated.
+- *"recovery correlates with the constraint-recovery metrics"* —
+  **missed**, and the miss is informative. `accepted_oracle_consistency`
+  does land below 1.0 on 32/44 worlds (the gate admits coherent-but-false
+  constraints in the wild, as P8 predicted it must), but neither metric
+  predicts uplift recovery (Spearman ρ = 0.15 and 0.05), and
+  `true_rule_satisfaction` is low everywhere (median 0.15, max 0.40) — the
+  learned assignment satisfies only a small fraction of the generative
+  rules even on the best-predicting worlds. Prediction quality is evidently
+  driven by whether the mined subset captures the structure the TEST
+  QUERIES traverse, not by global rule recovery. Both metrics stay in the
+  harness; the theory of what makes a world recoverable is open.
+
+Standing conclusion, now on untouched data: within its algebra the
+transport core clears the floor it claims (44/44 above-or-at majority is
+not claimed — eleven worlds sit at it; six worlds recover most of their
+additive reference), the non-abelian gap is unchanged (miner 0.72 median vs
+transport 0.07), and the case for a noncommutative carrier — referee step
+6, next — is now made on frozen, held-out external data rather than on
+development worlds.
+
 ## What this does not settle
 
 Internal validity only: a synthetic, closed, 12-entity world authored by the
