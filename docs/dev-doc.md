@@ -112,6 +112,49 @@ failing phase.
      never deleted. Reference: experiment0h_adversarial.py.
    - Report collateral retraction (clean edges excluded alongside the
      lie) as a metric; it is the price of recovery, keep it logged.
+
+   **Amendment (2026-07-11, trust).** Commitment stops *counting*
+   witnesses and starts *weighing* them (`trust.py`,
+   `Creature._committed_info`). Each source carries a learned weight PER
+   RELATION CLASS, projected from its track record — good marks: distinct
+   standing facts of its independently corroborated there; bad marks:
+   distinct facts of its among the log's excluded episodes. Fresh source
+   = 1.0 (the old rule, exactly); caught wrong there = below 1.0 (its
+   word needs more corroboration IN THAT CLASS — a grain of salt, learned
+   not decreed, and domain-local: wrong about legs says nothing about its
+   colours); a clean corroborated record of `authority_k` facts = weight
+   `commit_k` (earned sole-witness authority, in that class only; one
+   caught lie forfeits it). Fiat namespaces (`act:*` — the learner's own
+   gated moves; `correction*` — the owner's voice) carry `commit_k` by
+   construction and have no reputation: a correction is ONE honest
+   episode, never k counterfeit witnesses. Trust is a projection of
+   store + log (invariant 5): reproducible by replay, never checkpointed.
+   Known limits, stated: a colluding corroborated majority IS the record
+   until caught, and under a NullEpisodeLog bad marks cannot accrue.
+
+   **Amendment (2026-07-11, revision).** The LOCALIZE bullet gets a
+   fact-level counterpart so that TEACHING changes beliefs
+   (`Creature.revise`, run in every `ingest` and after every
+   correction): a source concept holding two+ committed targets in an
+   otherwise-functional relation class (functionality judged on RAW
+   testimony, so thin committed coverage cannot make a many-valued
+   relation look single-valued) is an observation-level conflict. It is
+   adjudicated ONLY when a decree is party to it — fiat over testimony,
+   later fiat over earlier: the losing side's episodes are flagged
+   excluded (never deleted) with the verdict as reason, the model
+   rebuilt by replay-with-exclusions, and the losing sources take the
+   bad marks; since this runs in every ingest, corrections defend
+   themselves against recidivist testimony. Testimony NEVER erases
+   testimony: two corroborated camps disagreeing is either genuine
+   dissent or complementary truth and the statistics cannot tell — the
+   real scholar's "a hen is a bird" vs "a hen is a female" came from
+   disjoint corpora with a decisive margin, both true; a margin rule
+   would have erased 414 true episodes. Such conflicts are KEPT
+   (`corroborated-dissent`), visible as defects (invariant 9):
+   acknowledged tension beats a guess, and a distrusted camp's facts
+   decommit by weight erosion rather than erasure. `retract_claim`
+   remains the surgical half for testimony with no better fact to
+   teach.
 7. **Bus provenance.** Trace episodes live in a reserved namespace
    (act-ids are generated only by the learner). External episodes
    claiming the act namespace are rejected at ingestion. CI test:

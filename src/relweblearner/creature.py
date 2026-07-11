@@ -85,6 +85,7 @@ from . import curriculum as C
 from . import motif as MO
 from . import talk as T
 from . import transport as TR
+from . import trust as TU
 from .episodelog import EpisodeLog, InMemoryEpisodeLog
 from .holonomy import potential
 from .journal import Journal
@@ -113,6 +114,8 @@ class Creature:
         exemplar_cap: int = 5,
         min_shared: int = 3,
         agree_threshold: float = 0.8,
+        authority_k: int = 10,
+        distrust_penalty: float = 3.0,
         exception_fraction: float = 0.2,
         derive_depth: int = 6,
         growth_persistence: int = 3,
@@ -147,6 +150,8 @@ class Creature:
         self.exemplar_cap = exemplar_cap
         self.min_shared = min_shared
         self.agree_threshold = agree_threshold
+        self.authority_k = authority_k
+        self.distrust_penalty = distrust_penalty
         self.exception_fraction = exception_fraction
         self.derive_depth = derive_depth
         self.growth_persistence = growth_persistence
@@ -198,6 +203,14 @@ class Creature:
         self._since_induction = 0
         # ------- the algebra layer (derived; rebuilt lazily when facts change) -------
         self._sectors: dict[str, TR.RelationSector] | None = None   # None = stale
+        # TRUST (:mod:`~relweblearner.trust`) is likewise a derived cache, never
+        # checkpoint state: per-(source, relation class) track records read off
+        # the store and the log's exclusions. ``None`` = stale. Deliberately NOT
+        # invalidated per observation (`_bump_fact`): new corroboration can only
+        # raise a weight above its default, so a batch's lag is conservative;
+        # every path that changes classes or exclusions does invalidate.
+        self._trust: dict[tuple[str, str], tuple[int, int]] | None = None
+        self._revising = False                                 # re-entrancy guard for revise()
         self._rel_groups: dict[str, str] = {}                  # class -> constraint-group root
         self._group_webs: dict[str, TR.Web] = {}               # group -> valued Web projection
         self._cmaps: dict[str, set] = {}                       # class -> eligible (src, tgt) pairs
@@ -323,6 +336,7 @@ class Creature:
                 )
             n += 1
         merges = self.unify_relations()   # recognise synonymous frames once evidence has accrued
+        self.revise()                     # adjudicate contradictory corroborated testimony (its own trace)
         self.commit()
         self._trace("ingest", {f"episodes:{n}"}, {f"merges:{merges}"})
         return self
@@ -383,6 +397,7 @@ class Creature:
             except (IndexError, ValueError):
                 pass
         self._sectors = None
+        self._trust = None
 
     def catch_up(self) -> int:
         """Replay log entries past the checkpoint position (skipping excluded
@@ -415,6 +430,7 @@ class Creature:
         self._since_induction = 0
         self._rng = random.Random(self.seed)
         self._sectors = None
+        self._trust = None
         self._rel_groups, self._group_webs, self._cmaps = {}, {}, {}
         self._motifs = []
         self.growth_events = []
@@ -465,25 +481,24 @@ class Creature:
         facts lost beyond the lie) as the price of recovery. Requires a
         retaining log; a NullEpisodeLog raises."""
         seqs = sorted(set(seqs))
-        before = self.edges.num_committed(self.commit_k)
+        before = self._num_committed()
         for s in seqs:
             self.log.exclude(s, reason)
         self.rebuild()
-        after = self.edges.num_committed(self.commit_k)
+        after = self._num_committed()
         self._trace("retract-episodes", {f"excluded:{len(seqs)}"},
                     {f"uncommitted:{before - after}"})
         return {"excluded": seqs, "reason": reason,
                 "committed_before": before, "committed_after": after,
                 "uncommitted": before - after}
 
-    def _episodes_for_fact(self, src: str, tgt: str) -> list[int]:
-        """Log sequences of the WORLD entries that distil to the oriented fact
-        ``(src, tgt)`` under the CURRENT frames — the bridge from a
-        human-meaningful claim ("owl has four legs") to the episode ids
-        invariant #6 excludes. A read-only replay-parse: it mutates nothing,
-        so it is safe to run before deciding to retract."""
-        src, tgt = src.strip().lower(), tgt.strip().lower()
-        seqs: list[int] = []
+    def _episodes_for_facts(self, facts: set[tuple[str, str]]) -> dict[tuple, list[int]]:
+        """Log sequences of the WORLD entries that distil to each oriented fact
+        in ``facts`` under the CURRENT frames — the bridge from human-meaningful
+        claims ("owl has four legs") to the episode ids invariant #6 excludes.
+        A read-only replay-parse over ONE log pass however many facts are asked;
+        it mutates nothing, so it is safe to run before deciding to retract."""
+        seqs: dict[tuple, list[int]] = {}
         excluded = self.log.excluded()
         for seq, entry in self.log.entries(0):
             if seq in excluded or entry.get("kind") != "world":
@@ -493,9 +508,13 @@ class Creature:
                 continue
             pic = (entry.get("picture") or "").strip().lower() or None
             fact = C._orient(r[1], pic) if pic else tuple(r[1])
-            if fact == (src, tgt):
-                seqs.append(seq)
+            if fact in facts:
+                seqs.setdefault(fact, []).append(seq)
         return seqs
+
+    def _episodes_for_fact(self, src: str, tgt: str) -> list[int]:
+        fact = (src.strip().lower(), tgt.strip().lower())
+        return self._episodes_for_facts({fact}).get(fact, [])
 
     def retract_claim(self, src: str, tgt: str, reason: str = "") -> dict:
         """Un-teach ONE specific wrong fact without a from-scratch retrain
@@ -510,12 +529,144 @@ class Creature:
         seqs = self._episodes_for_fact(src, tgt)
         if not seqs:
             self._trace("retract-claim", {f"{src}->{tgt}"}, {"no-match"})
+            n = self._num_committed()
             return {"fact": [src, tgt], "matched": 0, "excluded": [],
-                    "reason": reason, "committed_before": self.edges.num_committed(self.commit_k),
-                    "committed_after": self.edges.num_committed(self.commit_k), "uncommitted": 0}
+                    "reason": reason, "committed_before": n,
+                    "committed_after": n, "uncommitted": 0}
         rep = self.retract_episodes(seqs, reason or f"claim '{src} -> {tgt}' retracted")
         self._trace("retract-claim", {f"{src}->{tgt}"}, {f"episodes:{len(seqs)}"})
         return {"fact": [src, tgt], "matched": len(seqs), **rep}
+
+    # ============================================================= belief revision
+
+    def _beats(self, a: dict, b: dict) -> bool:
+        """Does candidate ``a`` decisively outrank candidate ``b`` in a belief
+        conflict? Decree outranks testimony however corroborated; between two
+        decrees the LATER one stands (a newer correction supersedes an older —
+        the log's order is the tiebreak). Testimony NEVER outranks testimony:
+        two corroborated camps disagreeing is either genuine dissent (a defect
+        to keep visible until taught) or complementary truth the statistics
+        cannot tell apart — the real scholar's 'a hen is a bird' vs 'a hen is
+        a female' came from disjoint corpora with a decisive margin, and a
+        margin rule erased 414 true episodes. Erosion, not erasure, is how
+        testimony loses to testimony: distrusted sources' facts fall below the
+        commitment weight on their own."""
+        if a["fiat"] != b["fiat"]:
+            return a["fiat"]
+        if a["fiat"]:
+            return a["latest"] > b["latest"]
+        return False
+
+    def revise(self) -> dict:
+        """Notice and resolve the web's own belief conflicts — the teaching-
+        shaped half of invariant #6, where :meth:`retract_claim` is the surgical
+        half. A conflict is a source concept holding TWO+ committed targets in a
+        relation class that is otherwise functional (single-valued for at least
+        ``agree_threshold`` of its sources in RAW testimony, so thin committed
+        coverage can never make a many-valued relation look single-valued — a
+        class where fan-out is normal is content, not contradiction). A
+        conflict is ADJUDICATED only when a decree is party to it
+        (:meth:`_beats`: fiat over testimony, later fiat over earlier): the
+        losing side's episodes are flagged excluded with the verdict as reason
+        and the web rebuilt by replay-with-exclusions, so the creature itself
+        retracts what it was taught better than — and the trust projection then
+        holds the losing sources' bad marks, in that class only (the
+        discrimination is learned, not decreed). Because this runs in every
+        :meth:`ingest`, corrections DEFEND themselves: testimony re-teaching a
+        corrected lie is re-excluded, and its sources dinged, with no owner in
+        the loop. Testimony-only conflicts are KEPT (``corroborated-dissent``),
+        reported, and stay visible as defects (invariant #9): the creature
+        prefers acknowledged tension to a guess, and a distrusted camp's facts
+        decommit by weight erosion rather than erasure. No-ops under a
+        NullEpisodeLog (nothing replayable can be excluded)."""
+        empty = {"conflicts": 0, "resolved": [], "unresolved": [],
+                 "excluded": 0, "uncommitted": 0}
+        if self._revising:
+            return empty
+        rel_of = self._rel_of()
+        raw: dict[str, dict[str, set]] = {}
+        by_class: dict[str, dict[str, dict[str, dict]]] = {}
+        for s, t, info in self.edges.iter_edges():
+            classes = {rel_of.get(fid, fid) for fid in info.get("frames", ())}
+            for cl in classes:
+                raw.setdefault(cl, {}).setdefault(s, set()).add(t)
+            if not self._committed_info(info, rel_of):
+                continue
+            for cl in classes:
+                by_class.setdefault(cl, {}).setdefault(s, {})[t] = info
+        conflicts = []
+        for cl, m in by_class.items():
+            contested = [s for s in m if len(m[s]) > 1]
+            if not contested:
+                continue
+            # Functionality is judged on ALL testimony, never on committed
+            # coverage: a hen is a kind of bird AND a kind of female even while
+            # sparse corroboration commits only one kind for most other
+            # animals, and a many-valued relation must not look single-valued
+            # just because commitment is thin. A class whose raw testimony
+            # tolerates fan-out is content; only a class that is single-valued
+            # in everyone's mouth makes a second value a contradiction.
+            rawm = raw.get(cl, m)
+            n_multi = sum(1 for s in rawm if len(rawm[s]) > 1)
+            if n_multi / max(1, len(rawm)) > (1.0 - self.agree_threshold):
+                continue                    # a genuinely multi-valued relation: content, not error
+            conflicts += [(cl, s, m[s]) for s in contested]
+        if not conflicts:
+            self._trace("revise", {"conflicts:0"}, {"clean"})
+            return empty
+        # one log pass for every contested fact: witnesses for exclusion, log
+        # order for the decree tiebreak
+        fact_seqs = self._episodes_for_facts(
+            {(s, t) for _cl, s, tm in conflicts for t in tm})
+        before = self._num_committed()
+        resolved, unresolved, exclusions = [], [], []
+        for cl, s, tm in conflicts:
+            cand = []
+            for t, info in tm.items():
+                cand.append({"target": t,
+                             "fiat": any(TU.is_fiat(so) for so in info.get("sources", ())),
+                             "support": self._edge_support(info, rel_of),
+                             "latest": max(fact_seqs.get((s, t), [-1]))})
+            if not any(a["fiat"] for a in cand):
+                # corroborated camps disagreeing: acknowledged tension, kept
+                # visible as a defect until teaching or trust erosion settles it
+                unresolved.append({"class": cl, "source_node": s,
+                                   "targets": sorted(tm), "reason": "corroborated-dissent"})
+                continue
+            winners = [a for a in cand
+                       if all(self._beats(a, b) for b in cand if b is not a)]
+            if not winners:
+                unresolved.append({"class": cl, "source_node": s,
+                                   "targets": sorted(tm), "reason": "indecisive"})
+                continue
+            win = winners[0]
+            for lose in cand:
+                if lose is win:
+                    continue
+                lseqs = fact_seqs.get((s, lose["target"]), [])
+                if not lseqs:               # nothing replayable witnesses it (Null log)
+                    unresolved.append({"class": cl, "source_node": s,
+                                       "targets": sorted(tm), "reason": "no-episodes"})
+                    continue
+                exclusions += [(q, f"revision: '{s} -> {lose['target']}' outweighed by "
+                                   f"'{s} -> {win['target']}' in {self._class_label(cl)!r}")
+                               for q in lseqs]
+                resolved.append({"class": cl, "source_node": s, "kept": win["target"],
+                                 "dropped": lose["target"], "episodes": len(lseqs)})
+        rep = {"conflicts": len(conflicts), "resolved": resolved,
+               "unresolved": unresolved, "excluded": len(exclusions), "uncommitted": 0}
+        if exclusions:
+            self._revising = True
+            try:
+                for seq, reason in exclusions:
+                    self.log.exclude(seq, reason)
+                self.rebuild()
+            finally:
+                self._revising = False
+            rep["uncommitted"] = before - self._num_committed()
+        self._trace("revise", {f"conflicts:{len(conflicts)}"},
+                    {f"resolved:{len(resolved)}", f"unresolved:{len(unresolved)}"})
+        return rep
 
     def _draft_fact(self, frame_id: str, src: str, tgt: str) -> list[str] | None:
         """Tokens that express ``(src, tgt)`` through ``frame_id`` — the inverse
@@ -553,39 +704,53 @@ class Creature:
         return sorted(info["frames"]) if info and info.get("frames") else []
 
     def correct(self, src: str, wrong: str, right: str, *,
-                source: str = "correction", witnesses: int | None = None) -> dict:
-        """Fix a mistake in one move: retract the wrong fact ``src -> wrong``
-        and teach ``src -> right`` in its place, voiced through a frame of the
-        SAME relation (:meth:`_relation_frames`) so no new construction is
-        needed and no other relation is polluted.
+                source: str = "correction") -> dict:
+        """Fix a mistake by TEACHING, not surgery: assert ``src -> right`` as ONE
+        honest episode in the owner's fiat voice (``correction`` — a reserved
+        namespace that carries commit strength by decree, never ``commit_k``
+        counterfeit witnesses), voiced through a frame of the wrong fact's OWN
+        relation (:meth:`_relation_frames`) so no other relation is polluted.
+        Then :meth:`revise` runs: the creature itself notices the resulting
+        committed conflict, prefers the decree, excludes the outweighed episodes
+        — and the sources that taught the lie lose trust in that relation class
+        (:meth:`trust_report`), so their future word there is taken with a grain
+        of salt. Testimony that never rose to belief (a provisional wrong fact
+        makes no committed conflict) is disqualified directly instead
+        (:meth:`retract_claim`) — evidence cleanup, not belief revision.
 
-        A correction is a DELIBERATE, authoritative act, so the replacement is
-        asserted with commit strength — ``witnesses`` (default ``commit_k``)
-        independent ``correction`` episodes — rather than left provisional like
-        a single passive reading. Its provenance stays fully auditable (every
-        witness is sourced ``correction:*``) and, being ordinary log episodes,
-        the correction is itself retractable and replayable. Returns the
-        retraction report plus what was taught and whether it committed."""
+        The correction stays fully auditable and reversible: it is an ordinary
+        log episode, itself retractable, and a LATER correction outranks it
+        (:meth:`_beats`). Returns what was taught, its status, the revision
+        verdicts, and the usual retraction metrics."""
         src, wrong, right = src.strip().lower(), wrong.strip().lower(), right.strip().lower()
-        witnesses = self.commit_k if witnesses is None else max(1, witnesses)
+        existed = self.edges.get(src, wrong) is not None
+        before = self._num_committed()
         frames = self._relation_frames(src, wrong)
         draft = next((d for fid in frames if (d := self._draft_fact(fid, src, right))), None)
-        rep = self.retract_claim(src, wrong, reason=f"corrected to '{right}'")
-        taught = None
+        taught, revision, matched = None, None, 0
         if draft is not None:
-            for i in range(witnesses):
-                self.observe(draft, picture=src, source=f"{source}:{i}")
+            self.observe(draft, picture=src, source=source)
             self.unify_relations()
+            revision = self.revise()
             self.commit()
             taught = " ".join(draft)
-        self._trace("correct", {f"{src}->{wrong}"}, {f"{src}->{right}"})
+            matched = sum(r["episodes"] for r in revision["resolved"]
+                          if r["source_node"] == src and r["dropped"] == wrong)
+        if self.edges.get(src, wrong) is not None:
+            ret = self.retract_claim(src, wrong, reason=f"corrected to '{right}'")
+            matched += ret["matched"]
         note = None
         if draft is None:
             note = ("no believed fact '{}' -> '{}' to correct — teach the right fact directly"
-                    .format(src, wrong) if rep["matched"] == 0 else
+                    .format(src, wrong) if not existed else
                     "could not voice the correction in the fact's own relation — teach it directly")
-        return {**rep, "corrected_to": right, "taught": taught,
-                "status": self._status((src, right)), "note": note}
+        after = self._num_committed()
+        self._trace("correct", {f"{src}->{wrong}"}, {f"{src}->{right}"})
+        return {"fact": [src, wrong], "matched": matched, "corrected_to": right,
+                "taught": taught, "status": self._status((src, right)),
+                "revision": revision, "note": note,
+                "committed_before": before, "committed_after": after,
+                "uncommitted": before - after}
 
     def close(self) -> None:
         self.edges.close()
@@ -766,6 +931,7 @@ class Creature:
         ra, rb = self._rel_find(a), self._rel_find(b)
         if ra != rb:
             self._rel_parent[ra] = rb
+            self._trust = None                     # class roots changed under the trust keys
 
     def _rel_of(self) -> dict[str, str]:
         return {fid: self._rel_find(fid) for fid in self.frames}
@@ -799,11 +965,12 @@ class Creature:
         answer each other. Returns the number of merges performed.
         """
         fids = [fid for fid, f in self.frames.items() if f.n_slots == 2]
+        rel_of = self._rel_of()
         maps: dict[str, dict[str, set]] = {}      # frame -> {source: {committed targets}}
         for fid in fids:
             m: dict[str, set] = {}
             for s, t, info in self.edges.edges_by_rel(fid):
-                if len(info["sources"]) >= self.commit_k:
+                if self._committed_info(info, rel_of):
                     m.setdefault(s, set()).add(t)
             maps[fid] = m
         merges = refused = 0
@@ -838,6 +1005,7 @@ class Creature:
                     refused += 1
         if merges:
             self._sectors = None                    # classes changed; transports are stale
+        self._trust = None                          # trust is keyed by class; refresh at the batch boundary
         self._trace("unify", {f"frames:{len(fids)}"},
                     {f"merges:{merges}", f"refused:{refused}"})
         return merges
@@ -872,13 +1040,133 @@ class Creature:
     # the streamed store. Everything here is DERIVED from the geometry — rebuilt
     # lazily whenever a fact, class or retraction changes it — never stored.
 
-    def _web_eligible(self, info: dict) -> bool:
-        """An edge enters the valued web if it is committed testimony (>=
-        ``commit_k`` independent sources) or one of the learner's own act-sourced
-        posits (structure committed by the growth discipline needs no
-        corroboration — the fork-scored search already gated it)."""
-        srcs = info.get("sources", {})
-        return len(srcs) >= self.commit_k or any(str(s).startswith("act:") for s in srcs)
+    # ============================================================= trust (invariant #6, weighted)
+    #
+    # Commitment stops counting witnesses and starts WEIGHING them. Each source
+    # carries a learned, per-relation-class weight (:mod:`~relweblearner.trust`):
+    # 1.0 fresh, below 1.0 once caught wrong there (its word needs more
+    # corroboration), ``commit_k`` after a long clean corroborated record there
+    # (earned authority — sole-witness commitment in that class only). With no
+    # track record anywhere this reduces exactly to the old k-distinct-sources
+    # rule. The record is a PROJECTION of store + log exclusions — reproducible
+    # by replay, revised by rebuild, never checkpointed.
+
+    def _ensure_trust(self) -> None:
+        """(Re)build the per-(source, relation class) track records when stale:
+        good = distinct standing facts independently corroborated (raw distinct-
+        source count — trust is EARNED against the uncorroded rule, so the weights
+        never feed their own definition); bad = distinct facts among the log's
+        excluded episodes, parsed under current frames. The log is scanned only
+        when exclusions exist; fiat namespaces are decree, not reputation, and
+        stay out of the ledger."""
+        if self._trust is not None:
+            return
+        rel_of = self._rel_of()
+        good: dict[tuple[str, str], set] = {}
+        for s, t, info in self.edges.iter_edges():
+            srcs = info.get("sources", {})
+            if len(srcs) < self.commit_k:
+                continue
+            classes = {rel_of.get(fid, fid) for fid in info.get("frames", ())}
+            for so in srcs:
+                if TU.is_fiat(so):
+                    continue
+                for cl in classes:
+                    good.setdefault((so, cl), set()).add((s, t))
+        bad: dict[tuple[str, str], set] = {}
+        excluded = self.log.excluded()
+        if excluded:
+            for seq, entry in self.log.entries(0):
+                if seq not in excluded or entry.get("kind") != "world":
+                    continue
+                so = entry.get("source", "stream")
+                if TU.is_fiat(so):
+                    continue
+                r = C.parse(list(entry.get("tokens", ())), self.frames)
+                if r is None or len(r[1]) != 2 or not self._fact_ok(r[1]):
+                    continue
+                fid, fillers = r
+                pic = (entry.get("picture") or "").strip().lower() or None
+                fact = C._orient(fillers, pic) if pic else tuple(fillers)
+                bad.setdefault((so, rel_of.get(fid, fid)), set()).add(fact)
+        self._trust = {k: (len(good.get(k, ())), len(bad.get(k, ())))
+                       for k in set(good) | set(bad)}
+
+    def source_weight(self, source: str, relclass: str | None) -> float:
+        """The witness weight ``source``'s testimony carries in ``relclass``."""
+        if TU.is_fiat(source):
+            return float(self.commit_k)
+        self._ensure_trust()
+        g, b = self._trust.get((source, relclass), (0, 0))
+        return TU.weight(g, b, commit_k=self.commit_k,
+                         authority_k=self.authority_k, penalty=self.distrust_penalty)
+
+    def _edge_support(self, info: dict, rel_of: dict[str, str]) -> float:
+        """Trust-weighted support for one edge: the sum over its sources of each
+        source's best weight across the edge's relation classes (provenance is
+        per-(edge, source), not per-frame — the store's stated granularity)."""
+        classes = [rel_of.get(fid, fid) for fid in info.get("frames", ())] or [None]
+        return sum(max(self.source_weight(so, cl) for cl in classes)
+                   for so in info.get("sources", ()))
+
+    def _committed_info(self, info: dict, rel_of: dict[str, str] | None = None) -> bool:
+        """The commitment predicate (invariant #6, trust-weighted): believed iff
+        the weighted support reaches ``commit_k``. Fiat sources (``act:*`` posits
+        gated by the growth discipline; ``correction*`` decrees) carry
+        ``commit_k`` each, so any one of them suffices — as before."""
+        if rel_of is None:
+            rel_of = self._rel_of()
+        return self._edge_support(info, rel_of) >= self.commit_k - 1e-9
+
+    def _num_committed(self) -> int:
+        """Weighted-committed census (the metric retraction reports move by)."""
+        rel_of = self._rel_of()
+        return sum(1 for _s, _t, info in self.edges.iter_edges()
+                   if self._committed_info(info, rel_of))
+
+    def _committed_edges(self, limit: int | None = None) -> list[tuple[str, str, dict]]:
+        """The weighted-committed edges, sorted — the creature-level counterpart
+        of ``EdgeStore.committed`` (which pre-dates trust and counts raw distinct
+        sources; that remains the store-level fast path where weights cannot
+        matter). O(edges) scan, honestly: weighting is a creature-level judgment."""
+        rel_of = self._rel_of()
+        out = [(s, t, info) for s, t, info in self.edges.iter_edges()
+               if self._committed_info(info, rel_of)]
+        out.sort(key=lambda r: (r[0], r[1]))
+        return out[:limit] if limit is not None else out
+
+    def _class_label(self, relclass: str) -> str:
+        """A human-readable name for a relation class: its first template."""
+        tpl = sorted(f.template for fid, f in self.frames.items()
+                     if self._rel_find(fid) == relclass)
+        return tpl[0] if tpl else relclass
+
+    def trust_report(self, limit: int | None = 60) -> list[dict]:
+        """The learned discrimination, legible: every (source, relation class)
+        with a track record — good/bad marks, weight, standing — most deviant
+        from ordinary first. This is what "taking a source with a grain of
+        salt" looks like from outside."""
+        self._ensure_trust()
+        rows = []
+        for (so, cl), (g, b) in self._trust.items():
+            w = self.source_weight(so, cl)
+            standing = ("authoritative" if w >= self.commit_k - 1e-9
+                        else "distrusted" if w < 1.0 - 1e-9 else "ordinary")
+            rows.append({"source": so, "class": self._class_label(cl),
+                         "class_id": cl, "good": g, "bad": b,
+                         "weight": round(w, 3), "standing": standing})
+        rows.sort(key=lambda r: (-abs(1.0 - r["weight"]), r["source"], r["class_id"]))
+        rows = rows[:limit] if limit is not None else rows
+        self._trace("trust", {"trust"}, {f"records:{len(rows)}"})
+        return rows
+
+    def _web_eligible(self, info: dict, rel_of: dict[str, str] | None = None) -> bool:
+        """An edge enters the valued web if it is committed testimony under the
+        trust-weighted rule above, which subsumes the two old gates: >= commit_k
+        ordinary witnesses, or one of the learner's own act-sourced posits
+        (structure committed by the growth discipline needs no corroboration —
+        the fork-scored search already gated it)."""
+        return self._committed_info(info, rel_of)
 
     def _class_maps(self) -> dict[str, set]:
         """Relation class → eligible ``(source, target)`` pairs, via the frames
@@ -887,7 +1175,7 @@ class Creature:
         two_slot = {fid for fid, f in self.frames.items() if f.n_slots == 2}
         out: dict[str, set] = {}
         for s, t, info in self.edges.iter_edges():
-            if not self._web_eligible(info):
+            if not self._web_eligible(info, rel_of):
                 continue
             for fid in info.get("frames", ()):
                 if fid in two_slot:
@@ -1158,21 +1446,22 @@ class Creature:
             return "unknown"
         if e["sources"] and all(str(s).startswith("act:") for s in e["sources"]):
             return "grown"
-        return "committed" if len(e["sources"]) >= self.commit_k else "provisional"
+        return "committed" if self._committed_info(e) else "provisional"
 
     def _state_for(self, edges: list) -> dict:
         """A talk-back state (see :mod:`~relweblearner.talk`) over ONLY the given
         edges ``(src, tgt, info)`` — a neighbourhood, never the whole web. Frames
         and slot orientation are bounded and always in memory."""
+        rel_of = self._rel_of()
         facts, committed, fact_frames = {}, set(), {}
         for s, t, info in edges:
             facts[(s, t)] = info["sources"]
             fact_frames[(s, t)] = info["frames"]
-            if len(info["sources"]) >= self.commit_k:
+            if self._committed_info(info, rel_of):
                 committed.add((s, t))
         return {"frames": self.frames, "facts": facts, "committed": committed,
                 "source_slot": self.source_slot, "fact_frames": fact_frames,
-                "rel_of": self._rel_of()}
+                "rel_of": rel_of}
 
     def about(self, referent: str) -> dict:
         r = referent.strip().lower()
@@ -1209,7 +1498,7 @@ class Creature:
             r = referent.strip().lower()
             edges = [(r, t, i) for t, i in self.edges.out_edges(r)]
         else:
-            edges = self.edges.committed(self.commit_k, limit=max(limit * 3, limit))
+            edges = self._committed_edges(limit=max(limit * 3, limit))
         out = T.say(self._state_for(edges), referent, limit)
         self._trace("say", {referent or "*"}, {f"sentences:{len(out)}"})
         return out
@@ -1232,11 +1521,12 @@ class Creature:
         Granularity is (source, claim), not per-episode — that WAS an episode's
         whole epistemic content — so "this source was wrong" retracts cleanly,
         while "this one page of an otherwise-good source was wrong" does not."""
-        before = self.edges.num_committed(self.commit_k)
+        before = self._num_committed()
         touched = self.edges.retract_source(source)
         namings = self.numbers.retract_source(source)   # the naming table decrements too
-        after = self.edges.num_committed(self.commit_k)
+        after = self._num_committed()
         self._sectors = None                        # geometry changed; transports are stale
+        self._trust = None
         self._trace("retract-source", {source}, {f"touched:{touched + namings}"})
         return {"source": source, "edges_touched": touched, "namings_touched": namings,
                 "committed_before": before, "committed_after": after,
@@ -1248,15 +1538,16 @@ class Creature:
         self._trace("snapshot", {"snapshot"}, {f"episodes:{self.episodes_seen}"})
         total = self.parsed + self.unparsed
         n_edges = self.edges.num_edges()
-        n_committed = self.edges.num_committed(self.commit_k)
-        committed_edges = self.edges.committed(self.commit_k, limit=committed_limit)
+        rel_of = self._rel_of()
+        all_edges = sorted(self.edges.iter_edges(), key=lambda r: (r[0], r[1]))
+        commed = [e for e in all_edges if self._committed_info(e[2], rel_of)]
+        n_committed = len(commed)
+        committed_edges = commed[:committed_limit]
         st = self._state_for(committed_edges)   # render only the shown committed facts
-        # provisional = edges seen but below the commitment threshold; the creature
-        # reports its own uncommitted geometry (bounded to committed_limit for the view)
-        prov_edges = sorted(
-            ((s, t, info) for (s, t, info) in self.edges.iter_edges()
-             if len(info.get("sources", [])) < self.commit_k),
-            key=lambda r: (r[0], r[1]))[:committed_limit]
+        # provisional = edges seen but below the (trust-weighted) commitment
+        # threshold; the creature reports its own uncommitted geometry (bounded)
+        prov_edges = [e for e in all_edges
+                      if not self._committed_info(e[2], rel_of)][:committed_limit]
         prov_st = self._state_for(prov_edges)
         return {
             "identity": {"name": self.name, "id": self.id, "created": self.created, "level": self.level},
@@ -1280,6 +1571,7 @@ class Creature:
             "relations_refused": self.refused_merges[-8:],
             "sectors": self._sector_rows(),
             "motifs": self._motif_rows(),
+            "trust": self.trust_report(limit=40),
             "defects": self.defects(),
             "growth": {"count": len(self.growth_events), "budget": self.growth_budget,
                        "events": self.growth_events[-10:]},
@@ -1311,7 +1603,7 @@ class Creature:
         """
         focus = (focus or "").strip().lower() or None
         if focus is None:
-            seed = self.edges.committed(self.commit_k, limit=1)
+            seed = self._committed_edges(limit=1)
             focus = seed[0][0] if seed else None
         self._trace("web-view", {focus or "*"}, {"ego-graph"})
         if focus is None:
@@ -1328,12 +1620,13 @@ class Creature:
         inn = self.edges.in_edges(focus)
         truncated = len(out) + len(inn) > limit
 
+        rel_of = self._rel_of()
         edges = [{"source": focus, "target": t, "rel": _rel(info),
-                  "committed": len(info["sources"]) >= self.commit_k}
+                  "committed": self._committed_info(info, rel_of)}
                  for (t, info) in out[:limit]]
         room = max(0, limit - len(edges))
         edges += [{"source": s, "target": focus, "rel": _rel(info),
-                   "committed": len(info["sources"]) >= self.commit_k}
+                   "committed": self._committed_info(info, rel_of)}
                   for (s, info) in inn[:room]]
 
         concepts = {focus}
@@ -1362,11 +1655,12 @@ class Creature:
         self._trace("web-graph", {f"nodes:{total_nodes}"}, {f"edges:{len(all_edges)}"})
 
         keep = {n for n, _ in deg.most_common(max_nodes)}
+        rel_of = self._rel_of()
         edges = []
         for s, t, info in all_edges:
             if s in keep and t in keep:
                 edges.append({"source": s, "target": t,
-                              "committed": len(info["sources"]) >= self.commit_k})
+                              "committed": self._committed_info(info, rel_of)})
                 if len(edges) >= max_edges:
                     break
 
@@ -1430,6 +1724,7 @@ class Creature:
         idx = {n: i for i, n in enumerate(nodes)}
         A = np.zeros((len(nodes), len(nodes)))
         outd, ind, deg = Counter(), Counter(), Counter()
+        rel_of = self._rel_of()
         comp_edges = []
         for s, t, ev in all_edges:
             if s in idx and t in idx:
@@ -1440,7 +1735,7 @@ class Creature:
                 deg[s] += 1
                 deg[t] += 1
                 comp_edges.append({"s": idx[s], "t": idx[t],
-                                   "committed": len(ev["sources"]) >= self.commit_k})
+                                   "committed": self._committed_info(ev, rel_of)})
 
         # Classical MDS on RELATIONAL distance (shortest paths in the web): plot-
         # distance approximates how far apart two concepts are in the creature's
@@ -1558,6 +1853,7 @@ class Creature:
                 "min_anchors": self.min_anchors, "induction_interval": self.induction_interval,
                 "buffer_cap": self.buffer_cap, "max_slot_tokens": self.max_slot_tokens,
                 "source_cap": self.source_cap, "exemplar_cap": self.exemplar_cap,
+                "authority_k": self.authority_k, "distrust_penalty": self.distrust_penalty,
                 "exception_fraction": self.exception_fraction, "derive_depth": self.derive_depth,
                 "growth_persistence": self.growth_persistence, "growth_budget": self.growth_budget,
                 "seed": self.seed, "reservoir_stratify": self.reservoir_stratify,

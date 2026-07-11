@@ -742,3 +742,36 @@ Post-verification work (the report's four next steps). All committed on `main`.
   claim-granular fixes inline. Verified on the real 98k-episode scholar: `--fix cat four six` excluded
   136 episodes and re-committed in place, log intact. Accepted: `tests/test_correct.py` (9) + 2 serve
   tests; append-only + rebuild-safety asserted.
+- **2026-07-11** — Teach to change beliefs; learn whom to believe (`trust.py`, `Creature.revise`/
+  `trust_report`/`source_weight`, trust-weighted `_committed_info`, serve `/api/trust`, trust panel in
+  the ledger tab, `relweb-correct --trust`). The previous entry's `correct()` had two honest flaws the
+  review surfaced: it bypassed the creature's own judgment (a human named the fact, code excised the
+  evidence — decree, not epistemics), and it counterfeited corroboration (ONE authoritative act dressed
+  as k `correction:*` witnesses to clear the commit bar). Both fixed by making the missing mechanisms
+  real. TRUST (invariant #6 amendment): commitment weighs witnesses instead of counting them; each
+  source carries a per-relation-class weight projected from its track record (good = distinct standing
+  facts independently corroborated there; bad = distinct facts among the log's excluded episodes) — 1.0
+  fresh (old rule exactly), <1 once caught wrong THERE (a grain of salt: needs more corroboration, in
+  that class only — its other domains stay ordinary), `commit_k` after `authority_k` clean corroborated
+  facts (earned domain authority: its lone word commits there and nowhere else; one caught lie forfeits
+  it). A projection of store + log exclusions — replayable, never checkpointed; collusion-until-caught
+  and Null-log blindness stated. REVISION (`revise`, in every `ingest` + after every correction): two+
+  committed targets on one source in an otherwise-functional class = a conflict — functionality judged
+  on RAW testimony, never committed coverage (thin corroboration must not make a many-valued relation
+  look single-valued). Adjudicated ONLY when a decree is party: fiat beats testimony, later fiat beats
+  earlier; losers' episodes flagged excluded with the verdict as reason, rebuild, losing sources take
+  the bad marks — and since revision runs in every ingest, corrections DEFEND themselves against
+  recidivist testimony with no owner in the loop. Testimony never erases testimony: dry-run on the real
+  scholar showed why — a margin rule dropped `hen -> bird` (414 true episodes; science-* vs wn-animals-*
+  are disjoint corpora with a decisive margin, BOTH true), plus `embryo -> plant` and `owl -> brown`,
+  and no statistic separates corroborated dissent from complementary truth. Such conflicts are KEPT
+  (`corroborated-dissent`), visible as defects; a distrusted camp decommits by weight erosion, not
+  erasure. `correct(src, wrong, right)` is now teach-then-revise: one honest `correction` episode (fiat
+  namespace, weight `commit_k`, no reputation), and the creature itself drops the outweighed belief and
+  learns to distrust the books that taught it; where the class tolerates fan-out the residual falls
+  back to claim surgery, blame included. `retract_claim` stays as the surgical half for testimony with
+  no better fact to teach. This is the society groundwork: peers will be sources, and discrimination —
+  trust earned per domain, lost where betrayed — is now a learned quantity. Verified on a COPY of the
+  real 98k-episode scholar: `--fix cat six four` re-taught the old demo lie in place (fiat recency), hen
+  and embryo untouched. Accepted: `tests/test_trust.py` (14), reworked `tests/test_correct.py` traces +
+  episodelog planting, serve trust test; suite 281.

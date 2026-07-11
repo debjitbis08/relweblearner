@@ -120,3 +120,21 @@ def test_api_retract_refuses_while_the_trainer_holds_the_lock(served):
         with pytest.raises(HTTPException) as exc:
             served.retract(served.RetractIn(source="iota", target="theta"))
         assert exc.value.status_code == 409
+
+
+def test_api_exposes_the_trust_ledger(served):
+    """A correction teaches the served creature whom to doubt: the books that
+    taught the lie turn up distrusted in /api/trust, in that relation class."""
+    served.feed(served.FeedIn(text="kappa comes after mu", picture="kappa", book="oops-1"))
+    served.feed(served.FeedIn(text="kappa comes after mu", picture="kappa", book="oops-2"))
+    served.correct(served.CorrectIn(source="kappa", wrong="mu", right="iota"))
+
+    rows = served.trust()["trust"]
+    dinged = {r["source"] for r in rows if r["standing"] == "distrusted"}
+    assert {"oops-1", "oops-2"} <= dinged
+    for r in rows:
+        if r["source"] in ("oops-1", "oops-2") and r["standing"] == "distrusted":
+            assert r["bad"] >= 1 and r["weight"] < 1.0
+            assert "after" in r["class"]           # the class is named, legibly
+    # fiat voices carry no reputation
+    assert not any(r["source"].startswith("correction") for r in rows)

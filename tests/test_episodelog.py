@@ -73,11 +73,18 @@ def test_checkpoint_plus_tail_replay_equals_live_run():
 
 
 def test_single_episode_retraction_by_replay():
-    # non-adjacent numbers, so the lying edge shares no key with an honest fact
+    # non-adjacent numbers, so the lying edge shares no key with an honest fact.
+    # The lie is planted via observe(), not ingest(): batch ingest now ends in
+    # belief revision (Creature.revise, exercised in test_trust.py), which
+    # adjudicates this outvoted collusion away by itself — this test is about
+    # the MANUAL episode-granular tool, so it holds the creature's own judgment
+    # at bay while planting.
     lie = {"tokens": ["nine", "comes", "after", "two"], "picture": "nine", "marks": None}
-    eps = _episodes() + [dict(lie, book="good-book-page-9"), dict(lie, book="other-book-page-3")]
     c = Creature("audited", **_PARAMS)
-    c.ingest(eps)
+    c.ingest(_episodes())
+    for book in ("good-book-page-9", "other-book-page-3"):
+        c.observe(lie["tokens"], picture=lie["picture"], source=book)
+    c.commit()
     assert c.edges.get("nine", "two") is not None        # the k-collusion committed
     assert c.defects()["count"] >= 1                     # and shows as holonomy
 
@@ -91,6 +98,7 @@ def test_single_episode_retraction_by_replay():
     assert c.defects()["count"] == 0
     # zero collateral: every honest belief survived (invariant #6's metric)
     assert _committed(c) == honest_before
+    assert ("nine", "eight") in _committed(c)            # nine's true predecessor intact
     assert report["uncommitted"] == 1
     # the log still HOLDS the excluded entries — flagged, not deleted
     assert set(seqs) <= c.log.excluded()

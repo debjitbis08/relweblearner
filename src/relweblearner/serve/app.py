@@ -232,11 +232,21 @@ def retract(body: RetractIn) -> dict:
 
 @app.post("/api/correct")
 def correct(body: CorrectIn) -> dict:
-    """Fix a mistake in one move: retract ``source -> wrong`` and teach
-    ``source -> right`` through the same frame, committed as an authoritative
-    correction."""
+    """Fix a mistake in one move: teach ``source -> right`` through the wrong
+    fact's own frame as an authoritative correction; the creature revises the
+    conflict itself, dropping ``source -> wrong`` and dinging the trust of the
+    sources that taught it."""
     report, c = _write_locked(lambda c: c.correct(body.source, body.wrong, body.right))
     return {"correction": report, "status": c.snapshot()}
+
+
+@app.get("/api/trust")
+def trust() -> dict:
+    """The learned source-trust ledger: per (source, relation class) track
+    records — good/bad marks, witness weight, standing. This is how the
+    creature discriminates: a source caught wrong about legs is taken with a
+    grain of salt about legs, while its colour testimony stays ordinary."""
+    return {"trust": _fresh_creature().trust_report()}
 
 
 @app.post("/api/ask")

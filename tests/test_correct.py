@@ -121,7 +121,9 @@ def test_correct_emits_traces():
     n = len(c.bus)
     c.correct("owl", "four", "two")
     tags = [ep.id1 for _eid, ep in c.bus.all_entries()][n:]
-    assert any(".retract-claim" in t for t in tags)
+    # teaching, then the creature's own adjudication — no surgical retract-claim
+    assert any(".observe" in t for t in tags)
+    assert any(".revise" in t for t in tags)
     assert any(".correct" in t for t in tags)
 
 

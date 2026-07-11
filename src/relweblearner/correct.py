@@ -1,16 +1,21 @@
-"""Fix a mistake in a trained creature — WITHOUT retraining from scratch.
+"""Fix a mistake in a trained creature — by TEACHING it better, not retraining.
 
-The episode log is immutable and append-only (invariant #5); a wrong belief is
-corrected the way the paradigm prescribes (invariant #6): the lying episodes
-are FLAGGED excluded — never deleted — and the model is rebuilt by
-replay-with-exclusions. That is orders of magnitude cheaper than
-``relweb-train --reset --all`` (no re-fetching, no worksheets, no re-reading the
-whole corpus) and it is claim-granular, so one bad fact goes without taking the
-good facts around it.
+``--fix`` asserts the right fact in the owner's fiat voice (ONE honest
+``correction`` episode) and the creature adjudicates the resulting conflict
+itself (``Creature.revise``): it prefers the decree, flags the outweighed
+episodes excluded — never deleted (invariant #5) — rebuilds by
+replay-with-exclusions, and the sources that taught the lie LOSE TRUST in that
+relation class, so their future word there is taken with a grain of salt
+(``--trust`` shows the ledger). ``--retract`` remains the surgical half of
+invariant #6: disqualify testimony outright when there is no better fact to
+teach. Either way the fix is orders of magnitude cheaper than
+``relweb-train --reset --all`` and claim-granular, so one bad fact goes without
+taking the good facts around it.
 
-    relweb-correct --retract owl four                 # un-teach "owl has four legs"
-    relweb-correct --fix owl four two                 # retract + teach "owl has two legs"
-    relweb-correct --show owl                          # what does it currently believe about owl?
+    relweb-correct --fix owl four two       # teach "owl has two legs"; it drops "four" itself
+    relweb-correct --retract owl four       # un-teach "owl has four legs" (no replacement)
+    relweb-correct --show owl               # what does it currently believe about owl?
+    relweb-correct --trust                  # whose word does it weigh, where, and why?
 
 Shares the creature lock with the cron trainer and the serving app, so a fix
 never interleaves with a scheduled run. The corrected checkpoint is saved in
@@ -49,8 +54,11 @@ def main() -> int:
     ap.add_argument("--retract", nargs=2, metavar=("SOURCE", "TARGET"),
                     help="un-teach the fact SOURCE -> TARGET (e.g. owl four)")
     ap.add_argument("--fix", nargs=3, metavar=("SOURCE", "WRONG", "RIGHT"),
-                    help="retract SOURCE -> WRONG and teach SOURCE -> RIGHT")
+                    help="teach SOURCE -> RIGHT with correction authority; "
+                         "the creature retracts SOURCE -> WRONG itself")
     ap.add_argument("--show", metavar="REFERENT", help="print current beliefs about REFERENT and exit")
+    ap.add_argument("--trust", action="store_true",
+                    help="print the learned per-source, per-relation-class trust ledger and exit")
     args = ap.parse_args()
 
     c = _load(args.name)
@@ -58,8 +66,17 @@ def main() -> int:
         print(f"\nBeliefs about '{args.show}':")
         _show(c, args.show)
         return 0
+    if args.trust:
+        rows = c.trust_report()
+        print(f"\nTrust ledger for '{args.name}' (weight 1 = one ordinary witness):")
+        if not rows:
+            print("   (no track records yet — nothing corroborated, nothing excluded)")
+        for r in rows:
+            print(f"   {r['source']:20s} {r['class']:30s} good={r['good']:<3d} "
+                  f"bad={r['bad']:<3d} weight={r['weight']:<6.3f} [{r['standing']}]")
+        return 0
     if not (args.retract or args.fix):
-        ap.error("give --retract, --fix, or --show")
+        ap.error("give --retract, --fix, --show, or --trust")
 
     # exclude the serving app's writes for the whole fix (same lock it takes)
     with creature_lock(_store_path(args.name).parent):
@@ -77,8 +94,11 @@ def main() -> int:
             src, wrong, right = (x.strip().lower() for x in args.fix)
             rep = c.correct(src, wrong, right)
             m = f"excluded {rep['matched']} episode(s)" if rep["matched"] else "nothing to retract"
-            print(f"\n   fixed '{src}': {m}; taught '{rep['taught'] or '(could not voice)'}' "
-                  f"[{rep['status']}]")
+            print(f"\n   fixed '{src}': taught '{rep['taught'] or '(could not voice)'}' "
+                  f"[{rep['status']}]; the creature {m}")
+            for r in (rep.get("revision") or {}).get("resolved", []):
+                print(f"   revised: kept '{r['source_node']} -> {r['kept']}', dropped "
+                      f"'{r['source_node']} -> {r['dropped']}' ({r['episodes']} episode(s))")
             if rep["note"]:
                 print(f"   note: {rep['note']}")
         c.commit()
