@@ -90,3 +90,33 @@ def test_feed_refuses_while_the_trainer_holds_the_lock(served):
     # lock released: the same feed goes through
     r = served.feed(served.FeedIn(text="one comes after zero", picture="one", book="x"))
     assert r["observation"]["parsed"]
+
+
+def test_api_corrects_a_mistake_in_place(served):
+    """A wrong fact taught through the app is fixed without a retrain: retract
+    the claim, or correct it, through the API — durable, claim-granular."""
+    # teach a deliberate mistake (twice, so it commits)
+    served.feed(served.FeedIn(text="theta comes after eta", picture="theta", book="oops-1"))
+    served.feed(served.FeedIn(text="theta comes after eta", picture="theta", book="oops-2"))
+    assert served.ask(served.AskIn(text="theta comes after ?"))["answers"][0]["status"] == "committed"
+
+    # correct it: theta comes after ZETA, not eta
+    out = served.correct(served.CorrectIn(source="theta", wrong="eta", right="zeta"))
+    assert out["correction"]["matched"] >= 2 and out["correction"]["status"] == "committed"
+    r = served.ask(served.AskIn(text="theta comes after ?"))
+    assert (r["answers"][0]["answer"], r["answers"][0]["status"]) == ("zeta", "committed")
+
+    # and the fix is durable — the served creature reloads from the checkpoint
+    c = served._fresh_creature()
+    c.rebuild()
+    assert c.edges.get("theta", "eta") is None
+
+
+def test_api_retract_refuses_while_the_trainer_holds_the_lock(served):
+    served.feed(served.FeedIn(text="iota comes after theta", picture="iota", book="h1"))
+    served.feed(served.FeedIn(text="iota comes after theta", picture="iota", book="h2"))
+    with creature_lock(served.DATA.parent):
+        from fastapi import HTTPException
+        with pytest.raises(HTTPException) as exc:
+            served.retract(served.RetractIn(source="iota", target="theta"))
+        assert exc.value.status_code == 409

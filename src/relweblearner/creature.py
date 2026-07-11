@@ -476,6 +476,117 @@ class Creature:
                 "committed_before": before, "committed_after": after,
                 "uncommitted": before - after}
 
+    def _episodes_for_fact(self, src: str, tgt: str) -> list[int]:
+        """Log sequences of the WORLD entries that distil to the oriented fact
+        ``(src, tgt)`` under the CURRENT frames — the bridge from a
+        human-meaningful claim ("owl has four legs") to the episode ids
+        invariant #6 excludes. A read-only replay-parse: it mutates nothing,
+        so it is safe to run before deciding to retract."""
+        src, tgt = src.strip().lower(), tgt.strip().lower()
+        seqs: list[int] = []
+        excluded = self.log.excluded()
+        for seq, entry in self.log.entries(0):
+            if seq in excluded or entry.get("kind") != "world":
+                continue
+            r = C.parse(list(entry["tokens"]), self.frames)
+            if r is None or len(r[1]) != 2 or not self._fact_ok(r[1]):
+                continue
+            pic = (entry.get("picture") or "").strip().lower() or None
+            fact = C._orient(r[1], pic) if pic else tuple(r[1])
+            if fact == (src, tgt):
+                seqs.append(seq)
+        return seqs
+
+    def retract_claim(self, src: str, tgt: str, reason: str = "") -> dict:
+        """Un-teach ONE specific wrong fact without a from-scratch retrain
+        (invariant #6, claim granularity). Finds every log episode that taught
+        ``src -> tgt``, flags them excluded (never deleted), and rebuilds by
+        replay-with-exclusions, so the correction is durable — it survives a
+        later :meth:`rebuild`, unlike the in-place decrement of
+        :meth:`retract_source`. Reports collateral (other committed facts lost
+        with the lie) as invariant #6 requires. A claim with no witnessing
+        episode is a no-op, reported as ``matched: 0`` rather than an error."""
+        src, tgt = src.strip().lower(), tgt.strip().lower()
+        seqs = self._episodes_for_fact(src, tgt)
+        if not seqs:
+            self._trace("retract-claim", {f"{src}->{tgt}"}, {"no-match"})
+            return {"fact": [src, tgt], "matched": 0, "excluded": [],
+                    "reason": reason, "committed_before": self.edges.num_committed(self.commit_k),
+                    "committed_after": self.edges.num_committed(self.commit_k), "uncommitted": 0}
+        rep = self.retract_episodes(seqs, reason or f"claim '{src} -> {tgt}' retracted")
+        self._trace("retract-claim", {f"{src}->{tgt}"}, {f"episodes:{len(seqs)}"})
+        return {"fact": [src, tgt], "matched": len(seqs), **rep}
+
+    def _draft_fact(self, frame_id: str, src: str, tgt: str) -> list[str] | None:
+        """Tokens that express ``(src, tgt)`` through ``frame_id`` — the inverse
+        of parsing, read back before returning (the L6 discipline) so a
+        correction only ever teaches a phrase that re-parses to the fact it
+        means. The picture is the source word (the frame's oriented slot)."""
+        f = self.frames.get(frame_id)
+        if f is None or f.n_slots != 2:
+            return None
+        slot = self.source_slot.get(frame_id)
+        if slot is None:
+            return None
+        draft, i = [], 0
+        for e in f.pattern:
+            if e[0] == C.LIT:
+                draft.append(e[1])
+            else:
+                draft.append(src if i == slot else tgt)
+                i += 1
+        r = C.parse(draft, self.frames)
+        if r is None or C._orient(r[1], src) != (src, tgt):
+            return None
+        return draft
+
+    def _relation_frames(self, src: str, wrong: str) -> list[str]:
+        """The frames a correction of ``src -> wrong`` may be voiced through:
+        the wrong fact's OWN frames, which name its relation. The replacement
+        must be re-taught as that same relation — a wrong colour fixed to
+        another colour stays colour, never leaks into ``has _ legs`` — and a
+        value shared across relations (``four`` is both legs and sides) makes
+        any guess from the value alone unsafe. So a correction requires the
+        mistaken fact to actually exist; absent it, there is no relation to
+        speak and nothing to correct (the caller is told to teach directly)."""
+        info = self.edges.get(src.strip().lower(), wrong.strip().lower())
+        return sorted(info["frames"]) if info and info.get("frames") else []
+
+    def correct(self, src: str, wrong: str, right: str, *,
+                source: str = "correction", witnesses: int | None = None) -> dict:
+        """Fix a mistake in one move: retract the wrong fact ``src -> wrong``
+        and teach ``src -> right`` in its place, voiced through a frame of the
+        SAME relation (:meth:`_relation_frames`) so no new construction is
+        needed and no other relation is polluted.
+
+        A correction is a DELIBERATE, authoritative act, so the replacement is
+        asserted with commit strength — ``witnesses`` (default ``commit_k``)
+        independent ``correction`` episodes — rather than left provisional like
+        a single passive reading. Its provenance stays fully auditable (every
+        witness is sourced ``correction:*``) and, being ordinary log episodes,
+        the correction is itself retractable and replayable. Returns the
+        retraction report plus what was taught and whether it committed."""
+        src, wrong, right = src.strip().lower(), wrong.strip().lower(), right.strip().lower()
+        witnesses = self.commit_k if witnesses is None else max(1, witnesses)
+        frames = self._relation_frames(src, wrong)
+        draft = next((d for fid in frames if (d := self._draft_fact(fid, src, right))), None)
+        rep = self.retract_claim(src, wrong, reason=f"corrected to '{right}'")
+        taught = None
+        if draft is not None:
+            for i in range(witnesses):
+                self.observe(draft, picture=src, source=f"{source}:{i}")
+            self.unify_relations()
+            self.commit()
+            taught = " ".join(draft)
+        self._trace("correct", {f"{src}->{wrong}"}, {f"{src}->{right}"})
+        note = None
+        if draft is None:
+            note = ("no believed fact '{}' -> '{}' to correct — teach the right fact directly"
+                    .format(src, wrong) if rep["matched"] == 0 else
+                    "could not voice the correction in the fact's own relation — teach it directly")
+        return {**rep, "corrected_to": right, "taught": taught,
+                "status": self._status((src, right)), "note": note}
+
     def close(self) -> None:
         self.edges.close()
         self.log.close()

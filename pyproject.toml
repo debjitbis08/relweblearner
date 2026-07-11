@@ -11,6 +11,7 @@ dependencies = ["numpy", "networkx", "matplotlib", "sympy", "fastapi (>=0.139.0,
 relweb-serve = "relweblearner.serve.app:main"
 relweb-train = "relweblearner.train:main"
 relweb-progress = "relweblearner.train:progress_main"
+relweb-correct = "relweblearner.correct:main"
 
 [tool.poetry]
 packages = [{ include = "relweblearner", from = "src" }]

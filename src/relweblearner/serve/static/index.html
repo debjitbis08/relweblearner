@@ -124,6 +124,18 @@ button.b:disabled{opacity:.35;cursor:default}
 .acard .sent{color:var(--dim);font-size:12px;font-style:italic}
 .acard .src{color:var(--faint);font-size:10.5px}
 .refusal{color:var(--defect);font-size:12px;padding-top:2px}
+/* correction affordance — "belief is revisable, and the fix is cheap" ——— */
+.acard .wrong{color:var(--faint);font-size:10.5px;cursor:pointer;border:1px solid var(--line2);
+  border-radius:2px;padding:0 5px;background:none}
+.acard .wrong:hover{color:var(--defect);border-color:var(--defect)}
+.fixbar{display:flex;gap:6px;align-items:center;flex-basis:100%;padding-top:4px;font-size:11px}
+.fixbar input{background:var(--bg);border:1px solid var(--line2);border-radius:2px;color:var(--ink);
+  font-family:var(--mono);font-size:12px;padding:2px 6px;width:120px}
+.fixbar button{background:none;border:1px solid var(--line2);border-radius:2px;color:var(--dim);
+  cursor:pointer;font-family:var(--sans);font-variation-settings:"wdth" 62;font-weight:700;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px}
+.fixbar button:hover{color:var(--ink);border-color:var(--ink)}
+.fixbar .note{color:var(--faint)}
 
 /* right column: tabs ———————————————————————————— */
 #tabs{display:flex;gap:2px;margin-bottom:-1px;position:relative;z-index:1}
@@ -369,6 +381,14 @@ function statusChip(a){
   if (a.via === "counting") cls = "counted";
   return `<span class="st ${cls}">${cls}</span>`;
 }
+// a taught belief carries the (source, target) fact it asserts, so the card can
+// offer a one-click retraction/correction — only committed/provisional testimony
+// is directly retractable (derived/counted/grown answers have no episode to
+// exclude; fix their PREMISES instead).
+function wrongCtl(src, tgt, status){
+  if (!src || (status !== "committed" && status !== "provisional")) return "";
+  return `<button class="wrong" data-src="${esc(src)}" data-tgt="${esc(tgt)}">✗ wrong</button>`;
+}
 function answerCards(r){
   if (r.kind === "about"){
     if (!r.beliefs.length) return `<div class="refusal">nothing believed about “${esc(r.referent)}” yet</div>`;
@@ -377,17 +397,25 @@ function answerCards(r){
         <span class="st ${b.status}">${b.status}</span>
         ${b.sentence ? `<span class="sent">“${esc(b.sentence)}”</span>` : ""}
         <span class="src">${b.sources.length} source${b.sources.length===1?"":"s"}: ${esc(b.sources.slice(0,4).join(", "))}${b.sources.length>4?"…":""}</span>
+        ${wrongCtl(r.referent, b.target, b.status)}
       </div>`).join("");
   }
   if (r.kind !== "answer") return `<div class="refusal">${esc(r.reason || "refused")}</div>`;
   if (!r.answers.length)
     return `<div class="refusal">${r.refused ? esc(r.refused) + " (degraded to refusal)" : "unknown — not taught, not derivable, no witness to grow"}</div>`;
-  return r.answers.map(a => `<div class="acard">
+  // the fact a taught answer asserts: forward "owl has ? legs" -> (owl, four);
+  // reverse "? has four legs" -> (owl, four). Derived answers pass no src.
+  return r.answers.map(a => {
+    const factSrc = a.via ? null : (r.forward ? r.given : a.answer);
+    const factTgt = r.forward ? a.answer : r.given;
+    return `<div class="acard">
       <span class="w" data-c="${esc(a.answer)}">${esc(a.answer)}</span>
       ${statusChip(a)}
       ${a.sentence ? `<span class="sent">“${esc(a.sentence)}”</span>` : ""}
       ${a.via === "motif" && a.through ? `<span class="src">inherited through ${a.through.map(esc).join(" → ")}</span>` : ""}
-    </div>`).join("");
+      ${wrongCtl(factSrc, factTgt, a.status)}
+    </div>`;
+  }).join("");
 }
 function pushQA(q, html){
   const el = document.createElement("div");
@@ -396,6 +424,36 @@ function pushQA(q, html){
   $("transcript").prepend(el);
   while ($("transcript").children.length > 24) $("transcript").lastChild.remove();
   el.querySelectorAll(".w").forEach(w => w.onclick = () => { setTab("web"); loadWeb(w.dataset.c); });
+  el.querySelectorAll(".wrong").forEach(b => b.onclick = () => openFix(b));
+}
+// Reveal an inline correction bar on a card: teach the right value (retract +
+// re-teach in one move) or just retract the wrong fact. Cheap, claim-granular,
+// no retrain — the app's answer to "we should be able to fix mistakes".
+function openFix(btn){
+  if (btn.disabled) return;
+  const src = btn.dataset.src, tgt = btn.dataset.tgt;
+  const bar = document.createElement("div");
+  bar.className = "fixbar";
+  bar.innerHTML = `<span class="note">“${esc(src)} → ${esc(tgt)}” is wrong.</span>
+    <input placeholder="correct value" />
+    <button class="fix">fix</button><button class="ret">just retract</button>`;
+  btn.replaceWith(bar);
+  const inp = bar.querySelector("input"); inp.focus();
+  const done = (report, verb) => {
+    bar.innerHTML = `<span class="note">${verb} — ${esc(report.matched||report.excluded?.length||0)} episode(s) excluded`
+      + `${report.uncommitted ? `, ${report.uncommitted} collateral` : ""}`
+      + `${report.taught ? `; taught “${esc(report.taught)}” [${esc(report.status)}]` : ""}.</span>`;
+    refreshStatus();
+  };
+  const run = async (fn) => { try { done(await fn(), "fixed"); } catch(e){ bar.innerHTML = `<span class="warn">${esc(e.message)}</span>`; } };
+  bar.querySelector(".fix").onclick = () => {
+    const right = inp.value.trim().toLowerCase();
+    if (!right) { inp.focus(); return; }
+    run(async () => (await J("/api/correct", {source:src, wrong:tgt, right})).correction);
+  };
+  bar.querySelector(".ret").onclick = () =>
+    run(async () => (await J("/api/retract", {source:src, target:tgt})).retraction);
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") bar.querySelector(".fix").click(); });
 }
 async function ask(){
   const q = $("ask-in").value.trim();

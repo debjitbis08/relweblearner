@@ -723,3 +723,22 @@ Post-verification work (the report's four next steps). All committed on `main`.
   sciencebooks taxonomy gains `duck→bird` so the pattern-book/science-book
   overlap carries ≥2 witnesses (owl, duck). Accepted: `tests/test_motif.py`
   (13, incl. the full-generator transcript above).
+- **2026-07-11** — Fix mistakes without retraining (`correct.py`, `Creature.retract_claim`/`correct`,
+  serve `/api/retract` + `/api/correct`, `relweb-correct` CLI, card ✗-affordance in the UI). Motivated
+  by the motif work exposing that the live scholar's pre-biological-legs log has plainly-false leg
+  counts: `--reset --all` (re-fetch, re-worksheet, re-read the whole corpus) is the wrong tool for one
+  bad fact. Invariant #6 already prescribes the fix — flag the lying episodes excluded (never delete),
+  rebuild by replay-with-exclusions — but nothing bridged a human-meaningful mistake to it:
+  `retract_source` drops a whole book of good facts with the one lie, `retract_episodes` needs raw log
+  seqs no human has. `retract_claim(src, tgt)` is that bridge: a read-only replay-parse finds every
+  episode distilling to the oriented fact `(src,tgt)` under current frames, excludes exactly those,
+  rebuilds, reports collateral. DURABLE (survives a later `rebuild`, unlike `retract_source`'s in-place
+  decrement) and claim-granular (owl's legs go, owl's colour stays). `correct(src, wrong, right)` =
+  retract + re-teach through the wrong fact's OWN relation frames (never a construction that merely
+  fits the words — a value shared across relations, `four` = legs & sides, makes any value-space guess
+  unsafe, so a correction requires the mistaken fact to exist), asserted with commit strength (k
+  `correction:*` witnesses — a deliberate authoritative act, fully auditable and itself retractable).
+  Served endpoints share the trainer lock (409 mid-run) and save the checkpoint; the ✗-on-card UI does
+  claim-granular fixes inline. Verified on the real 98k-episode scholar: `--fix cat four six` excluded
+  136 episodes and re-committed in place, log intact. Accepted: `tests/test_correct.py` (9) + 2 serve
+  tests; append-only + rebuild-safety asserted.

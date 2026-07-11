@@ -84,6 +84,18 @@ class SayIn(BaseModel):
     referent: str | None = None
 
 
+class RetractIn(BaseModel):
+    source: str            # the entity a fact is ABOUT ("owl")
+    target: str            # the value being retracted ("four")
+    reason: str = "marked wrong in the reading app"
+
+
+class CorrectIn(BaseModel):
+    source: str            # the entity ("owl")
+    wrong: str             # the mistaken value ("four")
+    right: str             # the corrected value ("two")
+
+
 @app.get("/api/status")
 def status() -> dict:
     return _fresh_creature().snapshot()
@@ -189,6 +201,42 @@ def feed(body: FeedIn) -> dict:
             c.save(DATA)
             _mtime = DATA.stat().st_mtime         # our own write; don't treat it as an external change
         return {"observation": observation, "status": c.snapshot()}
+
+
+def _write_locked(mutate):
+    """Run ``mutate(creature)`` under both the process lock and the cross-process
+    trainer lock, then persist — the write path shared by feed/retract/correct so
+    a correction can never interleave with a scheduled training run."""
+    with _lock:
+        global _mtime
+        with creature_lock(DATA.parent, blocking=False) as held:
+            if not held:
+                raise HTTPException(status_code=409,
+                                    detail="a training run is writing this creature; try again shortly")
+            c = _fresh_creature()
+            result = mutate(c)
+            c.commit()
+            c.save(DATA)
+            _mtime = DATA.stat().st_mtime
+        return result, c
+
+
+@app.post("/api/retract")
+def retract(body: RetractIn) -> dict:
+    """Un-teach one wrong fact (invariant #6, claim granularity): flag the
+    episodes that taught ``source -> target`` excluded and rebuild by
+    replay-with-exclusions — a durable fix, no from-scratch retrain."""
+    report, c = _write_locked(lambda c: c.retract_claim(body.source, body.target, body.reason))
+    return {"retraction": report, "status": c.snapshot()}
+
+
+@app.post("/api/correct")
+def correct(body: CorrectIn) -> dict:
+    """Fix a mistake in one move: retract ``source -> wrong`` and teach
+    ``source -> right`` through the same frame, committed as an authoritative
+    correction."""
+    report, c = _write_locked(lambda c: c.correct(body.source, body.wrong, body.right))
+    return {"correction": report, "status": c.snapshot()}
 
 
 @app.post("/api/ask")
