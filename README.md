@@ -12,7 +12,36 @@ allowed to do. Every belief can be traced to the episodes that justify it,
 reproduced by replaying the log, and revoked by replaying without the lying
 pages.
 
-What that buys you, concretely:
+## The hypothesis
+
+Stated technically, the project is one bet:
+
+> **Knowledge can be held entirely as *geometry* over a *fixed algebra* —
+> and learning can be reduced to geometry repair.** The state is a graph
+> whose edges carry values from a frozen involutive monoid (ℤ under addition
+> first; the algebra is code, never learned). Composing values along a path
+> is parallel transport; a **contradiction is a loop whose transport is not
+> the identity** — nonzero holonomy, the discrete analogue of curvature.
+> Learning is the *cheapest observation-preserving edit* that removes such
+> defects: relabel (free, provably changes no holonomy — the null move that
+> keeps everything honest) < rewire < grow new nodes (budgeted; exhaustion
+> means refusal, not fabrication).
+
+Freezing the algebra is what makes contradiction *objective*: if the
+composition law itself could learn, a defect could always be escaped by
+bending the ruler instead of fixing the map. It also makes inference exact —
+answering is transport, so entailments are computed, not approximated. Two
+more commitments complete the design: the state is a **projection of an
+append-only episode log** (so any belief is reproducible by replay and
+revocable by replay-with-exclusions — retraction is a theorem, not a hope),
+and commitment is **evidential** (a claim needs k independent — now
+trust-weighted — witnesses before it counts as belief). Everything else in
+the repo (invented numbers, frame induction, inheritance motifs, per-domain
+trust, the society layer) is these few rules applied without exception; the
+falsifiable part is how far they reach. The full story with definitions and
+references is [docs/theory.md](docs/theory.md).
+
+What the bet buys, concretely:
 
 - **It composes exactly.** Taught "ten comes after nine", it *derives* the
   never-heard "nine is before ten" — and held-out arithmetic scores 100% with
