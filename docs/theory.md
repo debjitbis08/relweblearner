@@ -366,13 +366,24 @@ levels, and the plurality is load-bearing:
   interlocking relation classes, and the groups are **mutually ungauged**
   (P4′) — no potential is shared across them, so no relabeling in one can
   disguise or create a defect in another. Error stays local by construction.
+  This partition is the streaming creature's dynamism: it is a projection,
+  re-inferred whenever the committed geometry changes, so a newly committed
+  converse link *merges* two webs and a retraction that breaks one *splits*
+  them — the web count is a consequence of evidence, never a parameter (the
+  trained scholar currently runs 16).
 - **The dynamic ensemble** ([`ensemble.py`](../src/relweblearner/ensemble.py)):
   N webs plus cross-web *identifications* form one union graph on which an
   interface mismatch is just another holonomy defect; transfer flows through
   the identifications with zero shared parameters, a poisoned identification
   is isolated by consensus and resolved by *split* — and under a stimulus
   stream the **number of webs is itself learned** (persistence-gated merges
-  and splits evolved the count 3 → 2 → 1 → 2 in the acceptance run).
+  and splits evolved the count 3 → 2 → 1 → 2 in the acceptance run). Honest
+  scope note: this machinery is accepted phase code the streaming creature
+  does not yet wire in — its within-mind identification decisions are played
+  by relation unification (fork-simulated, §4), and its dynamism by the
+  gauge-group reprojection above; explicit identification edges *between* a
+  creature's webs remain a stated seam (natural once P9 perception gives a
+  second, non-linguistic web to identify against).
 - **One web per agent** (§13): the society layer is an ensemble whose
   members share no memory at all; agreement across webs is the system's only
   correspondence signal.
