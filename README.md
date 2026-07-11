@@ -49,15 +49,23 @@ really does discover converse structure from raw pages and answer held-out
 inversions by transport where pure recall scores zero, its refusals and
 exact unlearning hold under adversarial lies, and its holonomy signal
 detects a class of contradiction (the "loop lie") that lookup is
-structurally blind to and statistical detectors miss under noise. But a
-plain statistical rule inducer matches its capability numbers on that same
-benchmark, and composite relations (skip = step∘step) are currently
-**undiscoverable by the mechanism** — it refuses them, honestly, where the
-statistical competitor learns them. So the defensible claim today is
-narrower than the bet above: an event-sourced, provenance-aware relational
-learner with exact inference, noise-robust inconsistency detection, and
-exact unlearning, within the converse/inversion sector it can discover. The
-bet stays on the wall; the evidence so far covers that much of it.
+structurally blind to and statistical detectors miss under noise. The first
+run also found the mechanism's edge honestly: composite relations
+(skip = step∘step) were undiscoverable — gauge groups formed from converse
+evidence only — and the follow-up run closed exactly that gap with 3-cycle
+loop evidence behind a defect gate (candidates are mined statistically but
+admitted only if the resulting geometry stays consistent: the miner
+proposes, the geometry disposes). The flip is on the same frozen benchmark:
+skip-transfer went 0.00 → 1.00, discovered from raw pages, with zero false
+admissions. What remains true: a plain statistical rule inducer matches the
+capability numbers on the clean benchmark — the demonstrated differentiators
+are the guarantees (exactness, audit, exact unlearning) plus noise-robust
+detection and junk-robust admission, both properties of reading only
+committed geometry. So the defensible claim today: an event-sourced,
+provenance-aware relational learner with exact inference, geometry-gated
+structure discovery (converses and binary compositions so far), noise-robust
+inconsistency detection, and exact unlearning. The bet stays on the wall;
+the evidence now covers that much of it.
 
 What the bet buys, concretely:
 

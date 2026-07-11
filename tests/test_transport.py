@@ -207,9 +207,12 @@ def test_posits_and_transports_survive_reload():
 
 def test_one_lying_pair_cannot_weld_two_gauge_groups():
     """A single committed pair whose converse lands in another class is not
-    loop evidence enough to union their gauge groups (the floor the infer()
-    docstring promises). Welding is catastrophic: the groups' magnitudes are
-    mutually gauged, so a weld poisons every transport in both."""
+    2-cycle evidence enough to union their gauge groups (the floor the
+    infer() docstring promises). Welding on a lie is catastrophic: the
+    groups' magnitudes are mutually gauged, so a weld poisons every transport
+    in both. (``compositions=False`` isolates the 2-cycle floor — with
+    composition mining ON these groups legitimately merge, with the RIGHT
+    relative magnitudes; that is the next test.)"""
     step_f = {(f"n{i + 1}", f"n{i}") for i in range(8)}
     step_r = {(f"n{i}", f"n{i + 1}") for i in range(8)}
     skip_f = {(f"n{i + 2}", f"n{i}") for i in range(7)}
@@ -217,11 +220,73 @@ def test_one_lying_pair_cannot_weld_two_gauge_groups():
     # the lie: one step edge over a true skip pair — its converse is in skip+
     cmaps = {"step+": step_f | {("n3", "n1")}, "step-": step_r,
              "skip+": skip_f, "skip-": skip_r}
-    sectors, groups = TR.infer(cmaps)
+    sectors, groups = TR.infer(cmaps, compositions=False)
     assert groups["step+"] == groups["step-"]
     assert groups["skip+"] == groups["skip-"]
     assert groups["step+"] != groups["skip+"]        # ONE pair must not weld
     assert all(s.sector == TR.ANTISYMMETRIC for s in sectors.values())
+
+
+# ------------------------------------- composition (3-cycle) discovery
+
+
+def test_composition_discovered_with_relative_magnitude():
+    """Committed triangles are 3-cycle loop evidence: skip = step∘step is
+    DISCOVERED, the groups merge, and the solved transports carry the right
+    relative magnitude (step ±1, skip ±2 in ONE gauge group) — the constraint
+    the 2-cycle story could never fix. A held-out skip fact then derives by
+    composing two step edges in the merged web."""
+    step_f = {(f"n{i + 1}", f"n{i}") for i in range(8)}
+    step_r = {(f"n{i}", f"n{i + 1}") for i in range(8)}
+    skip_f = {(f"n{i + 2}", f"n{i}") for i in range(7) if i != 3}   # (n5, n3) held out
+    skip_r = {(f"n{i}", f"n{i + 2}") for i in range(7) if i != 3}
+    cmaps = {"step+": step_f, "step-": step_r, "skip+": skip_f, "skip-": skip_r}
+    sectors, groups = TR.infer(cmaps)
+    assert groups["step+"] == groups["skip+"] == groups["skip-"]
+    assert abs(sectors["skip+"].transport) == 2 * abs(sectors["step+"].transport)
+    assert sectors["skip+"].transport == -sectors["skip-"].transport
+    webs = TR.build_group_webs(cmaps, sectors, groups)
+    web = webs[groups["skip+"]]
+    hits = TR.derive(web, "n5", sectors["skip+"].transport, max_depth=4)
+    assert hits == ["n3"]                            # the held-out skip, by two steps
+
+
+def test_junk_composition_refused_by_the_defect_gate():
+    """A coincidental triangle overlap must not constrain a class: 'likes'
+    chains over their own entities propose step = likes∘likes (two committed
+    step edges happen to span likes chains), whose acceptance would zero the
+    step group (g = 0 + 0). The gate sees the degradation and refuses; step
+    stays a live ±1 generator."""
+    step_f = {(f"n{i + 1}", f"n{i}") for i in range(6)}
+    step_r = {(f"n{i}", f"n{i + 1}") for i in range(6)}
+    likes = {("m0", "m1"), ("m1", "m0"), ("m1", "m2"), ("m2", "m1"),
+             ("m3", "m4"), ("m4", "m3"), ("m4", "m5"), ("m5", "m4")}
+    # the junk-shaped support: two step+ edges spanning the likes chains, so
+    # the candidate step+ = likes∘likes mines — and must be refused
+    cmaps = {"step+": step_f | {("m2", "m0"), ("m5", "m3")},
+             "step-": step_r, "likes": likes}
+    sectors, groups = TR.infer(cmaps)
+    assert sectors["step+"].sector == TR.ANTISYMMETRIC
+    assert sectors["step+"].transport != 0           # not zeroed by likes∘likes
+    assert groups["likes"] != groups["step+"]
+
+
+def test_sub_budget_lie_does_not_veto_a_true_composition():
+    """One committed lie among the head's edges must not block the discovery
+    (the standing P2 rule: sub-budget contradiction is reported noise). The
+    composition is accepted, the merged group keeps step ±1 / skip ±2, and
+    the lie stays VISIBLE as a defect instead of silently vetoing structure."""
+    step_f = {(f"n{i + 1:02d}", f"n{i:02d}") for i in range(11)}
+    step_r = {(f"n{i:02d}", f"n{i + 1:02d}") for i in range(11)}
+    skip_f = {(f"n{i + 2:02d}", f"n{i:02d}") for i in range(10)}
+    skip_r = {(f"n{i:02d}", f"n{i + 2:02d}") for i in range(10)}
+    cmaps = {"step+": step_f | {("n09", "n02")},     # the lie: +1 over a span of 7
+             "step-": step_r, "skip+": skip_f, "skip-": skip_r}
+    sectors, groups = TR.infer(cmaps)
+    assert groups["skip+"] == groups["step+"]        # discovery survived the lie
+    assert abs(sectors["skip+"].transport) == 2 * abs(sectors["step+"].transport)
+    webs = TR.build_group_webs(cmaps, sectors, groups)
+    assert TR.defect_report(webs)["count"] >= 1      # and the lie is on display
 
 
 def test_one_lie_does_not_demote_a_true_class_to_motif():

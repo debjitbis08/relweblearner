@@ -297,12 +297,19 @@ learning result (the holdout supplies the decomposition; the code calls it
 the pre-registered falsification benchmark
 ([falsification-plan.md](falsification-plan.md) /
 [falsification-report.md](falsification-report.md)): converse discovery and
-inversion hold up from raw pages (and pure recall scores zero there); the
-gauge groups form from converse 2-cycles only, so composite relations
-(skip = step∘step) are currently undiscoverable — the learner refuses them
-where a statistical rule inducer learns them. Exact composition is what the
-frozen algebra buys; *which* compositions exist to be exact about is exactly
-as far as the discovered loop evidence reaches.
+inversion hold up from raw pages (and pure recall scores zero there), and —
+since the follow-up run — so do binary compositions: committed triangles are
+3-cycle loop evidence witnessing g(head) = g(a) + g(b), mined by support but
+admitted only through a defect gate (fork-solve the constraint system,
+re-project, refuse anything that degrades a live class or brings over-budget
+new culprit edges). The general constraint system is solved as a homogeneous
+integer system, so a composed skip comes out ±2 in the same gauge group as
+its ±1 steps — relative magnitudes are now discovered, not gauge-fixed.
+Still outside the mechanism: longer composition words, per-edge-varying
+transports, and anything needing coordinates the constructed chain has not
+built. Exact composition is what the frozen algebra buys; *which*
+compositions exist to be exact about is exactly as far as the discovered
+loop evidence reaches.
 
 ## 10. Motifs: learned concepts as words over edges
 

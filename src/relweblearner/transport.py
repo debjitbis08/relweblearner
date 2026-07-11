@@ -62,8 +62,130 @@ __all__ = [
 ]
 
 
-def infer(cmaps: dict[str, set], exception_fraction: float = 0.2):
-    """Per-relation-class transports over Z from converse-pair loop evidence.
+def _mine_compositions(cmaps: dict[str, set], eligible: list,
+                       exception_fraction: float) -> list[tuple]:
+    """Candidate 3-cycle constraints ``g(head) = g(a) + g(b)``, by triangle
+    support: committed ``(s,m) in a``, ``(m,t) in b``, ``(s,t) in head`` is a
+    loop whose closure ties the three transports. The floor bounds compute and
+    junk; the SEMANTIC vetting is the defect gate in :func:`infer` — a mined
+    candidate is only a hypothesis until the fork-projection clears it.
+    Deterministic: strongest support first, names break ties."""
+    out_idx: dict[str, dict] = {r: defaultdict(set) for r in eligible}
+    for r in eligible:
+        for s, t in cmaps[r]:
+            out_idx[r][s].add(t)
+    cands = []
+    for a in eligible:
+        for b in eligible:
+            for head in eligible:
+                if head in (a, b):
+                    continue
+                support = sum(
+                    1 for (s, t) in cmaps[head] if s != t and any(
+                        m not in (s, t) and t in out_idx[b].get(m, ())
+                        for m in out_idx[a].get(s, ()))
+                )
+                if support >= max(2, round(exception_fraction * len(cmaps[head]))):
+                    cands.append((-support, head, a, b))
+    cands.sort()
+    return [(h, a, b) for _s, h, a, b in cands]
+
+
+def _solve(classes: list, links: list, comps: list, symmetric: set,
+           motif: set) -> tuple[dict, object]:
+    """The homogeneous loop-constraint system, solved by propagation.
+
+    Variables: one transport per live class. Equations: ``g_b = -g_a`` per
+    converse link, ``g_h = g_a + g_b`` per accepted composition, ``g_s = 0``
+    per symmetric class. The system is homogeneous, so each constraint
+    component carries one free scale; a conflict forces that scale to 0 (the
+    old odd-cycle rule, generalized). Solutions are scaled to minimal
+    integers with the alphabetically-first nonzero class positive — the same
+    gauge convention as before, which the 2-cycle-only case reproduces
+    exactly (±1). Where propagation stalls (an underdetermined composition),
+    the first unknown is re-seeded: any solution of a homogeneous
+    underdetermined system is a valid gauge choice, and the seed order makes
+    it deterministic. Returns ``(coeff, find)``: integer transport per live
+    class and the component-root function."""
+    from fractions import Fraction
+    from math import gcd, lcm
+
+    live = [r for r in classes if r not in motif]
+    parent = {r: r for r in live}
+
+    def find(x: str) -> str:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for a, b in links:
+        if find(a) != find(b):
+            parent[find(a)] = find(b)
+    for h, a, b in comps:
+        for x in (a, b):
+            if find(h) != find(x):
+                parent[find(h)] = find(x)
+
+    members: dict[str, list] = defaultdict(list)
+    for r in live:
+        members[find(r)].append(r)
+
+    coeff: dict[str, int] = {}
+    for root in sorted(members):
+        ms = sorted(members[root])
+        clinks = [(a, b) for a, b in links if find(a) == root]
+        ccomps = [(h, a, b) for h, a, b in comps if find(h) == root]
+        c: dict[str, Fraction] = {m: Fraction(0) for m in ms if m in symmetric}
+        conflict = False
+        while not conflict and len(c) < len(ms):
+            c[next(m for m in ms if m not in c)] = Fraction(1)
+            changed = True
+            while changed and not conflict:
+                changed = False
+                for a, b in clinks:
+                    for x, y in ((a, b), (b, a)):
+                        if x in c:
+                            v = -c[x]
+                            if y not in c:
+                                c[y], changed = v, True
+                            elif c[y] != v:
+                                conflict = True
+                for h, a, b in ccomps:
+                    # g_h - g_a - g_b = 0, as coefficients per DISTINCT class
+                    # (a == b folds to -2, so g_h = 2*g_a solves either way)
+                    k: dict[str, int] = {}
+                    for cls, kk in ((h, 1), (a, -1), (b, -1)):
+                        k[cls] = k.get(cls, 0) + kk
+                    unknown = [cls for cls, kk in k.items() if kk and cls not in c]
+                    if len(unknown) > 1:
+                        continue
+                    if not unknown:
+                        if sum(kk * c[cls] for cls, kk in k.items() if kk) != 0:
+                            conflict = True
+                        continue
+                    u = unknown[0]
+                    rest = sum(kk * c[cls] for cls, kk in k.items() if kk and cls != u)
+                    c[u], changed = Fraction(-rest, k[u]), True
+                if any(m in symmetric and c.get(m, Fraction(0)) != 0 for m in ms):
+                    conflict = True
+        if conflict:
+            c = {m: Fraction(0) for m in ms}      # over-constrained: magnitude 0
+        nz = [v for m in ms if (v := c.get(m, Fraction(0))) != 0]
+        if nz:
+            scale = Fraction(gcd(*(abs(v.numerator) for v in nz)),
+                             lcm(*(v.denominator for v in nz)))
+            if next(v for m in ms if (v := c.get(m, Fraction(0))) != 0) < 0:
+                scale = -scale
+            c = {m: v / scale for m, v in c.items()}
+        for m in ms:
+            coeff[m] = int(c.get(m, Fraction(0)))
+    return coeff, find
+
+
+def infer(cmaps: dict[str, set], exception_fraction: float = 0.2,
+          compositions: bool = True):
+    """Per-relation-class transports over Z from LOOP evidence.
 
     ``cmaps`` maps relation class → set of eligible ``(source, target)``
     pairs. Returns ``(sectors, groups)`` where ``sectors[r]`` is a
@@ -71,14 +193,30 @@ def infer(cmaps: dict[str, set], exception_fraction: float = 0.2):
     class's constraint-group root — classes share a group only when loop
     evidence ties their transports together.
 
-    The only loops detectable without coordinates are the 2-cycles, and they
-    are enough: each one is an integer equation ``g(R1) + g(R2) = 0``. What
-    they cannot fix — the magnitude and global sign of a chain generator — is
-    gauge, set to ±1 deterministically (alphabetically-first class positive).
+    Two kinds of loop are detectable without coordinates:
+
+    * **2-cycles** (converse pairs): each is an equation ``g(R1) + g(R2) = 0``.
+    * **3-cycles** (compositions): committed triangles witness
+      ``g(head) = g(a) + g(b)`` — how a skip relation is DISCOVERED to be two
+      steps. Candidates are mined by support (:func:`_mine_compositions`) but
+      admitted only through a DEFECT GATE, one at a time strongest-first: the
+      constraint set is fork-solved and re-projected, and the candidate is
+      refused if any previously-antisymmetric class degrades (a junk
+      composition that zeroes or demotes a live group) or if the projection's
+      defect count rises past the head class's exception budget. A sub-budget
+      rise is ACCEPTED — a lie among the head's edges becomes a visible
+      defect, which must not veto a true composition (the standing P2 rule:
+      sub-budget contradiction is reported noise, never a classification
+      flip). This is the geometric answer to threshold rule-mining: the
+      miner proposes, the gauge geometry disposes.
+
+    What the constraints cannot fix — one scale and sign per constraint
+    component — is gauge, set deterministically (minimal integers,
+    alphabetically-first class positive): a lone converse pair is ±1 exactly
+    as before; a composed skip comes out ±2 in the SAME group as its steps.
     All thresholds follow the P2 exception rule: a sub-budget minority of
     contrary pairs is noise to be REPORTED as defects, never enough to flip a
-    classification (the repeat-lie discipline).
-    """
+    classification (the repeat-lie discipline)."""
     classes = sorted(cmaps)
     owner: dict[tuple, set] = defaultdict(set)
     for r in classes:
@@ -105,72 +243,84 @@ def infer(cmaps: dict[str, set], exception_fraction: float = 0.2):
              if exception_fraction < frac_sym[r] < 1.0 - exception_fraction}
 
     # significant converse links union classes into constraint groups; a link
-    # below the budget floor is noise (one coincidental committed pair must not
-    # weld two unrelated relations into a shared gauge group).
-    parent = {r: r for r in classes}
-
-    def find(x: str) -> str:
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    adj: dict[str, set] = defaultdict(set)
-    for (a, b), w in link_w.items():
+    # below the budget floor is noise. floor >= 2: the docstring's own rule,
+    # enforced — with a floor of 1 (which max(1, ...) yields for any class
+    # under ~8 edges) a SINGLE committed pair — one k-corroborated lie whose
+    # converse happens to land in another class — welds two gauge groups, and
+    # a weld poisons every transport in both (their magnitudes are mutually
+    # gauged).
+    links: list[tuple] = []
+    for (a, b), w in sorted(link_w.items()):
         if a in motif or b in motif:
             continue
-        # floor >= 2: the docstring's own rule, enforced. With a floor of 1
-        # (which max(1, ...) yields for any class under ~8 edges) a SINGLE
-        # committed pair — one k-corroborated lie whose converse happens to
-        # land in another class — welds two gauge groups, and a weld poisons
-        # every transport in both (their magnitudes are mutually gauged).
         floor = max(2, round(exception_fraction * min(n_edges[a], n_edges[b])))
         if w // 2 >= floor:                       # w counts both directions per pair
-            adj[a].add(b)
-            adj[b].add(a)
-            ra, rb = find(a), find(b)
-            if ra != rb:
-                parent[ra] = rb
+            links.append((a, b))
 
-    # relative signs by BFS over the link graph; a sign conflict is an odd
-    # constraint cycle, which over Z forces the whole group's magnitude to 0.
-    sign: dict[str, int] = {}
-    zero_groups: set = set()
-    for r in classes:
-        if r in motif or r in sign:
-            continue
-        sign[r] = 1
-        stack = [r]
-        while stack:
-            u = stack.pop()
-            for v in sorted(adj[u]):
-                if v in sign:
-                    if sign[v] != -sign[u]:
-                        zero_groups.add(find(u))
-                else:
-                    sign[v] = -sign[u]
-                    stack.append(v)
-    for r in classes:
-        if r not in motif and r in symmetric:
-            zero_groups.add(find(r))              # 2g = 0 propagates group-wide
+    def assemble(comps: list) -> tuple[dict, dict]:
+        coeff, find = _solve(classes, links, comps, symmetric, motif)
+        touched = set(symmetric) | {x for l in links for x in l} \
+            | {x for cc in comps for x in cc}
+        sectors: dict[str, RelationSector] = {}
+        groups: dict[str, str] = {}
+        for r in classes:
+            n = n_edges[r]
+            if r in motif:
+                groups[r] = r
+                sectors[r] = RelationSector(r, NON_HOMOGENEOUS, None, frac_sym[r], n)
+                continue
+            groups[r] = find(r)
+            if r not in touched:
+                sectors[r] = RelationSector(r, UNCONSTRAINED, 1, 1.0, n)
+            elif coeff[r] == 0:
+                support = frac_sym[r] if r in symmetric else 1.0
+                sectors[r] = RelationSector(r, SYMMETRIC, 0, support, n)
+            else:
+                sectors[r] = RelationSector(r, ANTISYMMETRIC, coeff[r],
+                                            1.0 - frac_sym[r], n)
+        return sectors, groups
 
-    sectors: dict[str, RelationSector] = {}
-    groups: dict[str, str] = {}
-    for r in classes:
-        n = n_edges[r]
-        if r in motif:
-            groups[r] = r
-            sectors[r] = RelationSector(r, NON_HOMOGENEOUS, None, frac_sym[r], n)
+    sectors, groups = assemble([])
+    if not compositions:
+        return sectors, groups
+
+    eligible = [r for r in classes if r not in motif]
+    accepted: list[tuple] = []
+    base_count, base_anti = None, None
+    for h, a, b in _mine_compositions(cmaps, eligible, exception_fraction):
+        # extend KNOWN structure: both body classes must already carry a
+        # constrained transport. An UNCONSTRAINED head is fine — being
+        # constrained by the composition is the point (a skip class whose
+        # converse frame never induced still joins the step group here).
+        if any(sectors[x].sector not in (ANTISYMMETRIC, SYMMETRIC) for x in (a, b)):
             continue
-        gid = find(r)
-        groups[r] = gid
-        if gid in zero_groups:
-            support = frac_sym[r] if r in symmetric else 1.0
-            sectors[r] = RelationSector(r, SYMMETRIC, 0, support, n)
-        elif adj[r]:
-            sectors[r] = RelationSector(r, ANTISYMMETRIC, sign[r], 1.0 - frac_sym[r], n)
-        else:
-            sectors[r] = RelationSector(r, UNCONSTRAINED, 1, 1.0, n)
+        if sectors[h].sector == NON_HOMOGENEOUS:
+            continue
+        if base_count is None:
+            base_webs = build_group_webs(cmaps, sectors, groups, name="infer:gate")
+            base_count = defect_report(base_webs)["count"]
+            base_anti = {r for r, s in sectors.items() if s.sector == ANTISYMMETRIC}
+        ts, tg = assemble(accepted + [(h, a, b)])
+        if any(ts[r].sector != ANTISYMMETRIC for r in base_anti):
+            continue                              # degrades a live group: refused
+        twebs = build_group_webs(cmaps, ts, tg, name="infer:gate")
+        tcount = defect_report(twebs)["count"]
+        budget = exception_fraction * max(1, n_edges[h])
+        if tcount - base_count > budget:
+            # Attribute before refusing: an EXISTING culprit — a committed lie
+            # already on display — explains MORE fundamental cycles once the
+            # merge densifies its group, but it is the same one edge, not new
+            # contradiction. Charge culprits; refuse only if the candidate
+            # itself brings over-budget new ones.
+            cap = int(exception_fraction * sum(n_edges.values())) + 1
+            base_cul = sum(sum(_peel(w, cap).values()) for w in base_webs.values())
+            trial_cul = sum(sum(_peel(w, cap).values()) for w in twebs.values())
+            if trial_cul - base_cul > budget:
+                continue                          # over-budget new culprits: refused
+        accepted.append((h, a, b))
+        sectors, groups = ts, tg
+        base_webs, base_count = twebs, tcount
+        base_anti = {r for r, s in sectors.items() if s.sector == ANTISYMMETRIC}
     return sectors, groups
 
 
@@ -333,13 +483,39 @@ def simulate_fission(
 
 def _web_without(web: Web, drop: set) -> Web:
     """A fresh, journal-free copy of ``web`` minus the ``(u, v, rel)`` keys in
-    ``drop`` — trial bookkeeping for :func:`non_homogeneous_by_defect`, never
-    belief (converses re-derive from the primaries, as always)."""
+    ``drop`` — trial bookkeeping for the culprit peel, never belief (converses
+    re-derive from the primaries, as always)."""
     w = Web(web.algebra, name=f"{web.name}:trial")
     for e in web.edges():
         if (e.u, e.v, e.rel) not in drop:
             w.add_edge(e.u, e.v, e.rel, e.value)
     return w
+
+
+def _peel(web: Web, cap: int) -> Counter:
+    """Greedy culprit attribution for one group web: the class-charged size of
+    an (approximately) minimal edge set explaining every defect. One lying
+    edge that smears residuals across many fundamental cycles charges its
+    class ONCE; whatever no peel explains charges its own edge's class.
+    Deterministic (sorted candidate order); trial webs are journal-free
+    bookkeeping. Shared by :func:`non_homogeneous_by_defect` (demotion) and
+    :func:`infer`'s composition gate (admission)."""
+    charged: Counter = Counter()
+    trial, ds = web, defects(web)
+    while ds and sum(charged.values()) < cap:
+        best_e, best_n = None, len(ds)
+        for e in sorted(trial.edges(), key=lambda e: (repr(e.u), repr(e.v), e.rel)):
+            n = len(defects(_web_without(trial, {(e.u, e.v, e.rel)})))
+            if n < best_n:
+                best_e, best_n = e, n
+        if best_e is None:
+            break                                  # no single edge explains anything more
+        trial = _web_without(trial, {(best_e.u, best_e.v, best_e.rel)})
+        charged[best_e.rel] += 1
+        ds = defects(trial)
+    for d in ds:
+        charged[d.edge.rel] += 1
+    return charged
 
 
 def non_homogeneous_by_defect(
@@ -373,22 +549,9 @@ def non_homogeneous_by_defect(
         naive = Counter(d.edge.rel for d in ds)
         if not any(c > budget.get(r, exception_fraction) for r, c in naive.items()):
             continue
-        cap = int(sum(budget.values())) + 1
-        trial, charged = w, Counter()
-        while ds and sum(charged.values()) < cap:
-            best_e, best_n = None, len(ds)
-            for e in sorted(trial.edges(), key=lambda e: (repr(e.u), repr(e.v), e.rel)):
-                n = len(defects(_web_without(trial, {(e.u, e.v, e.rel)})))
-                if n < best_n:
-                    best_e, best_n = e, n
-            if best_e is None:
-                break                              # no single edge explains anything more
-            trial = _web_without(trial, {(best_e.u, best_e.v, best_e.rel)})
-            charged[best_e.rel] += 1
-            ds = defects(trial)
-        remaining = Counter(d.edge.rel for d in ds)
-        for r in set(charged) | set(remaining):
-            if charged[r] + remaining[r] > budget.get(r, exception_fraction):
+        charged = _peel(w, cap=int(sum(budget.values())) + 1)
+        for r, c in charged.items():
+            if c > budget.get(r, exception_fraction):
                 bad.add(r)
     return bad
 

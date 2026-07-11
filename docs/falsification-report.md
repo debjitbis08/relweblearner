@@ -83,6 +83,68 @@ and is no longer claimed.
    recovery story is detection (D2) → arbitration → retraction (U1 = 1.00),
    not immunity.
 
+## Follow-up run (2026-07-12): 3-cycle evidence flips the F3 loss
+
+The C3 bound named its own fix — composite relations need 3-cycle loop
+evidence — so it was implemented and the SAME frozen benchmark re-run
+(`results/bench-composition/`; the bench, world, queries and baselines are
+untouched — only the learner changed).
+
+The mechanism (`transport.infer()`): committed triangles
+``(s,m) ∈ a, (m,t) ∈ b, (s,t) ∈ head`` witness ``g(head) = g(a) + g(b)``.
+Candidates are mined by support but admitted only through a **defect gate**,
+one at a time strongest-first: the whole constraint system (converse links +
+accepted compositions) is fork-solved as a homogeneous integer system and
+re-projected; a candidate is refused if it degrades any live antisymmetric
+class (a junk composition that would zero a group) or brings over-budget new
+*culprits* — defects are attributed to culprit edges before judging, so an
+already-visible lie that merely smears across more cycles in the denser
+merged web cannot veto a true composition. The miner proposes; the gauge
+geometry disposes. The gauge convention generalizes unchanged: minimal
+integers per constraint component, so step is ±1 and a composed skip is ±2
+*in the same group*.
+
+| measure | before | after | note |
+|---|---|---|---|
+| F3 skip-transfer (relweb) | 0.00 | **1.00** (5/5 seeds) | discovered, not given |
+| F2 / F5 / F6 | 1.00 | 1.00 | unchanged |
+| F4 invert-skip | 0.80 ± 0.45 | 0.80 ± 0.45 | seed-1 frame never induces; unrelated |
+| D2 loop-lie detection | 1.00 | 1.00 | survives the denser merged web |
+| U1 exact unlearning | 1.00 | 1.00 | retraction unaffected |
+| clean-arm false alarms | 0 | 0 | the gate admitted no junk |
+| D2 localization | 0.40 | 0.20 | merged web smears attribution further |
+
+Two details worth the ink:
+
+- **Seed 1 is the sharpest evidence for the gate's value.** Its `skip⁻`
+  frame never induced, so skip⁺ had *zero converse evidence* — under 2-cycle
+  inference it stayed unconstrained forever. Composition evidence alone
+  constrained it to g = 2 in the step group, and F3 went 3/3 there. A
+  capability was recovered for a class whose paraphrase data was too thin
+  for the old mechanism.
+- **The gate beats the miner exactly where predicted.** In the unit
+  stressor (`test_junk_composition_refused_by_the_defect_gate`), junk
+  triangles at PCA-confidence 1.0 — which the AMIE-style miner accepts and
+  turns into garbage derivations — are refused by the gate because
+  committing them would zero a live gauge group. Conversely a sub-budget
+  committed lie does not veto a true composition
+  (`test_sub_budget_lie_does_not_veto_a_true_composition`); it stays on
+  display as a defect. This is the "miner proposes, geometry disposes"
+  division of labor, now demonstrated rather than argued. Honest scope
+  note: on the benchmark's clean arm the miner and the gate agree
+  everywhere (both score 1.00 with zero false alarms); the difference shows
+  under adversarial/coincidental evidence, and a full poisoned-composition
+  *benchmark arm* (not just unit stressors) is the right next measurement.
+
+C3's bound therefore moves: composite discovery now reaches 3-cycle
+(binary-composition) evidence. Still outside the mechanism: longer
+composition words, per-edge-varying transports (``double``), and anything
+needing coordinates the P1b chain hasn't built. C2's verdict is refined but
+not reversed — the fair miner still matches RelWeb's clean-arm capability;
+the demonstrated differentiators are noise-robust detection (D2) and now
+junk-robust *admission* (the gate), both properties of reading only
+committed geometry.
+
 ## What this does not settle
 
 Internal validity only: a synthetic, closed, 12-entity world authored by the
