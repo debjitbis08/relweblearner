@@ -1,0 +1,1830 @@
+{
+ "per_seed": [
+  {
+   "seed": 0,
+   "families": {
+    "lookup": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      false,
+      false,
+      false
+     ],
+     "F3-skip-transfer": [
+      false,
+      false,
+      false
+     ],
+     "F4-invert-skip": [
+      false,
+      false
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "induced-rules": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "oracle-rules": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "relweb": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "relweb-noderive": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      false,
+      false,
+      false
+     ],
+     "F3-skip-transfer": [
+      false,
+      false,
+      false
+     ],
+     "F4-invert-skip": [
+      false,
+      false
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    }
+   },
+   "clean_flags": {
+    "lookup": 0,
+    "induced-rules": 0,
+    "oracle-rules": 0,
+    "relweb": 0
+   },
+   "discovered": [
+    {
+     "class": "S259_0_sits_two_past",
+     "sector": "antisymmetric",
+     "transport": 2,
+     "templates": [
+      "___ sits two past ___"
+     ]
+    },
+    {
+     "class": "S259_1_lies_two_shy_of",
+     "sector": "antisymmetric",
+     "transport": -2,
+     "templates": [
+      "___ lies two shy of ___"
+     ]
+    },
+    {
+     "class": "S395_0_stands_near",
+     "sector": "symmetric",
+     "transport": 0,
+     "templates": [
+      "___ stands near ___"
+     ]
+    },
+    {
+     "class": "S40_0_plays_with",
+     "sector": "symmetric",
+     "transport": 0,
+     "templates": [
+      "___ plays with ___"
+     ]
+    },
+    {
+     "class": "S98_0_comes_right_after",
+     "sector": "antisymmetric",
+     "transport": 1,
+     "templates": [
+      "___ comes right after ___"
+     ]
+    },
+    {
+     "class": "S98_1_is_just_before",
+     "sector": "antisymmetric",
+     "transport": -1,
+     "templates": [
+      "___ is just before ___"
+     ]
+    },
+    {
+     "class": "S98_2_the_looks",
+     "sector": "unconstrained",
+     "transport": 1,
+     "templates": [
+      "the ___ looks ___"
+     ]
+    }
+   ],
+   "detect": {
+    "lookup": {
+     "d1": true,
+     "d2": false,
+     "spurious": 0
+    },
+    "induced-rules": {
+     "d1": true,
+     "d2": true,
+     "spurious": 2
+    },
+    "oracle-rules": {
+     "d1": true,
+     "d2": true,
+     "spurious": 1
+    },
+    "relweb": {
+     "d1": true,
+     "d2": true,
+     "d2_localized": false,
+     "spurious": 0
+    }
+   },
+   "poisoned": {
+    "lookup": true,
+    "induced-rules": true,
+    "oracle-rules": true,
+    "relweb": true
+   },
+   "p7": {
+    "lookup": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    },
+    "induced-rules": {
+     "accuracy": 0.0,
+     "junk_admitted": true
+    },
+    "oracle-rules": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    },
+    "relweb": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    }
+   },
+   "unlearn": {
+    "relweb_match": 1.0,
+    "relweb_defects_after": 0,
+    "baselines_exact": true
+   },
+   "n_episodes": 509,
+   "n_queries": 23
+  },
+  {
+   "seed": 1,
+   "families": {
+    "lookup": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      false,
+      false,
+      false
+     ],
+     "F3-skip-transfer": [
+      false,
+      false,
+      false
+     ],
+     "F4-invert-skip": [
+      false,
+      false
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "induced-rules": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "oracle-rules": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "relweb": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "relweb-noderive": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      false,
+      false,
+      false
+     ],
+     "F3-skip-transfer": [
+      false,
+      false,
+      false
+     ],
+     "F4-invert-skip": [
+      false,
+      false
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    }
+   },
+   "clean_flags": {
+    "lookup": 0,
+    "induced-rules": 0,
+    "oracle-rules": 0,
+    "relweb": 0
+   },
+   "discovered": [
+    {
+     "class": "S366_0_lies_two_shy_of",
+     "sector": "antisymmetric",
+     "transport": 2,
+     "templates": [
+      "___ lies two shy of ___"
+     ]
+    },
+    {
+     "class": "S406_0_stands_near",
+     "sector": "symmetric",
+     "transport": 0,
+     "templates": [
+      "___ stands near ___"
+     ]
+    },
+    {
+     "class": "S40_0_plays_with",
+     "sector": "symmetric",
+     "transport": 0,
+     "templates": [
+      "___ plays with ___"
+     ]
+    },
+    {
+     "class": "S96_0_the_looks",
+     "sector": "unconstrained",
+     "transport": 1,
+     "templates": [
+      "the ___ looks ___"
+     ]
+    },
+    {
+     "class": "S96_1_sits_two_past",
+     "sector": "antisymmetric",
+     "transport": -2,
+     "templates": [
+      "___ sits two past ___"
+     ]
+    },
+    {
+     "class": "S96_2_comes_right_after",
+     "sector": "antisymmetric",
+     "transport": -1,
+     "templates": [
+      "___ comes right after ___"
+     ]
+    },
+    {
+     "class": "S96_3_is_just_before",
+     "sector": "antisymmetric",
+     "transport": 1,
+     "templates": [
+      "___ is just before ___"
+     ]
+    }
+   ],
+   "detect": {
+    "lookup": {
+     "d1": true,
+     "d2": false,
+     "spurious": 0
+    },
+    "induced-rules": {
+     "d1": true,
+     "d2": true,
+     "spurious": 6
+    },
+    "oracle-rules": {
+     "d1": true,
+     "d2": true,
+     "spurious": 3
+    },
+    "relweb": {
+     "d1": true,
+     "d2": true,
+     "d2_localized": true,
+     "spurious": 0
+    }
+   },
+   "poisoned": {
+    "lookup": true,
+    "induced-rules": true,
+    "oracle-rules": true,
+    "relweb": true
+   },
+   "p7": {
+    "lookup": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    },
+    "induced-rules": {
+     "accuracy": 0.0,
+     "junk_admitted": true
+    },
+    "oracle-rules": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    },
+    "relweb": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    }
+   },
+   "unlearn": {
+    "relweb_match": 1.0,
+    "relweb_defects_after": 0,
+    "baselines_exact": true
+   },
+   "n_episodes": 509,
+   "n_queries": 23
+  },
+  {
+   "seed": 2,
+   "families": {
+    "lookup": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      false,
+      false,
+      false
+     ],
+     "F3-skip-transfer": [
+      false,
+      false,
+      false
+     ],
+     "F4-invert-skip": [
+      false,
+      false
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "induced-rules": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "oracle-rules": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "relweb": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "relweb-noderive": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      false,
+      false,
+      false
+     ],
+     "F3-skip-transfer": [
+      false,
+      false,
+      false
+     ],
+     "F4-invert-skip": [
+      false,
+      false
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    }
+   },
+   "clean_flags": {
+    "lookup": 0,
+    "induced-rules": 0,
+    "oracle-rules": 0,
+    "relweb": 0
+   },
+   "discovered": [
+    {
+     "class": "S353_0_sits_two_past",
+     "sector": "antisymmetric",
+     "transport": 2,
+     "templates": [
+      "___ sits two past ___"
+     ]
+    },
+    {
+     "class": "S399_0_stands_near",
+     "sector": "symmetric",
+     "transport": 0,
+     "templates": [
+      "___ stands near ___"
+     ]
+    },
+    {
+     "class": "S40_0_plays_with",
+     "sector": "symmetric",
+     "transport": 0,
+     "templates": [
+      "___ plays with ___"
+     ]
+    },
+    {
+     "class": "S93_0_comes_right_after",
+     "sector": "antisymmetric",
+     "transport": 1,
+     "templates": [
+      "___ comes right after ___"
+     ]
+    },
+    {
+     "class": "S93_1_lies_two_shy_of",
+     "sector": "antisymmetric",
+     "transport": -2,
+     "templates": [
+      "___ lies two shy of ___"
+     ]
+    },
+    {
+     "class": "S93_2_the_looks",
+     "sector": "unconstrained",
+     "transport": 1,
+     "templates": [
+      "the ___ looks ___"
+     ]
+    },
+    {
+     "class": "S93_3_is_just_before",
+     "sector": "antisymmetric",
+     "transport": -1,
+     "templates": [
+      "___ is just before ___"
+     ]
+    }
+   ],
+   "detect": {
+    "lookup": {
+     "d1": true,
+     "d2": false,
+     "spurious": 0
+    },
+    "induced-rules": {
+     "d1": true,
+     "d2": true,
+     "spurious": 10
+    },
+    "oracle-rules": {
+     "d1": true,
+     "d2": true,
+     "spurious": 2
+    },
+    "relweb": {
+     "d1": true,
+     "d2": true,
+     "d2_localized": false,
+     "spurious": 0
+    }
+   },
+   "poisoned": {
+    "lookup": true,
+    "induced-rules": true,
+    "oracle-rules": true,
+    "relweb": true
+   },
+   "p7": {
+    "lookup": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    },
+    "induced-rules": {
+     "accuracy": 0.0,
+     "junk_admitted": true
+    },
+    "oracle-rules": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    },
+    "relweb": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    }
+   },
+   "unlearn": {
+    "relweb_match": 1.0,
+    "relweb_defects_after": 0,
+    "baselines_exact": true
+   },
+   "n_episodes": 509,
+   "n_queries": 23
+  },
+  {
+   "seed": 3,
+   "families": {
+    "lookup": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      false,
+      false,
+      false
+     ],
+     "F3-skip-transfer": [
+      false,
+      false,
+      false
+     ],
+     "F4-invert-skip": [
+      false,
+      false
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "induced-rules": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "oracle-rules": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "relweb": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "relweb-noderive": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      false,
+      false,
+      false
+     ],
+     "F3-skip-transfer": [
+      false,
+      false,
+      false
+     ],
+     "F4-invert-skip": [
+      false,
+      false
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    }
+   },
+   "clean_flags": {
+    "lookup": 0,
+    "induced-rules": 0,
+    "oracle-rules": 0,
+    "relweb": 0
+   },
+   "discovered": [
+    {
+     "class": "S254_0_lies_two_shy_of",
+     "sector": "antisymmetric",
+     "transport": 2,
+     "templates": [
+      "___ lies two shy of ___"
+     ]
+    },
+    {
+     "class": "S254_1_sits_two_past",
+     "sector": "antisymmetric",
+     "transport": -2,
+     "templates": [
+      "___ sits two past ___"
+     ]
+    },
+    {
+     "class": "S382_0_stands_near",
+     "sector": "symmetric",
+     "transport": 0,
+     "templates": [
+      "___ stands near ___"
+     ]
+    },
+    {
+     "class": "S40_0_plays_with",
+     "sector": "symmetric",
+     "transport": 0,
+     "templates": [
+      "___ plays with ___"
+     ]
+    },
+    {
+     "class": "S96_0_comes_right_after",
+     "sector": "antisymmetric",
+     "transport": -1,
+     "templates": [
+      "___ comes right after ___"
+     ]
+    },
+    {
+     "class": "S96_1_is_just_before",
+     "sector": "antisymmetric",
+     "transport": 1,
+     "templates": [
+      "___ is just before ___"
+     ]
+    },
+    {
+     "class": "S96_2_the_looks",
+     "sector": "unconstrained",
+     "transport": 1,
+     "templates": [
+      "the ___ looks ___"
+     ]
+    }
+   ],
+   "detect": {
+    "lookup": {
+     "d1": true,
+     "d2": false,
+     "spurious": 0
+    },
+    "induced-rules": {
+     "d1": true,
+     "d2": true,
+     "spurious": 7
+    },
+    "oracle-rules": {
+     "d1": true,
+     "d2": false,
+     "spurious": 1
+    },
+    "relweb": {
+     "d1": true,
+     "d2": true,
+     "d2_localized": false,
+     "spurious": 0
+    }
+   },
+   "poisoned": {
+    "lookup": true,
+    "induced-rules": true,
+    "oracle-rules": true,
+    "relweb": true
+   },
+   "p7": {
+    "lookup": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    },
+    "induced-rules": {
+     "accuracy": 0.0,
+     "junk_admitted": true
+    },
+    "oracle-rules": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    },
+    "relweb": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    }
+   },
+   "unlearn": {
+    "relweb_match": 1.0,
+    "relweb_defects_after": 0,
+    "baselines_exact": true
+   },
+   "n_episodes": 496,
+   "n_queries": 23
+  },
+  {
+   "seed": 4,
+   "families": {
+    "lookup": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      false,
+      false,
+      false
+     ],
+     "F3-skip-transfer": [
+      false,
+      false,
+      false
+     ],
+     "F4-invert-skip": [
+      false,
+      false
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "induced-rules": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "oracle-rules": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "relweb": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      true,
+      true,
+      true
+     ],
+     "F3-skip-transfer": [
+      true,
+      true,
+      true
+     ],
+     "F4-invert-skip": [
+      true,
+      true
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    },
+    "relweb-noderive": {
+     "F1-memory": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+     ],
+     "F2-invert-step": [
+      false,
+      false,
+      false
+     ],
+     "F3-skip-transfer": [
+      false,
+      false,
+      false
+     ],
+     "F4-invert-skip": [
+      false,
+      false
+     ],
+     "F5-refuse-color": [
+      true,
+      true,
+      true
+     ],
+     "F6-plural-likes": [
+      true
+     ]
+    }
+   },
+   "clean_flags": {
+    "lookup": 0,
+    "induced-rules": 0,
+    "oracle-rules": 0,
+    "relweb": 0
+   },
+   "discovered": [
+    {
+     "class": "S258_0_lies_two_shy_of",
+     "sector": "antisymmetric",
+     "transport": 2,
+     "templates": [
+      "___ lies two shy of ___"
+     ]
+    },
+    {
+     "class": "S258_1_sits_two_past",
+     "sector": "antisymmetric",
+     "transport": -2,
+     "templates": [
+      "___ sits two past ___"
+     ]
+    },
+    {
+     "class": "S396_0_stands_near",
+     "sector": "symmetric",
+     "transport": 0,
+     "templates": [
+      "___ stands near ___"
+     ]
+    },
+    {
+     "class": "S40_0_plays_with",
+     "sector": "symmetric",
+     "transport": 0,
+     "templates": [
+      "___ plays with ___"
+     ]
+    },
+    {
+     "class": "S95_0_is_just_before",
+     "sector": "antisymmetric",
+     "transport": 1,
+     "templates": [
+      "___ is just before ___"
+     ]
+    },
+    {
+     "class": "S95_1_the_looks",
+     "sector": "unconstrained",
+     "transport": 1,
+     "templates": [
+      "the ___ looks ___"
+     ]
+    },
+    {
+     "class": "S95_2_comes_right_after",
+     "sector": "antisymmetric",
+     "transport": -1,
+     "templates": [
+      "___ comes right after ___"
+     ]
+    }
+   ],
+   "detect": {
+    "lookup": {
+     "d1": true,
+     "d2": false,
+     "spurious": 0
+    },
+    "induced-rules": {
+     "d1": true,
+     "d2": true,
+     "spurious": 1
+    },
+    "oracle-rules": {
+     "d1": true,
+     "d2": true,
+     "spurious": 0
+    },
+    "relweb": {
+     "d1": true,
+     "d2": true,
+     "d2_localized": false,
+     "spurious": 0
+    }
+   },
+   "poisoned": {
+    "lookup": true,
+    "induced-rules": true,
+    "oracle-rules": true,
+    "relweb": true
+   },
+   "p7": {
+    "lookup": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    },
+    "induced-rules": {
+     "accuracy": 0.0,
+     "junk_admitted": true
+    },
+    "oracle-rules": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    },
+    "relweb": {
+     "accuracy": 1.0,
+     "junk_admitted": false
+    }
+   },
+   "unlearn": {
+    "relweb_match": 1.0,
+    "relweb_defects_after": 0,
+    "baselines_exact": true
+   },
+   "n_episodes": 509,
+   "n_queries": 23
+  }
+ ],
+ "summary": {
+  "lookup": {
+   "F1-memory": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F2-invert-step": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "F3-skip-transfer": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "F4-invert-skip": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "F5-refuse-color": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F6-plural-likes": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "induced-rules": {
+   "F1-memory": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F2-invert-step": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F3-skip-transfer": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F4-invert-skip": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F5-refuse-color": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F6-plural-likes": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "oracle-rules": {
+   "F1-memory": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F2-invert-step": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F3-skip-transfer": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F4-invert-skip": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F5-refuse-color": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F6-plural-likes": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "relweb": {
+   "F1-memory": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F2-invert-step": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F3-skip-transfer": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F4-invert-skip": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F5-refuse-color": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F6-plural-likes": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "relweb-noderive": {
+   "F1-memory": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F2-invert-step": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "F3-skip-transfer": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "F4-invert-skip": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "per_seed": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "F5-refuse-color": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "F6-plural-likes": {
+    "mean": 1.0,
+    "sd": 0.0,
+    "per_seed": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  },
+  "detect_d1": {
+   "lookup": 1.0,
+   "induced-rules": 1.0,
+   "oracle-rules": 1.0,
+   "relweb": 1.0
+  },
+  "detect_d2": {
+   "lookup": 0.0,
+   "induced-rules": 1.0,
+   "oracle-rules": 0.8,
+   "relweb": 1.0
+  },
+  "d2_localized": 0.2,
+  "poisoned": {
+   "lookup": 1.0,
+   "induced-rules": 1.0,
+   "oracle-rules": 1.0,
+   "relweb": 1.0
+  },
+  "unlearn_relweb_match": 1.0,
+  "p7": {
+   "lookup": {
+    "accuracy": 1.0,
+    "junk_admitted": 0.0
+   },
+   "induced-rules": {
+    "accuracy": 0.0,
+    "junk_admitted": 1.0
+   },
+   "oracle-rules": {
+    "accuracy": 1.0,
+    "junk_admitted": 0.0
+   },
+   "relweb": {
+    "accuracy": 1.0,
+    "junk_admitted": 0.0
+   }
+  },
+  "clean_false_alarms": {
+   "lookup": 0,
+   "induced-rules": 0,
+   "oracle-rules": 0,
+   "relweb": 0
+  }
+ }
+}

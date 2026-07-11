@@ -24,3 +24,4 @@ corpus/raw/
 # os / editor
 .DS_Store
 *.swp
+data/graphlog/

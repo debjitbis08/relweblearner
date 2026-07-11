@@ -62,14 +62,33 @@ __all__ = [
 ]
 
 
+#: mining floor: triangles witnessing a composition before it is even a
+#: hypothesis — two, the k-witness spirit (one coincidence proves nothing).
+#: Deliberately ABSOLUTE, not relative to class size: a composition is a
+#: constraint on the relation's transport, witnessed the way converse links
+#: are, not a coverage claim about the head class (triangle-sparse corpora —
+#: GraphLog — would otherwise never mine anything). The SEMANTIC vetting is
+#: the defect gate; junk that mines here still has to survive it.
+MINE_SUPPORT = 2
+#: candidates handed to the gate per infer(), strongest-support first — a
+#: compute bound (each gate step re-solves and re-projects), not a verdict.
+MINE_CAP_PER_CLASS = 6
+#: above this many edges in the trial projection, the gate skips the culprit
+#: peel and refuses on the raw defect delta — O(E^2)-per-culprit is the
+#: peel's price, and at scale the conservative answer is refusal (a scaling
+#: seam, recorded in docs/scaling.md style: over-refusal, never corruption).
+PEEL_EDGE_CAP = 3000
+
+
 def _mine_compositions(cmaps: dict[str, set], eligible: list,
                        exception_fraction: float) -> list[tuple]:
     """Candidate 3-cycle constraints ``g(head) = g(a) + g(b)``, by triangle
     support: committed ``(s,m) in a``, ``(m,t) in b``, ``(s,t) in head`` is a
-    loop whose closure ties the three transports. The floor bounds compute and
-    junk; the SEMANTIC vetting is the defect gate in :func:`infer` — a mined
-    candidate is only a hypothesis until the fork-projection clears it.
-    Deterministic: strongest support first, names break ties."""
+    loop whose closure ties the three transports. The floor and cap bound
+    compute and junk; the SEMANTIC vetting is the defect gate in
+    :func:`infer` — a mined candidate is only a hypothesis until the
+    fork-projection clears it. Deterministic: strongest support first, names
+    break ties."""
     out_idx: dict[str, dict] = {r: defaultdict(set) for r in eligible}
     for r in eligible:
         for s, t in cmaps[r]:
@@ -85,10 +104,10 @@ def _mine_compositions(cmaps: dict[str, set], eligible: list,
                         m not in (s, t) and t in out_idx[b].get(m, ())
                         for m in out_idx[a].get(s, ()))
                 )
-                if support >= max(2, round(exception_fraction * len(cmaps[head]))):
+                if support >= MINE_SUPPORT:
                     cands.append((-support, head, a, b))
     cands.sort()
-    return [(h, a, b) for _s, h, a, b in cands]
+    return [(h, a, b) for _s, h, a, b in cands[:MINE_CAP_PER_CLASS * len(eligible)]]
 
 
 def _solve(classes: list, links: list, comps: list, symmetric: set,
@@ -311,7 +330,10 @@ def infer(cmaps: dict[str, set], exception_fraction: float = 0.2,
             # already on display — explains MORE fundamental cycles once the
             # merge densifies its group, but it is the same one edge, not new
             # contradiction. Charge culprits; refuse only if the candidate
-            # itself brings over-budget new ones.
+            # itself brings over-budget new ones. Past PEEL_EDGE_CAP the peel
+            # is skipped and the raw delta stands — refusal, never corruption.
+            if sum(len(w.edges()) for w in twebs.values()) > PEEL_EDGE_CAP:
+                continue
             cap = int(exception_fraction * sum(n_edges.values())) + 1
             base_cul = sum(sum(_peel(w, cap).values()) for w in base_webs.values())
             trial_cul = sum(sum(_peel(w, cap).values()) for w in twebs.values())
@@ -549,7 +571,10 @@ def non_homogeneous_by_defect(
         naive = Counter(d.edge.rel for d in ds)
         if not any(c > budget.get(r, exception_fraction) for r, c in naive.items()):
             continue
-        charged = _peel(w, cap=int(sum(budget.values())) + 1)
+        if len(w.edges()) > PEEL_EDGE_CAP:        # scaling seam: naive count stands
+            charged = naive
+        else:
+            charged = _peel(w, cap=int(sum(budget.values())) + 1)
         for r, c in charged.items():
             if c > budget.get(r, exception_fraction):
                 bad.add(r)

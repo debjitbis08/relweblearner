@@ -182,6 +182,57 @@ score 1.00 (no such rule exists for them). If instead the gate admits the
 forged rule on any seed, the "miner proposes, geometry disposes" claim from
 the follow-up report is falsified at bench level and must be withdrawn.
 
+## 6¾. GraphLog addendum (2026-07-12, pre-registered before the comparative run)
+
+GraphLog v1.1 (external; Sinha et al., ICML 2020) is in hand: 51 training
+worlds, each with its own binary composition rules, 5000/1000 train/test
+instances, query edge held out. Adapter: `bench/graphlog.py`
+(`relweb-graphlog`), evaluating the GEOMETRY CORE on gold triples (the
+language pipeline is bypassed — GraphLog states each edge once, so frames
+and k-witness commitment have nothing to do; stated as scope, not hidden).
+
+Two facts established before predictions, disclosed: (a) the data carries
+**zero converse 2-cycles** (0/14,943 edges sampled), so any structure the
+transport learner finds comes through the 3-cycle composition gate alone;
+(b) a per-world diagnostic solving the TRUE rules over ℤ (never shown to the
+learner) says 12/51 worlds are fully degenerate (only g ≡ 0 solves them) and
+the rest range up to dof 4 with 31–46 of ~171 relation pairs forced to
+collide. One dry run was done on rule_0 (degenerate control) while building
+the adapter: transport = majority there, as the diagnostic demands.
+
+Calibration disclosed: `_mine_compositions`' support floor was relative to
+head-class size (a coverage claim); on triangle-sparse worlds it mines
+nothing. It is now absolute (≥ 2 triangles, the k-witness spirit) with a
+deterministic top-K compute cap, and the culprit peel is skipped above
+`PEEL_EDGE_CAP` (refusal, never corruption). The internal bench v2 was
+re-run after the change and reproduces exactly (results/bench-v2b); the P7
+gate story is unchanged — junk still has to survive the gate, which is the
+semantic vetting.
+
+Predictions for the comparative run (worlds spanning the diagnostic:
+rule_43/44 most separable, rule_21/22 dof 4, rule_19 dof 3, rule_18 dof 2
+with heavy collisions, rule_0 degenerate control):
+
+- transport beats majority on every non-degenerate world and tracks the
+  diagnostic: best on rule_43/44, ≈ majority on rule_0;
+- transport ≤ cyk-miner everywhere (the miner's non-abelian rewrite rules
+  are strictly more expressive than any ℤ embedding); the gap narrows as
+  collisions shrink;
+- cyk-oracle (true rules) is the path-reduction ceiling and stays well
+  below 1.0 (path ambiguity), consistent with GraphLog's published
+  supervised numbers being ~0.5–0.7;
+- if transport beats the miner anywhere, that is evidence the global
+  solve generalizes past locally-mined rules; not predicted, just scored.
+
+The standing structural admission: GraphLog's rule systems are mostly
+NON-ABELIAN, and the frozen ℤ algebra provably cannot represent relation
+pairs its diagnostic marks as collided. A poor absolute score here is the
+expected, honest outcome; the measured quantity is the correlation between
+the diagnostic and the accuracy, plus the mechanism-vs-mechanism gap. The
+motivated next step if the correlation holds is the P4′ move the theory doc
+already names: richer frozen algebras (the free monoid/groupoid limit of
+which IS rule rewriting).
+
 ## 7. What this benchmark does not settle
 
 Internal validity only: the world is synthetic, closed, and small, and the
