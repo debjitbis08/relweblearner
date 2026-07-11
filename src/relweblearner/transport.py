@@ -58,7 +58,7 @@ __all__ = [
     "ANTISYMMETRIC", "NON_HOMOGENEOUS", "SYMMETRIC", "UNCONSTRAINED",
     "RelationSector", "SectorGrowth", "Web",
     "build_group_webs", "defect_report", "derive", "infer",
-    "non_homogeneous_by_defect", "simulate_merge",
+    "non_homogeneous_by_defect", "simulate_fission", "simulate_merge",
 ]
 
 
@@ -268,6 +268,61 @@ def simulate_merge(
     if delta > 0:
         return {"commit": False, "degrades": False, "defect_delta": delta,
                 "reason": f"defect mass would rise by {delta}"}
+    return {"commit": True, "degrades": False, "defect_delta": delta, "reason": "clean"}
+
+
+def simulate_fission(
+    cmaps: dict[str, set],
+    moves: dict[tuple, tuple],
+    exception_fraction: float = 0.2,
+    journal=None,
+    name: str = "sim",
+) -> dict:
+    """Fork-score-discard for a node fission (invariant #8) — merge's dagger.
+
+    ``moves`` maps a committed ``(src, tgt)`` pair to its post-split key (one
+    endpoint re-bound to a sense node). Like :func:`simulate_merge`, the class
+    maps are re-inferred and re-projected twice — as they stand and with the
+    moves applied — on cf-flagged trial webs riding the shared ``journal``,
+    and scoring is restricted to the constraint groups whose classes contain a
+    moved pair (the only groups whose loop evidence the split rewires).
+
+    REFUSED iff either:
+
+      * a class that was composable comes out NON-HOMOGENEOUS — the split
+        destroys composability; or
+      * defect mass fails to STRICTLY drop — a fission that removes no
+        contradiction is a free node the growth discipline must not pay for.
+
+    Returns ``{"commit", "reason", "defect_delta", "degrades"}``.
+    """
+    _sectors, base_groups = infer(cmaps, exception_fraction)
+    moved_pairs = set(moves)
+    touched_classes = {r for r, pairs in cmaps.items() if pairs & moved_pairs}
+    gids = {base_groups.get(r, r) for r in touched_classes}
+    touched = {r for r, g in base_groups.items() if g in gids}
+    base_slice = {r: cmaps[r] for r in touched if r in cmaps}
+
+    bs, bg = infer(base_slice, exception_fraction)
+    bwebs = build_group_webs(base_slice, bs, bg, name=f"{name}:base", journal=journal, cf=True)
+    base_mass = defect_report(bwebs)["mass"]
+
+    trial_slice = {r: {moves.get(p, p) for p in pairs} for r, pairs in base_slice.items()}
+    ts, tg = infer(trial_slice, exception_fraction)
+    twebs = build_group_webs(trial_slice, ts, tg, name=f"{name}:trial", journal=journal, cf=True)
+    trial_mass = defect_report(twebs)["mass"]
+
+    degrades = any(
+        ts[r].sector == NON_HOMOGENEOUS and bs[r].sector != NON_HOMOGENEOUS
+        for r in trial_slice if r in ts and r in bs
+    )
+    delta = trial_mass - base_mass
+    if degrades:
+        return {"commit": False, "degrades": True, "defect_delta": delta,
+                "reason": "split demotes a composable class to a motif"}
+    if delta >= 0:
+        return {"commit": False, "degrades": False, "defect_delta": delta,
+                "reason": "split would remove no defect mass"}
     return {"commit": True, "degrades": False, "defect_delta": delta, "reason": "clean"}
 
 

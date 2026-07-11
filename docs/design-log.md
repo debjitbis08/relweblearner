@@ -775,3 +775,37 @@ Post-verification work (the report's four next steps). All committed on `main`.
   real 98k-episode scholar: `--fix cat six four` re-taught the old demo lie in place (fiat recency), hen
   and embryo untouched. Accepted: `tests/test_trust.py` (14), reworked `tests/test_correct.py` traces +
   episodelog planting, serve trust test; suite 281.
+- **2026-07-11** — Same word, different meaning: sense fission, the dagger of merge
+  (`Creature.distinguish_senses`/`_fission_plan`/`_role_plan`/`_sense_bind`, `transport.simulate_fission`,
+  `EdgeStore.move_edge`). The live scholar surfaced `orange -(a _ is _)-> orange · residual +1`: kidbooks'
+  fruit->colour class ("a apple is red" … "a orange is orange") welds orange-the-fruit to
+  orange-the-colour under one-node-per-word, and the weld is a committed SELF-LOOP — gauge-invariant
+  (relabel provably futile, P0), un-removable (the sentence is true testimony; erasing it is the
+  hen->bird mistake again), un-retractable (no source lied). The one observation-preserving repair is
+  the move the web had no inverse for: `rewire(merge=…)` existed, fission didn't. Now it does, under
+  every standing discipline: trigger = a committed self-loop defect in a valued group web (the pinned,
+  provably-unfixable case; multi-node polysemy cycles deferred); plan = partition the node's incident
+  committed edges by the coordinate each implies under the potential-WITHOUT-the-node (the full-web
+  potential routes through the node and contaminates its neighbours — found the hard way; coordinates
+  compare only within one component, since senses bridged ONLY by the word are not in contradiction),
+  or, where coordinates carry no evidence (unconstrained attribute classes — the actual orange case),
+  by ROLE DISJOINTNESS: sources and targets otherwise disjoint populations, only this word playing both
+  parts, `min_shared` as the evidence bar. Either way the loop becomes a cross-sense bridge
+  (`orange -is-> orange#2`) — zero testimony lost, the exposing sentence survives verbatim. Gates: a
+  bare reflexive lie ("five comes after five") finds no second cluster and is REFUSED on the record
+  (`refused_fissions`) — the defect stays visible rather than minting a concept nothing witnesses;
+  every plan is SIMULATED (`simulate_fission`, mirror of `simulate_merge`: cf-flagged trial projections
+  on the bus, commit only if defect mass STRICTLY drops and no class demotes to motif); splits are
+  budgeted (`fission_budget`, P7 refusal) and are act entries in the episode log — replay re-applies
+  them (`_apply_act`), excluding the act's seq un-splits (invariant #6). Provenance granularity is
+  per-(src,tgt) pair, so a pair whose frames straddle both senses splits imperfectly and the leftover
+  stays a visible defect — stated, not guessed away. Durable lexicon `senses` (word -> `word#n` ids;
+  `#` can never tokenise) with commit-time SENSE BINDING: re-testimony of a moved pair accrues to the
+  moved edge, so repetition can never silently re-weld a split; a never-seen pair of an ambiguous word
+  stays on the bare word (conservative default — a new weld re-surfaces as a defect and re-adjudicates).
+  Talk-back collapses senses to the surface (`_surface_edges`): both senses answer, the creature speaks
+  words while the distinction stays internal (web views show `orange#2` as its own node). Runs in every
+  `ingest` after `revise`. Verified on a COPY of the real 98k-episode scholar: one split, orange loop
+  repaired (remaining defect only hen->bird corroborated-dissent, by design), "a orange is ?" still
+  answers "a orange is orange" committed, full rebuild from the log reproduces the split exactly.
+  Accepted: `tests/test_fission.py` (13, incl. `move_edge` across all three store backends); suite 294.

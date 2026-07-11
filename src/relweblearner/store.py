@@ -78,6 +78,31 @@ class EdgeStore:
         #5/#6, recovered at aggregate granularity — (source, claim), not episode)."""
         raise NotImplementedError
 
+    def delete_edge(self, src: str, tgt: str) -> dict | None:
+        """Remove ONE edge and return its info (``None`` if absent). Only ever
+        called by the projection layer as half of :meth:`move_edge` — the
+        episode log remains the source of truth for what was witnessed."""
+        raise NotImplementedError
+
+    def move_edge(self, src: str, tgt: str, new_src: str, new_tgt: str) -> bool:
+        """Re-key one edge, provenance and all (the fission move: an endpoint
+        re-bound to a sense node). If the destination already exists the two
+        aggregates merge — counts add, per-source tallies add, frames union —
+        so a replayed move lands on testimony that accrued there since.
+        Returns whether an edge was moved."""
+        info = self.delete_edge(src, tgt)
+        if info is None:
+            return False
+        dest = self.get(new_src, new_tgt)
+        if dest is not None:
+            srcs = _as_source_counts(dest["sources"])
+            for so, n in _as_source_counts(info["sources"]).items():
+                srcs[so] = srcs.get(so, 0) + n
+            info = {"count": dest["count"] + info["count"], "sources": srcs,
+                    "frames": set(dest["frames"]) | set(info["frames"])}
+        self.put(new_src, new_tgt, info)
+        return True
+
     def out_edges(self, src: str) -> list[tuple[str, dict]]:
         raise NotImplementedError
 
@@ -156,6 +181,16 @@ class InMemoryEdgeStore(EdgeStore):
             if not e["sources"]:                            # no provenance left -> not a belief
                 del self._e[key]
         return touched
+
+    def delete_edge(self, src, tgt):
+        e = self._e.pop((src, tgt), None)
+        if e is None:
+            return None
+        for so in e["sources"]:
+            keys = self._by_source.get(so)
+            if keys is not None:
+                keys.discard((src, tgt))
+        return e
 
     def get(self, src, tgt):
         e = self._e.get((src, tgt))
@@ -300,6 +335,15 @@ class SqliteEdgeStore(EdgeStore):
         row = self.db.execute("SELECT cnt FROM edges WHERE src=? AND tgt=?", (s[0], t[0])).fetchone()
         return self._info(s[0], t[0], row[0]) if row else None
 
+    def delete_edge(self, src, tgt):
+        info = self.get(src, tgt)
+        if info is None:
+            return None
+        s, t = self._node_id(src), self._node_id(tgt)
+        for table in ("edges", "edge_rel", "edge_src"):
+            self.db.execute(f"DELETE FROM {table} WHERE src=? AND tgt=?", (s, t))
+        return info
+
     def out_edges(self, src):
         s = self.db.execute("SELECT id FROM nodes WHERE name=?", (src,)).fetchone()
         if not s:
@@ -405,6 +449,11 @@ class ShardedEdgeStore(EdgeStore):
 
     def get(self, src, tgt):
         return self._shard(src).get(src, tgt)
+
+    def delete_edge(self, src, tgt):
+        # move_edge (base class) composes this with get/put, so a move whose
+        # new source routes to a different shard migrates the edge across shards.
+        return self._shard(src).delete_edge(src, tgt)
 
     def retract_source(self, source):
         # a source teaches edges on many concepts -> its summands are spread across

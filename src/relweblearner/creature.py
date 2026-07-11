@@ -87,6 +87,7 @@ from . import talk as T
 from . import transport as TR
 from . import trust as TU
 from .episodelog import EpisodeLog, InMemoryEpisodeLog
+from .holonomy import defects as web_defects
 from .holonomy import potential
 from .journal import Journal
 from .numbersense import NumberSense
@@ -120,6 +121,7 @@ class Creature:
         derive_depth: int = 6,
         growth_persistence: int = 3,
         growth_budget: int = 16,
+        fission_budget: int = 8,
         seed: int = 0,
         reservoir_stratify: bool = True,
         created: str | None = None,
@@ -156,6 +158,7 @@ class Creature:
         self.derive_depth = derive_depth
         self.growth_persistence = growth_persistence
         self.growth_budget = growth_budget
+        self.fission_budget = fission_budget
         self.seed = seed
         self.reservoir_stratify = reservoir_stratify
         self._rng = random.Random(seed)
@@ -217,6 +220,16 @@ class Creature:
         self._motifs: list[MO.MotifRule] = []                  # scored inheritance rules (projection)
         self.growth_events: list[dict] = []                    # committed P1 moves (budgeted, P7)
         self.grown_seq = 0                                     # allocator for posited concept ids
+        # SENSES (fission, the dagger of merge): one surface word can name two
+        # concepts, and the weld surfaces as a self-loop defect. A committed
+        # split re-keys the second sense's edges to a ``word#n`` node and is an
+        # act entry in the log (replayable, revocable); the lexicon below is
+        # the durable record of the distinction — commit-time binding respects
+        # it, so a split is never silently re-welded by fresh testimony.
+        self.senses: dict[str, list[str]] = {}                 # surface word -> sense node ids
+        self._sense_ids: set[str] = set()                      # every minted sense node id
+        self.fission_events: list[dict] = []                   # committed splits (budgeted, P7)
+        self.refused_fissions: list[dict] = []                 # bounded rehearsal-refusal record
         # ------- counters (scalars, not history) -------
         self.episodes_seen = 0
         self.parsed = 0
@@ -337,6 +350,7 @@ class Creature:
             n += 1
         merges = self.unify_relations()   # recognise synonymous frames once evidence has accrued
         self.revise()                     # adjudicate contradictory corroborated testimony (its own trace)
+        self.distinguish_senses()         # split words the geometry proves over-merged (its own trace)
         self.commit()
         self._trace("ingest", {f"episodes:{n}"}, {f"merges:{merges}"})
         return self
@@ -377,7 +391,20 @@ class Creature:
     def _apply_act(self, event: dict) -> None:
         """Fold one committed act into the projection (live commit and replay
         share this path). Restores the posit-id allocator past every replayed
-        posit so a later growth can never collide."""
+        posit so a later growth can never collide. A FISSION act re-keys the
+        recorded edges to the sense node and registers the sense — as
+        recorded, tolerant of edges a replay-with-exclusions never formed."""
+        if event.get("move") == "fission":
+            for s, t, s2, t2 in event["moved"]:
+                self.edges.move_edge(s, t, s2, t2)
+            senses = self.senses.setdefault(event["word"], [])
+            if event["sense"] not in senses:
+                senses.append(event["sense"])
+            self._sense_ids.add(event["sense"])
+            self.fission_events.append({k: event[k] for k in ("move", "word", "sense", "moved")})
+            self._sectors = None
+            self._trust = None
+            return
         qclass = event["class"]
         if qclass not in self.frames:
             # a replay renumbered the induced frames: re-resolve the relation
@@ -435,6 +462,10 @@ class Creature:
         self._motifs = []
         self.growth_events = []
         self.refused_merges = []
+        self.senses = {}
+        self._sense_ids = set()
+        self.fission_events = []
+        self.refused_fissions = []
         self.numbers = NumberSense(commit_k=self.commit_k, source_cap=self.source_cap)
         self.grown_seq = 0
         self.episodes_seen = self.parsed = self.unparsed = 0
@@ -497,7 +528,12 @@ class Creature:
         in ``facts`` under the CURRENT frames — the bridge from human-meaningful
         claims ("owl has four legs") to the episode ids invariant #6 excludes.
         A read-only replay-parse over ONE log pass however many facts are asked;
-        it mutates nothing, so it is safe to run before deciding to retract."""
+        it mutates nothing, so it is safe to run before deciding to retract.
+        Episodes speak SURFACE words, so a fact whose endpoint a fission moved
+        to a sense node is matched by its surface form."""
+        want: dict[tuple, list[tuple]] = {}
+        for f in facts:
+            want.setdefault((self._desense(f[0]), self._desense(f[1])), []).append(f)
         seqs: dict[tuple, list[int]] = {}
         excluded = self.log.excluded()
         for seq, entry in self.log.entries(0):
@@ -508,8 +544,8 @@ class Creature:
                 continue
             pic = (entry.get("picture") or "").strip().lower() or None
             fact = C._orient(r[1], pic) if pic else tuple(r[1])
-            if fact in facts:
-                seqs.setdefault(fact, []).append(seq)
+            for orig in want.get(fact, ()):
+                seqs.setdefault(orig, []).append(seq)
         return seqs
 
     def _episodes_for_fact(self, src: str, tgt: str) -> list[int]:
@@ -768,7 +804,7 @@ class Creature:
         if r is not None and len(r[1]) == 2 and self._fact_ok(r[1]):
             fid, fillers = r
             fact = C._orient(fillers, ep["picture"]) if ep["picture"] else tuple(fillers)
-            self._bump_fact(fact, ep["source"], fid, fillers, ep["picture"])
+            fact = self._bump_fact(fact, ep["source"], fid, fillers, ep["picture"])
             self.parsed += 1
             return {"parsed": True, "frontier": False, "frame": fid, "fact": fact, "status": self._status(fact)}
         self.unparsed += 1
@@ -779,7 +815,8 @@ class Creature:
             self._induce()
         return {"parsed": False, "frontier": True, "fact": None}
 
-    def _bump_fact(self, fact, source, fid, fillers, picture) -> None:
+    def _bump_fact(self, fact, source, fid, fillers, picture) -> tuple:
+        fact = self._sense_bind(*fact)                         # respect committed splits
         self.edges.bump(fact[0], fact[1], fid, source, self.source_cap)   # indexed, incremental
         self._sectors = None                                   # transports are stale
         if picture is not None and fid not in self.source_slot:
@@ -787,6 +824,7 @@ class Creature:
                 if fill == picture:
                     self.source_slot[fid] = i
                     break
+        return fact
 
     def _cluster_key(self, ep: dict):
         """The retention cluster an unparsed episode belongs to. Frame induction
@@ -1032,6 +1070,246 @@ class Creature:
             return False
         conflicts = sum(1 for s in union if len(ma.get(s, set()) | mb.get(s, set())) > 1)
         return conflicts / len(union) <= (1 - self.agree_threshold)
+
+    # ============================================================= sense fission (merge's dagger)
+    #
+    # One surface word can name two concepts ("an orange is orange"), and under
+    # one-node-per-word the weld surfaces as GEOMETRY: a committed reflexive
+    # fact is a self-loop whose holonomy residual no relabel can change (it is
+    # gauge-invariant, P0) and whose removal would erase true testimony. The
+    # one observation-preserving repair left is FISSION — split the node — the
+    # exact dagger of the rewire merge, run under the same disciplines:
+    # evidence-gated, simulated before committed (invariant #8), budgeted (P7),
+    # and logged as an act so replay reproduces it (invariant #5).
+
+    def _desense(self, node: str) -> str:
+        """The surface word behind a node id (a sense id voices as its word)."""
+        return node.rsplit("#", 1)[0] if node in self._sense_ids else node
+
+    def _sense_variants(self, word: str) -> list[str]:
+        """The nodes a surface word may denote: itself plus its split senses."""
+        return [word, *self.senses.get(word, ())]
+
+    def _sense_bind(self, s: str, t: str) -> tuple[str, str]:
+        """Route new testimony onto a committed sense split. A pair whose bare
+        key still exists (or was never split) lands as spoken; a pair the
+        fission moved accrues to the moved edge, so a split is never silently
+        re-welded by repetition. A never-seen pair of an ambiguous word stays
+        on the bare word — the conservative default; if that welds two senses
+        again the defect returns and fission re-adjudicates."""
+        if not self.senses or self.edges.get(s, t) is not None:
+            return s, t
+        for s2 in self._sense_variants(s):
+            for t2 in self._sense_variants(t):
+                if (s2, t2) != (s, t) and self.edges.get(s2, t2) is not None:
+                    return s2, t2
+        return s, t
+
+    def _surface_edges(self, rows: list[tuple[str, str, dict]]) -> list[tuple[str, str, dict]]:
+        """Collapse sense ids to their surface words for talk-back, merging the
+        collisions — the creature SPEAKS words; the sense distinction stays
+        internal (and visible in the web views and snapshot geometry)."""
+        merged: dict[tuple, dict] = {}
+        for s, t, info in rows:
+            key = (self._desense(s), self._desense(t))
+            cur = merged.get(key)
+            if cur is None:
+                merged[key] = {"count": info["count"], "sources": dict(info["sources"]),
+                               "frames": set(info["frames"])}
+            else:
+                cur["count"] += info["count"]
+                for so, n in info["sources"].items():
+                    cur["sources"][so] = cur["sources"].get(so, 0) + n
+                cur["frames"] |= set(info["frames"])
+        return [(s, t, info) for (s, t), info in merged.items()]
+
+    def _fresh_sense(self, node: str) -> str:
+        """A durable sense id for a split word: ``word#2``, ``word#3``, … —
+        ``#`` never appears in a tokenised surface word, so a sense can no
+        more collide with testimony vocabulary than a ``new-*`` posit can."""
+        base = self._desense(node)
+        n = len(self.senses.get(base, [])) + 2
+        while f"{base}#{n}" in self._sense_ids:
+            n += 1
+        return f"{base}#{n}"
+
+    def _refuse_fission(self, word: str, reason: str) -> None:
+        """Rehearsal-refusal (invariant #8), mirroring :meth:`_refuse_merge`."""
+        self.refused_fissions = (self.refused_fissions + [{"word": word, "reason": reason}])[-32:]
+        self._trace("refuse-fission", {word}, {reason})
+
+    def distinguish_senses(self) -> int:
+        """Split words the geometry proves over-merged — merge's dagger.
+
+        The trigger is the pinned, provably-unrepairable case: a committed
+        SELF-LOOP with nonzero residual in a valued group web. Two partition
+        plans, by the shape of the evidence: in a CHAIN-like group the node's
+        incident committed edges cluster by the coordinate each implies for it
+        under the spanning-forest potential (the strongest cluster keeps the
+        word, the runner-up becomes the sense); in an ATTRIBUTE-like group
+        with no second coordinate the evidence is role disjointness
+        (:meth:`_role_plan` — sources and targets are otherwise disjoint
+        populations and only this word plays both parts). Either way the loop
+        itself becomes a cross-sense bridge — the sentence that exposed the
+        weld survives verbatim, as do all its witnesses. The move is:
+
+          * **evidence-gated** — refused unless the second cluster holds at
+            least one committed non-loop edge (a bare reflexive lie posits no
+            second concept; it stays a visible defect);
+          * **simulated before committed** — each plan runs through
+            :func:`~relweblearner.transport.simulate_fission` (cf-flagged on
+            the shared bus): commit only if defect mass strictly drops and no
+            composable class demotes to a motif;
+          * **budgeted** (P7) and **replayable** — a committed split is an
+            act entry in the episode log, re-applied as recorded.
+
+        Provenance granularity is per-(src, tgt) pair, so a pair whose frames
+        straddle both senses splits imperfectly — the leftover stays a visible
+        defect rather than being guessed away. Returns the number of splits.
+        """
+        done = 0
+        tried: set[str] = set()
+        while True:
+            self._ensure_transports()
+            plan = self._fission_candidate(tried)
+            if plan is None:
+                break
+            tried.add(plan["node"])
+            if len(self.fission_events) >= self.fission_budget:
+                self._refuse_fission(plan["word"], "fission budget exhausted")   # P7: refusal, not corruption
+                break
+            moves = {(s, t): (s2, t2) for s, t, s2, t2 in plan["moved"]}
+            verdict = TR.simulate_fission(self._cmaps, moves, self.exception_fraction,
+                                          journal=self.bus, name=self.id)
+            if not verdict["commit"]:
+                self._refuse_fission(plan["word"], verdict["reason"])
+                continue
+            event = {"move": "fission", "word": plan["word"], "sense": plan["sense"],
+                     "moved": [list(m) for m in plan["moved"]]}
+            # a committed move is a log entry like any episode (invariant #5)
+            self.log_position = self.log.append({"kind": "act", **event}) + 1
+            self._apply_act(event)
+            self._trace("fission", {plan["word"]}, {plan["sense"]})
+            done += 1
+        self._trace("senses", {f"tried:{len(tried)}"}, {f"split:{done}"})
+        return done
+
+    def _fission_candidate(self, tried: set) -> dict | None:
+        """The first self-loop defect (deterministic scan order) whose node
+        admits a partition plan; loops with no independent second-cluster
+        evidence are refused on the record and skipped."""
+        for _gid, web in sorted(self._group_webs.items()):
+            phi = potential(web)
+            for d in sorted(web_defects(web, phi), key=lambda d: d.edge.eid):
+                w = d.edge.u
+                if d.edge.v != w or w in tried:
+                    continue
+                plan = self._fission_plan(web, phi, w)
+                if plan is not None:
+                    return plan
+                tried.add(w)
+                self._refuse_fission(w, "no independent evidence for a second sense")
+        return None
+
+    @staticmethod
+    def _potential_without(web: TR.Web, w: str) -> tuple[dict, dict]:
+        """Spanning-forest potential of the web WITH ``w`` REMOVED, plus each
+        node's component root. The full-web potential routes THROUGH ``w``, so
+        a wrong-sense edge can contaminate its neighbours' coordinates and
+        hide the second cluster; excluding ``w`` makes every incident edge's
+        implied coordinate independent testimony about where ``w`` sits."""
+        from collections import deque
+        algebra = web.algebra
+        phi: dict = {}
+        comp: dict = {}
+        for root in sorted(web.nodes, key=repr):
+            if root == w or root in phi:
+                continue
+            phi[root] = algebra.identity
+            comp[root] = root
+            dq = deque([root])
+            while dq:
+                u = dq.popleft()
+                for v, value, _eid in web.neighbors(u):
+                    if v == w or v in phi:
+                        continue
+                    p = algebra.compose(phi[u], value)
+                    if p is None:
+                        continue
+                    phi[v] = p
+                    comp[v] = root
+                    dq.append(v)
+        return phi, comp
+
+    def _fission_plan(self, web: TR.Web, phi: dict, w: str) -> dict | None:
+        """Partition ``w``'s incident committed edges by the coordinate each
+        implies for ``w`` under the potential-without-``w``. Coordinates only
+        compare within one connected component (across components they are
+        separate gauges — and two senses bridged ONLY by ``w`` bend the
+        potential freely, so they are not in contradiction and must not
+        split). The strongest cluster keeps the word, the runner-up in the
+        SAME component becomes the sense; a pair moves only when every edge
+        it carries in this group agrees (a multi-class pair must not be
+        torn). The loop pair is oriented so its transport points from the
+        kept coordinate to the moved one when that closes, and bridges by
+        default otherwise (the simulation arbitrates)."""
+        phi2, comp = self._potential_without(web, w)
+        implied: dict[tuple, set] = {}       # non-loop (u, v) pair -> (comp, coord) implied for w
+        loops = []
+        for e in web.edges():
+            if e.u == w and e.v == w:
+                loops.append(e)
+            elif e.u == w and e.v in phi2:
+                implied.setdefault((e.u, e.v), set()).add((comp[e.v], phi2[e.v] - e.value))
+            elif e.v == w and e.u in phi2:
+                implied.setdefault((e.u, e.v), set()).add((comp[e.u], phi2[e.u] + e.value))
+        if not loops:
+            return None
+        coord_of = {p: next(iter(cs)) for p, cs in implied.items() if len(cs) == 1}
+        votes = Counter(coord_of.values())
+        gauge = phi.get(w)                   # the full-web coordinate, for the tie-break
+        ranked = sorted(votes, key=lambda cc: (-votes[cc], cc[1] != gauge, cc))
+        second = next((cc for cc in ranked[1:] if cc[0] == ranked[0][0]), None)
+        if second is None:
+            return self._role_plan(web, w)   # no second coordinate: try the attribute-class variant
+        base = ranked[0]
+        sense = self._fresh_sense(w)
+        moved = [(s, t, sense if s == w else s, sense if t == w else t)
+                 for (s, t), cc in sorted(coord_of.items()) if cc == second]
+        g = loops[0].value
+        if second[1] + g == base[1] and base[1] + g != second[1]:
+            moved.append((w, w, sense, w))   # the moved sense sits one step BELOW the kept one
+        else:
+            moved.append((w, w, w, sense))
+        return {"node": w, "word": self._desense(w), "sense": sense, "moved": moved}
+
+    def _role_plan(self, web: TR.Web, w: str) -> dict | None:
+        """The attribute-class variant of the partition, where coordinates
+        carry no evidence (unconstrained classes — the fruit→colour shape of
+        ``a orange is orange``). There the second-sense evidence is ROLE
+        DISJOINTNESS: the group's committed sources and targets are otherwise
+        disjoint populations (fruits vs colours), and only ``w`` plays both
+        parts. Split by role — the source occurrence keeps the word (the
+        pictured referent side), every target occurrence becomes the sense.
+        A group whose roles genuinely overlap (a chain: numbers on both
+        sides) yields no plan, so a bare reflexive lie stays a defect."""
+        src: set = set()
+        tgt: set = set()
+        pairs: set = set()
+        for e in web.edges():
+            if e.u == e.v:
+                continue
+            pairs.add((e.u, e.v))
+            src.add(e.u)
+            tgt.add(e.v)
+        if len(pairs) < self.min_shared:     # the evidence bar, in the role dimension
+            return None
+        if not (src - {w}) or not (tgt - {w}) or (src - {w}) & (tgt - {w}):
+            return None
+        sense = self._fresh_sense(w)
+        moved = [(u, w, u, sense) for (u, v) in sorted(pairs) if v == w]
+        moved.append((w, w, w, sense))
+        return {"node": w, "word": self._desense(w), "sense": sense, "moved": moved}
 
     # ============================================================= transport / algebra
     #
@@ -1317,13 +1595,16 @@ class Creature:
         antisym = sector is not None and sector.sector == TR.ANTISYMMETRIC and web is not None
         if antisym:
             target = sector.transport if forward else web.algebra.dagger(sector.transport)
-            seen = {a["answer"] for a in res["answers"]}
-            for n in TR.derive(web, given, target, max_depth=self.derive_depth):
-                if n in seen:
-                    continue
-                fact = (given, n) if forward else (n, given)
-                res["answers"].append({"answer": n, "status": "derived",
-                                       "sentence": self._render_via(fact, res["frame"])})
+            seen = {self._desense(a["answer"]) for a in res["answers"]}
+            for start in self._sense_variants(given):
+                for n in TR.derive(web, start, target, max_depth=self.derive_depth):
+                    n = self._desense(n)                # a derived sense voices as its word
+                    if n in seen:
+                        continue
+                    seen.add(n)
+                    fact = (given, n) if forward else (n, given)
+                    res["answers"].append({"answer": n, "status": "derived",
+                                           "sentence": self._render_via(fact, res["frame"])})
             if not res["answers"]:
                 # the word web cannot answer: try the P5 interface — step along
                 # the CONSTRUCTED number chain instead (order learned from
@@ -1368,11 +1649,12 @@ class Creature:
             return
         for h in MO.derive(self._motifs, self._cmaps, qclass, given,
                            max_depth=self.derive_depth):
-            fact = (given, h["answer"])
-            res["answers"].append({"answer": h["answer"], "status": "derived",
+            a = self._desense(h["answer"])              # an inherited sense voices as its word
+            fact = (given, a)
+            res["answers"].append({"answer": a, "status": "derived",
                                    "via": "motif", "through": h["through"],
                                    "sentence": self._render_via(fact, res["frame"])})
-            self._trace("inherit", {given, *h["through"]}, {h["answer"]})
+            self._trace("inherit", {given, *h["through"]}, {a})
 
     def _number_maps(self) -> list[dict]:
         """Every committed interface map across the gauge groups, BEST first —
@@ -1465,7 +1747,8 @@ class Creature:
 
     def about(self, referent: str) -> dict:
         r = referent.strip().lower()
-        res = T.about(self._state_for([(r, t, i) for t, i in self.edges.out_edges(r)]), r)
+        rows = [(v, t, i) for v in self._sense_variants(r) for t, i in self.edges.out_edges(v)]
+        res = T.about(self._state_for(self._surface_edges(rows)), r)
         self._trace("about", {r}, {f"beliefs:{len(res['beliefs'])}"})
         return res
 
@@ -1473,13 +1756,16 @@ class Creature:
         from .reader import tokenize
         tokens = tokenize(phrase)
         # load the neighbourhood of each content token (the given filler is among
-        # them) — indexed lookups, not a full-web scan.
+        # them) — indexed lookups, not a full-web scan. A split word's senses are
+        # part of its neighbourhood, collapsed back to the surface for talk-back:
+        # both senses answer, distinction kept internal.
         content = [t for t in tokens if t not in ("?", "_") and not self._is_anchor(t)]
         edges = []
         for tok in content:
-            edges += [(tok, t, i) for t, i in self.edges.out_edges(tok)]
-            edges += [(s, tok, i) for s, i in self.edges.in_edges(tok)]
-        res = T.answer(self._state_for(edges), tokens)
+            for v in self._sense_variants(tok):
+                edges += [(v, t, i) for t, i in self.edges.out_edges(v)]
+                edges += [(s, v, i) for s, i in self.edges.in_edges(v)]
+        res = T.answer(self._state_for(self._surface_edges(edges)), tokens)
         if res.get("kind") == "answer":
             res = self._think(res)                # lookup first, then transport (P3/P1)
             marks = ({f"{a['status']}:{a['answer']}" for a in res["answers"][:3]}
@@ -1496,10 +1782,10 @@ class Creature:
     def say(self, referent: str | None = None, limit: int = 20) -> list[dict]:
         if referent is not None:
             r = referent.strip().lower()
-            edges = [(r, t, i) for t, i in self.edges.out_edges(r)]
+            edges = [(v, t, i) for v in self._sense_variants(r) for t, i in self.edges.out_edges(v)]
         else:
             edges = self._committed_edges(limit=max(limit * 3, limit))
-        out = T.say(self._state_for(edges), referent, limit)
+        out = T.say(self._state_for(self._surface_edges(edges)), referent, limit)
         self._trace("say", {referent or "*"}, {f"sentences:{len(out)}"})
         return out
 
@@ -1575,6 +1861,12 @@ class Creature:
             "defects": self.defects(),
             "growth": {"count": len(self.growth_events), "budget": self.growth_budget,
                        "events": self.growth_events[-10:]},
+            "senses": {w: list(v) for w, v in sorted(self.senses.items())},
+            "senses_refused": self.refused_fissions[-8:],
+            "fissions": {"count": len(self.fission_events), "budget": self.fission_budget,
+                         "events": [{"word": e["word"], "sense": e["sense"],
+                                     "moved": len(e["moved"])}
+                                    for e in self.fission_events[-10:]]},
             "numbers": self._numbers_census(),
             "bus": vars(self.bus.counts()).copy(),
             "ledger": {"read_sources": sorted(self.read_sources),
@@ -1856,11 +2148,14 @@ class Creature:
                 "authority_k": self.authority_k, "distrust_penalty": self.distrust_penalty,
                 "exception_fraction": self.exception_fraction, "derive_depth": self.derive_depth,
                 "growth_persistence": self.growth_persistence, "growth_budget": self.growth_budget,
+                "fission_budget": self.fission_budget,
                 "seed": self.seed, "reservoir_stratify": self.reservoir_stratify,
             },
             "counters": {"episodes_seen": self.episodes_seen, "parsed": self.parsed,
                          "unparsed": self.unparsed, "grown_seq": self.grown_seq},
             "growth_events": self.growth_events,
+            "fission_events": self.fission_events,
+            "senses": {w: list(v) for w, v in sorted(self.senses.items())},
             # checkpoint marker (invariant #5): how far into the episode log this
             # state has distilled — load() replays whatever tail lies beyond it.
             "log_position": self.log_position,
@@ -1889,6 +2184,9 @@ class Creature:
         c.episodes_seen, c.parsed, c.unparsed = cnt["episodes_seen"], cnt["parsed"], cnt["unparsed"]
         c.grown_seq = cnt.get("grown_seq", 0)
         c.growth_events = list(d.get("growth_events", []))
+        c.fission_events = list(d.get("fission_events", []))
+        c.senses = {w: list(v) for w, v in d.get("senses", {}).items()}
+        c._sense_ids = {sid for v in c.senses.values() for sid in v}
         geo = d["geometry"]
         lang = geo["language_web"]
         c.frames = {fid: C.Frame(fid, tuple(tuple(e) for e in pat)) for fid, pat in lang["frames"].items()}
