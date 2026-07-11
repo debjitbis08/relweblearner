@@ -132,6 +132,10 @@ sources that taught the lie — in that relation class only.
 */30 * * * * /path/to/relweblearner/scripts/train_tick.sh >> /path/to/relweblearner/data/train.log 2>&1
 # one curiosity batch per tick: answer its open questions from the declared oracles
 15,45 * * * * /path/to/relweblearner/scripts/wonder_tick.sh >> /path/to/relweblearner/data/wonder.log 2>&1
+# re-examine everything it has ever mastered; alert on any drift
+50 */2 * * * /path/to/relweblearner/scripts/eval_tick.sh >> /path/to/relweblearner/data/eval.log 2>&1
+# run the full acceptance suite nightly — local CI, no cloud runner
+20 3 * * * /path/to/relweblearner/scripts/nightly_check.sh >> /path/to/relweblearner/data/nightly.log 2>&1
 ```
 
 The wonder tick is the self-learning half ([docs/spec-curiosity.md](docs/spec-curiosity.md)):
@@ -144,6 +148,16 @@ Inspect its curiosity from the shell:
 poetry run relweb-wonder --show          # what is it wondering about?
 poetry run relweb-wonder --tick          # one batch: ask the oracles, ingest, resolve
 ```
+
+The examination tick is the testing half: `relweb-eval --run` re-sits **every**
+stage's worksheet (mastery must not decay), audits the invariants (holonomy
+defects, refusal-not-confabulation, committed facts accounted for), appends a
+row to `data/metrics.jsonl`, and compares it with the previous row — any
+regression lands in `data/alerts.log`, raises a desktop notification, and exits
+non-zero for cron. A question it misses on an exam becomes an open wonder, so
+failing an exam literally makes it curious. `relweb-eval --report` prints the
+trend and plots `results/eval_trend.png`. Everything runs on the one machine —
+no CI service, no cloud runner.
 
 Training, wondering and serving share a lock, so a correction can never
 interleave with a scheduled run. Each training tick also snapshots the state it
