@@ -233,6 +233,58 @@ motivated next step if the correlation holds is the P4′ move the theory doc
 already names: richer frozen algebras (the free monoid/groupoid limit of
 which IS rule rewriting).
 
+## 6⅞. Held-out GraphLog + coherent forgery (2026-07-12, pre-registered; referee round 2)
+
+The second referee pass is accepted in full and drives this addendum:
+
+**(a) The seven GraphLog worlds already run are DEVELOPMENT data.** The
+external run exposed two solver defects, code changed, and the same worlds
+were re-run — the right engineering, but those worlds no longer count as
+untouched validation. The implementation is now FROZEN at this commit
+(learner and decoder untouched hereafter; the only additions since the last
+run are measurement: the recovery audit and report columns, which alter no
+prediction path) and the run extends to **all 44 remaining train-split
+worlds** (rule_0–50 minus the seven development worlds), degenerate
+controls included. No code changes after observing held-out performance.
+
+Pre-registered predictions for the held-out worlds:
+
+- transport ≤ cyk-miner on every world (7/7 on development data);
+- uplift recovery stays INCONSISTENT: median recovery of the
+  additive-oracle uplift over majority below 50%, with a minority of worlds
+  above 80% — matching the development spread (one high, one middle, four
+  floor);
+- `true_rule_satisfaction` (the new direct constraint-recovery metric)
+  correlates with uplift recovery; `accepted_oracle_consistency` lands well
+  below 1.0 (the gate provably admits coherent junk — see (b)), and its
+  shortfall correlates with recovery failure.
+
+**(b) The coherent-forgery arm (P8).** Verified directly, agreeing with the
+referee: `infer()` accepts a composition supported by two fabricated but
+internally coherent triangles over unconstrained relations — a consistent
+new component, nothing to contradict. This is §16's "coherent lie" limit
+expressed at the structure level, and P7's result must therefore be read
+narrowly: the gate rejects **algebraically incompatible** forgeries, not
+junk in general. Bench v3 adds P8: liars fabricate a WHOLLY coherent fake
+relation family over fresh entities (fake step frames, fake skip frames,
+consistent forged triangles). Pre-registered predictions: RelWeb admits the
+fake structure 5/5 seeds with ZERO defects (coherence is invisible from
+inside), derives never-taught false facts from it, and recovers exactly on
+liar retraction; the statistical miner admits it identically. P8 measures a
+shared limit — the arm exists so the correspondence boundary is a number,
+not a caveat.
+
+**(c) Metric tightening (bench v3, same freeze discipline as (b)):** seeds
+raised 5 → 50 with pooled raw counts alongside per-seed means; F6 scored as
+set retrieval (precision/recall over the full committed answer set), not
+single-answer membership; D2 reported as lie-arm vs clean-arm defect
+DIFFERENCE plus post-retraction clearance (the causal tie, not
+`bool(any defect)`); U1 extended from probe-answer equality to full
+committed-belief-set comparison against the liar-free control; and every
+gate-accepted composition is RECORDED per seed and audited against the
+world's true structure — "no false alarms" becomes "the admission log is
+empty of forgeries", measured rather than inferred.
+
 ## 7. What this benchmark does not settle
 
 Internal validity only: the world is synthetic, closed, and small, and the

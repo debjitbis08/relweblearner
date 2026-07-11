@@ -187,14 +187,17 @@ pipeline is out of scope here by design.
 | rule_18 | 0.010 | 0.010 | 0.263 | 0.414 | 0.515 | 46 |
 | rule_0 | 0.002 | 0.034 | 0.022 | 0.423 | 0.484 | 136 |
 
-**The headline number is `transport-oracle`: the abelian ceiling.** It is
-the TRUE rules, exactly solved over ℤ (generic nullspace point,
-per-component gauges), predicting with perfect discovery — the best any
-frozen-abelian-ℤ transport system can possibly do. It spans 0.02–0.58 and
-sits far below the path-reduction ceiling (cyk-oracle, 0.48–0.88) on every
-world. GraphLog's rule systems are essentially non-abelian: **the binding
-constraint is the algebra, not the discovery machinery.** This is the
-pre-registered structural limit, now carrying a hard number per world.
+**The headline number is `transport-oracle`: the additive-oracle
+reference.** It is the TRUE rules, exactly solved over ℤ (generic nullspace
+point, per-component gauges), evaluated through the same path-voting
+decoder — i.e. oracle performance of the current one-dimensional additive
+transport model and decoder, not a bound on every conceivable abelian
+scheme. It spans 0.02–0.58 and sits far below the path-reduction reference
+(cyk-oracle, 0.48–0.88) on every world. GraphLog's rule systems are
+essentially non-abelian: **for this representation the binding constraint
+is the algebra**, and (see below) discovery is a second, independent
+limitation. This is the pre-registered structural limit, now carrying a
+hard number per world.
 
 Predictions scored:
 
@@ -209,12 +212,16 @@ Predictions scored:
   is how the query distribution lands on the solution space's separable
   directions. The direct ceiling measurement replaces the diagnostic as the
   right tool.
-- Where discovery had a ceiling to reach, it reached most of it: rule_21
-  recovers 0.515 of a 0.576 ceiling (89%) with all 19 transports placed in
-  the right gauge components — from 3-cycle evidence alone, since GraphLog
-  contains **zero converse pairs**. Recovery is uneven elsewhere (rule_22:
-  6% of ceiling) — discovery quality varies with how the mined subset
-  constrains the solution space, and that variance is real and reported.
+- Discovery recovers the additive-oracle uplift **inconsistently**, and the
+  honest per-world accounting is: rule_21 recovers 88% of the uplift over
+  majority, rule_44 recovers ~50%, and rule_43/22/19/18 sit at or near the
+  floor (0–3%). "Transports learned: 17–19/19" counts placements, not
+  correctness — a count that does not establish the right constraint
+  structure was learned. So on most evaluated worlds *discovery itself*,
+  not only representation, remains a major limitation; the held-out run
+  below adds a direct learned-vs-oracle constraint-recovery measurement to
+  replace the placement count. What discovery does do here it does from
+  3-cycle evidence alone, since GraphLog contains **zero converse pairs**.
 
 **What the external data fixed in the learner.** Two genuine defects
 surfaced only at GraphLog density, both now in `transport.py` with the

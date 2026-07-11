@@ -76,20 +76,56 @@ def build_cmaps(graphs: list[dict]) -> dict[str, set]:
     return dict(cmaps)
 
 
-def learn_transports(graphs: list[dict]) -> dict[str, tuple]:
-    """Discovered transports as ``rel -> (component, g)``: TR.infer
-    (composition mining + defect gate) over the pooled maps. Only classes
-    CONSTRAINED into a multi-class component carry meaning, and transports
-    are comparable only WITHIN a component — the groups are mutually ungauged
+def learn_transports(graphs: list[dict]) -> tuple[dict[str, tuple], list]:
+    """Discovered transports as ``rel -> (component, g)`` plus the ACCEPTED
+    composition constraints (for the recovery audit): TR.infer (composition
+    mining + defect gate) over the pooled maps. Only classes CONSTRAINED
+    into a multi-class component carry meaning, and transports are
+    comparable only WITHIN a component — the groups are mutually ungauged
     (P4'), so the component tag rides along and the predictor never composes
     across a gauge boundary (doing so is precisely the false-inverse
     manufacture the theory forbids)."""
     cmaps = build_cmaps(graphs)
-    sectors, groups = TR.infer(cmaps)
+    tr: dict = {}
+    sectors, groups = TR.infer(cmaps, trace=tr)
     members = Counter(groups.values())
-    return {r: (groups[r], s.transport) for r, s in sectors.items()
+    g_of = {r: (groups[r], s.transport) for r, s in sectors.items()
             if s.transport is not None and members[groups[r]] > 1
             and s.sector in (TR.ANTISYMMETRIC, TR.SYMMETRIC)}
+    return g_of, tr.get("accepted", [])
+
+
+def recovery_audit(g_of: dict[str, tuple], accepted: list,
+                   g_true: dict[str, tuple], rules: dict[tuple, str]) -> dict:
+    """Learned-vs-oracle CONSTRAINT recovery, measured directly (a transport
+    placement count establishes nothing about correctness):
+
+    * ``true_rule_satisfaction`` — fraction of generative rules
+      ``(a, b) -> c`` that the LEARNED assignment satisfies (all three
+      classes learned, one gauge component, ``g_c = g_a + g_b``).
+    * ``accepted_oracle_consistency`` — fraction of gate-ACCEPTED
+      constraints that hold under the TRUE-rule assignment. Scoring against
+      the generative list would mislabel entailed-but-true compositions as
+      junk; consistency under the oracle solution credits them correctly.
+    """
+    sat = n_sat = 0
+    for (a, b), c in sorted(rules.items()):
+        n_sat += 1
+        if all(x in g_of for x in (a, b, c)):
+            (ca, ga), (cb, gb), (cc, gc) = g_of[a], g_of[b], g_of[c]
+            if ca == cb == cc and gc == ga + gb:
+                sat += 1
+    ok = n_ok = 0
+    for h, a, b in accepted:
+        n_ok += 1
+        if all(x in g_true for x in (h, a, b)):
+            (ch, gh), (ca, ga), (cb, gb) = g_true[h], g_true[a], g_true[b]
+            if ch == ca == cb and gh == ga + gb:
+                ok += 1
+    return {"true_rule_satisfaction": round(sat / max(1, n_sat), 4),
+            "true_rules_satisfied": [sat, n_sat],
+            "accepted_oracle_consistency": round(ok / max(1, n_ok), 4),
+            "accepted_consistent": [ok, n_ok]}
 
 
 def transport_predict(rec: dict, g_of: dict[str, tuple], majority: str,
@@ -256,12 +292,13 @@ def z_diagnostic(rules: dict[tuple, str]) -> dict:
 # ------------------------------------------------------------------ runner
 
 def oracle_transports(rules: dict[tuple, str]) -> dict[str, tuple]:
-    """The abelian CEILING: the true rules solved over Z exactly (generic
-    nullspace point, per-component tags) — the best assignment any
-    Z-transport system could reach with perfect discovery. Where even this
-    predicts at chance, GraphLog's rule system is structurally outside the
-    frozen abelian algebra, and no amount of better mining or gating can
-    help — the pre-registered algebra limit, measured."""
+    """The ADDITIVE-ORACLE REFERENCE: the true rules solved over Z exactly
+    (generic nullspace point, per-component tags) — oracle performance of
+    the current one-dimensional additive transport model, as evaluated
+    through the same path-voting decoder. Not a bound on every conceivable
+    abelian scheme; a reference for THIS representation. Where even this
+    predicts at chance, the world's rule system is structurally outside the
+    frozen additive algebra — the pre-registered algebra limit, measured."""
     rels = sorted({x for k, v in rules.items() for x in (*k, v)})
     comps = [(v, a, b) for (a, b), v in sorted(rules.items())]
     coeff, find = TR._solve(rels, [], comps, set(), set())
@@ -272,7 +309,7 @@ def run_world(name: str, n_train: int) -> dict:
     w = load_world(name, n_train)
     prior = Counter(r["target"] for r in w["train"])
     majority = max(prior, key=lambda r: (prior[r], r))
-    g_of = learn_transports(w["train"])
+    g_of, accepted = learn_transports(w["train"])
     g_true = oracle_transports(w["rules"])
     mined = mine_rules(w["train"])
     systems = {
@@ -288,6 +325,7 @@ def run_world(name: str, n_train: int) -> dict:
     return {"world": name, "n_train": n_train, "n_test": len(w["test"]),
             "accuracy": {s: round(a, 4) for s, a in acc.items()},
             "z_diagnostic": diag,
+            "recovery": recovery_audit(g_of, accepted, g_true, w["rules"]),
             "learned_transports": {r: g_of[r] for r in sorted(g_of)},
             "mined_rules": len(mined), "true_rules": len(w["rules"])}
 
@@ -305,8 +343,9 @@ def main() -> None:
         print(f"{r['world']}: " + "  ".join(
             f"{s}={a:.3f}" for s, a in r["accuracy"].items())
             + f"  (collisions={r['z_diagnostic']['collisions']}, "
-              f"transports={len(r['learned_transports'])}/{r['z_diagnostic']['n_rels']},"
-              f" {time.time() - t0:.0f}s)")
+              f"rule-sat={r['recovery']['true_rule_satisfaction']:.2f}, "
+              f"acc-cons={r['recovery']['accepted_oracle_consistency']:.2f},"
+              f" {time.time() - t0:.0f}s)", flush=True)
         results.append(r)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -315,16 +354,18 @@ def main() -> None:
              f"{len(results)} worlds, {args.n_train} training instances each, "
              f"full test splits; {time.time() - t0:.0f}s.", "",
              "| world | majority | transport | transport-oracle | cyk-miner | "
-             "cyk-oracle | Z-collisions | transports learned |",
-             "|---|---|---|---|---|---|---|---|"]
+             "cyk-oracle | Z-collisions | rule-sat | acc-cons |",
+             "|---|---|---|---|---|---|---|---|---|"]
     for r in results:
         a = r["accuracy"]
+        rec = r["recovery"]
         lines.append(
             f"| {r['world']} | {a['majority']:.3f} | {a['transport']:.3f} | "
             f"{a['transport-oracle']:.3f} | "
             f"{a['cyk-miner']:.3f} | {a['cyk-oracle']:.3f} | "
             f"{r['z_diagnostic']['collisions']} | "
-            f"{len(r['learned_transports'])}/{r['z_diagnostic']['n_rels']} |")
+            f"{rec['true_rule_satisfaction']:.2f} | "
+            f"{rec['accepted_oracle_consistency']:.2f} |")
     (out / "report.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 

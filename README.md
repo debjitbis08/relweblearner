@@ -14,18 +14,25 @@ pages.
 
 ## The hypothesis
 
-Stated technically, the project is one bet:
+Stated technically, the claim under investigation is:
 
-> **Knowledge can be held entirely as *geometry* over a *fixed algebra* —
-> and learning can be reduced to geometry repair.** The state is a graph
-> whose edges carry values from a frozen involutive monoid (ℤ under addition
-> first; the algebra is code, never learned). Composing values along a path
-> is parallel transport; a **contradiction is a loop whose transport is not
-> the identity** — nonzero holonomy, the discrete analogue of curvature.
-> Learning is the *cheapest observation-preserving edit* that removes such
-> defects: relabel (free, provably changes no holonomy — the null move that
-> keeps everything honest) < rewire < grow new nodes (budgeted; exhaustion
-> means refusal, not fabrication).
+> **Some relational learning can be represented as fixed-algebra constraint
+> discovery and geometry-gated repair — and this project measures exactly
+> which sectors of knowledge admit that representation.** The state is a
+> graph whose edges carry values from a frozen involutive monoid (ℤ under
+> addition first; the algebra is code, never learned). Composing values
+> along a path is parallel transport; a **contradiction is a loop whose
+> transport is not the identity** — nonzero holonomy, the discrete analogue
+> of curvature. Repair is the *cheapest observation-preserving edit* that
+> removes such defects: relabel (free, provably changes no holonomy — the
+> null move that keeps everything honest) < rewire < grow new nodes
+> (budgeted; exhaustion means refusal, not fabrication).
+
+The project began as a stronger bet — *all* learning reduces to geometry
+repair — and the pre-registered falsification program below is what cut it
+down: the universal form is **withdrawn**, and the sector boundary (which
+relations the frozen algebra can and cannot carry) is now a measured
+quantity rather than an aspiration.
 
 Freezing the algebra is what makes contradiction *objective*: if the
 composition law itself could learn, a defect could always be escaped by
@@ -56,23 +63,28 @@ evidence only — and the follow-up run closed exactly that gap with 3-cycle
 loop evidence behind a defect gate (candidates are mined statistically but
 admitted only if the resulting geometry stays consistent: the miner
 proposes, the geometry disposes). The flip is on the same frozen benchmark:
-skip-transfer went 0.00 → 1.00, discovered from raw pages, with zero false
-admissions. What remains true: a plain statistical rule inducer matches the
-capability numbers on the clean benchmark — the demonstrated differentiators
-are the guarantees (exactness, audit, exact unlearning) plus noise-robust
-detection and junk-robust admission, both properties of reading only
-committed geometry. So the defensible claim today: an event-sourced,
-provenance-aware relational learner with exact inference, geometry-gated
-structure discovery (converses and binary compositions so far), noise-robust
-inconsistency detection, and exact unlearning. On the external GraphLog
-benchmark the same machinery discovers up to 19/19 relation transports from
-composition evidence alone (the data has no converse pairs at all) and
-predicts near its representational ceiling — but that ceiling is low,
-because GraphLog's rule systems are non-abelian and the frozen ℤ algebra
-provably cannot represent them (measured per world: the true rules, exactly
-solved, top out at 0.02–0.58 where non-abelian rule rewriting reaches
-0.48–0.88). The bet stays on the wall; the evidence now covers that much of
-it, and the next stake is a richer frozen algebra behind the same interface.
+skip-transfer went 0.00 → 1.00, discovered from raw pages, with no false
+alarms on the clean arm. What remains true: a plain statistical rule inducer
+matches the capability numbers on the clean benchmark — the demonstrated
+differentiators are the guarantees (exactness, audit, exact unlearning) plus
+noise-robust detection and admission that is robust against **algebraically
+incompatible** forged compositions (a statistically convincing rule that
+would collapse live structure is refused; a *coherent* forgery still passes
+— coherence is not correspondence, and that limit is measured, not hidden).
+So the defensible claim today: an event-sourced, provenance-aware relational
+learner with exact inference, geometry-gated structure discovery (converses
+and binary compositions so far), noise-robust inconsistency detection, and
+exact unlearning. On the external GraphLog benchmark the same machinery
+discovers relation transports from composition evidence alone (the data has
+no converse pairs at all), but recovery of the additive-oracle reference is
+**inconsistent** — near-complete on one development world, near-floor on
+most — and the reference itself is low, because GraphLog's rule systems are
+non-abelian and the frozen ℤ algebra provably cannot represent them
+(measured per world: the true rules, exactly solved through the same
+decoder, top out at 0.02–0.58 where non-abelian rule rewriting reaches
+0.48–0.88). Discovery, not only representation, remains a limitation there.
+The evidence covers exactly that much; the next stake is a genuinely
+noncommutative frozen carrier behind the same interface.
 
 What the bet buys, concretely:
 
