@@ -213,6 +213,38 @@ contradictions would result. And a brand-new word can be learned from a single
 page — the frame carries the structure, so one tap on "zebu" teaches what kind
 of thing a zebu is. Toddlers do this too; psychologists call it fast mapping.
 
+An architectural point hides here, and it's one of the design's quiet vows:
+**language is its own web, not more wiring inside the concept web.** Words and
+frames live in a separate structure that *reads* the concept web through a
+learned interface; the concepts owe it nothing back. You could delete the
+creature's entire language — every word, every frame — and its concepts,
+counting, and arithmetic would pass every test untouched; delete the concepts
+and language collapses, because there is nothing left to mean. Language is a
+skill *about* knowledge, not part of it. Speaking and understanding are then
+just the two directions through that one interface: to say something, the
+creature drafts a sentence through the same frames it reads with, **reads its
+own draft back**, and utters it only if the read-back reconstructs exactly
+the fact it meant — never a separate "writing system" that could drift from
+what its own reading would understand. A pleasant freebie of the separation:
+nothing stops a *second* word-web — another language — from interfacing the
+same concepts; that is what being bilingual is, structurally. (One honest
+asterisk, recorded in the roadmap: today's creature learns all its relations
+*from* language, so its concept edges still carry the frame that voiced them
+as their relation label. Until it gains a non-linguistic sense — the planned
+perception phase — the divorce is a discipline it maintains, not yet a
+boundary it could prove the hard way.)
+
+In fact the creature's mind is many webs, not one. Words live apart from
+concepts, as we just saw. The concepts themselves split into independent
+islands — one web per family of interlocking relations (the counting chain
+and its arithmetic; the taxonomy; the attribute clusters) — with no
+bookkeeping shared across islands, so an error in one cannot silently
+contaminate another. In the multi-mind experiments the *number* of webs is
+itself learned: webs merge when evidence says their contents interlock and
+split when a contradiction proves a weld was false. And in the society
+experiments every creature is its own web, with agreement between creatures —
+not anything inside one head — doing the work that "truth" does for us.
+
 ## Answering: look it up, then walk
 
 Ask the creature a question and it tries, in order:

@@ -325,7 +325,16 @@ stage with an acceptance test:
   *Word and Object*, 1960\]. The residue is discharged by **ostension**
   (pointing), with the required budget provably = the number of orbits.
 - **Reading and writing** as adjoint maps, with write followed by read-back
-  before commitment (`read(write(f)) = f` holding at zero violations).
+  before commitment (`read(write(f)) = f` holding at zero violations). Note
+  the design decision this encodes: reading and writing are *not* separate
+  webs but the two directions of one interface over one language web —
+  writing is *defined* as the inverse map followed by reading one's own
+  draft, so the adjunction laws are checkable at all. What the spec does
+  allow in the plural is *languages*: several word-webs may interface the
+  same concept web, which is the structural model of bilingualism (and a
+  second language's frames would unify with the first's across the shared
+  edge sets by the ordinary §9 machinery — cross-language synonymy as
+  paraphrase).
 
 Oriented facts come from the **picture channel**: a tap marks which slot the
 illustration grounds, so token order never has to be trusted — which is what
@@ -333,6 +342,40 @@ lets real WordNet/Wikidata facts be rendered through several paraphrase
 constructions (including argument-reversed ones) with the relation identity
 left for unification to *discover* (§9), the stripped label surviving only as
 the worksheet answer key.
+
+**An honest bend in the streaming creature.** The phase implementation
+enforces the one-way dependency by CI (delete language, concept tests pass;
+disjoint namespaces). The streaming creature keeps the *behavioural*
+discipline — frames are a separate bounded structure, `_draft_fact` does the
+L6 read-back — but its concept edges carry frame ids as their relation-type
+markers, a reference from the concept layer into language that the spec's
+ideal forbids. The reason is stated in the roadmap: with no non-linguistic
+perception channel yet (the planned P9), language is the creature's *only*
+source of relations, so frames stand in for the relation types that P2′-style
+discovery should eventually supply. A bend pending P9, not a silent drift.
+
+### 11½. Many webs
+
+"The web" is a convenient singular; the architecture is plural at four
+levels, and the plurality is load-bearing:
+
+- **Language vs concepts** — the one-way split above; several language webs
+  per concept web is bilingualism for free.
+- **Concept webs per gauge group** ([`transport.py`](../src/relweblearner/transport.py)):
+  committed facts project into one valued web per *constraint group* of
+  interlocking relation classes, and the groups are **mutually ungauged**
+  (P4′) — no potential is shared across them, so no relabeling in one can
+  disguise or create a defect in another. Error stays local by construction.
+- **The dynamic ensemble** ([`ensemble.py`](../src/relweblearner/ensemble.py)):
+  N webs plus cross-web *identifications* form one union graph on which an
+  interface mismatch is just another holonomy defect; transfer flows through
+  the identifications with zero shared parameters, a poisoned identification
+  is isolated by consensus and resolved by *split* — and under a stimulus
+  stream the **number of webs is itself learned** (persistence-gated merges
+  and splits evolved the count 3 → 2 → 1 → 2 in the acceptance run).
+- **One web per agent** (§13): the society layer is an ensemble whose
+  members share no memory at all; agreement across webs is the system's only
+  correspondence signal.
 
 ## 12. Reflection and simulation
 
