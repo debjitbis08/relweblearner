@@ -41,11 +41,31 @@ trust, the society layer) is these few rules applied without exception; the
 falsifiable part is how far they reach. The full story with definitions and
 references is [docs/theory.md](docs/theory.md).
 
+**Where the evidence stands** (a pre-registered falsification benchmark,
+run 2026-07-11 — design in
+[docs/falsification-plan.md](docs/falsification-plan.md), outcomes in
+[docs/falsification-report.md](docs/falsification-report.md)): the creature
+really does discover converse structure from raw pages and answer held-out
+inversions by transport where pure recall scores zero, its refusals and
+exact unlearning hold under adversarial lies, and its holonomy signal
+detects a class of contradiction (the "loop lie") that lookup is
+structurally blind to and statistical detectors miss under noise. But a
+plain statistical rule inducer matches its capability numbers on that same
+benchmark, and composite relations (skip = step∘step) are currently
+**undiscoverable by the mechanism** — it refuses them, honestly, where the
+statistical competitor learns them. So the defensible claim today is
+narrower than the bet above: an event-sourced, provenance-aware relational
+learner with exact inference, noise-robust inconsistency detection, and
+exact unlearning, within the converse/inversion sector it can discover. The
+bet stays on the wall; the evidence so far covers that much of it.
+
 What the bet buys, concretely:
 
 - **It composes exactly.** Taught "ten comes after nine", it *derives* the
-  never-heard "nine is before ten" — and held-out arithmetic scores 100% with
-  zero parameters where trained knowledge-graph embeddings score ~50%.
+  never-heard "nine is before ten" with zero parameters. (The older "100% vs
+  ~50% against trained knowledge-graph embeddings" figure demonstrates exact
+  composition — a property the representation entails — not superior
+  learning; see the falsification report.)
 - **It invents numbers.** It is only ever taught to count. Asked `three minus
   five`, it walks off the edge of its number line and *grows* the missing
   concepts — its own negative numbers, with correct arithmetic.

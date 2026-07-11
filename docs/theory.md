@@ -285,13 +285,24 @@ ungauged), and a never-taught question is answered by **transport
 composition**: taught n —(+k)→ n+k for k ∈ {1,2}, the composite +5 answers all
 held-out k = 5 questions exactly.
 
-That yields the project's headline sample-efficiency comparison: on the same
-compositional holdout, the web scores Hits@1 = 1.0 with zero parameters, while
-trained knowledge-graph-embedding baselines — TransE \[Bordes et al., NeurIPS
-2013\] and ComplEx \[Trouillon et al., ICML 2016,
+On the same compositional holdout, the web scores Hits@1 = 1.0 with zero
+parameters, while trained knowledge-graph-embedding baselines — TransE
+\[Bordes et al., NeurIPS 2013\] and ComplEx \[Trouillon et al., ICML 2016,
 [arXiv:1606.06357](https://arxiv.org/abs/1606.06357)\] — memorize training
-perfectly yet compose the held-out relation at Hits@1 ≈ 0.15 and 0.49. Exact
-composition is what the frozen algebra buys.
+perfectly yet compose the held-out relation at Hits@1 ≈ 0.15 and 0.49. Read
+that comparison for what it is: a demonstration of *exact composition*, a
+property the representation entails once the transports are in place — not a
+learning result (the holdout supplies the decomposition; the code calls it
+"exact by construction"). What is and is not *learned* is measured instead by
+the pre-registered falsification benchmark
+([falsification-plan.md](falsification-plan.md) /
+[falsification-report.md](falsification-report.md)): converse discovery and
+inversion hold up from raw pages (and pure recall scores zero there); the
+gauge groups form from converse 2-cycles only, so composite relations
+(skip = step∘step) are currently undiscoverable — the learner refuses them
+where a statistical rule inducer learns them. Exact composition is what the
+frozen algebra buys; *which* compositions exist to be exact about is exactly
+as far as the discovered loop evidence reaches.
 
 ## 10. Motifs: learned concepts as words over edges
 

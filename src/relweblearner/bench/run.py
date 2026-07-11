@@ -24,8 +24,8 @@ import time
 from pathlib import Path
 
 from .. import curiosity as CU
-from .. import holonomy as H
 from ..creature import Creature
+from ..holonomy import defects as _web_defects
 from ..episodelog import InMemoryEpisodeLog
 from . import world as W
 from .baselines import GoldKB, InducedRules, Lookup, bench_oracle
@@ -68,7 +68,7 @@ def _score(w: W.World, answer_fn) -> dict[str, list[bool]]:
 
 
 def _relweb_defects(c: Creature) -> list:
-    return [d for web in c.concept_webs().values() for d in H.defects(web)]
+    return [d for web in c.concept_webs().values() for d in _web_defects(web)]
 
 
 def run_seed(seed: int) -> dict:
