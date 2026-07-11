@@ -52,6 +52,12 @@ What the bet buys, concretely:
 - **It refuses rather than confabulates.** Unknown means unknown. Thin evidence
   stays "provisional". A question it can't ground is declined, with the reason
   on the record.
+- **It is curious about its own gaps.** A question it couldn't answer, a fact
+  one witness short, a disagreement it's holding open — each is an open
+  *wonder* on its ledger, and a scheduled tick batch-answers them from
+  declared oracles (WordNet, Wikidata). Oracle answers are ordinary testimony:
+  one source never commits a belief, and a lying oracle loses trust like any
+  book.
 - **It can be corrected without retraining.** Teach it the right fact once and
   it notices the contradiction, retracts the outweighed belief itself, and
   starts taking the sources that misled it with a grain of salt — per topic.
@@ -124,10 +130,23 @@ sources that taught the lie — in that relation class only.
 ```bash
 # one lesson per tick; a no-op once the curriculum is mastered
 */30 * * * * /path/to/relweblearner/scripts/train_tick.sh >> /path/to/relweblearner/data/train.log 2>&1
+# one curiosity batch per tick: answer its open questions from the declared oracles
+15,45 * * * * /path/to/relweblearner/scripts/wonder_tick.sh >> /path/to/relweblearner/data/wonder.log 2>&1
 ```
 
-Training and serving share a lock, so a correction can never interleave with a
-scheduled run. Or ship the whole thing as a container:
+The wonder tick is the self-learning half ([docs/spec-curiosity.md](docs/spec-curiosity.md)):
+questions it was asked and couldn't answer, facts one witness short of belief,
+and standing disagreements are batch-answered from the oracles declared in
+`corpus/oracles.json` — as ordinary, trust-weighted, revocable testimony.
+Inspect its curiosity from the shell:
+
+```bash
+poetry run relweb-wonder --show          # what is it wondering about?
+poetry run relweb-wonder --tick          # one batch: ask the oracles, ingest, resolve
+```
+
+Training, wondering and serving share a lock, so a correction can never
+interleave with a scheduled run. Or ship the whole thing as a container:
 
 ```bash
 docker build -t relweb . && docker run -p 8000:8000 -v relweb-data:/data relweb
@@ -174,6 +193,7 @@ defaults visible in `src/relweblearner/creature.py`:
 | `agree_threshold` | 0.8 | how single-valued a relation must look before a second value counts as contradiction |
 | `exception_fraction` | 0.2 | tolerated exceptions before a rule/motif is refused |
 | `growth_budget` | 16 | how many concepts it may invent before refusing |
+| `wonder_cap` | 64 | open unanswered questions it may hold before refusing to mint more |
 
 **Swap the algebra** — the frozen algebra behind the web is one interface
 (`src/relweblearner/algebra.py`): integers by default; cyclic groups, Klein

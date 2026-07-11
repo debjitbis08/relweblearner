@@ -809,3 +809,33 @@ Post-verification work (the report's four next steps). All committed on `main`.
   repaired (remaining defect only hen->bird corroborated-dissent, by design), "a orange is ?" still
   answers "a orange is orange" committed, full rebuild from the log reproduces the split exactly.
   Accepted: `tests/test_fission.py` (13, incl. `move_edge` across all three store backends); suite 294.
+- **2026-07-11** — Curiosity (PQ): the wonder ledger + oracle ticks — spec'd tests-first, then BUILT
+  (`docs/spec-curiosity.md`; `curiosity.py`; `Creature._mint_wonder`/`_apply_act` folds/`wonder_cap`;
+  `_belief_conflicts` extracted read-only from `revise`; `factsource.wordnet_lookup`/`wikidata_lookup`
+  (targeted, EntitySearch-resolved); `corpus/oracles.json`; `relweb-wonder` CLI + `wonder_tick.sh` +
+  `GET /api/wonders`). The creature already knows what it doesn't know —
+  unanswered parsed questions, provisional edges (one witness short of `commit_k`), tied committed
+  conflicts `revise()` declines — so curiosity needs no drive, only bookkeeping and a batch step.
+  Design: a WONDER LEDGER as a projection of the episode log (three act kinds — `wonder`/`sought`/
+  `resolved`; parked is derived from sought-count, `unknown` wonders minted by `answer()` on parsed
+  misses and capped `wonder_cap`-P7-style, `confirm`/`arbitrate` computed fresh from provisional-ness
+  and standing conflicts, never stored), plus a budgeted TICK (`relweb-wonder`, cron sibling of the
+  train tick under the same lock) routing wonders lexically-by-anchor to declared ORACLES
+  (`corpus/oracles.json`: inline triples / wordnet-lookup / targeted wikidata SPARQL) whose answers
+  arrive as ORDINARY paraphrase-rendered testimony — one oracle = one trust-ledger source = one
+  witness, so a lone oracle answers only provisionally and the thin edge chains into a fresh
+  `confirm` wonder; commitment needs a second independent source, lies are survivable by the
+  standard `retract_claim`→trust machinery. Theoretical placement: ASK extends the move hierarchy
+  below refusal — `relabel < rewire < grow < ask < refuse` — the repair for defects whose cause is
+  missing evidence, not bad geometry; objective = shrink defect mass + provisional mass. Explicitly
+  a policy layer: deleting it must leave every prior acceptance test passing. Two design corrections
+  made against the first draft, both toward standing invariants: (1) parking is DECIDED by the tick
+  and recorded on its final `sought` act (a pure sought-count ≥ knob derivation would let a later
+  knob change silently unpark history); (2) an oracle can only INFORM a corroborated tie, never
+  settle it — `_beats` says testimony never outranks testimony (the hen→bird lesson), so arbitrate
+  resolution is "no longer tied, margin on the record", both camps stay committed and visible.
+  Deferred: naming grown `new-*` nodes (needs phrasing through committed neighbours; ledger kind
+  reserved). Verified end-to-end on a scratch creature over the real JSONL log + checkpoint path:
+  mint → `--show` → `--tick` with two inline oracles → committed on reload → `/api/wonders` shows it
+  resolved. Accepted: `tests/test_curiosity.py` (15, all offline, importorskip gate now live);
+  suite 309.

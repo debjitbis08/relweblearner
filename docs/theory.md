@@ -127,6 +127,19 @@ score clears policy. Refusals are logged with reasons ("rehearsal-refusal").
 Simulated acts emit traces flagged counterfactual — imagining is on the
 record, but never in belief.
 
+One move sits *below* refusal in the schedule: **ask**
+([`curiosity.py`](../src/relweblearner/curiosity.py),
+[spec-curiosity.md](spec-curiosity.md)). Some defects have no
+observation-preserving repair because their cause is missing evidence, not
+bad geometry — a provisional edge one witness short, a corroborated tie no
+edit may erase. For these the cheapest honest move is to *schedule an
+observation*: the open question goes on the episode log as a **wonder** act,
+and a budgeted batch step later routes it to declared oracles, whose answers
+enter as ordinary testimony under every standing rule (§6: one oracle is one
+witness; a lying oracle loses trust like any source). Curiosity is thus a
+policy over the same objective — the creature choosing its own next input to
+shrink defect mass plus provisional mass — and adds no new epistemology.
+
 ## 5. Memory: event sourcing, replay, and retraction
 
 State management follows **event sourcing**: the append-only episode log is

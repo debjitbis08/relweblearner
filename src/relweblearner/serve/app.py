@@ -249,6 +249,18 @@ def trust() -> dict:
     return {"trust": _fresh_creature().trust_report()}
 
 
+@app.get("/api/wonders")
+def wonders() -> dict:
+    """The curiosity ledger (docs/spec-curiosity.md): what the creature
+    currently wonders about — conflicts to arbitrate, provisional facts one
+    witness short, questions it was asked and couldn't answer — plus what it
+    has given up on (parked) and settled (resolved). Read-only; the batch
+    answering happens in ``relweb-wonder --tick``."""
+    from .. import curiosity as CU
+
+    return CU.ledger(_fresh_creature())
+
+
 @app.post("/api/ask")
 def ask(body: AskIn) -> dict:
     return _fresh_creature().answer(body.text)

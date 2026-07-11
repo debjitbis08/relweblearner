@@ -12,6 +12,7 @@ relweb-serve = "relweblearner.serve.app:main"
 relweb-train = "relweblearner.train:main"
 relweb-progress = "relweblearner.train:progress_main"
 relweb-correct = "relweblearner.correct:main"
+relweb-wonder = "relweblearner.wonder:main"
 
 [tool.poetry]
 packages = [{ include = "relweblearner", from = "src" }]

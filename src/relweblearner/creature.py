@@ -122,6 +122,7 @@ class Creature:
         growth_persistence: int = 3,
         growth_budget: int = 16,
         fission_budget: int = 8,
+        wonder_cap: int = 64,
         seed: int = 0,
         reservoir_stratify: bool = True,
         created: str | None = None,
@@ -159,6 +160,7 @@ class Creature:
         self.growth_persistence = growth_persistence
         self.growth_budget = growth_budget
         self.fission_budget = fission_budget
+        self.wonder_cap = wonder_cap
         self.seed = seed
         self.reservoir_stratify = reservoir_stratify
         self._rng = random.Random(seed)
@@ -230,6 +232,17 @@ class Creature:
         self._sense_ids: set[str] = set()                      # every minted sense node id
         self.fission_events: list[dict] = []                   # committed splits (budgeted, P7)
         self.refused_fissions: list[dict] = []                 # bounded rehearsal-refusal record
+        # CURIOSITY (PQ, docs/spec-curiosity.md): the creature's open questions.
+        # A parsed-but-unanswerable question is a WONDER act on the episode log;
+        # these four are the ledger's distilled state, a projection of those
+        # acts (rebuilt by replay like everything else). The standing question
+        # kinds — confirm (provisional edges) and arbitrate (unsettled
+        # conflicts) — are computed fresh by :mod:`~relweblearner.curiosity`
+        # and never stored.
+        self.wonder_events: dict[str, dict] = {}               # wid -> birth act (insertion = age order)
+        self.sought_counts: dict[str, int] = {}                # wid -> tick attempts so far
+        self.parked_wonders: set[str] = set()                  # wids a tick gave up on (recorded, P7)
+        self.resolved_wonders: dict[str, str] = {}             # wid -> how; a resolved wid never reopens
         # ------- counters (scalars, not history) -------
         self.episodes_seen = 0
         self.parsed = 0
@@ -393,8 +406,22 @@ class Creature:
         share this path). Restores the posit-id allocator past every replayed
         posit so a later growth can never collide. A FISSION act re-keys the
         recorded edges to the sense node and registers the sense — as
-        recorded, tolerant of edges a replay-with-exclusions never formed."""
-        if event.get("move") == "fission":
+        recorded, tolerant of edges a replay-with-exclusions never formed.
+        The curiosity ledger acts (wonder/sought/resolved, spec-curiosity §1)
+        fold into the ledger projection and touch no belief structure."""
+        move = event.get("move")
+        if move == "wonder":
+            self.wonder_events[event["wid"]] = dict(event)
+            return
+        if move == "sought":
+            self.sought_counts[event["wid"]] = self.sought_counts.get(event["wid"], 0) + 1
+            if event.get("parked"):
+                self.parked_wonders.add(event["wid"])
+            return
+        if move == "resolved":
+            self.resolved_wonders[event["wid"]] = event.get("how", "")
+            return
+        if move == "fission":
             for s, t, s2, t2 in event["moved"]:
                 self.edges.move_edge(s, t, s2, t2)
             senses = self.senses.setdefault(event["word"], [])
@@ -466,6 +493,10 @@ class Creature:
         self._sense_ids = set()
         self.fission_events = []
         self.refused_fissions = []
+        self.wonder_events = {}
+        self.sought_counts = {}
+        self.parked_wonders = set()
+        self.resolved_wonders = {}
         self.numbers = NumberSense(commit_k=self.commit_k, source_cap=self.source_cap)
         self.grown_seq = 0
         self.episodes_seen = self.parsed = self.unparsed = 0
@@ -575,6 +606,44 @@ class Creature:
 
     # ============================================================= belief revision
 
+    def _belief_conflicts(self, rel_of: dict[str, str] | None = None) -> list[tuple[str, str, dict]]:
+        """The web's standing belief conflicts, READ-ONLY: ``(class, source
+        node, {target: edge info})`` for every source node holding two-plus
+        committed targets in an otherwise-functional relation class. Extracted
+        from :meth:`revise` (which adjudicates them where a decree is party)
+        so the curiosity ledger can list the unsettled ones as ``arbitrate``
+        wonders without touching anything."""
+        if rel_of is None:
+            rel_of = self._rel_of()
+        raw: dict[str, dict[str, set]] = {}
+        by_class: dict[str, dict[str, dict[str, dict]]] = {}
+        for s, t, info in self.edges.iter_edges():
+            classes = {rel_of.get(fid, fid) for fid in info.get("frames", ())}
+            for cl in classes:
+                raw.setdefault(cl, {}).setdefault(s, set()).add(t)
+            if not self._committed_info(info, rel_of):
+                continue
+            for cl in classes:
+                by_class.setdefault(cl, {}).setdefault(s, {})[t] = info
+        conflicts = []
+        for cl, m in by_class.items():
+            contested = [s for s in m if len(m[s]) > 1]
+            if not contested:
+                continue
+            # Functionality is judged on ALL testimony, never on committed
+            # coverage: a hen is a kind of bird AND a kind of female even while
+            # sparse corroboration commits only one kind for most other
+            # animals, and a many-valued relation must not look single-valued
+            # just because commitment is thin. A class whose raw testimony
+            # tolerates fan-out is content; only a class that is single-valued
+            # in everyone's mouth makes a second value a contradiction.
+            rawm = raw.get(cl, m)
+            n_multi = sum(1 for s in rawm if len(rawm[s]) > 1)
+            if n_multi / max(1, len(rawm)) > (1.0 - self.agree_threshold):
+                continue                    # a genuinely multi-valued relation: content, not error
+            conflicts += [(cl, s, m[s]) for s in contested]
+        return conflicts
+
     def _beats(self, a: dict, b: dict) -> bool:
         """Does candidate ``a`` decisively outrank candidate ``b`` in a belief
         conflict? Decree outranks testimony however corroborated; between two
@@ -620,33 +689,7 @@ class Creature:
         if self._revising:
             return empty
         rel_of = self._rel_of()
-        raw: dict[str, dict[str, set]] = {}
-        by_class: dict[str, dict[str, dict[str, dict]]] = {}
-        for s, t, info in self.edges.iter_edges():
-            classes = {rel_of.get(fid, fid) for fid in info.get("frames", ())}
-            for cl in classes:
-                raw.setdefault(cl, {}).setdefault(s, set()).add(t)
-            if not self._committed_info(info, rel_of):
-                continue
-            for cl in classes:
-                by_class.setdefault(cl, {}).setdefault(s, {})[t] = info
-        conflicts = []
-        for cl, m in by_class.items():
-            contested = [s for s in m if len(m[s]) > 1]
-            if not contested:
-                continue
-            # Functionality is judged on ALL testimony, never on committed
-            # coverage: a hen is a kind of bird AND a kind of female even while
-            # sparse corroboration commits only one kind for most other
-            # animals, and a many-valued relation must not look single-valued
-            # just because commitment is thin. A class whose raw testimony
-            # tolerates fan-out is content; only a class that is single-valued
-            # in everyone's mouth makes a second value a contradiction.
-            rawm = raw.get(cl, m)
-            n_multi = sum(1 for s in rawm if len(rawm[s]) > 1)
-            if n_multi / max(1, len(rawm)) > (1.0 - self.agree_threshold):
-                continue                    # a genuinely multi-valued relation: content, not error
-            conflicts += [(cl, s, m[s]) for s in contested]
+        conflicts = self._belief_conflicts(rel_of)
         if not conflicts:
             self._trace("revise", {"conflicts:0"}, {"clean"})
             return empty
@@ -1771,9 +1814,38 @@ class Creature:
             marks = ({f"{a['status']}:{a['answer']}" for a in res["answers"][:3]}
                      or {"unknown"})
             self._trace("answer", {res.get("given") or "?"}, marks)
+            if not res.get("known"):
+                self._mint_wonder(res, tokens)    # a parsed miss goes on the record (PQ)
         else:
             self._trace("answer", {"?"}, {res.get("kind", "unparsed")})
         return res
+
+    def _mint_wonder(self, res: dict, tokens: list[str]) -> None:
+        """A parsed question the creature could not answer becomes an open
+        WONDER on the episode log (spec-curiosity §1a) — the seed of the
+        curiosity ledger, which :mod:`~relweblearner.curiosity` projects and a
+        wonder tick batch-answers. Only parsed misses mint (junk that matches
+        no frame never reaches here); the wid is stable across replays (built
+        from the given filler + the frame's anchor words, never a frame id);
+        re-asking dedups; a resolved wid never reopens; and past ``wonder_cap``
+        open unknowns, minting is refused on the record (P7: refusal, not a
+        flood)."""
+        given, fid = res.get("given"), res.get("frame")
+        if given is None or fid not in self.frames:
+            return
+        anchors = list(self.frames[fid].anchors)
+        wid = f"u:{given}:{'-'.join(anchors)}"
+        if wid in self.wonder_events or wid in self.resolved_wonders:
+            return
+        n_open = sum(1 for w in self.wonder_events if w not in self.resolved_wonders)
+        if n_open >= self.wonder_cap:
+            self._trace("refuse", {given}, {"wonder-cap"})
+            return
+        event = {"move": "wonder", "wid": wid, "qkind": "unknown", "subject": given,
+                 "anchors": anchors, "phrase": " ".join(tokens)}
+        self.log_position = self.log.append({"kind": "act", **event}) + 1
+        self._apply_act(event)
+        self._trace("wonder", {given}, {wid})
 
 
     def _is_anchor(self, tok: str) -> bool:
@@ -2148,13 +2220,19 @@ class Creature:
                 "authority_k": self.authority_k, "distrust_penalty": self.distrust_penalty,
                 "exception_fraction": self.exception_fraction, "derive_depth": self.derive_depth,
                 "growth_persistence": self.growth_persistence, "growth_budget": self.growth_budget,
-                "fission_budget": self.fission_budget,
+                "fission_budget": self.fission_budget, "wonder_cap": self.wonder_cap,
                 "seed": self.seed, "reservoir_stratify": self.reservoir_stratify,
             },
             "counters": {"episodes_seen": self.episodes_seen, "parsed": self.parsed,
                          "unparsed": self.unparsed, "grown_seq": self.grown_seq},
             "growth_events": self.growth_events,
             "fission_events": self.fission_events,
+            # the curiosity ledger's distilled state (acts up to log_position;
+            # the tail replays through _apply_act like every other act)
+            "wonders": {"events": list(self.wonder_events.values()),
+                        "sought": dict(self.sought_counts),
+                        "parked": sorted(self.parked_wonders),
+                        "resolved": dict(self.resolved_wonders)},
             "senses": {w: list(v) for w, v in sorted(self.senses.items())},
             # checkpoint marker (invariant #5): how far into the episode log this
             # state has distilled — load() replays whatever tail lies beyond it.
@@ -2185,6 +2263,11 @@ class Creature:
         c.grown_seq = cnt.get("grown_seq", 0)
         c.growth_events = list(d.get("growth_events", []))
         c.fission_events = list(d.get("fission_events", []))
+        wo = d.get("wonders", {})
+        c.wonder_events = {e["wid"]: dict(e) for e in wo.get("events", [])}
+        c.sought_counts = {k: int(v) for k, v in wo.get("sought", {}).items()}
+        c.parked_wonders = set(wo.get("parked", []))
+        c.resolved_wonders = dict(wo.get("resolved", {}))
         c.senses = {w: list(v) for w, v in d.get("senses", {}).items()}
         c._sense_ids = {sid for v in c.senses.values() for sid in v}
         geo = d["geometry"]

@@ -1,0 +1,31 @@
+{
+ "note": "The ORACLE registry for curiosity ticks (docs/spec-curiosity.md). Where sources.json declares what the creature is TAUGHT, this declares whom it may ASK: each oracle answers targeted lookups (one subject at a time) for the relation named by its `anchors`, and its answers are rendered through `frames` as ordinary testimony under the oracle's `id` — one oracle is ONE witness in the trust ledger, however often it repeats itself, so a lone oracle's answer stays provisional until a second independent source corroborates. Keep `anchors` DISCRIMINATIVE (routing is lexical): 'kind' routes taxonomy questions, bare 'is' would route every attribute question here too. Kinds: `triples` (inline, offline), `wordnet-lookup` (offline corpus), `wikidata-lookup` (SPARQL, throttled — a failed fetch is a fruitless attempt, retried next tick).",
+ "oracles": [
+  {
+   "id": "oracle-wordnet",
+   "kind": "wordnet-lookup",
+   "anchors": ["kind"],
+   "domain": "science",
+   "frames": [["a", "{s}", "is", "a", "{o}"],
+              ["the", "{s}", "is", "a", "kind", "of", "{o}"]]
+  },
+  {
+   "id": "oracle-wd-capital",
+   "kind": "wikidata-lookup",
+   "property": "P36",
+   "anchors": ["capital"],
+   "domain": "geography",
+   "frames": [["{s}", "has", "capital", "{o}"],
+              ["the", "capital", "of", "{s}", "is", "{o}"]]
+  },
+  {
+   "id": "oracle-wd-symbol",
+   "kind": "wikidata-lookup",
+   "property": "P246",
+   "anchors": ["symbol"],
+   "domain": "science",
+   "frames": [["{s}", "has", "symbol", "{o}"],
+              ["{o}", "is", "the", "symbol", "for", "{s}"]]
+  }
+ ]
+}

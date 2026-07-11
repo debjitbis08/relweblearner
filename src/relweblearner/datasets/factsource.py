@@ -115,6 +115,19 @@ def wordnet_triples(root: str, max_n: int = 150) -> list[tuple[str, str]]:
     return clean_triples(out)[:max_n]
 
 
+def wordnet_lookup(word: str, max_n: int = 4) -> list[tuple[str, str]]:
+    """The targeted twin of :func:`wordnet_triples` — the immediate hypernyms
+    of ONE word, for a curiosity tick asking "what is a {word}?". Offline
+    (requires the ``wordnet`` nltk corpus, like the bulk fetcher)."""
+    from nltk.corpus import wordnet as wn  # lazy: only when a wordnet oracle is asked
+
+    out = []
+    for syn in wn.synsets(word, pos="n"):
+        for hyp in syn.hypernyms():
+            out.append((word, hyp.lemmas()[0].name()))
+    return clean_triples(out)[:max_n]
+
+
 # ------------------------------------------------------------------ Wikidata
 # Named relations -> (SPARQL, description). SPARQL returns ?sL (subject label) and
 # ?oL (object label / literal). Kept small and cache-once (endpoint is rate-limited).
@@ -144,4 +157,29 @@ def wikidata_triples(relation: str, max_n: int = 200) -> list[tuple[str, str]]:
     import json
     data = json.load(urllib.request.urlopen(req, timeout=40))
     rows = [(b["sL"]["value"], b["oL"]["value"]) for b in data["results"]["bindings"]]
+    return clean_triples(rows)[:max_n]
+
+
+def wikidata_lookup(subject: str, prop: str, max_n: int = 4) -> list[tuple[str, str]]:
+    """The targeted twin of :func:`wikidata_triples` — ONE entity's one
+    property (``wikidata_lookup("france", "P36")`` -> capital), for a
+    curiosity tick. Resolves the surface word through the EntitySearch API
+    (labels are case-normalized there; a bare rdfs:label match would scan).
+    Raises on network/rate-limit errors so the caller can treat the attempt
+    as fruitless and retry a later tick (the endpoint throttles aggressively)."""
+    query = (
+        'SELECT ?oL WHERE { SERVICE wikibase:mwapi { '
+        'bd:serviceParam wikibase:endpoint "www.wikidata.org" ; '
+        'wikibase:api "EntitySearch" ; '
+        f'mwapi:search "{subject}" ; mwapi:language "en" . '
+        '?s wikibase:apiOutputItem mwapi:item . } '
+        f'?s wdt:{prop} ?o . '
+        '?o rdfs:label ?oL FILTER(LANG(?oL)="en") . } '
+        f'LIMIT {max_n * 3}'
+    )
+    url = "https://query.wikidata.org/sparql?format=json&query=" + urllib.parse.quote(query)
+    req = urllib.request.Request(url, headers={**_UA, "Accept": "application/sparql-results+json"})
+    import json
+    data = json.load(urllib.request.urlopen(req, timeout=40))
+    rows = [(subject, b["oL"]["value"]) for b in data["results"]["bindings"]]
     return clean_triples(rows)[:max_n]

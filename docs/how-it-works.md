@@ -308,6 +308,30 @@ camp's credibility to erode on its own. No statistic can distinguish a
 disagreement from two truths; the creature knows better than to pretend
 otherwise.
 
+## It keeps a list of what it doesn't know
+
+Refusing to guess would be a dead end if the questions just evaporated. They
+don't. Ask the creature something it can parse but cannot answer, and the
+question itself goes into the diary as an open **wonder**. Its other gaps are
+already visible to it for free: facts heard from only one source (one witness
+short of belief), and the honest disagreements it is holding open. All of it
+together is its *curiosity ledger* — you can read it with `relweb-wonder
+--show` or in the web console.
+
+Then, on a schedule, it goes and finds out. A *wonder tick* (`relweb-wonder
+--tick`, a cron sibling of the training tick) takes a budgeted handful of open
+questions and asks the **oracles** you've declared for it — WordNet for
+taxonomy, Wikidata for facts like capitals, whatever you register in
+`corpus/oracles.json`. Here is the part that makes this safe where
+self-directed internet learning usually isn't: an oracle's answer is just
+*testimony*, from a source like any book. One oracle's word never commits a
+belief — it lands as provisional, and the creature keeps wondering until an
+independent second source corroborates. An oracle that lies gets caught and
+discounted by the same trust machinery as everything else. And a question no
+oracle can answer is *parked* after a few attempts, on the record — refusal,
+never fabrication. Curiosity gets no special powers; it only decides what to
+ask about next.
+
 ## Watching it think
 
 One last architectural vow: **no silent operations**. Every single act — each
