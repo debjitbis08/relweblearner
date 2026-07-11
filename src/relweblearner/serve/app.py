@@ -24,6 +24,7 @@ from .. import curriculum as C
 from ..creature import Creature, _slug
 from ..episodelog import JsonlEpisodeLog, creature_lock
 from ..reader import tokenize
+from ..store import open_store
 
 NAME = os.environ.get("RELWEB_CREATURE", "scholar")
 DATA = Path(os.environ.get("RELWEB_DATA", f"data/creatures/{_slug(NAME)}.json"))
@@ -34,15 +35,25 @@ _lock = threading.Lock()
 # the durable episode log next to the checkpoint (shared with relweb-train);
 # one handle for the process — every reload reuses it.
 _LOG = JsonlEpisodeLog(DATA.with_suffix(".episodes.jsonl"))
+# the edge store (RELWEB_STORE, shared convention with relweb-train; with no env
+# set, an existing checkpoint's own recorded spec wins — a migrated creature
+# serves with zero configuration). A durable store keeps ONE handle for the
+# process — the database is shared truth with the trainer, so reloads reuse it;
+# in-memory stays None so every (re)load builds a fresh dict from the
+# checkpoint's inline geometry, exactly as before.
+from ..train import _store_spec
+
+_SPEC = _store_spec(checkpoint=DATA if DATA.exists() else None)
+_STORE = open_store(_SPEC, DATA.with_suffix(".edges")) if _SPEC != "memory" else None
 
 
 def _load_creature() -> Creature:
     if DATA.exists():
-        return Creature.load(DATA, log=_LOG)      # replays any tail past the checkpoint
+        return Creature.load(DATA, log=_LOG, store=_STORE)   # replays any tail past the checkpoint
     # no trained creature yet: a fresh one tuned for hand-training (a human feeds a
     # handful of examples per frame, so induce from small groups, often). A log
     # with no checkpoint (e.g. a crash before the first save) is replayed whole.
-    c = Creature(NAME, min_group=3, induction_interval=50, log=_LOG)
+    c = Creature(NAME, min_group=3, induction_interval=50, log=_LOG, store=_STORE)
     if len(_LOG):
         c.catch_up()
     return c
@@ -62,7 +73,7 @@ def _fresh_creature() -> Creature:
         m = DATA.stat().st_mtime
         if m > _mtime:
             _LOG.refresh()                        # the trainer appended: resync the counter
-            _creature = Creature.load(DATA, log=_LOG)
+            _creature = Creature.load(DATA, log=_LOG, store=_STORE)
             _mtime = m
     return _creature
 

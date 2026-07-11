@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import time
 from pathlib import Path
 
@@ -29,6 +30,7 @@ from .creature import Creature, _slug
 from .datasets import registry as R
 from .datasets import syllabus as SYL
 from .episodelog import JsonlEpisodeLog, creature_lock
+from .store import open_store, store_files
 
 # real prose needs a wide induction window; the slot cap keeps clause-wide real
 # slots out of the concept web while grounded single-token facts commit cleanly.
@@ -52,27 +54,72 @@ def _log_path(name: str) -> Path:
     return _store_path(name).with_suffix(".episodes.jsonl")
 
 
+def _edges_base(name: str) -> Path:
+    """Base path (no extension) for a durable edge store's files."""
+    return _store_path(name).with_suffix(".edges")
+
+
+def _checkpoint_spec(path: Path) -> str | None:
+    """The store spec a checkpoint on disk says its concept web lives in
+    (``None`` for inline geometry / no readable checkpoint)."""
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))["geometry"]["concept_web"].get("external")
+    except (OSError, ValueError, KeyError):
+        return None
+
+
+def _store_spec(cli: str | None = None, checkpoint: Path | None = None) -> str:
+    """Which EdgeStore backs the creature: --store flag, else RELWEB_STORE,
+    else whatever the existing checkpoint says it needs (a migrated creature
+    keeps working with no env set — the state knows its own backend), else
+    in-memory (geometry inline in the JSON checkpoint, as always). An explicit
+    flag/env that differs from the checkpoint is a deliberate migration."""
+    explicit = cli or os.environ.get("RELWEB_STORE")
+    if explicit:
+        return explicit
+    if checkpoint is not None:
+        return _checkpoint_spec(checkpoint) or "memory"
+    return "memory"
+
+
 def _progress_path() -> Path:
     return _root() / "data" / "progress.jsonl"
 
 
-def load_or_create(name: str, reset: bool = False, **kw) -> Creature:
+def load_or_create(name: str, reset: bool = False, store_spec: str | None = None, **kw) -> Creature:
     path = _store_path(name)
     lpath = _log_path(name)
-    if reset and lpath.exists():
-        # a reset starts a new history; the old log is rotated aside, never deleted
-        lpath.rename(lpath.parent / (lpath.name + f".{time.strftime('%Y%m%d-%H%M%S')}.bak"))
+    spec = _store_spec(store_spec, checkpoint=None if reset else path)
+    if reset:
+        # a reset starts a new history; the old log and edge database are
+        # rotated aside, never deleted
+        ts = time.strftime("%Y%m%d-%H%M%S")
+        for f in ([lpath] if lpath.exists() else []) + store_files(spec, _edges_base(name)):
+            f.rename(f.parent / (f.name + f".{ts}.bak"))
     log = JsonlEpisodeLog(lpath)
+    store = open_store(spec, _edges_base(name))
     if path.exists() and not reset:
-        c = Creature.load(path, log=log)          # replays any tail past the checkpoint
+        c = Creature.load(path, log=log, store=store)   # replays any tail past the checkpoint
         print(f"resumed '{c.name}' — {len(c.passed_stages)} stage(s) mastered, "
-              f"{c.episodes_seen} episodes")
+              f"{c.episodes_seen} episodes [{spec} store]")
         return c
-    print(f"created new creature '{name}'")
-    c = Creature(name, created=time.strftime("%Y-%m-%d"), log=log, **kw)
+    print(f"created new creature '{name}' [{spec} store]")
+    c = Creature(name, created=time.strftime("%Y-%m-%d"), log=log, store=store, **kw)
     if len(log):                                  # a log with no checkpoint: replay it all
         c.catch_up()
     return c
+
+
+def open_creature(name: str, store_spec: str | None = None) -> Creature:
+    """Open an EXISTING creature with its log and configured store — the one
+    loader every CLI (correct, wonder, serve helpers) shares, so they all
+    honour RELWEB_STORE the same way."""
+    path = _store_path(name)
+    if not path.exists():
+        raise SystemExit(f"no trained creature '{name}' at {path}")
+    spec = _store_spec(store_spec, checkpoint=path)
+    return Creature.load(path, log=JsonlEpisodeLog(_log_path(name)),
+                         store=open_store(spec, _edges_base(name)))
 
 
 def teach_stage(creature: Creature, stage: dict, registry: list[dict]):
@@ -129,16 +176,19 @@ def report_card(stage: dict, ingested: list, report: dict, passed: bool) -> None
         print("   (reading stage — no worksheet)")
 
 
-def run_curriculum(name: str, *, reset: bool, drain: bool, max_stages: int) -> Creature:
+def run_curriculum(name: str, *, reset: bool, drain: bool, max_stages: int,
+                   store_spec: str | None = None) -> Creature:
     registry, stages = R.load_registry(), R.load_stages()
     with creature_lock(_store_path(name).parent):   # exclude the serving app's writes
-        return _run_curriculum_locked(name, registry, stages,
-                                      reset=reset, drain=drain, max_stages=max_stages)
+        return _run_curriculum_locked(name, registry, stages, reset=reset,
+                                      drain=drain, max_stages=max_stages,
+                                      store_spec=store_spec)
 
 
 def _run_curriculum_locked(name: str, registry, stages, *, reset: bool,
-                           drain: bool, max_stages: int) -> Creature:
-    c = load_or_create(name, reset=reset, **_PARAMS)
+                           drain: bool, max_stages: int,
+                           store_spec: str | None = None) -> Creature:
+    c = load_or_create(name, reset=reset, store_spec=store_spec, **_PARAMS)
     path = _store_path(name)
     advanced = 0
     while True:
@@ -159,6 +209,13 @@ def _run_curriculum_locked(name: str, registry, stages, *, reset: bool,
             break
         if not drain and advanced >= max_stages:
             break
+    if advanced and os.environ.get("RELWEB_AUTOSNAP", "1") != "0":
+        # snapshot the post-tick state (auto-<log position>, pruned to the
+        # newest RELWEB_AUTOSNAP_KEEP) — last night's state is one
+        # `relweb-version --rollback` away. We already hold the creature lock.
+        from .version import autosnap
+        autosnap(name, c.log_position,
+                 keep=int(os.environ.get("RELWEB_AUTOSNAP_KEEP", "5")), take_lock=False)
     return c
 
 
@@ -190,13 +247,17 @@ def main() -> int:
     ap.add_argument("--all", dest="drain", action="store_true", help="run the whole curriculum now")
     ap.add_argument("--max-stages", type=int, default=1, help="stages to attempt this run (a tick)")
     ap.add_argument("--progress", action="store_true", help="print the report card and exit")
+    ap.add_argument("--store", default=None, metavar="SPEC",
+                    help="edge-store backend: memory (default) | sqlite | sharded[:N]; "
+                         "RELWEB_STORE sets the same thing for every relweb command")
     args = ap.parse_args()
 
     if args.progress:
         print_progress(args.name)
         return 0
 
-    c = run_curriculum(args.name, reset=args.reset, drain=args.drain, max_stages=args.max_stages)
+    c = run_curriculum(args.name, reset=args.reset, drain=args.drain,
+                       max_stages=args.max_stages, store_spec=args.store)
     c.close()
     return 0
 

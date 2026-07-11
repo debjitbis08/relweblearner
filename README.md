@@ -146,7 +146,9 @@ poetry run relweb-wonder --tick          # one batch: ask the oracles, ingest, r
 ```
 
 Training, wondering and serving share a lock, so a correction can never
-interleave with a scheduled run. Or ship the whole thing as a container:
+interleave with a scheduled run. Each training tick also snapshots the state it
+produced (see versioning below), so any night's run can be undone. Or ship the
+whole thing as a container:
 
 ```bash
 docker build -t relweb . && docker run -p 8000:8000 -v relweb-data:/data relweb
@@ -181,6 +183,39 @@ the label survives only as the worksheet's answer key.
 **Name your creature** — `relweb-train --name darwin` raises a separate
 creature with its own log, checkpoint and report card. `RELWEB_CREATURE` /
 `RELWEB_DATA` point the server at it.
+
+**Scale its memory** — by default the concept web lives in RAM and inside the
+JSON checkpoint; past a laptop-sized world, move it behind an indexed on-disk
+store. One switch, honoured by every command (`relweb-train --store` sets it
+per run):
+
+```bash
+export RELWEB_STORE=sqlite      # or sharded:6 — memory is the default
+```
+
+The checkpoint then records a *pointer* to the database instead of dumping the
+web, saves stay O(what-is-bounded) however large the geometry grows, and
+queries stay O(neighbourhood) (measured to 200k+ concepts,
+[docs/scale-substrate.md](docs/scale-substrate.md)). An existing JSON-trained
+creature migrates automatically the first time it is opened with a store; if
+the database file is ever lost, the episode log rebuilds it by replay.
+
+**Version the mind** — a creature's whole state is checkpoint + append-only
+log (+ store files), so a *version* is a consistent, taggable copy of the
+three, and two versions diff as **belief sets**, not bytes:
+
+```bash
+relweb-version --tag before-wikidata     # snapshot the current state
+relweb-version --diff before-wikidata    # what has it learned/unlearned since?
+relweb-version --rollback before-wikidata# restore it (current state rotated aside)
+relweb-version --list                    # every version, with the code that made it
+```
+
+Every training tick auto-snapshots (`auto-*` tags, newest
+`RELWEB_AUTOSNAP_KEEP` kept, `RELWEB_AUTOSNAP=0` disables), rollback restores
+the log too (so the abandoned tail can never replay back on top), and every
+checkpoint is stamped with the git commit and curriculum hash that produced
+it — any state file is traceable to the exact code and syllabus behind it.
 
 **Tune its epistemology** — `Creature(...)` constructor knobs, all with the
 defaults visible in `src/relweblearner/creature.py`:

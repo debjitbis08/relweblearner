@@ -8,6 +8,9 @@
 # ensures a slow tick never overlaps the next one. Tune per-tick size and target
 # with env vars (defaults shown). Portable: when you outgrow the laptop, run the
 # same script (or `poetry run relweb-train`) wherever the repo and data volume live.
+# RELWEB_STORE=sqlite (or sharded:N) moves the concept web to an on-disk store;
+# each tick that advances auto-snapshots the state (RELWEB_AUTOSNAP=0 disables,
+# RELWEB_AUTOSNAP_KEEP tunes retention) — inspect and roll back with `relweb-version`.
 set -euo pipefail
 
 # cron runs with a bare environment, so make sure poetry (~/.local/bin) and flock

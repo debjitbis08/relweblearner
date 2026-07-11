@@ -25,15 +25,12 @@ from pathlib import Path
 
 from . import curiosity as CU
 from .creature import Creature
-from .episodelog import JsonlEpisodeLog, creature_lock
-from .train import _log_path, _root, _store_path
+from .episodelog import creature_lock
+from .train import _root, _store_path, open_creature
 
 
 def _load(name: str) -> Creature:
-    path = _store_path(name)
-    if not path.exists():
-        raise SystemExit(f"no trained creature '{name}' at {path}")
-    return Creature.load(path, log=JsonlEpisodeLog(_log_path(name)))
+    return open_creature(name)   # honours RELWEB_STORE like every other CLI
 
 
 def _print_ledger(led: dict) -> None:

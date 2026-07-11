@@ -57,6 +57,14 @@ def _as_source_counts(sources) -> dict:
 class EdgeStore:
     """Interface every backend implements. All names are concept strings."""
 
+    #: does this backend persist itself (its files ARE the geometry)? A durable
+    #: store lets the checkpoint record a POINTER to the web instead of dumping
+    #: every edge into JSON — save stays O(bounded state), not O(web).
+    durable: bool = False
+    #: the ``open_store`` spec that built this store (``None`` if hand-built) —
+    #: recorded in external checkpoints so a reload knows what to reopen.
+    spec: str | None = None
+
     def bump(self, src: str, tgt: str, rel: str, source: str, source_cap: int) -> None:
         raise NotImplementedError
 
@@ -248,6 +256,7 @@ class SqliteEdgeStore(EdgeStore):
 
     def __init__(self, path: str | Path = ":memory:", node_cache_cap: int = 100_000):
         self.path = str(path)
+        self.durable = self.path != ":memory:"
         self.db = sqlite3.connect(self.path)
         self.db.executescript("PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;")
         self.db.executescript(_SCHEMA)
@@ -437,6 +446,7 @@ class ShardedEdgeStore(EdgeStore):
     def __init__(self, shards: list[EdgeStore], route=_default_route):
         self.shards = shards
         self._route = route
+        self.durable = bool(shards) and all(sh.durable for sh in shards)
 
     def _shard(self, src: str) -> EdgeStore:
         return self.shards[self._route(src, len(self.shards))]
@@ -507,3 +517,59 @@ class ShardedEdgeStore(EdgeStore):
     def close(self):
         for sh in self.shards:
             sh.close()
+
+
+# ============================================================ selection seam
+#
+# One creature = one geometry; WHICH backend holds it is deployment config, not
+# code. ``open_store`` maps a spec string (the RELWEB_STORE env var / --store
+# flag) plus the creature's edge-file base path to a live store, and
+# ``store_files`` names the disk artefacts that spec owns at that base — the
+# pieces a reset must rotate aside and a version snapshot must copy.
+
+def open_store(spec: str | None, base: str | Path) -> EdgeStore:
+    """Build the EdgeStore ``spec`` names, rooted at ``base`` (a path WITHOUT
+    extension, e.g. ``data/creatures/scholar.edges``):
+
+      * ``None`` / ``"memory"`` — :class:`InMemoryEdgeStore` (the default;
+        geometry lives inline in the JSON checkpoint, exactly as before);
+      * ``"sqlite"`` — :class:`SqliteEdgeStore` at ``<base>.sqlite``;
+      * ``"sharded"`` / ``"sharded:N"`` — N (default 4) SQLite shards under
+        ``<base>.d/``.
+    """
+    if spec in (None, "", "memory"):
+        st: EdgeStore = InMemoryEdgeStore()
+        st.spec = "memory"
+        return st
+    if spec == "sqlite":
+        st = SqliteEdgeStore(Path(f"{base}.sqlite"))
+    elif spec == "sharded" or spec.startswith("sharded:"):
+        n = int(spec.split(":", 1)[1]) if ":" in spec else 4
+        if n < 1:
+            raise ValueError(f"sharded store needs >= 1 shard, got {n}")
+        d = Path(f"{base}.d")
+        d.mkdir(parents=True, exist_ok=True)
+        st = ShardedEdgeStore([SqliteEdgeStore(d / f"shard-{i}.sqlite") for i in range(n)])
+    else:
+        raise ValueError(f"unknown store spec {spec!r} (memory | sqlite | sharded[:N])")
+    st.spec = spec
+    return st
+
+
+def store_files(spec: str | None, base: str | Path) -> list[Path]:
+    """The disk paths ``open_store(spec, base)`` reads and writes (empty for
+    in-memory). Existing files only — callers rotate or copy what is there."""
+    if spec in (None, "", "memory"):
+        return []
+    if spec == "sqlite":
+        # include SQLite's WAL sidecars: a copy without them loses committed writes
+        return [p for p in (Path(f"{base}.sqlite"), Path(f"{base}.sqlite-wal"),
+                            Path(f"{base}.sqlite-shm")) if p.exists()]
+    if spec == "sharded" or spec.startswith("sharded:"):
+        d = Path(f"{base}.d")
+        if not d.exists():
+            return []
+        return sorted(p for p in d.iterdir()
+                      if p.name.startswith("shard-")
+                      and (p.suffix == ".sqlite" or p.name.endswith((".sqlite-wal", ".sqlite-shm"))))
+    raise ValueError(f"unknown store spec {spec!r} (memory | sqlite | sharded[:N])")

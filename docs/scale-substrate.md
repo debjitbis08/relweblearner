@@ -150,10 +150,24 @@ animal) never do. The classes persist with the geometry. This is the same
 mention/node-merge decision as cross-book character identity (R3), on the relation
 axis; batch reference machinery is `types.py` (P2′) and `sectors.py`.
 
+## Store selection in the live path (built)
+
+The stores are wired into every entry point: `RELWEB_STORE=memory|sqlite|sharded[:N]`
+(or `relweb-train --store`) selects the backend for the trainer, the server,
+`relweb-correct`, `relweb-wonder` and `relweb-version` alike (`store.open_store`
+is the one factory). Under a durable store the JSON checkpoint stops dumping the
+web and records an **external pointer** (spec + counts) instead — the database
+files are their own persistence — so `save` is O(bounded state) regardless of
+geometry size. Saves are atomic (temp + rename) and stamped with the git commit
+and curriculum hash that produced them; an inline-geometry checkpoint migrates
+into a store the first time it is loaded with one; a lost database is rebuilt
+from the episode log by replay (the log stays the belief source). Versioning
+(`relweb-version`: tag / list / belief-diff / rollback, plus per-tick auto
+snapshots) covers checkpoint + log + store files as one consistent unit.
+
 ## Not yet built (next steps)
 
-- Migrating the web app to serve **named creatures** (identity in the API/UI),
-  and per-creature store selection (in-memory vs on-disk vs sharded).
+- Migrating the web app to serve **named creatures** (identity in the API/UI).
 - An archived/sampled episode stream alongside the store (currently episodes are
   distilled and dropped; keeping a sampled trail would aid audit/replay).
 - Relation unification up to TRANSPOSE (a frame that orients the other way

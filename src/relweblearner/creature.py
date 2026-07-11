@@ -75,6 +75,7 @@ hand-trained one.
 from __future__ import annotations
 
 import json
+import os
 import random
 import re
 from collections import Counter
@@ -2171,11 +2172,14 @@ class Creature:
         self._trace("geometry", {f"nodes:{len(node_set)}"}, {f"edges:{len(edges)}"})
         return {
             "concept_web": {"nodes": sorted(node_set), "edges": edges},
-            "language_web": {
-                "frames": {fid: [list(e) for e in f.pattern] for fid, f in self.frames.items()},
-                "source_slot": self.source_slot,
-                "relations": self._rel_of(),   # frame -> unified relation class
-            },
+            "language_web": self._language_web(),
+        }
+
+    def _language_web(self) -> dict:
+        return {
+            "frames": {fid: [list(e) for e in f.pattern] for fid, f in self.frames.items()},
+            "source_slot": self.source_slot,
+            "relations": self._rel_of(),   # frame -> unified relation class
         }
 
     def embedding(self, dim: int = 2) -> dict:
@@ -2208,7 +2212,23 @@ class Creature:
     def to_dict(self) -> dict:
         """Serialise identity + GEOMETRY (never the algebra, never the episode
         history). The algebra stays in code; reload rebuilds the web and the fixed
-        machinery operates on it again."""
+        machinery operates on it again.
+
+        When the edges live in a DURABLE store (SQLite / sharded), the concept
+        web is NOT dumped here — its database files are their own persistence,
+        and re-serialising O(web) edges into JSON on every save is exactly what
+        the store exists to avoid. The checkpoint then records an ``external``
+        pointer (the store spec) plus counts, and ``load`` must be handed the
+        reopened store."""
+        if self.edges.durable:
+            geometry = {
+                "concept_web": {"external": self.edges.spec or "external",
+                                "nodes": self.edges.num_nodes(),
+                                "edges": self.edges.num_edges()},
+                "language_web": self._language_web(),
+            }
+        else:
+            geometry = self.geometry()
         return {
             "identity": {"name": self.name, "id": self.id, "created": self.created, "level": self.level},
             "algebra": "frozen in code (not stored) — only geometry is persisted",
@@ -2239,7 +2259,7 @@ class Creature:
             "log_position": self.log_position,
             "ledger": {"read_sources": sorted(self.read_sources),    # registry ids already ingested (incremental training)
                        "passed_stages": sorted(self.passed_stages)}, # curriculum stages mastered (worksheet passed)
-            "geometry": self.geometry(),
+            "geometry": geometry,
             "frontier": {str(k): v for k, v in self.frontier.items()},
             # induction reservoir + stream counter + RNG state, so a checkpoint
             # resumed with a tail replay is identical to the uninterrupted run
@@ -2252,12 +2272,26 @@ class Creature:
         return [st[0], list(st[1]), st[2]]
 
     def save(self, path: str | Path) -> None:
-        Path(path).write_text(json.dumps(self.to_dict(), ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        """Checkpoint atomically: flush the store and log first (a checkpoint
+        must never point past durable state), write a sibling temp file, then
+        ``os.replace`` — a crash mid-save leaves the previous checkpoint whole.
+        Each save is stamped with when/what produced it (git SHA, curriculum
+        hash) so any state file is traceable to the code and syllabus behind it."""
+        self.commit()
+        d = self.to_dict()
+        from .version import stamp  # local import: version imports this module
+        d["provenance"] = stamp()
+        path = Path(path)
+        tmp = path.with_name(path.name + ".tmp")
+        tmp.write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        os.replace(tmp, path)
 
     @classmethod
-    def from_dict(cls, d: dict, log: EpisodeLog | None = None) -> "Creature":
+    def from_dict(cls, d: dict, log: EpisodeLog | None = None,
+                  store: EdgeStore | None = None) -> "Creature":
         idy, p = d["identity"], d["params"]
-        c = cls(idy["name"], created=idy.get("created"), level=idy.get("level"), log=log, **p)
+        c = cls(idy["name"], created=idy.get("created"), level=idy.get("level"),
+                log=log, store=store, **p)
         cnt = d["counters"]
         c.episodes_seen, c.parsed, c.unparsed = cnt["episodes_seen"], cnt["parsed"], cnt["unparsed"]
         c.grown_seq = cnt.get("grown_seq", 0)
@@ -2275,8 +2309,21 @@ class Creature:
         c.frames = {fid: C.Frame(fid, tuple(tuple(e) for e in pat)) for fid, pat in lang["frames"].items()}
         c.source_slot = {k: int(v) for k, v in lang["source_slot"].items()}
         c._rel_parent = {fid: root for fid, root in lang.get("relations", {}).items()}
-        for e in geo["concept_web"]["edges"]:
-            c.edges.put(e["src"], e["tgt"], {"count": e["count"], "sources": e["sources"], "frames": e["rel"]})
+        cw = geo["concept_web"]
+        if "external" in cw:
+            # the concept web lives in a durable store's own files; the caller
+            # must hand us that store reopened — there is nothing to re-put.
+            if store is None:
+                raise ValueError(
+                    f"checkpoint for '{idy['name']}' keeps its concept web in an "
+                    f"external store (spec {cw['external']!r}); pass store= "
+                    f"(set RELWEB_STORE / --store to match)")
+        else:
+            # inline edges load into whatever store the creature holds — handing
+            # a durable store here IS the JSON->store migration: the next save
+            # writes the external form and never dumps the web again.
+            for e in cw["edges"]:
+                c.edges.put(e["src"], e["tgt"], {"count": e["count"], "sources": e["sources"], "frames": e["rel"]})
         c.frontier = {int(k): v for k, v in d["frontier"].items()}
         c.read_sources = set(d.get("ledger", {}).get("read_sources", []))
         c.passed_stages = set(d.get("ledger", {}).get("passed_stages", []))
@@ -2290,13 +2337,25 @@ class Creature:
         return c
 
     @classmethod
-    def load(cls, path: str | Path, log: EpisodeLog | None = None) -> "Creature":
+    def load(cls, path: str | Path, log: EpisodeLog | None = None,
+             store: EdgeStore | None = None) -> "Creature":
         """Restore the checkpoint; if the given log has grown past it (another
         writer appended, or a crash lost a save), replay the tail (invariant #5:
         the log is the belief source, the file just a checkpoint of it). The
         number sense — a pure projection — re-derives from the log's pairing
-        and ostension entries."""
-        c = cls.from_dict(json.loads(Path(path).read_text(encoding="utf-8")), log=log)
+        and ostension entries.
+
+        A checkpoint whose concept web is EXTERNAL needs its ``store`` passed
+        in. If that store turns out empty while the checkpoint says the web had
+        edges (a deleted/misplaced database file), the log is still the source
+        of truth: rebuild the whole projection by replay rather than resume
+        silently amnesiac."""
+        d = json.loads(Path(path).read_text(encoding="utf-8"))
+        c = cls.from_dict(d, log=log, store=store)
+        cw = d["geometry"]["concept_web"]
+        if "external" in cw and cw.get("edges", 0) and c.edges.num_edges() == 0 and len(c.log):
+            c._trace("store-lost", {f"expected:{cw['edges']}"}, {"rebuild:full-replay"})
+            return c.rebuild()   # replays everything, pairings included
         c._reproject_numbers()
         if len(c.log) > c.log_position:
             c.catch_up()
