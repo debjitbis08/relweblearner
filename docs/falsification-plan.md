@@ -159,6 +159,29 @@ contributions of the geometry are not raw capability numbers but:
   is — a property of exact composition, demonstrated on a representation
   that entails it.
 
+## 6½. Bench v2 addendum (2026-07-12, pre-registered before the v2 run)
+
+The composition follow-up left one measurement owed: miner-vs-gate under
+poisoned composition evidence, at benchmark level. Bench v2 adds the **P7
+poisoned-composition arm**: off-chain stranger entities in five 3-chains of
+a new symmetric relation (``x stands near y``); the liars cap three chains
+with forged ``step⁺`` facts (``end2 comes right after end0``) — evidence
+engineered to be SELF-LICENSING for a PCA-confidence rule miner (the only
+``near∘near`` body pairs whose subject carries step⁺ testimony are exactly
+the forged heads → confidence 1.0), while admitting it as a geometric
+constraint forces ``g(step) = 0 + 0`` and zeroes a live gauge group. The two
+clean chains are the probes: asked ``step⁺`` about their ends, the right
+answer is refusal; a system that admitted the rule derives garbage. The main
+world's draws are bit-identical to v1 (strangers come from a child rng and
+append after the stream), so F1–F6 are predicted unchanged.
+
+Pre-registered predictions (P7, lie arm): induced-rules admits the junk rule
+5/5 seeds and scores 0.00 refusal accuracy; relweb refuses the rule 5/5
+(step stays a live ±1 generator) and scores 1.00; lookup and oracle-rules
+score 1.00 (no such rule exists for them). If instead the gate admits the
+forged rule on any seed, the "miner proposes, geometry disposes" claim from
+the follow-up report is falsified at bench level and must be withdrawn.
+
 ## 7. What this benchmark does not settle
 
 Internal validity only: the world is synthetic, closed, and small, and the

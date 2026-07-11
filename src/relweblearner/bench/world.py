@@ -66,11 +66,18 @@ OFF_FRAME = [
 _CONSONANTS = "bdfgklmnprstvz"
 _VOWELS = "aeiou"
 
+# v2, the poisoned-composition arm: stranger chains of the symmetric 'near'
+# relation, three of them capped by FORGED step+ facts (the liars fabricating
+# self-licensing composition evidence), two kept clean as garbage probes.
+STRANGER_CHAINS = 5
+FORGED_CHAINS = 3
 
-def _names(rng: random.Random, n: int) -> list[str]:
+
+def _names(rng: random.Random, n: int, avoid: tuple = ()) -> list[str]:
     """Fresh CVCVC entity names, disjoint from every anchor/color word."""
     out: list[str] = []
     seen = set(ANCHORS) | set(COLORS) | set(OFF_FRAME[0] + OFF_FRAME[1] + OFF_FRAME[2])
+    seen |= set(avoid)
     while len(out) < n:
         w = (rng.choice(_CONSONANTS) + rng.choice(_VOWELS) + rng.choice(_CONSONANTS)
              + rng.choice(_VOWELS) + rng.choice(_CONSONANTS))
@@ -91,10 +98,11 @@ def _r_skip_fwd(x, y):    return ([x, "sits", "two", "past", y], x)
 def _r_skip_rev(x, y):    return ([x, "lies", "two", "shy", "of", y], x)
 def _r_color(x, c):       return (["the", x, "looks", c], x)
 def _r_likes(x, y):       return ([x, "plays", "with", y], x)
+def _r_near(x, y):        return ([x, "stands", "near", y], x)
 
 RENDER = {"step+": _r_step_fwd, "step-": _r_step_rev,
           "skip+": _r_skip_fwd, "skip-": _r_skip_rev,
-          "color": _r_color, "likes": _r_likes}
+          "color": _r_color, "likes": _r_likes, "near": _r_near}
 
 # How each relation is ASKED (the second slot blanked).
 ASK = {"step+": "{s} comes right after ?", "step-": "{s} is just before ?",
@@ -113,6 +121,7 @@ class World:
     liar_books: tuple[str, str] = ("liar-a", "liar-b")
     d1: dict = field(default_factory=dict)  # the functional lie {subject, wrong, right}
     d2: dict = field(default_factory=dict)  # the loop lie {subject, wrong, right}
+    forged: dict = field(default_factory=dict)  # the P7 attack {rule, forged_subjects, probes}
 
 
 def generate(seed: int = 0) -> World:
@@ -269,5 +278,51 @@ def generate(seed: int = 0) -> World:
                       | {a for a, b in likes_pairs if b == hub})
     ask("F6-plural-likes", "likes", hub, set(partners))
 
+    # ---------------- v2: the poisoned-composition attack (P7)
+    # Off-chain STRANGER entities in 3-chains of the symmetric 'near'
+    # relation; the liars cap FORGED_CHAINS of them with forged step+ facts
+    # ("end2 comes right after end0") — SELF-LICENSING composition evidence:
+    # the only near∘near body pairs whose subject carries any step+ testimony
+    # are exactly the forged heads, so a PCA-confidence rule miner reads the
+    # rule step+ = near∘near at confidence 1.0, while accepting it as a
+    # geometric constraint would force g(step) = 0 + 0 and zero a live gauge
+    # group. The clean chains are the garbage probes: a system that admitted
+    # the rule derives step+ facts there; the right answer is refusal.
+    # A CHILD rng keeps every draw above bit-identical to bench v1; stranger
+    # pages append after the main stream, shuffled among themselves.
+    srng = random.Random((seed << 16) + 7)
+    strangers = _names(srng, 3 * STRANGER_CHAINS, avoid=tuple(chain))
+    chains3 = [strangers[i * 3:i * 3 + 3] for i in range(STRANGER_CHAINS)]
+    spages: list[tuple[dict, tuple | None]] = []
+    for c3 in chains3:
+        for x, y in ((c3[0], c3[1]), (c3[1], c3[2])):
+            for s, t in ((x, y), (y, x)):                  # symmetric: both ways
+                for book in srng.sample(books, WITNESSES):
+                    tokens, pic = _r_near(s, t)
+                    for _ in range(REPEATS):
+                        spages.append(({"book": book, "tokens": list(tokens),
+                                        "picture": pic, "marks": None},
+                                       ("near", s, t)))
+    forged_subjects = []
+    for c3 in chains3[:FORGED_CHAINS]:
+        s, t = c3[2], c3[0]                                # end2 comes right after end0
+        forged_subjects.append(s)
+        for book in ("liar-a", "liar-b"):
+            tokens, pic = _r_step_fwd(s, t)
+            for _ in range(REPEATS):
+                spages.append(({"book": book, "tokens": list(tokens),
+                                "picture": pic, "marks": None},
+                               ("step+", s, t)))
+    srng.shuffle(spages)
+    episodes += [p for p, _g in spages]
+    gold += [g for _p, g in spages]
+    probes = []
+    for c3 in chains3[FORGED_CHAINS:]:
+        for s in (c3[0], c3[2]):                           # both clean-chain ends
+            ask("P7-junkcomp", "step+", s, None)
+            probes.append(s)
+    forged = {"rule": ("step+", "near", "near"),
+              "forged_subjects": forged_subjects, "probes": probes}
+
     return World(seed=seed, chain=chain, episodes=episodes, gold=gold,
-                 queries=queries, d1=d1, d2=d2)
+                 queries=queries, d1=d1, d2=d2, forged=forged)

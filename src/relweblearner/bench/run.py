@@ -33,6 +33,7 @@ from .baselines import GoldKB, InducedRules, Lookup, bench_oracle
 PARAMS = dict(commit_k=2, min_group=10, induction_interval=40, buffer_cap=4000)
 FAMILIES = ["F1-memory", "F2-invert-step", "F3-skip-transfer",
             "F4-invert-skip", "F5-refuse-color", "F6-plural-likes"]
+P_FAMILY = "P7-junkcomp"      # scored on the LIE arm (the forgeries live there)
 SYSTEMS = ["lookup", "induced-rules", "oracle-rules", "relweb", "relweb-noderive"]
 
 
@@ -60,10 +61,11 @@ def _correct(got: str | None, expect) -> bool:
     return got == expect
 
 
-def _score(w: W.World, answer_fn) -> dict[str, list[bool]]:
-    per: dict[str, list[bool]] = {f: [] for f in FAMILIES}
+def _score(w: W.World, answer_fn, families: list[str] = FAMILIES) -> dict[str, list[bool]]:
+    per: dict[str, list[bool]] = {f: [] for f in families}
     for q in w.queries:
-        per[q["family"]].append(_correct(answer_fn(q), q["expect"]))
+        if q["family"] in per:
+            per[q["family"]].append(_correct(answer_fn(q), q["expect"]))
     return per
 
 
@@ -132,6 +134,24 @@ def run_seed(seed: int) -> dict:
                 for name, b in b_lie.items()}
     poisoned["relweb"] = _relweb_answer(c_lie, poison_q) == w.d2["wrong"]
 
+    # P7, the poisoned-composition attack (lie arm): who admits the forged
+    # rule step+ = near∘near, and who derives garbage on the clean chains?
+    p7: dict[str, dict] = {}
+    for name, b in b_lie.items():
+        scored = _score(w, lambda q, b=b: b.answer(q["rel"], q["subject"]),
+                        families=[P_FAMILY])[P_FAMILY]
+        rule = tuple(w.forged["rule"])
+        p7[name] = {"accuracy": _accuracy(scored),
+                    "junk_admitted": rule in getattr(b, "compositions", [])}
+    scored = _score(w, lambda q: _relweb_answer(c_lie, q["phrase"]),
+                    families=[P_FAMILY])[P_FAMILY]
+    step_row = next(r for r in c_lie._sector_rows()
+                    if any("comes right after" in t for t in r["templates"]))
+    p7["relweb"] = {"accuracy": _accuracy(scored),
+                    # admitted junk would zero the live step generator
+                    "junk_admitted": not (step_row["sector"] == "antisymmetric"
+                                          and step_row["transport"] not in (0, None))}
+
     # U1 exact unlearning: retract the liars, answers must match the clean arm
     for liar in w.liar_books:
         c_lie.retract_source(liar)
@@ -149,7 +169,7 @@ def run_seed(seed: int) -> dict:
 
     return {"seed": seed, "families": fam, "clean_flags": clean_flags,
             "discovered": discovered, "detect": detect, "poisoned": poisoned,
-            "unlearn": unlearn,
+            "p7": p7, "unlearn": unlearn,
             "n_episodes": len(w.episodes), "n_queries": len(w.queries)}
 
 
@@ -182,6 +202,11 @@ def aggregate(runs: list[dict]) -> dict:
         for s in ("lookup", "induced-rules", "oracle-rules", "relweb")}
     out["summary"]["unlearn_relweb_match"] = round(statistics.mean(
         r["unlearn"]["relweb_match"] for r in runs), 4)
+    out["summary"]["p7"] = {
+        s: {"accuracy": round(statistics.mean(r["p7"][s]["accuracy"] for r in runs), 4),
+            "junk_admitted": round(statistics.mean(
+                1.0 if r["p7"][s]["junk_admitted"] else 0.0 for r in runs), 4)}
+        for s in ("lookup", "induced-rules", "oracle-rules", "relweb")}
     out["summary"]["clean_false_alarms"] = {
         s: sum(r["clean_flags"][s] for r in runs)
         for s in ("lookup", "induced-rules", "oracle-rules", "relweb")}
@@ -225,6 +250,15 @@ def report_md(agg: dict, elapsed: float) -> str:
         "",
         f"RelWeb D2 localization (defect touches the lie's endpoints): "
         f"{s['d2_localized']:.2f}",
+        "",
+        "P7 poisoned composition (lie arm; forged rule step+ = near∘near):",
+        "",
+        "| system | junk rule admitted | refusal accuracy on clean chains |",
+        "|---|---|---|",
+    ] + [
+        f"| {x} | {s['p7'][x]['junk_admitted']:.2f} | {s['p7'][x]['accuracy']:.2f} |"
+        for x in ("lookup", "induced-rules", "oracle-rules", "relweb")
+    ] + [
         "",
         "Poisoning (committed lie repeated when asked): " + ", ".join(
             f"{x} {s['poisoned'][x]:.2f}" for x in

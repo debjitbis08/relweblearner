@@ -86,6 +86,36 @@ def test_baselines_match_their_definitions(w):
     assert ("skip+", "step+", "step+") in induced.compositions
 
 
+def test_p7_attack_traps_the_miner_and_not_the_gate(w):
+    """The poisoned-composition arm's contract, on one seed end to end: the
+    forged step+ pages over stranger 'near' chains are SELF-LICENSING for a
+    PCA-confidence miner (the only applicable body pairs are the forged
+    heads), so it inducts step+ = near∘near and derives step-garbage on the
+    clean chains — while the defect gate refuses the same candidate because
+    accepting it would zero the live step generator (g = 0 + 0)."""
+    from relweblearner.bench.baselines import InducedRules
+    from relweblearner.bench.run import P_FAMILY, _relweb_answer, _score, _train
+
+    lie_kb = GoldKB([(ep["book"], g) for ep, g in zip(w.episodes, w.gold)])
+    miner = InducedRules(lie_kb)
+    assert tuple(w.forged["rule"]) in miner.compositions      # trapped
+    mined = _score(w, lambda q: miner.answer(q["rel"], q["subject"]),
+                   families=[P_FAMILY])[P_FAMILY]
+    assert not any(mined)                                     # garbage everywhere
+
+    c = _train(list(w.episodes), seed=0)
+    step = next(r for r in c._sector_rows()
+                if any("comes right after" in t for t in r["templates"]))
+    assert step["sector"] == "antisymmetric" and step["transport"] != 0
+    ours = _score(w, lambda q: _relweb_answer(c, q["phrase"]),
+                  families=[P_FAMILY])[P_FAMILY]
+    assert all(ours)                                          # refused, correctly
+
+    # and the clean arm never even mines the rule (no forged evidence)
+    clean_kb = _clean_kb(w)
+    assert tuple(w.forged["rule"]) not in InducedRules(clean_kb).compositions
+
+
 def test_creature_clears_the_c1_floor_on_seed_zero(w):
     """End to end on one seed: the creature, reading raw pages, discovers the
     converse structure and answers the F2/F4 inversions (the plan's C1
