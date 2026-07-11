@@ -27,10 +27,26 @@ whose entire mental life is inspectable:
 - Everything it *does* — reading, merging two ideas, answering, changing its
   mind — leaves a trace it can itself read.
 
-No dials. No statistics-until-it-looks-right. The interesting question the
-project asks is: how much of what we call intelligence — counting, arithmetic,
-reading, generalizing, doubting, trusting — can grow out of a machine this
-transparent?
+Underneath the transparency sits the actual scientific bet, and it is worth
+stating plainly, because every design choice in this document follows from it:
+
+> **Everything the creature knows lives in the *shape* of its concept map —
+> and nothing in the measuring instrument.** The instrument — the small
+> arithmetic its connections carry, which we'll meet as the "frozen ruler" —
+> is fixed once, in code, and can never be changed by learning. Learning is
+> only allowed to *redraw the map*: cheapest corrections first, new territory
+> only when nothing cheaper works.
+
+Why insist the ruler be frozen? Because a contradiction, in this system, is a
+route around the map that doesn't add up — and if the creature could adjust
+the arithmetic itself, every contradiction could be escaped by quietly bending
+the ruler instead of fixing the map. Freezing the instrument is what makes
+"this doesn't add up" an objective fact rather than a matter of calibration.
+The transparency isn't the bet; it's a consequence of winning it. And the open
+question the project exists to probe is how far the bet reaches: how much of
+what we call intelligence — counting, arithmetic, reading, generalizing,
+doubting, trusting — can grow out of nothing but map repair over a fixed
+ruler?
 
 The rest of this document walks through the creature's life: how it remembers,
 how it believes, how it does math it was never taught, how it reads, how it

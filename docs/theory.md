@@ -23,10 +23,14 @@ stores knowledge in the **topology of a labelled graph** and learns by
 - The **web** — which nodes exist and how they are wired — is the *only*
   degree of freedom.
 
-Everything else in the project is a consequence of taking that split seriously:
-a gauge-theoretic notion of contradiction (§3), an event-sourced notion of
-memory (§5), an evidential notion of belief (§6), and a growth-based notion of
-concept formation (§8).
+The freeze is what makes contradiction *objective*: were the composition law
+itself learnable, any defect could be absorbed by deforming the algebra —
+bending the ruler instead of fixing the map — whereas a frozen algebra forces
+every repair into the observable topology, where it can be audited, costed,
+and refused. Everything else in the project is a consequence of taking that
+split seriously: a gauge-theoretic notion of contradiction (§3), an
+event-sourced notion of memory (§5), an evidential notion of belief (§6), and
+a growth-based notion of concept formation (§8).
 
 ## 2. The objects
 
