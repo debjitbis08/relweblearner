@@ -1,14 +1,16 @@
 # The design problem — a precise statement of the math this project now needs
 
-*Written 2026-07-12, after the graded-ensemble runs. This document builds
-nothing. It fixes the objects, states the invariances any designed
-structure must respect, translates one day's empirical findings into
-boundary conditions, and lists the theorems that would have to be proved
-for the structure to count as DESIGNED rather than found. It is written to
-be handed to a mathematician — possibly a future us reading slowly — and
-to make "we cannot invent this" into a bounded, attackable claim about
-which existing mathematics has to be learned and applied, rather than a
-dead end.*
+*Written 2026-07-12; **revision 2 same day, after external referee.** The
+referee's corrections are accepted in full and worked in rather than
+appended: the v1 text promoted the coherent-forgery exclusion to a
+cohomological obstruction it never was, and the referee's decisive
+question ("why exactly was the forgery excluded while the solo truth
+remained provisional?") turned out to be answerable from the
+implementation in one grep — see §2. v1 is preserved in git history
+(eb96448). This document builds nothing. It fixes the objects, states the
+invariances and policies any designed structure must respect, translates
+the empirical findings into boundary conditions, and lists the theorems
+required for the structure to count as DESIGNED rather than found.*
 
 ## 1. The thesis being formalized
 
@@ -17,183 +19,242 @@ semantic knowledge are projections of stable structures within and between
 those webs. Multiple webs arise as different views of one hidden world;
 their combination — not any single web — is where understanding lives.
 
-Three benches now exist as the falsification harness for any candidate
+Three benches exist as the falsification harness for any candidate
 formalization (all pre-registered, all with held-out results):
+**bench-multiweb** (categorical knowledge, forgery + solo controls),
+**multiweb-graphlog** (compositional thinking, split-brain measurement),
+**graded-ensemble** (two-timescale attempt: guard passed, headline failed).
 
-- **bench-multiweb** — categorical knowledge: stable regions, cross-view
-  correspondence, coherent forgery, solo-truth control.
-- **multiweb-graphlog** — compositional thinking: aspect-partial views of
-  external rule worlds, discovered correspondence, split-brain measurement.
-- **graded-ensemble** — the two-timescale attempt: soft coupling for
-  thinking, hard commits for knowledge; guard passed, headline failed.
+## 2. The settled question: why the forgery was actually excluded
 
-## 2. The candidate framework, stated as a conjecture
+The referee asked the decisive question, and the code answers it plainly:
+`project()` in bench-multiweb emits exactly TWO states — corroborated
+(concept) or not. The forged region and the solo-truth region both scored
+corroboration 0 and landed in the SAME state. The distinction between
+"excluded" and "provisional" existed only in the evaluation's gold labels.
 
-**Conjecture.** The correct formalization is a cellular sheaf (possibly
-of sets for the knowledge layer, with a linearization for the thinking
-layer) over the nerve of the view cover.
+So: **the forgery was rejected by absence of overlap support under a
+closed-world projection policy, not by incompatibility.** No view ever
+contradicted it; no view could — it was built from fresh, never
+co-witnessed nodes, so it touches no overlap. E1 and E2 are geometrically
+identical (both unglued/underdetermined), exactly as the bench's own
+honest-limit paragraph (P-D) had already stated before the v1 document
+forgot it. The v1 claim "forgery = nonzero H¹" was wrong.
 
-The dictionary that motivates it — every entry to be verified, none to be
-assumed:
+Two consequences, one of each kind:
 
-| this project | sheaf language |
-|---|---|
-| a view's web | stalk over a vertex of the nerve |
-| anchors / co-witnessed events | data on the overlap (edge) cells |
-| partial cross-web mapping | restriction maps (see D1: partiality) |
-| semantic projection (concepts) | global sections |
-| provisional structure (solo truth) | local section that does not extend |
-| coherent forgery | obstructed gluing — a nonzero class in H¹ |
-| destructive interference | coboundary residual / consistency radius |
-| graded thinking field | harmonic extension in the linearized sheaf |
-| anchor-seeded zero-init | Dirichlet boundary conditions |
-| within-web relabeling invariance | isomorphism-invariance of the sheaf |
+- **A policy must be named, not smuggled.** The projection rule "only
+  structure supported by ≥ 2 views commits" is an epistemic policy — the
+  ensemble lift of the one-web system's k-witness commitment rule
+  (commit_k = 2), not a fact of geometry. It goes into the framework as
+  an explicit axiom (P1, §6) with the honest gloss: it rejects
+  fabrications and unshared truths alike, by design.
+- **Incompatibility detection exists in this project's data — elsewhere.**
+  The destructive-interference gate (multiweb-graphlog bring-up) rejected
+  confabulated identifications because the trial gluing produced
+  CONTRADICTED triples on both sides — that is a genuine residual of an
+  attempted extension. And bench v3's D2 loop lie was detected as
+  holonomy — incompatibility inside one web. The obstruction machinery
+  has empirical support; the coherent-forgery exclusion is just not an
+  instance of it.
+- **A bench is missing, and it is the decisive one.** An **overlap
+  forgery**: liars wire a false pattern among CO-WITNESSED nodes, so that
+  view agreement is violated on the overlap itself. Prediction space:
+  it is rejected with a different TYPE than the fresh-node forgery
+  (obstructed vs unsupported), detectable as an extension failure, with
+  no closed-world policy needed. This experiment is licensed diagnosis
+  (§10) and should run before T1–T3 are attempted, because it determines
+  whether the geometric-obstruction half of the framework carries real
+  weight in the ensemble setting.
 
-Two entries deserve emphasis because they were discovered empirically
-before being recognized:
+## 3. The conjecture, v2 (broadened per referee)
 
-- The **zero-init finding** (graded plan §4b.3) — identity mass may only
-  flow outward from co-witnessed events — is exactly the statement that
-  the thinking field is the solution of a Dirichlet problem: harmonic
-  extension of overlap data, not relaxation from a uniform prior. The
-  uniform prior manufactured sections; the boundary-value problem cannot.
-- The **provisional/false distinction** the forgery bench needed is a
-  distinction sheaf theory already makes: a local section that extends to
-  no larger cover (unglued, provisional) is a different object from a
-  cocycle with nonzero class (obstructed, non-corresponding). No tuned
-  threshold separates them; their types do.
+> The correct framework is a **descent structure over the nerve of the
+> view cover** — of which ordinary sheaves, category-valued sheaves,
+> spans, and stacks are candidate instances — whose **linear shadow is a
+> cellular sheaf** supporting harmonic dynamics.
 
-Nearest existing work, in order of likely relevance: Hansen & Ghrist,
-*Toward a spectral theory of cellular sheaves* (2019); Michael Robinson's
-sheaf-based data fusion and **consistency radius** (the closest thing to
-our destructive-interference measure in the literature); Curry's thesis
-(2014) for the foundations; sheaf neural networks (Hansen–Gebhart,
-Bodnar et al.) for learned linearizations.
+With the model/data separation made explicit (Robinson): the sheaf-like
+object models the VIEW SYSTEM — stalks are the *possible local states* at
+a view or overlap, restriction/descent data say what views jointly
+witness. An observed web is an **assignment** (a candidate local section)
+to that model, not a stalk. "Global section" must also be disambiguated:
+a compatible family of local assignments may represent one cross-view
+concept instance, one complete interpretation, or a whole knowledge
+state — T0 fixes which of these each layer uses.
 
-## 3. Design decisions the framework must fix (not tune)
+Why possibly a stack rather than a sheaf of sets: the knowledge layer
+must glue graphs/semicategories, identify structure only up to
+automorphism (orphan merges, E3), and remember alternative identifications
+— which a sheaf of sets forgets and descent/stack language is built for.
+"Identity determined up to the automorphisms visible to the cover" is the
+same lemma family as polysemy fission, run in reverse.
 
-- **D1. Partiality.** Our restriction maps are partial (mappings never
-  total, and must not be). Options: sheaves valued in relations or
-  partial functions; stalks restricted over overlap cells; or spans.
-  This is the first real decision — exactness properties differ.
-- **D2. What stalks carry.** For bench-multiweb, stalks are weighted
-  graphs (regions = their stable structure). For GraphLog, stalks carry
-  composition — a semicategory / operad-like object, not a set. The
-  sheaf must be valued in the category where that structure lives, so
-  that identity across webs is structure-preserving by construction.
-- **D3. The linearization functor.** The thinking layer needs vector
-  spaces (free on node/token sets is the obvious move) and an operator.
-  The requirement that dissolves the "which algebra?" question: the
-  propagation/reduction semiring must be DERIVED from the linearization
-  functor, not chosen. Sum-product vs max-product vs max-min (the
-  rule_20 question) becomes a property of the functor; if the framework
-  leaves it free, the framework has not done its job.
-- **D4. The commitment rule.** When does soft become hard? Needed: a
-  theorem of the form "if harmonic mass concentrates within ε of an
-  exact section, committing to that section is sound" — replacing
-  HARD_SIM = 0.5 with a bound that carries its own proof.
+The composite picture:
 
-## 4. Invariances (non-negotiable, inherited from the project)
+    structured descent/stack --linearization--> cellular sheaf
+                             --harmonic dynamics--> thinking field
 
-- **I1.** Within-web relabeling of opaque ids changes nothing (the house
-  gauge invariance, already property-tested in the one-web system).
-- **I2.** Identity evidence is local: it originates only in co-witnessed
-  events and propagates only along genuine structure (the backbone and
-  zero-init findings, promoted from patches to axioms).
-- **I3.** Refusal is typed, not thresholded: "no section exists" and
-  "section exists but is unglued" must be answers the formalism can give
-  exactly. Any ε or floor appearing in a refusal decision must come with
-  the D4-style bound that justifies it.
-- **I4.** The knowledge layer is auditable: commitments are discrete,
-  provenanced, and exactly retractable (event-sourcing survives the
-  redesign; it is orthogonal to it).
+Knowledge is the discrete compatible structure recovered through descent;
+thinking is the evolving graded field used to find it.
 
-## 5. Boundary conditions — what one day of experiments requires
+## 4. Epistemic states are extension sets
 
-Any designed structure must reproduce, ideally as theorems, all of:
+For a local structure s, define Ext(s) = the set of global compatible
+structures extending s. The three states, and the typed refusal they
+induce:
 
-- **E1** (bench-multiweb): the coherent forgery is excluded 50/50 — must
-  be derivable as an obstruction, with the forgery's statistical
-  coherence irrelevant by construction.
-- **E2**: the solo truth is provisional 50/50 — unglued, not obstructed
-  (see §2); the formalism must produce different objects for E1 and E2.
-- **E3** (multiweb-graphlog): zero real mispairings across 44 worlds in
-  the discrete extension, with all errors orphan merges — identity is
-  underdetermined exactly up to isomorphism of what the overlap can see.
-  Needed: a characterization (automorphism/quotient) of WHEN identity is
-  underdetermined — this is also the polysemy-fission story in reverse,
-  and should be the same lemma.
-- **E4**: the split-brain tax (0.79 × gold with knowledge 97% present) —
-  in the formalism, the cost of refusing to glue; harmonic extension
-  should recover it, and the framework must say by how much.
-- **E5** (graded-ensemble): bimodality — soft coupling healed rule_26/30/42,
-  pushed rule_32 ABOVE gold-pooled, and tore rule_20 (0.66→0.32). The
-  D3 functor must explain both directions or the design is wrong.
-- **E6**: rule_27's immunity — 100/103 rules present, discrete and graded
-  both 0.163, unmoved by every mechanism. **Open diagnosis; cheap
-  empirical work that should precede formalization** — a designed theory
-  must predict it, so we must first know what it is.
-- **E7**: the confabulation trilogy (normalization manufactures
-  confidence; noise edges carry no identity; uniform priors seed
-  invention) — should fall out as: the field is a boundary-value problem
-  (I2), full stop.
-- **E8** (rule_0 bring-up): triangle interference cannot cross rule-web
-  components; anchors are needed per component — in sheaf terms,
-  connectivity of the base/stalk structure bounds what overlap data can
-  determine. Should become the coverage hypothesis of the representation
-  theorem T1.
-- **E9** (carrier ladder, bench v3): a frozen one-web algebra has
-  measurable representational ceilings, and the ensemble cleared one
-  (0.13 → 0.51). The formalism should locate WHERE algebraic capacity
-  now lives (in the stalks? the gluing? the linearization?) such that
+| Ext(s) | state | system behaviour |
+|---|---|---|
+| empty | obstructed / incompatible | reject as inconsistent |
+| singleton | determined by available views | commitment permitted (P1 still applies) |
+| larger | underdetermined / provisional | refuse to commit |
+
+This replaces v1's H¹ talk as the working language for T1–T3. Note
+"unique extension" means uniquely determined BY THE VIEW MODEL — not true
+of the external world; truth needs the identifiability theorem (T4) and
+its assumptions. H¹ enters, if at all, only after the coefficient object
+is constructed and the claim proved: until then E-type failures are
+called **failure of compatible extension / failure of descent**. (For the
+linear layer: a nonzero residual δx of an assignment is not yet a nonzero
+H¹ class — cocycles and coboundaries first.)
+
+## 5. Design decisions the framework must fix or expose
+
+- **D1. Partiality.** Restriction/descent data are partial and must stay
+  so. Candidates: relations/partial functions as the value category;
+  overlap-restricted stalks; spans. First real decision; exactness
+  properties differ.
+- **D2. What stalks carry.** bench-multiweb: weighted graphs with their
+  stable structure. GraphLog: composition-carrying objects
+  (semicategories). The value category must make cross-web identity
+  structure-preserving by construction — this is where the stack option
+  becomes live.
+- **D3. The enrichment is a choice to expose, not eliminate.** (Revised
+  per referee — v1 overpromised.) Linearization cannot derive its own
+  semantics: free vector spaces already choose additive superposition;
+  max-plus needs tropical enrichment. The honest requirement: the
+  invariances (§6), boundary conditions (§7) and soundness theorem (T6)
+  must restrict the admissible enrichments enough that the surviving
+  candidates — linear, tropical, probabilistic, set-valued — are
+  FALSIFIABLE against each other. rule_20's collapse (E5) is then a
+  selector experiment between enrichments, not a bug to patch.
+- **D4. Stable commitment, relative to the view model.** (Renamed per
+  referee.) The needed theorem: the soft field lies near one exact
+  compatible section and small perturbations do not change which — a
+  stability statement. It cannot and does not establish truth; external
+  soundness is T4's job under explicit coverage/independence assumptions.
+  This bound replaces HARD_SIM = 0.5 or it does not exist.
+
+## 6. Invariances and policies (separated, both explicit)
+
+Invariances (facts the formalism must respect):
+
+- **I1.** Within-web relabeling of opaque ids changes nothing.
+- **I2.** Identity evidence is local: it originates in co-witnessed
+  events and propagates only along genuine structure (zero-init and
+  backbone findings, promoted to axioms).
+- **I3.** Refusal is typed by Ext(s) (§4), not thresholded. Any ε in a
+  refusal decision carries a D4-style stability bound.
+- **I4.** The knowledge layer is auditable: discrete, provenanced,
+  exactly retractable commitments (event-sourcing is orthogonal to the
+  redesign and survives it).
+
+Policies (epistemic choices, named so they can be varied):
+
+- **P1. Closed-world projection.** Only structure with ≥ k-view support
+  commits (currently k = 2 — the ensemble lift of commit_k). This is
+  what rejects fresh-node forgeries AND unshared truths (§2); it is not
+  geometry and must never be presented as such.
+
+## 7. Boundary conditions — what the experiments require
+
+- **E1** (revised): the fresh-node coherent forgery is non-committed
+  50/50 — by P1 over an underdetermined extension set, NOT by
+  obstruction. The formalism must reproduce it as such.
+- **E2**: the solo truth is non-committed 50/50 — the SAME state as E1
+  (settled, §2). Any framework that makes E1 and E2 differ without an
+  overlap-forgery-style signal or provenance is claiming more than the
+  data.
+- **E2b** (to be run — licensed): the overlap forgery is rejected as
+  Ext = empty, a genuinely different type from E1/E2.
+- **E3**: zero real mispairings across 44 worlds; all errors orphan
+  merges — identity underdetermined exactly up to overlap-visible
+  automorphism (T3's content).
+- **E4**: the split-brain tax (0.79 × gold, knowledge 97% present) —
+  the measured cost of refusing to glue; the linear layer must recover
+  it and say by how much.
+- **E5**: graded bimodality — heals rule_26/30/42, rule_32 above
+  gold-pooled, tears rule_20 — the D3 selector data.
+- **E6**: rule_27 immunity (100/103 rules, 0.163 under discrete AND
+  graded). **Undiagnosed; diagnosis licensed and prerequisite.**
+- **E7**: the confabulation trilogy — should reduce to "the field is a
+  boundary-value problem" (I2).
+- **E8**: interference cannot cross rule-web components; anchors needed
+  per component. Per referee: this is not colour, it is likely the
+  UNIQUENESS CONDITION of T5 (anchors in every relevant component;
+  positive-definite Dirichlet Laplacian; no uncontrolled kernel).
+- **E9**: the one-web frozen-algebra ceiling was real and measurable
+  (carrier ladder), and the ensemble cleared it (0.13 → 0.51). The
+  formalism should locate where representational capacity now lives so
   the old ceiling provably does not rebind.
 
-## 6. The theorems needed (the "preliminary math", enumerated)
+## 8. The theorems (revised list, referee's T0–T4 adopted)
 
-- **T1 Representation.** Under stated coverage conditions (E8), the
-  global sections of the view-sheaf recover the hidden world's semantic
-  structure. Without coverage, characterize what is recoverable.
-- **T2 Obstruction.** A pattern with no overlap support admits no global
-  section; the forgery bench's 50/50 becomes a corollary, not a result.
-- **T3 Provisional ≠ false.** Unglued and obstructed are distinct,
-  decidable types (E2 vs E1).
-- **T4 Identity underdetermination.** Identity across webs is determined
-  exactly up to the automorphisms of what overlaps see; orphan merges
-  (E3) are the quotient, and fission on new evidence is its inverse.
+- **T0 Model/data separation.** Define the local state objects,
+  observations-as-assignments, overlaps, and legal maps; say what a
+  global section denotes in each layer (§3).
+- **T1 Extension classification.** Characterize when a local assignment
+  has zero, one, or many global extensions.
+- **T2 Incompatibility.** Incompatible overlap data implies Ext = empty.
+  (E2b is its experiment.)
+- **T3 Underdetermination.** Insufficient overlap yields many
+  extensions, characterized by the automorphism group / quotient visible
+  to the cover (orphan merges and provisional states live here).
+- **T4 Identifiability.** Under explicit coverage and independence
+  conditions, global extensions correspond to hidden-world semantic
+  structure up to known automorphisms. (This, plus P1, is where any
+  claim about TRUTH lives.)
 - **T5 The thinking operator.** The graded field is the harmonic
-  extension of anchor data in the linearized sheaf: existence,
-  uniqueness, locality, and convergence — retiring annealing schedules,
-  backbone thresholds and init choices as constants (they become
-  hypotheses or corollaries).
-- **T6 Functorial reduction.** The derivation semantics (rule_20's
-  sum-vs-max) is determined by D3, with a soundness statement: graded
-  derivations approximate exact ones with bounded error.
-- **T7 Sound commitment.** The D4 bound: concentration implies safe
-  hardening. This is the two-timescale claim as a theorem, and the only
-  acceptable replacement for HARD_SIM.
+  extension of anchor data in the linearized object: existence,
+  uniqueness (hypotheses = E8), locality, convergence — retiring
+  annealing, backbone thresholds and init choices as theorems or
+  hypotheses.
+- **T6 Enrichment soundness.** For each admissible D3 enrichment, graded
+  derivations approximate exact ones with stated error; E5 selects.
+- **T7 Stable commitment.** The D4 bound. Two-timescale as a theorem,
+  explicitly relative to the view model.
 
-## 7. What would falsify the conjecture itself
+## 9. What would falsify the conjecture itself
 
 - Partiality (D1) cannot be accommodated without losing the exactness
-  that makes T2/T3 work.
-- E1 and E2 turn out NOT to be type-distinct in any sheaf formulation —
-  i.e., the provisional/false distinction genuinely needs provenance,
-  not geometry.
-- The D3 functor exists but leaves the reduction semiring free after
-  all — then the algebra question returns as a free parameter and the
-  framework has merely renamed the problem.
-- rule_27 (E6), once diagnosed, is something no gluing story touches —
-  e.g., a path-search horizon artifact — in which case it constrains
-  the benches, not the theory, and must be reclassified.
+  T1–T3 need.
+- E2b comes out indistinguishable from E1/E2 — overlap incompatibility
+  is NOT detected as a different type in practice; then obstruction adds
+  nothing over policy P1 + provenance, and the geometric half of the
+  conjecture deflates to the linear thinking layer only.
+- Every admissible enrichment fails some of E5's healed/torn worlds
+  simultaneously — the bimodality is not an enrichment question.
+- rule_27 (E6) turns out to be a harness artifact (e.g. path-horizon) —
+  reclassify: it constrains the benches, not the theory.
 
-## 8. Doing this honestly
+## 10. Discipline
 
-The failure mode this document exists to prevent has a name in this
-repo's history: mechanism-search wearing better vocabulary. The rule for
-the design phase, matching the falsification culture: **no
-implementation until T1–T3 are actually proved for the chosen D1/D2**,
-at whatever level of rigor we can genuinely sustain — and the first
-implementation ships with its predictions for all three benches written
-down before it runs. The empirical work that IS licensed meanwhile:
-diagnosing E6 (rule_27) and the rule_20 collapse, because a theory built
-to explain misdiagnosed data is designed wrong from the start.
+No implementation until T0–T3 are proved for the chosen D1/D2, at
+whatever rigor we can genuinely sustain; the first implementation ships
+with pre-registered predictions for all three benches. Empirical work
+licensed meanwhile, in priority order:
+
+1. **E2b, the overlap forgery** — the referee's decisive experiment: does
+   incompatible overlap data get rejected as a different TYPE? This
+   determines how much of the framework is geometry and how much is P1.
+2. **E6, rule_27** — diagnose before formalizing; a theory built to
+   explain misdiagnosed data is designed wrong.
+3. **E5, rule_20** — the enrichment selector needs a mechanism-level
+   account of the collapse.
+
+Reading: Hansen & Ghrist, *Toward a spectral theory of cellular sheaves*
+(2019); Michael Robinson's sheaf-based sensor fusion and consistency
+radius (the model/data separation and the nearest existing machinery);
+Curry's thesis (2014); stacks/descent at the level of Vistoli's notes,
+only as far as T3 requires.
