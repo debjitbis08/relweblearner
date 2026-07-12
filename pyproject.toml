@@ -18,6 +18,7 @@ relweb-eval = "relweblearner.evaluate:main"
 relweb-bench = "relweblearner.bench.run:main"
 relweb-graphlog = "relweblearner.bench.graphlog:main"
 relweb-carriers = "relweblearner.bench.carrier_sweep:main"
+relweb-multiweb = "relweblearner.bench.multiweb:main"
 
 [tool.poetry]
 packages = [{ include = "relweblearner", from = "src" }]

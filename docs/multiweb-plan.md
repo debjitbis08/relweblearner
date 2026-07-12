@@ -52,8 +52,11 @@ community ids.
 One community (the **solo control**) is made visible *only* in view 0.
 
 **Partial cross-web mappings.** For an entity visible in two views, an anchor
-correspondence is given with p = 0.3 (the story: occasionally one event is
-registered by two views simultaneously). Anchors are then extended by a
+correspondence is given with p = 0.4 (the story: occasionally one event is
+registered by two views simultaneously). *(Amended from 0.3 before any code
+was run: at 0.3 a community's expected 6.4 co-visible entities clear the ≥ 2
+anchor floor of §4 only ~55% of the time — the design would fail on binomial
+arithmetic, not on the hypothesis.)* Anchors are then extended by a
 conservative structural propagation (an unmapped node is mapped to the
 neighbour-signature best match in the other web only if it beats the
 runner-up by a margin). The mapping stays partial by construction.
@@ -145,6 +148,19 @@ Scored per seed (50 seeds):
 - P-D failing in the *other* direction (solo control projected as a concept)
   means corroboration is leaking — the implementation, not the hypothesis,
   is broken; fix before interpreting anything else.
+
+## 7b. Post-run amendment (2026-07-12, after run 1)
+
+Run 1 (50 seeds) passed P-A/P-B/P-C and failed **P-D** exactly in the
+direction §7 marks as an implementation leak: the solo control was projected
+as a concept in 0.18 of seeds. Diagnosis (results/bench-multiweb/report.md,
+run-1 table): the structural extension assigned images to never-co-witnessed
+nodes over **weight-1 noise edges** — two hallucinated images landing in the
+same region clear the ≥ 2-member floor at concentration 1.0. Fix, web-local
+and label-free: identity evidence may only ride the structural backbone —
+extension skips edges lighter than 0.5 × the web's median edge weight
+(`EXT_BACKBONE`). No other constant changed; all metrics rerun; both runs
+reported.
 
 ## 8. Relation to the existing system
 
