@@ -338,6 +338,56 @@ transport 0.07), and the case for a noncommutative carrier — referee step
 6, next — is now made on frozen, held-out external data rather than on
 development worlds.
 
+## Carrier-ladder feasibility (2026-07-12): no 3-point carrier earns discovery code
+
+The referee's nested sweep — Z, S3, I3, B3, CYK — run as oracle
+feasibility over all 51 train-split worlds (plan §7¼, predictions and
+decision rule frozen first; `results/carriers/`, 1520s). Medians:
+
+| | Z | S3 | I3 | B3 | cyk-oracle |
+|---|---|---|---|---|---|
+| median oracle accuracy | 0.248 | 0.124 | 0.110 | 0.251 | 0.807 |
+| median uplift over Z | — | −0.096 | −0.025 | **+0.000** | +0.456 |
+
+**The decision rule fires negative: no rung clears the bar** (≥ 2× Z's own
++0.225 median uplift over majority), so per the frozen rule no 3-point
+carrier gets discovery code, and the rewriting route wins the next phase.
+
+Predictions scored:
+
+- *"S3 alone does not solve GraphLog"* — **confirmed**: totality and
+  invertibility mis-model these relations; S3 sits below Z on median.
+- *"B3 unlocks high-collision worlds"* — **partially confirmed, and the
+  partial matters**: 11 of the 17 worlds where Z ≤ 0.1 improve under B3,
+  a few dramatically (rule_4: 0.024 → **0.624**, nearly reaching its
+  cyk-oracle of 0.679; rule_41: 0.222 → 0.702; rule_5: 0.126 → 0.489) —
+  but the median across those worlds is only 0.109. B3 is transformative
+  on a minority of worlds and median-neutral overall (beats Z on 19/51,
+  loses on 18/51).
+- *"ladder nondecreasing on a majority of worlds"* — **missed** (21/51).
+  Nesting guarantees solutions EXIST monotonically up the ladder; a
+  min-conflicts search does not FIND them monotonically. This is a solver
+  artifact and a real caveat on every number here: B3 reached exactness on
+  only 8/51 worlds (most sit at 17–19 of 20 rules), so the B3 column is a
+  lower bound that a SAT/SMT solve could lift.
+- *"B3 remains well below cyk-oracle"* — **confirmed emphatically**:
+  median gap 0.456.
+
+**The ladder answered the referee's question.** The missing ingredient on
+GraphLog is not noncommutativity (S3 flat), not partiality (I3 flat), and
+not even arbitrary many-to-many relational transport (B3 median-neutral):
+it is **contextual rule rewriting** — the CYK reference towers over every
+fixed finite carrier tried. Two escape hatches remain open and are recorded
+rather than pursued now: exact B3 solving (SAT) could raise the B3 lower
+bound, and larger latent sets (B4, B5) were not swept; but the frozen
+decision rule points the discovery phase at the free-monoid/rewriting
+sector — discovered binary rules applied as typed rewriting, with the
+defect gate admitting rules the way it admits compositions today — rather
+than at a richer fixed carrier. The one bright spot worth keeping: on the
+minority of worlds where B3 shines, it nearly closes the gap to CYK, so a
+per-gauge-group carrier CHOICE (Z where abelian fits, B3 where it pays,
+rewriting above both) remains consistent with everything measured.
+
 ## What this does not settle
 
 Internal validity only: a synthetic, closed, 12-entity world authored by the
