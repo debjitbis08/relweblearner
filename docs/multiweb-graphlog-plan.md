@@ -59,6 +59,62 @@ From the world's 150 training instances plus S = 2 **shared** instances:
 - **Answering (thinking)**: CYK path reduction over the projected rules, in
   A's vocabulary; predictions mapped back to gold labels for scoring only.
 
+## 2b. Pre-run amendment (2026-07-12, after rule_0 bring-up, before any
+held-out world was touched)
+
+Bring-up on the dev world exposed two structural flaws in §2's construction:
+
+1. **Whole-instance co-witnessing anchors whole components.** GraphLog
+   instances live inside one rule-web component (rule_0's rule web has two
+   disconnected components, 9 + 8 relations; the 2 shared instances anchored
+   8/8 of one and 0/9 of the other). Triangle interference provably cannot
+   cross a component boundary — no mixed triangles exist — so extension had
+   literally nothing to do (0 pairs added), while the anchored component
+   needed no extension at all.
+2. **Instance-splitting yields no gap.** 75 instances nearly saturate rule
+   mining (view-alone 0.410 vs gold-pooled 0.424 on rule_0): there is almost
+   no knowledge for the ensemble to transfer, so T2 would be vacuous.
+
+Amended construction — more demanding, and truer to "different views of the
+same hidden world":
+
+- **Aspect-partial views.** Both views read ALL training episodes; each view
+  is blind to its own seeded 15% of relation types (disjoint sets, so the
+  union sees everything, and neither view alone does). Edges carrying a
+  view's blind relations simply do not exist in its web. Queries whose
+  reduction needs an A-blind relation are answerable only through B's web,
+  translated through the discovered mapping — including relations A has no
+  token for, which enter the projection as imported vocabulary.
+- **Edge-level, curiosity-placed anchors.** The co-witnessing budget is 6
+  single edges (events registered by both views), not instances. The first
+  is the first co-perceivable edge in the stream; each further anchor is
+  spent on the largest component of A's OWN mined web that has none yet
+  (label-free — the learner notices an unanchored island and asks for one
+  shared experience there). Extension must recover the remaining ~2/3 of
+  the vocabulary along triangles.
+- Test episodes are co-witnessed (both views read them); view-alone sees
+  only A's rendering.
+
+Bring-up also added one mechanism and surfaced one phenomenon, both on the
+dev world only:
+
+- **Destructive interference.** Positive-only triangle matching confabulates:
+  when the leftover unmatched tokens on each side are married off to each
+  other, margins pass trivially (no runner-up). Extension therefore also
+  counts CONTRADICTED evidence — triples on either side, fully mapped under
+  the trial pairing, with no counterpart in the other web — and accepts only
+  at agreement ≥ 0.5. On dev this killed 2 of 3 confabulations.
+- **Orphan merges.** The third survived at agreement 0.99 on ~2,900 weight
+  of evidence: an A-only relation and a B-only relation occupying identical
+  compositional roles in the visible structure. The webs genuinely agree on
+  the identification; no label-free test can refuse it without refusing true
+  pairs. Nominal precision (P-K1, frozen) counts these as errors; the run
+  additionally reports the orphan/real split of extension errors, since
+  merging structurally indistinguishable orphans is defensible projection
+  behaviour while mispairing two present tokens is not.
+
+The §5 predictions are unchanged and remain frozen.
+
 ## 3. Systems
 
 | system | sees | what it measures |

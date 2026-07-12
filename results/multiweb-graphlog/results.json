@@ -1,0 +1,46 @@
+{
+ "summary": {
+  "worlds": 1,
+  "elapsed_s": 3.9,
+  "mean_view_alone": 0.254,
+  "mean_ensemble": 0.456,
+  "mean_gold_pooled": 0.486,
+  "mean_transport_prior": null,
+  "P-K1_ext_precision": 0.75,
+  "P-K1_coverage": 0.7142857142857143,
+  "P-K2_ensemble_over_gold": 0.9382716049382717,
+  "P-T1_ensemble_minus_transport": null,
+  "P-T2_gap_closure": 0.8706896551724139,
+  "P-T2_worlds_with_gap": 1,
+  "s0_precision": 0.5,
+  "s0_mapped_mean": 2
+ },
+ "worlds": [
+  {
+   "world": "rule_0",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.254,
+    "ensemble": 0.456,
+    "gold-pooled": 0.486
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 4,
+    "ext_precision": 0.75,
+    "coverage": 0.7142857142857143
+   },
+   "s0": {
+    "mapped": 2,
+    "precision": 0.5
+   },
+   "rules": {
+    "alone": 63,
+    "ensemble": 93,
+    "gold": 86
+   },
+   "n_labels": 17,
+   "prior": {}
+  }
+ ]
+}
