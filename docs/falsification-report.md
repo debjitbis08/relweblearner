@@ -340,18 +340,29 @@ development worlds.
 
 ## Carrier-ladder feasibility (2026-07-12): no 3-point carrier earns discovery code
 
-The referee's nested sweep — Z, S3, I3, B3, CYK — run as oracle
-feasibility over all 51 train-split worlds (plan §7¼, predictions and
-decision rule frozen first; `results/carriers/`, 1520s). Medians:
+The referee's nested sweep — Z, S3, I3, B3, CYK — run as feasibility over
+all 51 train-split worlds (plan §7¼, predictions and decision rule frozen
+first; `results/carriers/`, 1520s). Terminology corrected on referee
+review: these are **heuristic carrier-feasibility accuracies using the true
+rules**, not oracle results — the assignments are min-conflicts lower
+bounds, and the failed ladder monotonicity below is direct evidence that
+solver quality materially affects the numbers. Note also that "rules
+satisfied" alone is trivial: every monoid satisfies all rules by the
+all-identity assignment (e = e∘e), and I3/B3 by all-zero too — the real
+problem is a DISCRIMINATIVE homomorphism, which the lexicographic
+distinctness objective pursues but does not provably find. Medians:
 
 | | Z | S3 | I3 | B3 | cyk-oracle |
 |---|---|---|---|---|---|
-| median oracle accuracy | 0.248 | 0.124 | 0.110 | 0.251 | 0.807 |
+| median feasibility accuracy | 0.248 | 0.124 | 0.110 | 0.251 | 0.807 |
 | median uplift over Z | — | −0.096 | −0.025 | **+0.000** | +0.456 |
 
 **The decision rule fires negative: no rung clears the bar** (≥ 2× Z's own
-+0.225 median uplift over majority), so per the frozen rule no 3-point
-carrier gets discovery code, and the rewriting route wins the next phase.
++0.225 median uplift over majority). Two readings must be kept apart. The
+bar was deliberately a "worth engineering?" threshold — B3 would have
+needed nearly the full remaining gap to CYK — so "does not earn discovery
+code" is justified and "adds nothing" is not: B3's wins on rule_4/41/5
+demonstrate real structure.
 
 Predictions scored:
 
@@ -373,20 +384,40 @@ Predictions scored:
 - *"B3 remains well below cyk-oracle"* — **confirmed emphatically**:
   median gap 0.456.
 
-**The ladder answered the referee's question.** The missing ingredient on
-GraphLog is not noncommutativity (S3 flat), not partiality (I3 flat), and
-not even arbitrary many-to-many relational transport (B3 median-neutral):
-it is **contextual rule rewriting** — the CYK reference towers over every
-fixed finite carrier tried. Two escape hatches remain open and are recorded
-rather than pursued now: exact B3 solving (SAT) could raise the B3 lower
-bound, and larger latent sets (B4, B5) were not swept; but the frozen
-decision rule points the discovery phase at the free-monoid/rewriting
-sector — discovered binary rules applied as typed rewriting, with the
-defect gate admitting rules the way it admits compositions today — rather
-than at a richer fixed carrier. The one bright spot worth keeping: on the
-minority of worlds where B3 shines, it nearly closes the gap to CYK, so a
-per-gauge-group carrier CHOICE (Z where abelian fits, B3 where it pays,
-rewriting above both) remains consistent with everything measured.
+**The verdict, in the narrowed form the referee endorsed:** no tested
+three-point carrier, under the current feasibility solver and decoder,
+provides broad enough benefit to justify implementing carrier-specific
+discovery; **rule-preserving symbolic composition (typed path rewriting)**
+is therefore the next experimental sector — CYK's advantage is that it
+keeps relation SYMBOLS and structured words instead of compressing twenty
+relations into a small carrier ("contextual" was the wrong word: the
+reference applies context-free binary reductions ab → c). B3 remains a
+demonstrated specialist carrier on a minority of worlds (on rule_4 it
+nearly closes the gap to its CYK reference), and exact discriminative B3
+feasibility remains UNRESOLVED — the recorded cheap audit is MaxSAT/SMT on
+~six worlds (three where B3 shone, three where it failed): require all
+equations, maximize separations between query-competing relations,
+evaluate on untouched queries. Larger latent sets (B4, B5) were not swept.
+
+**Rewriting is not the abandonment of the fixed-algebra idea — it is a
+sharper statement of it.** What stays frozen is the META-algebra: typed
+word construction, concatenation-then-reduction composition, dagger
+(reverse the word, dagger each symbol), empty word as identity, failure of
+typed reduction as undefined. What is LEARNED is the presentation: the
+admitted equations ab → c, gated exactly as compositions are gated today
+(accept a rule only if it preserves audited derivations and introduces no
+incompatible reductions), provenance-tracked and exactly retractable. The
+learner, in standard mathematical terms, is constructing a PRESENTATION of
+a monoid/category — which is also this architecture's own invariant #1
+("learned concepts are words over existing edges, never new algebra
+operations") applied to relation composition itself. The falsification
+comparison for that phase, pre-registered here in outline: statistical
+miner / miner + confidence threshold / miner + defect gate / typed
+rewriting with provenance and exact retraction / CYK oracle, with the
+central question being whether the defect gate improves learned rule
+precision and adversarial robustness (P7's incompatible forgery must be
+rejected; P8's coherent forgery must still be accepted) without destroying
+recall.
 
 ## What this does not settle
 

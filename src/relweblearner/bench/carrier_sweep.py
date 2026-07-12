@@ -51,6 +51,7 @@ def run_world(name: str, ref: dict) -> dict:
         acc = sum(CR.decode(rec, assign, majority, prior) == rec["query"][2]
                   for rec in w["test"]) / len(w["test"])
         out["carriers"][cname] = {
+            # heuristic lower bound (min-conflicts), not a true oracle
             "oracle_accuracy": round(acc, 4),
             **CR.audit(assign, sat, len(w["rules"])),
         }
@@ -77,7 +78,7 @@ def main() -> None:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     (out / "results.json").write_text(json.dumps(results, indent=1))
-    lines = ["# Carrier-ladder oracle feasibility (true rules, no learning)",
+    lines = ["# Carrier ladder: heuristic feasibility accuracy using true rules (no learning)",
              "",
              f"{len(results)} worlds; {time.time() - t0:.0f}s. '*' = every true "
              "rule satisfied by the found assignment (local search: exactness "
