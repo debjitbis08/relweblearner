@@ -285,6 +285,42 @@ gate-accepted composition is RECORDED per seed and audited against the
 world's true structure — "no false alarms" becomes "the admission log is
 empty of forgeries", measured rather than inferred.
 
+## 7¼. Carrier-ladder oracle feasibility (2026-07-12, pre-registered; referee's algebra recommendation)
+
+Before any discovery code for a richer algebra: the referee's nested sweep
+on one 3-point latent set — ``Z, S3, I3, B3, CYK`` — run as ORACLE
+FEASIBILITY (true rules, no learning) over all 51 train-split worlds.
+``bench/carriers.py`` implements the dagger-monoid ladder (Boolean-matrix
+composition, transpose dagger, S3-only gauge; the dagger contract pinned by
+tests); ``relweb-carriers`` solves ``X_h = X_a ∘ X_b`` per world per
+carrier by min-conflicts with a LEXICOGRAPHIC objective — satisfied rules,
+then distinct elements — because bring-up showed satisfaction alone is a
+trap: an absorbing zero satisfies everything (0 ∘ x = 0) and discriminates
+nothing. Local search yields lower bounds: "exact" is proven, infeasibility
+is not. Found assignments decode the real test queries with the same
+forward path-voting as the Z reference. rule_51–56 (GraphLog's valid/test
+world splits) stay untouched for the eventual discovery phase; this sweep
+is carrier SELECTION and makes all train-split worlds development data for
+that choice.
+
+Pre-registered predictions:
+
+- S3 alone does NOT solve GraphLog (totality + invertibility mis-model
+  non-injective relations; near-floor on most worlds);
+- oracle accuracy is nondecreasing up the ladder on a majority of worlds
+  (not all — search variance is real; rule_29 already shows B3 below Z);
+- B3 beats the Z reference specifically on the high-collision worlds where
+  Z is ≤ 0.1, including some of the twelve fully-degenerate ones (bring-up:
+  rule_43 went 0.05 → 0.30);
+- B3 remains well below cyk-oracle on most worlds — if so, the residual
+  gap is contextual rule rewriting, not a still-richer fixed carrier.
+
+Decision rule, stated before the numbers: implement discovery for the
+LOWEST rung whose median uplift over the Z reference (across worlds with
+nontrivial cyk-oracle) is at least twice Z's own median uplift over
+majority. If no rung clears that bar, no 3-point carrier earns discovery
+code and the rewriting route (free-monoid sector) wins the next phase.
+
 ## 7. What this benchmark does not settle
 
 Internal validity only: the world is synthetic, closed, and small, and the

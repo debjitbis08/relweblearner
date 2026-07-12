@@ -132,3 +132,42 @@ def test_creature_clears_the_c1_floor_on_seed_zero(w):
     assert all(full["F2-invert-step"]) and all(full["F4-invert-skip"])
     assert not any(ablated["F2-invert-step"])       # memory alone cannot invert
     assert set(full) == set(FAMILIES)
+
+
+# ------------------------------------------------- carrier ladder (plan §7¼)
+
+
+def test_carrier_algebra_contract():
+    """The dagger-monoid laws the whole architecture assumes, pinned on the
+    binary-relation carrier: involution, contravariance, identity, totality,
+    and the nested sizes |S3| = 6 < |I3| = 34 < |B3| = 512."""
+    from relweblearner.bench import carriers as CR
+
+    s3, i3 = CR.s3(), CR.i3()
+    assert len(s3) == 6 and len(i3) == 34
+    assert set(s3) <= set(i3) <= set(CR.b3())
+    rng = __import__("random").Random(0)
+    for _ in range(200):
+        a, b = rng.randrange(512), rng.randrange(512)
+        assert CR.dagger(CR.dagger(a)) == a
+        assert CR.dagger(CR.compose(a, b)) == CR.compose(CR.dagger(b), CR.dagger(a))
+        assert CR.compose(a, CR.IDENTITY) == a == CR.compose(CR.IDENTITY, a)
+        c = rng.randrange(512)
+        assert CR.compose(CR.compose(a, b), c) == CR.compose(a, CR.compose(b, c))
+    assert all(CR.compose(p, CR.dagger(p)) == CR.IDENTITY for p in s3)
+
+
+def test_carrier_solver_finds_exact_solutions():
+    """A rule system with a known S3 model is solved exactly on every rung
+    (nested carriers: a solution low on the ladder exists high on it)."""
+    from relweblearner.bench import carriers as CR
+
+    # cyclic Z3-style rules: step∘step = skip, step∘skip = ident-ish chain —
+    # modeled by 3-cycles in S3, hence in I3 and B3 too
+    rules = {("step", "step"): "skip", ("step", "skip"): "back",
+             ("skip", "step"): "back"}
+    for cname in ("S3", "I3", "B3"):
+        assign, sat = CR.solve_rules(rules, CR.CARRIERS[cname](), seed=1)
+        assert sat == len(rules), cname
+        a = assign
+        assert CR.compose(a["step"], a["step"]) == a["skip"]
