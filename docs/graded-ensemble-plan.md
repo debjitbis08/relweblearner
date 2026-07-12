@@ -75,6 +75,38 @@ single stable region of the other web, gated by an absolute mass floor
 no coupled similarity cannot corroborate, however concentrated the crumbs).
 Concept / provisional decisions as in run 2.
 
+## 4b. Bring-up amendments (2026-07-12, dev worlds/seeds only, before the
+scored runs)
+
+Token arm (rule_0): the coupled field found correct argmaxes but stayed
+flat (transport-plan magnitudes, 0.33–0.45); **softassign annealing** was
+added (β rising 1→2 over rounds under Sinkhorn competition — graduated
+assignment, Gold & Rangarajan 1996). Beam constants fixed at TOP_K = 8,
+ACT_MIN = 0.01. Dev graded 0.439 vs discrete 0.456 — noted: rule_0 is not
+a split-brain world; the graded bet pays where discrete died at seams.
+
+Node arm (seeds 1000–1004) leaked the forgery AND the solo control, and
+the diagnosis took three rounds, each a finding about graded coupling:
+
+1. **Competitive normalisation manufactures confidence.** Sinkhorn forces
+   every node — forged included — to place mass ~1 somewhere; annealing
+   then sharpens the crumbs into a consistent placement. Correspondence is
+   therefore gated on ABSOLUTE propagated mass (anchor-calibrated), with a
+   median-member floor (a region whose mass lives in two absorbed anchored
+   members is not corroborated as a region).
+2. **The backbone rule generalises.** Weight-1 noise/attachment edges must
+   carry no identity evidence in the graded arm either (edges below half
+   the web's median weight are cut from the propagation adjacency) — the
+   same EXT_BACKBONE lesson the discrete bench pre-registered.
+3. **A uniform initialisation is a confabulation seed.** The decisive fix:
+   the field starts at ZERO except the anchors — cross-web identity mass
+   can only flow outward from co-witnessed events. Unanchored islands then
+   stay at exactly zero: nothing to sharpen, nothing to invent. This is
+   also what §2's "seeded by the anchors" should have meant operationally.
+
+After the three fixes: dev seeds 1000–1004 all clean (forgery excluded,
+recall 1.0, purity 1.0, solo provisional). §5 predictions unchanged.
+
 ## 5. Frozen predictions
 
 GraphLog arm (44 worlds):
