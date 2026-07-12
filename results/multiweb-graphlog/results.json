@@ -1,46 +1,1518 @@
 {
  "summary": {
-  "worlds": 1,
-  "elapsed_s": 3.9,
-  "mean_view_alone": 0.254,
-  "mean_ensemble": 0.456,
-  "mean_gold_pooled": 0.486,
-  "mean_transport_prior": null,
-  "P-K1_ext_precision": 0.75,
-  "P-K1_coverage": 0.7142857142857143,
-  "P-K2_ensemble_over_gold": 0.9382716049382717,
-  "P-T1_ensemble_minus_transport": null,
-  "P-T2_gap_closure": 0.8706896551724139,
-  "P-T2_worlds_with_gap": 1,
-  "s0_precision": 0.5,
-  "s0_mapped_mean": 2
+  "worlds": 44,
+  "elapsed_s": 112.2,
+  "mean_view_alone": 0.3886590909090909,
+  "mean_ensemble": 0.5143636363636364,
+  "mean_gold_pooled": 0.6478409090909091,
+  "mean_transport_prior": 0.13365909090909092,
+  "P-K1_ext_precision": 0.9226100288600289,
+  "P-K1_coverage": 0.7225275337407691,
+  "wrong_orphan_total": 17,
+  "wrong_real_total": 0,
+  "P-K2_ensemble_over_gold": 0.7939659708823014,
+  "P-T1_ensemble_minus_transport": 0.38070454545454546,
+  "P-T2_gap_closure": 0.5641390904757418,
+  "P-T2_worlds_with_gap": 41,
+  "s0_precision": 0.8683712121212122,
+  "s0_mapped_mean": 3.977272727272727
  },
  "worlds": [
   {
-   "world": "rule_0",
+   "world": "rule_1",
    "seed": 0,
    "accuracy": {
-    "view-alone": 0.254,
-    "ensemble": 0.456,
-    "gold-pooled": 0.486
+    "view-alone": 0.136,
+    "ensemble": 0.164,
+    "gold-pooled": 0.166
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 3,
+    "ext_precision": 0.6666666666666666,
+    "wrong_orphan": 1,
+    "wrong_real": 0,
+    "coverage": 0.6428571428571429
+   },
+   "s0": {
+    "mapped": 1,
+    "precision": 0.0
+   },
+   "rules": {
+    "alone": 59,
+    "ensemble": 90,
+    "gold": 80
+   },
+   "n_labels": 17,
+   "prior": {
+    "majority": 0.098,
+    "transport": 0.098,
+    "transport-oracle": 0.098,
+    "cyk-miner": 0.247,
+    "cyk-oracle": 0.4
+   }
+  },
+  {
+   "world": "rule_2",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.241,
+    "ensemble": 0.254,
+    "gold-pooled": 0.216
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 5,
+    "ext_precision": 0.8,
+    "wrong_orphan": 1,
+    "wrong_real": 0,
+    "coverage": 0.7857142857142857
+   },
+   "s0": {
+    "mapped": 4,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 50,
+    "ensemble": 73,
+    "gold": 64
+   },
+   "n_labels": 17,
+   "prior": {
+    "majority": 0.027,
+    "transport": 0.035,
+    "transport-oracle": 0.061,
+    "cyk-miner": 0.131,
+    "cyk-oracle": 0.265
+   }
+  },
+  {
+   "world": "rule_3",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.174,
+    "ensemble": 0.116,
+    "gold-pooled": 0.177
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 5,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.7333333333333333
+   },
+   "s0": {
+    "mapped": 6,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 68,
+    "ensemble": 106,
+    "gold": 94
+   },
+   "n_labels": 18,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.0,
+    "transport-oracle": 0.0,
+    "cyk-miner": 0.158,
+    "cyk-oracle": 0.217
+   }
+  },
+  {
+   "world": "rule_4",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.236,
+    "ensemble": 0.256,
+    "gold-pooled": 0.513
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 6,
+    "ext_precision": 0.8333333333333334,
+    "wrong_orphan": 1,
+    "wrong_real": 0,
+    "coverage": 0.8
+   },
+   "s0": {
+    "mapped": 2,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 70,
+    "ensemble": 98,
+    "gold": 88
+   },
+   "n_labels": 18,
+   "prior": {
+    "majority": 0.019,
+    "transport": 0.025,
+    "transport-oracle": 0.024,
+    "cyk-miner": 0.513,
+    "cyk-oracle": 0.679
+   }
+  },
+  {
+   "world": "rule_5",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.373,
+    "ensemble": 0.668,
+    "gold-pooled": 0.709
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 8,
+    "ext_precision": 0.75,
+    "wrong_orphan": 2,
+    "wrong_real": 0,
+    "coverage": 0.9333333333333333
+   },
+   "s0": {
+    "mapped": 4,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 72,
+    "ensemble": 82,
+    "gold": 87
+   },
+   "n_labels": 18,
+   "prior": {
+    "majority": 0.054,
+    "transport": 0.059,
+    "transport-oracle": 0.126,
+    "cyk-miner": 0.743,
+    "cyk-oracle": 0.782
+   }
+  },
+  {
+   "world": "rule_6",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.434,
+    "ensemble": 0.424,
+    "gold-pooled": 0.529
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 6,
+    "ext_precision": 0.8333333333333334,
+    "wrong_orphan": 1,
+    "wrong_real": 0,
+    "coverage": 0.8
+   },
+   "s0": {
+    "mapped": 4,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 64,
+    "ensemble": 91,
+    "gold": 88
+   },
+   "n_labels": 18,
+   "prior": {
+    "majority": 0.005,
+    "transport": 0.01,
+    "transport-oracle": 0.093,
+    "cyk-miner": 0.506,
+    "cyk-oracle": 0.612
+   }
+  },
+  {
+   "world": "rule_7",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.42,
+    "ensemble": 0.393,
+    "gold-pooled": 0.43
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 2,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.5333333333333333
+   },
+   "s0": {
+    "mapped": 5,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 62,
+    "ensemble": 104,
+    "gold": 81
+   },
+   "n_labels": 18,
+   "prior": {
+    "majority": 0.001,
+    "transport": 0.001,
+    "transport-oracle": 0.095,
+    "cyk-miner": 0.282,
+    "cyk-oracle": 0.482
+   }
+  },
+  {
+   "world": "rule_8",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.15,
+    "ensemble": 0.268,
+    "gold-pooled": 0.237
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 3,
+    "ext_precision": 0.6666666666666666,
+    "wrong_orphan": 1,
+    "wrong_real": 0,
+    "coverage": 0.6
+   },
+   "s0": {
+    "mapped": 2,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 70,
+    "ensemble": 109,
+    "gold": 82
+   },
+   "n_labels": 18,
+   "prior": {
+    "majority": 0.017,
+    "transport": 0.017,
+    "transport-oracle": 0.017,
+    "cyk-miner": 0.25,
+    "cyk-oracle": 0.428
+   }
+  },
+  {
+   "world": "rule_9",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.36,
+    "ensemble": 0.476,
+    "gold-pooled": 0.495
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 6,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.75
+   },
+   "s0": {
+    "mapped": 8,
+    "precision": 0.875
+   },
+   "rules": {
+    "alone": 68,
+    "ensemble": 91,
+    "gold": 87
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.032,
+    "transport-oracle": 0.01,
+    "cyk-miner": 0.495,
+    "cyk-oracle": 0.652
+   }
+  },
+  {
+   "world": "rule_10",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.228,
+    "ensemble": 0.375,
+    "gold-pooled": 0.601
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 5,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.6875
+   },
+   "s0": {
+    "mapped": 1,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 68,
+    "ensemble": 95,
+    "gold": 92
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.004,
+    "transport": 0.004,
+    "transport-oracle": 0.029,
+    "cyk-miner": 0.601,
+    "cyk-oracle": 0.694
+   }
+  },
+  {
+   "world": "rule_11",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.538,
+    "ensemble": 0.559,
+    "gold-pooled": 0.665
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 6,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.75
+   },
+   "s0": {
+    "mapped": 7,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 72,
+    "ensemble": 106,
+    "gold": 101
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.013,
+    "transport-oracle": 0.0,
+    "cyk-miner": 0.665,
+    "cyk-oracle": 0.744
+   }
+  },
+  {
+   "world": "rule_12",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.311,
+    "ensemble": 0.549,
+    "gold-pooled": 0.542
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 8,
+    "ext_precision": 0.875,
+    "wrong_orphan": 1,
+    "wrong_real": 0,
+    "coverage": 0.875
+   },
+   "s0": {
+    "mapped": 3,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 63,
+    "ensemble": 83,
+    "gold": 81
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.024,
+    "transport": 0.189,
+    "transport-oracle": 0.171,
+    "cyk-miner": 0.557,
+    "cyk-oracle": 0.643
+   }
+  },
+  {
+   "world": "rule_13",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.523,
+    "ensemble": 0.645,
+    "gold-pooled": 0.561
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 5,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.6875
+   },
+   "s0": {
+    "mapped": 5,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 67,
+    "ensemble": 94,
+    "gold": 93
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.064,
+    "transport-oracle": 0.008,
+    "cyk-miner": 0.561,
+    "cyk-oracle": 0.779
+   }
+  },
+  {
+   "world": "rule_14",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.349,
+    "ensemble": 0.463,
+    "gold-pooled": 0.413
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 2,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.5
+   },
+   "s0": {
+    "mapped": 3,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 84,
+    "ensemble": 146,
+    "gold": 115
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.05,
+    "transport-oracle": 0.033,
+    "cyk-miner": 0.413,
+    "cyk-oracle": 0.669
+   }
+  },
+  {
+   "world": "rule_15",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.353,
+    "ensemble": 0.492,
+    "gold-pooled": 0.553
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 5,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.6875
+   },
+   "s0": {
+    "mapped": 1,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 92,
+    "ensemble": 139,
+    "gold": 120
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.051,
+    "transport": 0.154,
+    "transport-oracle": 0.432,
+    "cyk-miner": 0.558,
+    "cyk-oracle": 0.773
+   }
+  },
+  {
+   "world": "rule_16",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.556,
+    "ensemble": 0.603,
+    "gold-pooled": 0.802
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 1,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.4375
+   },
+   "s0": {
+    "mapped": 2,
+    "precision": 0.0
+   },
+   "rules": {
+    "alone": 91,
+    "ensemble": 158,
+    "gold": 118
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.031,
+    "transport-oracle": 0.061,
+    "cyk-miner": 0.802,
+    "cyk-oracle": 0.845
+   }
+  },
+  {
+   "world": "rule_17",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.271,
+    "ensemble": 0.274,
+    "gold-pooled": 0.498
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 2,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.5
+   },
+   "s0": {
+    "mapped": 5,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 82,
+    "ensemble": 131,
+    "gold": 100
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.035,
+    "transport": 0.24,
+    "transport-oracle": 0.152,
+    "cyk-miner": 0.501,
+    "cyk-oracle": 0.654
+   }
+  },
+  {
+   "world": "rule_20",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.358,
+    "ensemble": 0.659,
+    "gold-pooled": 0.752
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 7,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.8125
+   },
+   "s0": {
+    "mapped": 6,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 74,
+    "ensemble": 95,
+    "gold": 91
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.177,
+    "transport": 0.293,
+    "transport-oracle": 0.59,
+    "cyk-miner": 0.752,
+    "cyk-oracle": 0.856
+   }
+  },
+  {
+   "world": "rule_23",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.665,
+    "ensemble": 0.69,
+    "gold-pooled": 0.928
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 1,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.4375
+   },
+   "s0": {
+    "mapped": 4,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 52,
+    "ensemble": 84,
+    "gold": 72
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.018,
+    "transport": 0.568,
+    "transport-oracle": 0.76,
+    "cyk-miner": 0.926,
+    "cyk-oracle": 0.959
+   }
+  },
+  {
+   "world": "rule_24",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.199,
+    "ensemble": 0.508,
+    "gold-pooled": 0.667
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 7,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.8125
+   },
+   "s0": {
+    "mapped": 4,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 58,
+    "ensemble": 79,
+    "gold": 77
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.213,
+    "transport-oracle": 0.225,
+    "cyk-miner": 0.66,
+    "cyk-oracle": 0.867
+   }
+  },
+  {
+   "world": "rule_25",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.368,
+    "ensemble": 0.482,
+    "gold-pooled": 0.873
    },
    "alignment": {
     "anchored": 6,
     "extended": 4,
-    "ext_precision": 0.75,
-    "coverage": 0.7142857142857143
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.6666666666666666
+   },
+   "s0": {
+    "mapped": 1,
+    "precision": 0.0
+   },
+   "rules": {
+    "alone": 39,
+    "ensemble": 56,
+    "gold": 55
+   },
+   "n_labels": 18,
+   "prior": {
+    "majority": 0.01,
+    "transport": 0.398,
+    "transport-oracle": 0.663,
+    "cyk-miner": 0.869,
+    "cyk-oracle": 0.904
+   }
+  },
+  {
+   "world": "rule_26",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.185,
+    "ensemble": 0.289,
+    "gold-pooled": 0.668
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 6,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.75
+   },
+   "s0": {
+    "mapped": 1,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 50,
+    "ensemble": 76,
+    "gold": 76
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.004,
+    "transport-oracle": 0.423,
+    "cyk-miner": 0.667,
+    "cyk-oracle": 0.858
+   }
+  },
+  {
+   "world": "rule_27",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.133,
+    "ensemble": 0.163,
+    "gold-pooled": 0.828
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 6,
+    "ext_precision": 0.8333333333333334,
+    "wrong_orphan": 1,
+    "wrong_real": 0,
+    "coverage": 0.75
+   },
+   "s0": {
+    "mapped": 4,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 69,
+    "ensemble": 100,
+    "gold": 103
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.006,
+    "transport": 0.183,
+    "transport-oracle": 0.488,
+    "cyk-miner": 0.828,
+    "cyk-oracle": 0.918
+   }
+  },
+  {
+   "world": "rule_28",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.531,
+    "ensemble": 0.533,
+    "gold-pooled": 0.787
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 6,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.75
+   },
+   "s0": {
+    "mapped": 1,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 67,
+    "ensemble": 105,
+    "gold": 98
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.001,
+    "transport-oracle": 0.355,
+    "cyk-miner": 0.785,
+    "cyk-oracle": 0.833
+   }
+  },
+  {
+   "world": "rule_29",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.215,
+    "ensemble": 0.529,
+    "gold-pooled": 0.738
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 5,
+    "ext_precision": 0.8,
+    "wrong_orphan": 1,
+    "wrong_real": 0,
+    "coverage": 0.6875
+   },
+   "s0": {
+    "mapped": 6,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 73,
+    "ensemble": 118,
+    "gold": 98
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.009,
+    "transport": 0.01,
+    "transport-oracle": 0.68,
+    "cyk-miner": 0.736,
+    "cyk-oracle": 0.867
+   }
+  },
+  {
+   "world": "rule_30",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.085,
+    "ensemble": 0.444,
+    "gold-pooled": 0.847
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 4,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.625
+   },
+   "s0": {
+    "mapped": 1,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 64,
+    "ensemble": 93,
+    "gold": 88
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.329,
+    "transport-oracle": 0.619,
+    "cyk-miner": 0.845,
+    "cyk-oracle": 0.91
+   }
+  },
+  {
+   "world": "rule_31",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.439,
+    "ensemble": 0.775,
+    "gold-pooled": 0.796
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 6,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.75
+   },
+   "s0": {
+    "mapped": 1,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 71,
+    "ensemble": 111,
+    "gold": 102
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.001,
+    "transport-oracle": 0.421,
+    "cyk-miner": 0.796,
+    "cyk-oracle": 0.919
+   }
+  },
+  {
+   "world": "rule_32",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.431,
+    "ensemble": 0.624,
+    "gold-pooled": 0.779
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 8,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.8235294117647058
+   },
+   "s0": {
+    "mapped": 1,
+    "precision": 0.0
+   },
+   "rules": {
+    "alone": 82,
+    "ensemble": 117,
+    "gold": 116
+   },
+   "n_labels": 20,
+   "prior": {
+    "majority": 0.05,
+    "transport": 0.06,
+    "transport-oracle": 0.454,
+    "cyk-miner": 0.779,
+    "cyk-oracle": 0.969
+   }
+  },
+  {
+   "world": "rule_33",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.446,
+    "ensemble": 0.782,
+    "gold-pooled": 0.838
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 9,
+    "ext_precision": 0.8888888888888888,
+    "wrong_orphan": 1,
+    "wrong_real": 0,
+    "coverage": 0.8823529411764706
+   },
+   "s0": {
+    "mapped": 1,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 74,
+    "ensemble": 94,
+    "gold": 89
+   },
+   "n_labels": 20,
+   "prior": {
+    "majority": 0.005,
+    "transport": 0.156,
+    "transport-oracle": 0.324,
+    "cyk-miner": 0.838,
+    "cyk-oracle": 0.931
+   }
+  },
+  {
+   "world": "rule_34",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.619,
+    "ensemble": 0.846,
+    "gold-pooled": 0.869
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 7,
+    "ext_precision": 0.8571428571428571,
+    "wrong_orphan": 1,
+    "wrong_real": 0,
+    "coverage": 0.7647058823529411
+   },
+   "s0": {
+    "mapped": 6,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 99,
+    "ensemble": 136,
+    "gold": 136
+   },
+   "n_labels": 20,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.52,
+    "transport-oracle": 0.516,
+    "cyk-miner": 0.869,
+    "cyk-oracle": 0.961
+   }
+  },
+  {
+   "world": "rule_35",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.43,
+    "ensemble": 0.692,
+    "gold-pooled": 0.67
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 8,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.8235294117647058
+   },
+   "s0": {
+    "mapped": 7,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 99,
+    "ensemble": 139,
+    "gold": 139
+   },
+   "n_labels": 20,
+   "prior": {
+    "majority": 0.072,
+    "transport": 0.071,
+    "transport-oracle": 0.317,
+    "cyk-miner": 0.67,
+    "cyk-oracle": 0.916
+   }
+  },
+  {
+   "world": "rule_36",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.773,
+    "ensemble": 0.74,
+    "gold-pooled": 0.861
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 8,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.8235294117647058
+   },
+   "s0": {
+    "mapped": 7,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 99,
+    "ensemble": 140,
+    "gold": 138
+   },
+   "n_labels": 20,
+   "prior": {
+    "majority": 0.044,
+    "transport": 0.372,
+    "transport-oracle": 0.413,
+    "cyk-miner": 0.861,
+    "cyk-oracle": 0.932
+   }
+  },
+  {
+   "world": "rule_37",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.559,
+    "ensemble": 0.652,
+    "gold-pooled": 0.74
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 7,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.7647058823529411
+   },
+   "s0": {
+    "mapped": 7,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 98,
+    "ensemble": 145,
+    "gold": 135
+   },
+   "n_labels": 20,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.005,
+    "transport-oracle": 0.127,
+    "cyk-miner": 0.74,
+    "cyk-oracle": 0.895
+   }
+  },
+  {
+   "world": "rule_38",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.623,
+    "ensemble": 0.616,
+    "gold-pooled": 0.715
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 6,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.7058823529411765
+   },
+   "s0": {
+    "mapped": 6,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 97,
+    "ensemble": 145,
+    "gold": 132
+   },
+   "n_labels": 20,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.242,
+    "transport-oracle": 0.41,
+    "cyk-miner": 0.715,
+    "cyk-oracle": 0.832
+   }
+  },
+  {
+   "world": "rule_39",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.58,
+    "ensemble": 0.697,
+    "gold-pooled": 0.774
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 6,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.75
    },
    "s0": {
     "mapped": 2,
-    "precision": 0.5
+    "precision": 1.0
    },
    "rules": {
-    "alone": 63,
-    "ensemble": 93,
-    "gold": 86
+    "alone": 81,
+    "ensemble": 113,
+    "gold": 115
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.0,
+    "transport": 0.088,
+    "transport-oracle": 0.492,
+    "cyk-miner": 0.774,
+    "cyk-oracle": 0.848
+   }
+  },
+  {
+   "world": "rule_40",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.608,
+    "ensemble": 0.719,
+    "gold-pooled": 0.77
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 7,
+    "ext_precision": 0.8571428571428571,
+    "wrong_orphan": 1,
+    "wrong_real": 0,
+    "coverage": 0.8125
+   },
+   "s0": {
+    "mapped": 7,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 77,
+    "ensemble": 103,
+    "gold": 114
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.003,
+    "transport": 0.389,
+    "transport-oracle": 0.646,
+    "cyk-miner": 0.764,
+    "cyk-oracle": 0.853
+   }
+  },
+  {
+   "world": "rule_41",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.627,
+    "ensemble": 0.792,
+    "gold-pooled": 0.918
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 7,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.8125
+   },
+   "s0": {
+    "mapped": 7,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 82,
+    "ensemble": 106,
+    "gold": 110
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.084,
+    "transport": 0.099,
+    "transport-oracle": 0.222,
+    "cyk-miner": 0.917,
+    "cyk-oracle": 0.923
+   }
+  },
+  {
+   "world": "rule_42",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.391,
+    "ensemble": 0.45,
+    "gold-pooled": 0.719
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 6,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.75
+   },
+   "s0": {
+    "mapped": 7,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 90,
+    "ensemble": 118,
+    "gold": 117
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.005,
+    "transport": 0.05,
+    "transport-oracle": 0.2,
+    "cyk-miner": 0.719,
+    "cyk-oracle": 0.745
+   }
+  },
+  {
+   "world": "rule_45",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.469,
+    "ensemble": 0.612,
+    "gold-pooled": 0.807
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 7,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.8125
+   },
+   "s0": {
+    "mapped": 7,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 82,
+    "ensemble": 116,
+    "gold": 119
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.022,
+    "transport": 0.051,
+    "transport-oracle": 0.093,
+    "cyk-miner": 0.808,
+    "cyk-oracle": 0.899
+   }
+  },
+  {
+   "world": "rule_46",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.319,
+    "ensemble": 0.478,
+    "gold-pooled": 0.546
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 7,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.8125
+   },
+   "s0": {
+    "mapped": 1,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 82,
+    "ensemble": 117,
+    "gold": 117
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.036,
+    "transport": 0.139,
+    "transport-oracle": 0.271,
+    "cyk-miner": 0.545,
+    "cyk-oracle": 0.696
+   }
+  },
+  {
+   "world": "rule_47",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.329,
+    "ensemble": 0.533,
+    "gold-pooled": 0.601
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 7,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.8125
+   },
+   "s0": {
+    "mapped": 2,
+    "precision": 1.0
+   },
+   "rules": {
+    "alone": 77,
+    "ensemble": 111,
+    "gold": 114
+   },
+   "n_labels": 19,
+   "prior": {
+    "majority": 0.01,
+    "transport": 0.246,
+    "transport-oracle": 0.181,
+    "cyk-miner": 0.603,
+    "cyk-oracle": 0.683
+   }
+  },
+  {
+   "world": "rule_48",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.467,
+    "ensemble": 0.474,
+    "gold-pooled": 0.76
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 1,
+    "ext_precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0,
+    "coverage": 0.4666666666666667
+   },
+   "s0": {
+    "mapped": 3,
+    "precision": 0.0
+   },
+   "rules": {
+    "alone": 70,
+    "ensemble": 111,
+    "gold": 85
+   },
+   "n_labels": 18,
+   "prior": {
+    "majority": 0.012,
+    "transport": 0.018,
+    "transport-oracle": 0.257,
+    "cyk-miner": 0.764,
+    "cyk-oracle": 0.821
+   }
+  },
+  {
+   "world": "rule_49",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.283,
+    "ensemble": 0.609,
+    "gold-pooled": 0.73
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 5,
+    "ext_precision": 0.6,
+    "wrong_orphan": 2,
+    "wrong_real": 0,
+    "coverage": 0.7857142857142857
+   },
+   "s0": {
+    "mapped": 6,
+    "precision": 0.6666666666666666
+   },
+   "rules": {
+    "alone": 62,
+    "ensemble": 80,
+    "gold": 79
    },
    "n_labels": 17,
-   "prior": {}
+   "prior": {
+    "majority": 0.194,
+    "transport": 0.201,
+    "transport-oracle": 0.252,
+    "cyk-miner": 0.734,
+    "cyk-oracle": 0.805
+   }
+  },
+  {
+   "world": "rule_50",
+   "seed": 0,
+   "accuracy": {
+    "view-alone": 0.316,
+    "ensemble": 0.265,
+    "gold-pooled": 0.417
+   },
+   "alignment": {
+    "anchored": 6,
+    "extended": 3,
+    "ext_precision": 0.3333333333333333,
+    "wrong_orphan": 2,
+    "wrong_real": 0,
+    "coverage": 0.6428571428571429
+   },
+   "s0": {
+    "mapped": 6,
+    "precision": 0.6666666666666666
+   },
+   "rules": {
+    "alone": 57,
+    "ensemble": 88,
+    "gold": 71
+   },
+   "n_labels": 17,
+   "prior": {
+    "majority": 0.022,
+    "transport": 0.152,
+    "transport-oracle": 0.024,
+    "cyk-miner": 0.414,
+    "cyk-oracle": 0.594
+   }
   }
  ]
 }
