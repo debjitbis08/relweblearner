@@ -1,0 +1,414 @@
+{
+ "summary": {
+  "arm": "forgery",
+  "seeds": 50,
+  "elapsed_s": 4.3,
+  "forged_stable_rate": 1.0,
+  "P-G4_forgery_excluded": 1.0,
+  "P-G5_recall": 1.0,
+  "P-G5_purity": 1.0,
+  "P-G5_solo_provisional": 1.0
+ },
+ "per_seed": [
+  {
+   "seed": 0,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 1,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 2,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 3,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 4,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 5,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 6,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 7,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 8,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 9,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 10,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 11,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 12,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 13,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 14,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 15,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 16,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 17,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 18,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 19,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 20,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 21,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 22,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 23,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 24,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 25,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 26,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 27,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 28,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 29,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 30,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 31,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 32,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 33,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 34,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 35,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 36,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 37,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 38,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 39,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 40,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 41,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 42,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 43,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 44,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 45,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 46,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 47,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 48,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  },
+  {
+   "seed": 49,
+   "forged_stable": true,
+   "forged_concept": false,
+   "recall": 1.0,
+   "purity": 1.0,
+   "solo_projected": false
+  }
+ ]
+}

@@ -1,0 +1,590 @@
+{
+ "summary": {
+  "arm": "graphlog",
+  "worlds": 44,
+  "elapsed_s": 2265.8,
+  "mean_graded": 0.5358636363636363,
+  "mean_discrete": 0.5143636363636364,
+  "mean_gold_pooled": 0.6478409090909091,
+  "P-G1_graded_over_gold": 0.8271531310296438,
+  "P-G2_worlds_improved": 0.5909090909090909,
+  "P-G2_mean_improvement": 0.021499999999999964,
+  "P-G3_commit_precision": 0.8069895382395382,
+  "commit_wrong_orphan": 40,
+  "commit_wrong_real": 2
+ },
+ "worlds": [
+  {
+   "world": "rule_1",
+   "graded": 0.209,
+   "commits": {
+    "n": 5,
+    "precision": 0.6,
+    "wrong_orphan": 2,
+    "wrong_real": 0
+   },
+   "discrete": 0.164,
+   "view_alone": 0.136,
+   "gold": 0.166
+  },
+  {
+   "world": "rule_2",
+   "graded": 0.196,
+   "commits": {
+    "n": 3,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.254,
+   "view_alone": 0.241,
+   "gold": 0.216
+  },
+  {
+   "world": "rule_3",
+   "graded": 0.205,
+   "commits": {
+    "n": 3,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.116,
+   "view_alone": 0.174,
+   "gold": 0.177
+  },
+  {
+   "world": "rule_4",
+   "graded": 0.409,
+   "commits": {
+    "n": 5,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.256,
+   "view_alone": 0.236,
+   "gold": 0.513
+  },
+  {
+   "world": "rule_5",
+   "graded": 0.668,
+   "commits": {
+    "n": 7,
+    "precision": 0.8571428571428571,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.668,
+   "view_alone": 0.373,
+   "gold": 0.709
+  },
+  {
+   "world": "rule_6",
+   "graded": 0.509,
+   "commits": {
+    "n": 3,
+    "precision": 0.6666666666666666,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.424,
+   "view_alone": 0.434,
+   "gold": 0.529
+  },
+  {
+   "world": "rule_7",
+   "graded": 0.319,
+   "commits": {
+    "n": 3,
+    "precision": 0.6666666666666666,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.393,
+   "view_alone": 0.42,
+   "gold": 0.43
+  },
+  {
+   "world": "rule_8",
+   "graded": 0.266,
+   "commits": {
+    "n": 6,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.268,
+   "view_alone": 0.15,
+   "gold": 0.237
+  },
+  {
+   "world": "rule_9",
+   "graded": 0.512,
+   "commits": {
+    "n": 6,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.476,
+   "view_alone": 0.36,
+   "gold": 0.495
+  },
+  {
+   "world": "rule_10",
+   "graded": 0.317,
+   "commits": {
+    "n": 6,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.375,
+   "view_alone": 0.228,
+   "gold": 0.601
+  },
+  {
+   "world": "rule_11",
+   "graded": 0.596,
+   "commits": {
+    "n": 7,
+    "precision": 0.8571428571428571,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.559,
+   "view_alone": 0.538,
+   "gold": 0.665
+  },
+  {
+   "world": "rule_12",
+   "graded": 0.522,
+   "commits": {
+    "n": 5,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.549,
+   "view_alone": 0.311,
+   "gold": 0.542
+  },
+  {
+   "world": "rule_13",
+   "graded": 0.644,
+   "commits": {
+    "n": 5,
+    "precision": 0.8,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.645,
+   "view_alone": 0.523,
+   "gold": 0.561
+  },
+  {
+   "world": "rule_14",
+   "graded": 0.52,
+   "commits": {
+    "n": 7,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.463,
+   "view_alone": 0.349,
+   "gold": 0.413
+  },
+  {
+   "world": "rule_15",
+   "graded": 0.481,
+   "commits": {
+    "n": 7,
+    "precision": 0.8571428571428571,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.492,
+   "view_alone": 0.353,
+   "gold": 0.553
+  },
+  {
+   "world": "rule_16",
+   "graded": 0.703,
+   "commits": {
+    "n": 6,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.603,
+   "view_alone": 0.556,
+   "gold": 0.802
+  },
+  {
+   "world": "rule_17",
+   "graded": 0.325,
+   "commits": {
+    "n": 6,
+    "precision": 0.8333333333333334,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.274,
+   "view_alone": 0.271,
+   "gold": 0.498
+  },
+  {
+   "world": "rule_20",
+   "graded": 0.317,
+   "commits": {
+    "n": 5,
+    "precision": 0.6,
+    "wrong_orphan": 2,
+    "wrong_real": 0
+   },
+   "discrete": 0.659,
+   "view_alone": 0.358,
+   "gold": 0.752
+  },
+  {
+   "world": "rule_23",
+   "graded": 0.693,
+   "commits": {
+    "n": 4,
+    "precision": 0.25,
+    "wrong_orphan": 1,
+    "wrong_real": 2
+   },
+   "discrete": 0.69,
+   "view_alone": 0.665,
+   "gold": 0.928
+  },
+  {
+   "world": "rule_24",
+   "graded": 0.55,
+   "commits": {
+    "n": 5,
+    "precision": 0.8,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.508,
+   "view_alone": 0.199,
+   "gold": 0.667
+  },
+  {
+   "world": "rule_25",
+   "graded": 0.477,
+   "commits": {
+    "n": 2,
+    "precision": 0.0,
+    "wrong_orphan": 2,
+    "wrong_real": 0
+   },
+   "discrete": 0.482,
+   "view_alone": 0.368,
+   "gold": 0.873
+  },
+  {
+   "world": "rule_26",
+   "graded": 0.644,
+   "commits": {
+    "n": 4,
+    "precision": 0.5,
+    "wrong_orphan": 2,
+    "wrong_real": 0
+   },
+   "discrete": 0.289,
+   "view_alone": 0.185,
+   "gold": 0.668
+  },
+  {
+   "world": "rule_27",
+   "graded": 0.163,
+   "commits": {
+    "n": 5,
+    "precision": 0.8,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.163,
+   "view_alone": 0.133,
+   "gold": 0.828
+  },
+  {
+   "world": "rule_28",
+   "graded": 0.605,
+   "commits": {
+    "n": 5,
+    "precision": 0.8,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.533,
+   "view_alone": 0.531,
+   "gold": 0.787
+  },
+  {
+   "world": "rule_29",
+   "graded": 0.534,
+   "commits": {
+    "n": 7,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.529,
+   "view_alone": 0.215,
+   "gold": 0.738
+  },
+  {
+   "world": "rule_30",
+   "graded": 0.718,
+   "commits": {
+    "n": 6,
+    "precision": 0.8333333333333334,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.444,
+   "view_alone": 0.085,
+   "gold": 0.847
+  },
+  {
+   "world": "rule_31",
+   "graded": 0.721,
+   "commits": {
+    "n": 6,
+    "precision": 0.8333333333333334,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.775,
+   "view_alone": 0.439,
+   "gold": 0.796
+  },
+  {
+   "world": "rule_32",
+   "graded": 0.876,
+   "commits": {
+    "n": 10,
+    "precision": 0.8,
+    "wrong_orphan": 2,
+    "wrong_real": 0
+   },
+   "discrete": 0.624,
+   "view_alone": 0.431,
+   "gold": 0.779
+  },
+  {
+   "world": "rule_33",
+   "graded": 0.775,
+   "commits": {
+    "n": 9,
+    "precision": 0.8888888888888888,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.782,
+   "view_alone": 0.446,
+   "gold": 0.838
+  },
+  {
+   "world": "rule_34",
+   "graded": 0.679,
+   "commits": {
+    "n": 9,
+    "precision": 0.8888888888888888,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.846,
+   "view_alone": 0.619,
+   "gold": 0.869
+  },
+  {
+   "world": "rule_35",
+   "graded": 0.608,
+   "commits": {
+    "n": 9,
+    "precision": 0.8888888888888888,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.692,
+   "view_alone": 0.43,
+   "gold": 0.67
+  },
+  {
+   "world": "rule_36",
+   "graded": 0.726,
+   "commits": {
+    "n": 9,
+    "precision": 0.8888888888888888,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.74,
+   "view_alone": 0.773,
+   "gold": 0.861
+  },
+  {
+   "world": "rule_37",
+   "graded": 0.575,
+   "commits": {
+    "n": 9,
+    "precision": 0.8888888888888888,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.652,
+   "view_alone": 0.559,
+   "gold": 0.74
+  },
+  {
+   "world": "rule_38",
+   "graded": 0.663,
+   "commits": {
+    "n": 8,
+    "precision": 0.875,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.616,
+   "view_alone": 0.623,
+   "gold": 0.715
+  },
+  {
+   "world": "rule_39",
+   "graded": 0.71,
+   "commits": {
+    "n": 8,
+    "precision": 0.75,
+    "wrong_orphan": 2,
+    "wrong_real": 0
+   },
+   "discrete": 0.697,
+   "view_alone": 0.58,
+   "gold": 0.774
+  },
+  {
+   "world": "rule_40",
+   "graded": 0.605,
+   "commits": {
+    "n": 6,
+    "precision": 0.6666666666666666,
+    "wrong_orphan": 2,
+    "wrong_real": 0
+   },
+   "discrete": 0.719,
+   "view_alone": 0.608,
+   "gold": 0.77
+  },
+  {
+   "world": "rule_41",
+   "graded": 0.772,
+   "commits": {
+    "n": 6,
+    "precision": 0.8333333333333334,
+    "wrong_orphan": 1,
+    "wrong_real": 0
+   },
+   "discrete": 0.792,
+   "view_alone": 0.627,
+   "gold": 0.918
+  },
+  {
+   "world": "rule_42",
+   "graded": 0.71,
+   "commits": {
+    "n": 6,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.45,
+   "view_alone": 0.391,
+   "gold": 0.719
+  },
+  {
+   "world": "rule_45",
+   "graded": 0.634,
+   "commits": {
+    "n": 8,
+    "precision": 0.75,
+    "wrong_orphan": 2,
+    "wrong_real": 0
+   },
+   "discrete": 0.612,
+   "view_alone": 0.469,
+   "gold": 0.807
+  },
+  {
+   "world": "rule_46",
+   "graded": 0.444,
+   "commits": {
+    "n": 4,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.478,
+   "view_alone": 0.319,
+   "gold": 0.546
+  },
+  {
+   "world": "rule_47",
+   "graded": 0.536,
+   "commits": {
+    "n": 5,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.533,
+   "view_alone": 0.329,
+   "gold": 0.601
+  },
+  {
+   "world": "rule_48",
+   "graded": 0.479,
+   "commits": {
+    "n": 4,
+    "precision": 1.0,
+    "wrong_orphan": 0,
+    "wrong_real": 0
+   },
+   "discrete": 0.474,
+   "view_alone": 0.467,
+   "gold": 0.76
+  },
+  {
+   "world": "rule_49",
+   "graded": 0.613,
+   "commits": {
+    "n": 4,
+    "precision": 0.5,
+    "wrong_orphan": 2,
+    "wrong_real": 0
+   },
+   "discrete": 0.609,
+   "view_alone": 0.283,
+   "gold": 0.73
+  },
+  {
+   "world": "rule_50",
+   "graded": 0.35,
+   "commits": {
+    "n": 3,
+    "precision": 0.3333333333333333,
+    "wrong_orphan": 2,
+    "wrong_real": 0
+   },
+   "discrete": 0.265,
+   "view_alone": 0.316,
+   "gold": 0.417
+  }
+ ]
+}
