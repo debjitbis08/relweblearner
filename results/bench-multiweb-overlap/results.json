@@ -1,0 +1,2879 @@
+{
+  "summary": {
+    "seeds": 50,
+    "constructible_frac": 1.0,
+    "QA_merge_stable": 1.0,
+    "QA_merge_separate": 1.0,
+    "QB_e2b_contra_ge_min": 1.0,
+    "QB_e1_contra_zero": 1.0,
+    "QB_e2_contra_zero": 1.0,
+    "QB_e2b_contra_dist": "10.48 +/- 4.50 (min 5.00, max 26.00)",
+    "QB_e2b_ratio_dist": "0.49 +/- 0.08 (min 0.28, max 0.70)",
+    "QB_e1_contra_dist": "0.00 +/- 0.00 (min 0.00, max 0.00)",
+    "QC_e2b_obstructed": 1.0,
+    "QC_e1_unsupported": 1.0,
+    "QC_e2_unsupported": 1.0,
+    "QD_e2b_geometric": 1.0,
+    "QE_true_false_obstructed": 0.023076923076923078,
+    "QE_true_contra_dist": "0.12 +/- 0.50 (min 0.00, max 8.00)",
+    "QE_recall": "0.99 +/- 0.04 (min 0.80, max 1.00)",
+    "QE_purity": "1.00 +/- 0.00 (min 1.00, max 1.00)",
+    "elapsed_s": 2.9,
+    "seed_block": [
+      1000,
+      1049
+    ]
+  },
+  "per_seed": [
+    {
+      "seed": 1000,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 10,
+        "ratio": 0.556,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 45,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        3,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "obstructed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1001,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 8,
+        "ratio": 0.592,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 47,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1002,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 7,
+        "ratio": 0.374,
+        "corr": 2,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 45,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1003,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 6,
+        "ratio": 0.506,
+        "corr": 0,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 53,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "unsupported",
+        "unsupported",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1004,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 9,
+        "ratio": 0.42,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 30,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1005,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 8,
+        "ratio": 0.477,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 31,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1006,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 22,
+        "ratio": 0.593,
+        "corr": 0,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 49,
+      "true_contras": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        2,
+        0,
+        2,
+        1,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "obstructed",
+        "committed",
+        "obstructed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1007,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 10,
+        "ratio": 0.6,
+        "corr": 2,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 35,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1008,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 8,
+        "ratio": 0.515,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 39,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1009,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 11,
+        "ratio": 0.473,
+        "corr": 0,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 49,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1010,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 5,
+        "ratio": 0.434,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 39,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1011,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 15,
+        "ratio": 0.441,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 43,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "obstructed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1012,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 7,
+        "ratio": 0.566,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 18,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed"
+      ],
+      "recall": 0.8,
+      "purity": 1.0
+    },
+    {
+      "seed": 1013,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 13,
+        "ratio": 0.481,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 55,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1014,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 11,
+        "ratio": 0.59,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 33,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1015,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 10,
+        "ratio": 0.457,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 56,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1016,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 16,
+        "ratio": 0.521,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 48,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1017,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 11,
+        "ratio": 0.407,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 57,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1018,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 9,
+        "ratio": 0.414,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 48,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1019,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 10,
+        "ratio": 0.275,
+        "corr": 2,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 48,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1020,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 10,
+        "ratio": 0.376,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 53,
+      "true_contras": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1021,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 17,
+        "ratio": 0.41,
+        "corr": 2,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 54,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1022,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 8,
+        "ratio": 0.427,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 38,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        1,
+        2
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "obstructed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "obstructed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1023,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 9,
+        "ratio": 0.497,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 33,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1024,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 7,
+        "ratio": 0.598,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 34,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1025,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 18,
+        "ratio": 0.432,
+        "corr": 0,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 46,
+      "true_contras": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "unsupported"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1026,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 16,
+        "ratio": 0.515,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 55,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "obstructed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1027,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 16,
+        "ratio": 0.566,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 45,
+      "true_contras": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "obstructed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1028,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 11,
+        "ratio": 0.432,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 44,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "obstructed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1029,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 11,
+        "ratio": 0.55,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 22,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "obstructed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1030,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 9,
+        "ratio": 0.514,
+        "corr": 2,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 47,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        8,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "obstructed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1031,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 6,
+        "ratio": 0.396,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 38,
+      "true_contras": [
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1032,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 6,
+        "ratio": 0.48,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 41,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "obstructed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1033,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 6,
+        "ratio": 0.698,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 35,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "obstructed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1034,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 10,
+        "ratio": 0.524,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 47,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1035,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 6,
+        "ratio": 0.407,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 21,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1036,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 5,
+        "ratio": 0.602,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 34,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1037,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 9,
+        "ratio": 0.567,
+        "corr": 0,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 51,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1038,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 10,
+        "ratio": 0.476,
+        "corr": 0,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 53,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1039,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 16,
+        "ratio": 0.444,
+        "corr": 0,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 36,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1040,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 9,
+        "ratio": 0.5,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 46,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1041,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 17,
+        "ratio": 0.538,
+        "corr": 2,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 38,
+      "true_contras": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1042,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 9,
+        "ratio": 0.534,
+        "corr": 0,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 25,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1043,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 6,
+        "ratio": 0.323,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 28,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1044,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 8,
+        "ratio": 0.541,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 48,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1045,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 6,
+        "ratio": 0.497,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 40,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1046,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 26,
+        "ratio": 0.5,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 49,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "true_types": [
+        "unsupported",
+        "committed",
+        "committed",
+        "unsupported",
+        "obstructed",
+        "committed",
+        "committed",
+        "committed",
+        "unsupported",
+        "committed",
+        "unsupported",
+        "committed",
+        "committed"
+      ],
+      "recall": 0.8,
+      "purity": 1.0
+    },
+    {
+      "seed": 1047,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 13,
+        "ratio": 0.538,
+        "corr": 0,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 39,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1048,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 13,
+        "ratio": 0.442,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 42,
+      "true_contras": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "unsupported",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    },
+    {
+      "seed": 1049,
+      "constructible": true,
+      "e1": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2": {
+        "contra": 0,
+        "ratio": 0.0,
+        "corr": 0,
+        "type": "unsupported"
+      },
+      "e2b": {
+        "contra": 5,
+        "ratio": 0.662,
+        "corr": 1,
+        "type": "obstructed"
+      },
+      "merge_stable": true,
+      "merge_separate": true,
+      "bridge_edges": 42,
+      "true_contras": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0
+      ],
+      "true_types": [
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "committed",
+        "obstructed",
+        "committed",
+        "committed",
+        "committed"
+      ],
+      "recall": 1.0,
+      "purity": 1.0
+    }
+  ]
+}
