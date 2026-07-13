@@ -21,6 +21,7 @@ relweb-carriers = "relweblearner.bench.carrier_sweep:main"
 relweb-multiweb = "relweblearner.bench.multiweb:main"
 relweb-multiweb-graphlog = "relweblearner.bench.multiweb_graphlog:main"
 relweb-multiweb-overlap = "relweblearner.bench.multiweb_overlap:main"
+relweb-rule27-diag = "relweblearner.bench.rule27_diag:main"
 
 [tool.poetry]
 packages = [{ include = "relweblearner", from = "src" }]
