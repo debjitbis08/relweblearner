@@ -1,0 +1,43 @@
+{
+  "note": "Post-plan supplementary cells (same day, after the pre-registered run; computed with the same frozen machinery, seed 0). Pre-registered results are in results.json and are untouched.",
+  "combined_probe": {
+    "repair_both_identities": 0.496,
+    "repair_both_plus_rule_patch": 0.503,
+    "n_missing_after_repair": 11,
+    "reading": "identity repair (0.496) and rule patch (0.503) are NOT additive; combined 0.503 — the same ~0.50 ceiling, two faces of one seam failure"
+  },
+  "missing_rule_structure": {
+    "n_missing": 15,
+    "cross_blind_needs_both_views": 6,
+    "a_blind_only": 7,
+    "b_blind_only": 2,
+    "hide_a": ["R_0_-", "R_6_-", "R_7_+"],
+    "hide_b": ["R_4_+", "R_4_-", "R_8_+"],
+    "reading": "6 of the 15 missing gold rules mention both an A-blind and a B-blind relation: NEITHER view can mine them alone; vote pooling cannot synthesize a triple no view witnessed in full"
+  },
+  "graded_hub_postmortem": {
+    "R_9_-": {"sim_true_pair": 0.6209, "mutual_argmax": true, "clears_HARD_SIM": true, "committed_by_graded": true},
+    "R_1_-": {"sim_true_pair": 0.6327, "mutual_argmax": false, "committed_by_graded": false,
+              "graded_committed_instead": "R_1_- -> R_0_- (a wrong commit marrying a shared relation to an A-blind one)"},
+    "graded_new_commits": ["R_1_+->R_1_+", "R_1_-->R_0_- (WRONG)", "R_6_+->R_6_+", "R_9_-->R_9_- (the hub)", "R_8_-->R_8_-"],
+    "reading": "the graded layer FOUND and COMMITTED the hub identity (S=0.62, mutual argmax, above HARD_SIM=0.5) and still scored 0.163: commits merge output symbols only; rules stay in native vocabularies bridged by multiplicative similarity (0.62^2 ~ 0.39 per bridged span), so activation decays toward ACT_MIN on multi-step derivations — the discovered identity is never cashable in derivation. An enrichment-semantics (D3/T6) datum, not an identity-discovery failure."
+  },
+  "rule_head_quality": {
+    "n_ensemble_rules": 100,
+    "head_agrees_with_gold": 79,
+    "wrong_head": 6,
+    "key_not_in_gold": 15,
+    "reading": "wrong heads are few (6); the residual 0.50 -> 0.83 gap is NOT attributed by these probes — candidates are the 15 not-in-gold keys firing on paths, path-vote statistics over the seam rendering, and patched heads that re-cross the seam as intermediate symbols; left open, licensed for a follow-up cell if pursued"
+  },
+  "plan_premise_correction": {
+    "claim_in_plan_s1": "graded left rule_27 at 0.163 exactly - no test prediction moved",
+    "measured": "graded healed 22 discrete failures and broke 22 discrete successes; the 0.163-exactly was a COUNT coincidence, not immobility",
+    "consequence": "the plan's strongest motivation for elevating H3/H4 ('graded could not even perturb it') was overstated; the elevated priors were nonetheless vindicated by the attribution"
+  },
+  "data_provenance": {
+    "note": "the GraphLog v1.1 dataset was absent from this machine at diagnosis time (data/ is gitignored, original host cs.mcgill.ca/~ksinha4 returns 404); re-fetched from the author's re-upload linked in facebookresearch/GraphLog issues #34/#35",
+    "source": "https://drive.google.com/file/d/1s6oG_5Ul199puKAu67z3QrOAm943hGV2",
+    "md5_of_fetched_zip": "5b6762c8e343659eaf96547787c596d4",
+    "authenticity": "established by the consistency gate: recomputed view-alone/ensemble/gold-pooled = 0.133/0.163/0.828, identical to the frozen bench artifacts, and graded_acc 0.163 identical to the frozen graded artifact"
+  }
+}
