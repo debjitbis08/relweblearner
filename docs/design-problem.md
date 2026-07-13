@@ -171,7 +171,13 @@ H¹ class — cocycles and coboundaries first.)
   must restrict the admissible enrichments enough that the surviving
   candidates — linear, tropical, probabilistic, set-valued — are
   FALSIFIABLE against each other. rule_20's collapse (E5) is then a
-  selector experiment between enrichments, not a bug to patch.
+  selector experiment between enrichments, not a bug to patch. The E6
+  diagnosis added a second selector datum (results/rule27-diagnosis): the
+  graded layer FOUND and COMMITTED the hub identity (S = 0.62, mutual
+  argmax) and still could not use it — multiplicative similarity taxes
+  every bridged span, so a discovered identity decays toward the
+  activation floor with derivation depth. The enrichment decides whether
+  identity, once discovered, is CASHABLE.
 - **D4. Stable commitment, relative to the view model.** (Renamed per
   referee.) The needed theorem: the soft field lies near one exact
   compatible section and small perturbations do not change which — a
@@ -242,8 +248,20 @@ Policies (epistemic choices, named so they can be varied):
   it and say by how much.
 - **E5**: graded bimodality — heals rule_26/30/42, rule_32 above
   gold-pooled, tears rule_20 — the D3 selector data.
-- **E6**: rule_27 immunity (100/103 rules, 0.163 under discrete AND
-  graded). **Undiagnosed; diagnosis licensed and prerequisite.**
+- **E6** (DIAGNOSED, results/rule27-diagnosis): rule_27's "immunity"
+  (100/103 rules present, 0.163 under discrete and graded) is a
+  catastrophic view DRAW, not a world property — the same world clears
+  0.41–0.80 at seeds 1–4 — and not a harness artifact (zero pathless
+  failures). Under the bad draw the failure is the SEAM: 38% of failures
+  die on imported A-blind vocabulary; oracle identity repair (0.496),
+  oracle rule-inventory patch (0.503), and both combined (0.503) hit the
+  same ceiling — split vocabulary and missing rules are two faces of one
+  failure, and 6 of the 15 missing gold rules are cross-blind, unmineable
+  by ANY single view. The graded layer found and committed the hub
+  identity yet could not cash it (D3, §5). The formalism must reproduce
+  the seam as the binding constraint and say what the residual
+  (0.50 → 0.83, unattributed) is. "0.163 exactly" under graded was a
+  count coincidence (22 healed, 22 broken), not immobility.
 - **E7**: the confabulation trilogy — should reduce to "the field is a
   boundary-value problem" (I2).
 - **E8**: interference cannot cross rule-web components; anchors needed
@@ -302,8 +320,12 @@ Policies (epistemic choices, named so they can be varied):
   (§8), not a triggered falsifier. This falsifier is retired.
 - Every admissible enrichment fails some of E5's healed/torn worlds
   simultaneously — the bimodality is not an enrichment question.
-- rule_27 (E6) turns out to be a harness artifact (e.g. path-horizon) —
-  reclassify: it constrains the benches, not the theory.
+- ~~rule_27 (E6) turns out to be a harness artifact (e.g. path-horizon) —
+  reclassify: it constrains the benches, not the theory.~~ **DID NOT
+  TRIGGER** (results/rule27-diagnosis): zero failing episodes lack a
+  witnessing path, and the world clears 0.41–0.80 at other seeds. Not an
+  artifact — a view-draw catastrophe at the vocabulary seam (§7 E6).
+  Retired.
 
 ## 10. Discipline
 
@@ -324,10 +346,16 @@ Empirical work licensed meanwhile, in priority order:
    just independent. Interpretation bounded per the round-2 referee: a
    disagreement separation under P2 — T2's candidate anchor, pending the
    P2 discharge above.
-2. **E6, rule_27** — now the head of the queue: diagnose before formalizing;
-   a theory built to explain misdiagnosed data is designed wrong.
-3. **E5, rule_20** — the enrichment selector needs a mechanism-level
-   account of the collapse.
+2. ~~**E6, rule_27**~~ — **DONE** (results/rule27-diagnosis, pre-registered
+   in docs/rule27-diagnosis-plan.md): not a harness artifact, not a wall —
+   a view-draw catastrophe at the vocabulary seam; repairs converge at a
+   0.50 ceiling; the graded layer discovers but cannot cash the hub
+   identity. Feeds E5/D3 directly. Open residual: the unattributed
+   0.50 → 0.83 gap, licensed as a follow-up cell if pursued.
+3. **E5, rule_20** — now the head of the queue: the enrichment selector
+   needs a mechanism-level account of the collapse, and E6 has sharpened
+   the question it must answer — the enrichment decides whether discovered
+   identity is cashable (rule_27's committed-but-unusable hub, §5 D3).
 
 Reading: Hansen & Ghrist, *Toward a spectral theory of cellular sheaves*
 (2019); Michael Robinson's sheaf-based sensor fusion and consistency
