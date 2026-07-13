@@ -93,24 +93,51 @@ governs identity evidence everywhere else:
 - if web *j* carries a backbone edge (M[u], M[v]): `matched += min(w_i, w_j)`;
 - otherwise (the mapped images are NOT strongly connected in *j*):
   `contradicted += w_i`.
-- **obstruction_j(R) = contradicted / (matched + contradicted)**, defined 0 when
-  the denominator is 0 (nothing was checkable).
-- **R is OBSTRUCTED** iff max_j obstruction_j(R) ≥ `OBS_THETA` (frozen at 0.5,
-  the ported `EXT_AGREE` value — a trial gluing that disagrees on at least half
-  its checkable weight is an extension failure, not a mapping gap).
+- record, per web *j*: `contra_j(R)` = the COUNT of contradicted backbone edges,
+  and the weight ratio `ratio_j(R) = contradicted / (matched + contradicted)`
+  (defined 0 when nothing was checkable);
+- the region's residual is `contra(R) = max_j contra_j(R)` (the strongest single
+  refuting view), with `ratio(R)` its companion ratio.
 
 This is `agreement()` read on co-occurrence edges instead of composition
 triples: identical logic (present-here-absent-there evidence under a trial
-identification), identical threshold, applied in the bench-multiweb substrate.
+identification), applied in the bench-multiweb substrate.
+
+### 3a. Pre-run amendment (2026-07-14, BEFORE any E2b code was run)
+
+The v1 §3 gated OBSTRUCTED on the weight *ratio* ≥ `OBS_THETA = 0.5` (ported
+`EXT_AGREE`). An arithmetic check *before writing the detector* — the same class
+of check that forced the multiweb-plan §2 anchor amendment — shows this
+miscalibrated. At coverage 0.8 / anchor rate 0.4 a community has ~3 anchored
+view-0 members per other view, so the merged region carries ~3 A-internal + ~3
+B-internal *matched* backbone edges (real structure that transports) diluting
+~5 A–B *contradicted* bridges: ratio ≈ 5/11 ≈ 0.45, **below 0.5 for a purely
+combinatorial reason** unrelated to the hypothesis. Raising the bridge count to
+clear 0.5 would be world-tuning toward the prediction (disallowed, §6); lowering
+`OBS_THETA` would look like weakening to force a pass.
+
+The principled fix, faithful to design-problem §2 (the signal is "a genuine
+**residual** of an attempted extension") and to the graphlog/carrier mining-floor
+precedents: gate on the residual COUNT, not the diluted ratio. The three-way
+type separation lives in the pair `(matched, contradicted)`, not their ratio:
+
+- **R is OBSTRUCTED** iff `contra(R) ≥ OBS_MIN_CONTRA` (frozen at **2**, mirroring
+  `CORR_MIN_IMG` — at least two independent refuting backbone edges, so one noisy
+  mapping cannot manufacture a type). `ratio(R)` and `OBS_THETA = 0.5` are
+  retained as REPORTED secondaries, not the classifier gate.
+
+Only the gate changes; the detector, the arms, and the Q-A…Q-E structure are
+otherwise as frozen at commit `eeec1d1`. No E2b run has occurred; this is a
+data-free correction, re-committed before the bring-up.
 
 The typed classifier, aligning each arm with the Ext(s) table of
 design-problem.md §4 — evaluated per region, no P1 counting involved:
 
 | signal | Ext(s) | type | which arm |
 |---|---|---|---|
-| obstruction ≥ OBS_THETA | empty | **obstructed** | overlap forgery (E2b) |
-| obstruction < OBS_THETA, corroboration ≥ 1 | singleton | **committed** | true multi-covered regions |
-| obstruction < OBS_THETA, corroboration 0 | larger | **unsupported** | fresh forgery (E1), solo truth (E2) |
+| contra ≥ OBS_MIN_CONTRA | empty | **obstructed** | overlap forgery (E2b) |
+| contra < OBS_MIN_CONTRA, corroboration ≥ 1 | singleton | **committed** | true multi-covered regions |
+| contra < OBS_MIN_CONTRA, corroboration 0 | larger | **unsupported** | fresh forgery (E1), solo truth (E2) |
 
 The decisive property to check: E1 and E2 have **no mapped backbone edges to
 contradict** (E1's nodes have no anchors; E2 is single-view), so their
@@ -123,14 +150,14 @@ a real, typed, policy-free signal.
 - **Q1 merge stability** — the A∪B false merge is discovered as ONE stable
   region of web 0 (coherence + stability do not filter it), and A, B are TWO
   separate stable regions in webs 1 and 2 (the refutation is available).
-- **Q2 obstruction score** — distribution of the E2b merged region's
-  max_j obstruction_j, against the same score computed for (a) E1's forged
-  region, (b) E2's solo region, (c) true multi-covered regions.
+- **Q2 obstruction residual** — distribution of the E2b merged region's
+  `contra` (and companion `ratio`), against the same measured for (a) E1's
+  forged region, (b) E2's solo region, (c) true multi-covered regions.
 - **Q3 typed outcome** — each of {E2b, E1, E2, true} classified into
-  {obstructed, committed, unsupported} by §3; the cross-tabulation is the
+  {obstructed, committed, unsupported} by §3a; the cross-tabulation is the
   headline result.
 - **Q4 policy independence** — E2b's rejection is attributed: obstructed (no P1
-  appeal) vs would-need-P1 (obstruction < OBS_THETA and rejected only by the
+  appeal) vs would-need-P1 (contra < OBS_MIN_CONTRA and rejected only by the
   ≥ 2-view rule). Fraction of E2b rejections that are geometric, not policy.
 - **Q5 collateral** — concept recall and purity on the true communities,
   recomputed with the E2b arm present, vs the bench-multiweb baseline; and the
@@ -145,18 +172,19 @@ a real, typed, policy-free signal.
   tune. (Parallels multiweb-plan P-A: the lie must survive the one-web test, or
   the ensemble test is unmotivated here.)
 - **Q-B (obstruction separation — the decisive prediction):** the E2b merged
-  region has max_j obstruction_j ≥ `OBS_THETA` in ≥ 0.90 of constructible
-  seeds, while E1's forged region and E2's solo region have obstruction < 0.10
-  in ≥ 0.95 of seeds (expected exactly 0 — no checkable edges). The
-  distributions are essentially disjoint: the overlap forgery produces a
-  contradiction residual; the fresh forgery and solo truth produce none.
+  region has `contra ≥ OBS_MIN_CONTRA` (≥ 2 refuting backbone edges) in ≥ 0.90
+  of constructible seeds, while E1's forged region and E2's solo region have
+  `contra = 0` in ≥ 0.98 of seeds (expected exactly 0 — no mapped backbone edges
+  to refute). The distributions are essentially disjoint: the overlap forgery
+  produces a contradiction residual; the fresh forgery and solo truth produce
+  none. (Reported alongside the companion `ratio` distributions for context.)
 - **Q-C (typed rejection, ≥ 0.90):** E2b is classified **obstructed** while
   E1 and E2 are classified **unsupported**, in ≥ 0.90 of seeds — a genuinely
   different TYPE, the property design-problem E2b/E2 demand.
 - **Q-D (policy independence, ≥ 0.90):** ≥ 0.90 of E2b rejections are geometric
-  (obstruction ≥ OBS_THETA), i.e. they do NOT require P1. This is the claim that
-  the geometric half carries weight: the overlap forgery would be caught even if
-  the closed-world policy were switched off.
+  (`contra ≥ OBS_MIN_CONTRA`), i.e. they do NOT require P1. This is the claim
+  that the geometric half carries weight: the overlap forgery would be caught
+  even if the closed-world policy were switched off.
 - **Q-E (no collateral):** the obstruction detector flags true corroborated
   regions in < 0.05 of cases; concept recall ≥ 0.80 and purity ≥ 0.90 are
   preserved within noise of the bench-multiweb baseline (the detector does not
@@ -164,16 +192,17 @@ a real, typed, policy-free signal.
 
 ## 6. Falsification criteria (mapped to design-problem.md §9)
 
-- **The conjecture-level falsifier.** If Q-B fails — E2b's obstruction
-  distribution overlaps E1/E2's (both near 0), or E2b's is not reliably above
-  OBS_THETA — then incompatible overlap data is NOT detected as a different type
+- **The conjecture-level falsifier.** If Q-B fails — E2b's `contra` residual
+  overlaps E1/E2's (either E2b rarely reaches OBS_MIN_CONTRA, or true/E1/E2
+  regions often do through mapping noise) — then incompatible overlap data is
+  NOT detected as a different type
   in practice. Per design-problem §9, obstruction then adds nothing over P1 +
   provenance, and **the geometric half of the conjecture deflates to the linear
   thinking layer only.** This outcome is reported with the full prominence of a
   headline result, not as a bug to be patched: it would redirect T1–T3 away from
   the geometric obstruction machinery. (A tempting move — strengthen the bridge
   until Q-B passes — is disallowed after the §5 freeze except as a declared,
-  separately-reported retune of the *world*, never of `OBS_THETA`.)
+  separately-reported retune of the *world*, never of `OBS_MIN_CONTRA`.)
 - If Q-A fails (no stable coherent merge can be built), E2b is inconstructible
   in this substrate and the experiment is inconclusive here, not a refutation —
   report the construction failure and what it implies about the world model.
@@ -187,13 +216,18 @@ a real, typed, policy-free signal.
 
 ## 7. Relation to what exists
 
-E2b is an extension of `src/relweblearner/bench/multiweb.py`: one arm added to
-`generate()` (the false merge), one detector added alongside `correspondence()`
-(the obstruction score), one classifier and five metrics added to `run_seed()`.
-It reuses `stable_regions`, `all_mappings`, `extend_mapping`, `EXT_BACKBONE`,
-`STAB_TAU`, `CORR_THETA`, and the anchor machinery unchanged. It introduces
-exactly one new constant, `OBS_THETA = 0.5`, ported from the graphlog
-`EXT_AGREE` gate and frozen here.
+E2b is a NEW module `src/relweblearner/bench/multiweb_overlap.py` that imports
+and reuses bench-multiweb's machinery UNCHANGED — `generate`, `stable_regions`,
+`all_mappings`, `extend_mapping`, `project`, `correspondence`, `EXT_BACKBONE`,
+`STAB_TAU`, `CORR_THETA`, `CORR_MIN_IMG`, and the anchor machinery — so the
+frozen bench-multiweb (results already reported) is not perturbed. It layers the
+false merge onto a generated world *after* `generate()` returns (leaving the E1
+fresh-node and E2 solo arms byte-identical), adds the obstruction detector
+alongside `correspondence()`, and adds the §3a classifier and §4 metrics in its
+own `run_seed`. It introduces two new constants: `OBS_MIN_CONTRA = 2` (the §3a
+residual gate) and `MERGE_FRAC` (the bridge density, tuned once for Q-A during
+bring-up then frozen); `OBS_THETA = 0.5` is retained only as a reported
+secondary ratio.
 
 Discipline (design-problem.md §10): E2b runs before T1–T3 are attempted, because
 its outcome determines whether the geometric-obstruction half of the framework
