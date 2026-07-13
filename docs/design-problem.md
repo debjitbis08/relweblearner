@@ -57,15 +57,21 @@ Two consequences, one of each kind:
   holonomy — incompatibility inside one web. The obstruction machinery
   has empirical support; the coherent-forgery exclusion is just not an
   instance of it.
-- **A bench is missing, and it is the decisive one.** An **overlap
-  forgery**: liars wire a false pattern among CO-WITNESSED nodes, so that
-  view agreement is violated on the overlap itself. Prediction space:
-  it is rejected with a different TYPE than the fresh-node forgery
-  (obstructed vs unsupported), detectable as an extension failure, with
-  no closed-world policy needed. This experiment is licensed diagnosis
-  (§10) and should run before T1–T3 are attempted, because it determines
-  whether the geometric-obstruction half of the framework carries real
-  weight in the ensemble setting.
+- **The decisive bench was missing; it has now been run, and it holds.** An
+  **overlap forgery** — liars wire a false pattern among CO-WITNESSED nodes, so
+  view agreement is violated on the overlap itself — was pre-registered
+  (docs/multiweb-overlap-forgery-plan.md) and run held-out (50 seeds,
+  results/bench-multiweb-overlap). A false MERGE bridging two co-witnessed
+  communities is rejected as a genuinely different TYPE than the fresh-node
+  forgery: **obstructed** (contradicted backbone residual ≥ 2, in 1.00 of seeds;
+  E1/E2 residual exactly 0) vs **unsupported**, detected as an extension failure
+  with NO closed-world policy invoked (Q-D geometric rejection 1.00), and true
+  regions almost untouched (0.02 falsely obstructed, recall 0.99). So the
+  geometric-obstruction half of the framework carries **real weight** in the
+  ensemble setting — the §9 falsifier did not trigger. This is the empirical
+  content of T2; it fixes the type distinction the T1–T3 statements must now
+  reproduce, and one calibration lesson: the residual must be gated on a COUNT,
+  not a weight ratio (the ratio mean was 0.49, straddling the naive 0.5 gate).
 
 ## 3. The conjecture, v2 (broadened per referee)
 
@@ -176,8 +182,9 @@ Policies (epistemic choices, named so they can be varied):
   (settled, §2). Any framework that makes E1 and E2 differ without an
   overlap-forgery-style signal or provenance is claiming more than the
   data.
-- **E2b** (to be run — licensed): the overlap forgery is rejected as
-  Ext = empty, a genuinely different type from E1/E2.
+- **E2b** (RUN, held-out, passed): the overlap forgery is rejected as
+  Ext = empty (obstructed, 1.00 of seeds), a genuinely different type from
+  E1/E2 (unsupported) — see §2 and results/bench-multiweb-overlap.
 - **E3**: zero real mispairings across 44 worlds; all errors orphan
   merges — identity underdetermined exactly up to overlap-visible
   automorphism (T3's content).
@@ -229,10 +236,13 @@ Policies (epistemic choices, named so they can be varied):
 
 - Partiality (D1) cannot be accommodated without losing the exactness
   T1–T3 need.
-- E2b comes out indistinguishable from E1/E2 — overlap incompatibility
+- ~~E2b comes out indistinguishable from E1/E2 — overlap incompatibility
   is NOT detected as a different type in practice; then obstruction adds
   nothing over policy P1 + provenance, and the geometric half of the
-  conjecture deflates to the linear thinking layer only.
+  conjecture deflates to the linear thinking layer only.~~ **DID NOT
+  TRIGGER** (§2): E2b was run held-out and the type distinction is clean
+  (obstructed 1.00 vs unsupported, geometric rejection 1.00). The geometric
+  half stands; this falsifier is retired.
 - Every admissible enrichment fails some of E5's healed/torn worlds
   simultaneously — the bimodality is not an enrichment question.
 - rule_27 (E6) turns out to be a harness artifact (e.g. path-horizon) —
@@ -245,11 +255,12 @@ whatever rigor we can genuinely sustain; the first implementation ships
 with pre-registered predictions for all three benches. Empirical work
 licensed meanwhile, in priority order:
 
-1. **E2b, the overlap forgery** — the referee's decisive experiment: does
-   incompatible overlap data get rejected as a different TYPE? This
-   determines how much of the framework is geometry and how much is P1.
-2. **E6, rule_27** — diagnose before formalizing; a theory built to
-   explain misdiagnosed data is designed wrong.
+1. ~~**E2b, the overlap forgery**~~ — **DONE** (§2): the referee's decisive
+   experiment passed held-out; incompatible overlap data IS rejected as a
+   different TYPE, and the geometry vs P1 question is answered — obstruction
+   carries weight, and it fires without P1. T2 now has its empirical anchor.
+2. **E6, rule_27** — now the head of the queue: diagnose before formalizing;
+   a theory built to explain misdiagnosed data is designed wrong.
 3. **E5, rule_20** — the enrichment selector needs a mechanism-level
    account of the collapse.
 
