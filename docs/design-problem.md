@@ -7,7 +7,17 @@ cohomological obstruction it never was, and the referee's decisive
 question ("why exactly was the forgery excluded while the solo truth
 remained provisional?") turned out to be answerable from the
 implementation in one grep — see §2. v1 is preserved in git history
-(eb96448). This document builds nothing. It fixes the objects, states the
+(eb96448). **Revision 3, 2026-07-14, after the round-2 referee report on
+E2b** (docs/multiweb-overlap-forgery-referee-report.md; all seven points
+accepted in full — response in
+docs/multiweb-overlap-forgery-referee-response.md). The chief round-2
+correction repeats rev 2's lesson one level down: the E2b detector reads
+an ABSENT overlap edge in a finite sampled view as refutation, and that
+reading is itself an epistemic policy — now named P2 (§6) rather than
+smuggled as geometry, exactly as P1 was named in rev 2 — so E2b's result
+is stated as a statistical disagreement separation, not yet a literal
+Ext = ∅ instance of T2. rev 2 is preserved in git history. This document
+builds nothing. It fixes the objects, states the
 invariances and policies any designed structure must respect, translates
 the empirical findings into boundary conditions, and lists the theorems
 required for the structure to count as DESIGNED rather than found.*
@@ -57,21 +67,38 @@ Two consequences, one of each kind:
   holonomy — incompatibility inside one web. The obstruction machinery
   has empirical support; the coherent-forgery exclusion is just not an
   instance of it.
-- **The decisive bench was missing; it has now been run, and it holds.** An
-  **overlap forgery** — liars wire a false pattern among CO-WITNESSED nodes, so
-  view agreement is violated on the overlap itself — was pre-registered
+- **The decisive bench was missing; it has now been run — the separation
+  holds, under a policy the run itself exposed.** An **overlap forgery** —
+  liars wire a false pattern among CO-WITNESSED nodes, so view agreement is
+  violated on the overlap itself — was pre-registered
   (docs/multiweb-overlap-forgery-plan.md) and run held-out (50 seeds,
-  results/bench-multiweb-overlap). A false MERGE bridging two co-witnessed
-  communities is rejected as a genuinely different TYPE than the fresh-node
-  forgery: **obstructed** (contradicted backbone residual ≥ 2, in 1.00 of seeds;
-  E1/E2 residual exactly 0) vs **unsupported**, detected as an extension failure
-  with NO closed-world policy invoked (Q-D geometric rejection 1.00), and true
-  regions almost untouched (0.02 falsely obstructed, recall 0.99). So the
-  geometric-obstruction half of the framework carries **real weight** in the
-  ensemble setting — the §9 falsifier did not trigger. This is the empirical
-  content of T2; it fixes the type distinction the T1–T3 statements must now
-  reproduce, and one calibration lesson: the residual must be gated on a COUNT,
-  not a weight ratio (the ratio mean was 0.49, straddling the naive 0.5 gate).
+  results/bench-multiweb-overlap). The false MERGE is separated from the
+  fresh-node forgery as a different measured type in every seed: a
+  cross-view disagreement residual of ≥ 2 contradicted backbone edges
+  (min 5, and ≥ 5 per seed on correctly mapped direct anchors), while E1/E2
+  have residual exactly 0 — they present no checkable edges at all. True
+  regions are almost untouched (0.02 of instances falsely flagged; recall
+  and purity identical to the unmodified benchmark on the same seeds). The
+  policy attribution (plan §8a): **P1 alone would have COMMITTED the false
+  merge in 41/50 seeds** and kept it provisional in 9 — the merged region's
+  mapped image concentrates past CORR_THETA in one side's region of another
+  view — so the detector is uniquely responsible for rejection in those 41
+  seeds and necessary for complete rejection over the block; P1's
+  fresh-node exclusion does not generalize to lies on the overlap. What the
+  round-2 referee then correctly bounded: the detector reads an ABSENT
+  backbone edge in another sampled view as a contradiction, and in a finite
+  co-occurrence sample absence is non-observation, not negative evidence —
+  that reading is itself an epistemic policy (**P2**, §6), and its false
+  positives are exactly its sampling-variance cost (14 of the 15 collateral
+  flags sit on correctly mapped direct anchors). So E2b establishes a
+  reliable, typed, cross-view **disagreement separation** — not yet literal
+  incompatibility (Ext = ∅): that identification is T2's standing proof
+  obligation (§8), requiring an explicit semantics for absent edges. Two
+  calibration lessons: gate the residual on a COUNT, not a dilution-prone
+  weight ratio (ratio mean 0.49, straddling the naive 0.5 gate) — and the
+  count is of edges, not independent witnesses (one mis-mapped node
+  produced both counted contradictions in one collateral case; re-run
+  obligation, plan §9).
 
 ## 3. The conjecture, v2 (broadened per referee)
 
@@ -171,7 +198,24 @@ Policies (epistemic choices, named so they can be varied):
 - **P1. Closed-world projection.** Only structure with ≥ k-view support
   commits (currently k = 2 — the ensemble lift of commit_k). This is
   what rejects fresh-node forgeries AND unshared truths (§2); it is not
-  geometry and must never be presented as such.
+  geometry and must never be presented as such. Its scope is now also
+  measured: P1 alone would have committed E2b's false merge in 41/50
+  scored seeds and kept it provisional in only 9 (§2, plan §8a) — the
+  closed-world policy is not a reliable defense against lies on the
+  overlap; there, rejection comes from the disagreement detector, which
+  operates under P2.
+- **P2. Overlap non-observation as refutation.** The E2b obstruction
+  detector counts a strong backbone edge whose mapped image is absent
+  (or weak) in another view as CONTRADICTED. In a finite sampled
+  co-occurrence world, absence is non-observation, not observed negative
+  evidence — so this reading is an epistemic policy, distinct from P1,
+  named per the round-2 referee rather than presented as geometry. Its
+  measured cost is pure sampling variance: 0.02 of true region-instances
+  falsely flagged, 14 of those 15 on correctly mapped direct anchors.
+  Discharging P2 — a per-view completeness axiom for backbone edges, or
+  a statistical soundness argument connecting the detector to genuine
+  incompatibility — is the standing obligation before detector verdicts
+  may be read as Ext = ∅ (T2, §8).
 
 ## 7. Boundary conditions — what the experiments require
 
@@ -182,9 +226,14 @@ Policies (epistemic choices, named so they can be varied):
   (settled, §2). Any framework that makes E1 and E2 differ without an
   overlap-forgery-style signal or provenance is claiming more than the
   data.
-- **E2b** (RUN, held-out, passed): the overlap forgery is rejected as
-  Ext = empty (obstructed, 1.00 of seeds), a genuinely different type from
-  E1/E2 (unsupported) — see §2 and results/bench-multiweb-overlap.
+- **E2b** (RUN, held-out, passed; interpretation bounded per round-2
+  referee): the overlap forgery is separated from E1/E2 by a disjoint
+  cross-view disagreement residual (≥ 2 contradicted backbone edges in
+  1.00 of seeds, min 5, vs exactly 0), read under P2; P1 alone would
+  have committed it in 41/50 seeds. Any formalism must derive this
+  rejection from overlap disagreement, not support counting; equating
+  the residual with Ext = empty awaits T2's soundness argument — see §2
+  and results/bench-multiweb-overlap.
 - **E3**: zero real mispairings across 44 worlds; all errors orphan
   merges — identity underdetermined exactly up to overlap-visible
   automorphism (T3's content).
@@ -214,7 +263,10 @@ Policies (epistemic choices, named so they can be varied):
 - **T1 Extension classification.** Characterize when a local assignment
   has zero, one, or many global extensions.
 - **T2 Incompatibility.** Incompatible overlap data implies Ext = empty.
-  (E2b is its experiment.)
+  (E2b measures its candidate signal; identifying the E2b residual with
+  Ext = empty additionally requires the P2 discharge — an explicit
+  semantics for absent co-occurrence edges and a soundness argument
+  connecting the operational detector to incompatibility, §6.)
 - **T3 Underdetermination.** Insufficient overlap yields many
   extensions, characterized by the automorphism group / quotient visible
   to the cover (orphan merges and provisional states live here).
@@ -240,9 +292,14 @@ Policies (epistemic choices, named so they can be varied):
   is NOT detected as a different type in practice; then obstruction adds
   nothing over policy P1 + provenance, and the geometric half of the
   conjecture deflates to the linear thinking layer only.~~ **DID NOT
-  TRIGGER** (§2): E2b was run held-out and the type distinction is clean
-  (obstructed 1.00 vs unsupported, geometric rejection 1.00). The geometric
-  half stands; this falsifier is retired.
+  TRIGGER** (§2): E2b ran held-out and the residual separation is clean
+  (detector fires in 1.00 of seeds vs E1/E2 exactly 0), and the
+  redundancy question resolved in the opposite direction — P1 alone
+  would have committed the forgery in 41/50 seeds, so the detector is
+  necessary, not merely independent (plan §8a). Per the round-2 referee
+  the result is a disagreement separation under P2, not yet literal
+  Ext = ∅ — a bounded interpretation carried as T2's proof obligation
+  (§8), not a triggered falsifier. This falsifier is retired.
 - Every admissible enrichment fails some of E5's healed/torn worlds
   simultaneously — the bimodality is not an enrichment question.
 - rule_27 (E6) turns out to be a harness artifact (e.g. path-horizon) —
@@ -252,13 +309,21 @@ Policies (epistemic choices, named so they can be varied):
 
 No implementation until T0–T3 are proved for the chosen D1/D2, at
 whatever rigor we can genuinely sustain; the first implementation ships
-with pre-registered predictions for all three benches. Empirical work
-licensed meanwhile, in priority order:
+with pre-registered predictions for all three benches. One theory-side
+obligation, added by the round-2 referee, precedes any use of E2b as
+T2's formal boundary condition: the **P2 discharge** (§6, §8) — an
+explicit semantics for absent co-occurrence edges and a soundness
+argument connecting the disagreement detector to incompatibility.
+Empirical work licensed meanwhile, in priority order:
 
 1. ~~**E2b, the overlap forgery**~~ — **DONE** (§2): the referee's decisive
-   experiment passed held-out; incompatible overlap data IS rejected as a
-   different TYPE, and the geometry vs P1 question is answered — obstruction
-   carries weight, and it fires without P1. T2 now has its empirical anchor.
+   experiment passed held-out; the overlap forgery IS separated as a
+   different measured type, and the geometry vs P1 attribution is
+   answered — P1 alone would have passed the forgery in 41/50 seeds
+   (plan §8a), so the detector is necessary over the scored block, not
+   just independent. Interpretation bounded per the round-2 referee: a
+   disagreement separation under P2 — T2's candidate anchor, pending the
+   P2 discharge above.
 2. **E6, rule_27** — now the head of the queue: diagnose before formalizing;
    a theory built to explain misdiagnosed data is designed wrong.
 3. **E5, rule_20** — the enrichment selector needs a mechanism-level

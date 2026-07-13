@@ -75,6 +75,29 @@ chosen among multi-covered communities whose co-visible members clear the
 `e2b_constructible = False` and excluded from the E2b rates (reported
 explicitly, never silently dropped).
 
+### 2a. Bring-up world retune (made before the scored run at commit `8ed73c1`; recorded here in the 2026-07-14 post-run review)
+
+The Q-A bring-up (seeds 0–11) found the §2 spec as written too weak to
+constitute an overlap forgery: bridging only the ~3 anchored members of each
+community left Louvain unmerged (merge_stable 2/8) — the bulk of each ~8-node
+community stayed uncrossed. The licensed fix (§5 Q-A: "retune before the
+scored run and report the tune"): the bridge is wired across the **full
+view-0 memberships** of A and B, uniformly at `MERGE_FRAC = 0.6`, with **no
+anchored preference** — the anchored members are included as a subset, so the
+checkable anchored-pair edges the detector reads are supplied as before.
+`MERGE_FRAC` itself was never changed. This is a world-tune under Q-A's
+explicit license, frozen before any scored seed; it was reported in the
+implementation commit message but this document was not amended at the time —
+this subsection backfills the record so the plan and the code agree. Two
+smaller operational details, disclosed for the same reason: the (A, B, j)
+triple is chosen by MAXIMIZING the smaller anchored count over a common
+witness view (not sampled among qualifying pairs — a mild tilt toward
+checkability; every qualifying pair already clears the ≥ 2 floor), and
+`merge_stable` is operationalized as one web-0 stable region containing
+≥ `CORR_MIN_IMG` members of EACH side (looser than "A∪B as one region" —
+though in the scored data the merged region in fact contains 100% of both
+memberships in every seed inspected).
+
 ## 3. The obstruction detector (the new machinery)
 
 bench-multiweb's `correspondence()` measures only image *concentration* — how
@@ -235,3 +258,129 @@ is worth formalizing at all. It is empirical work licensed on the existing
 benches — it neither validates nor requires the T0 model/data separation, and it
 ships its result (pass or fail) with pre-registered predictions, like every
 other bench in this project.
+
+## 8. Post-run review notes (2026-07-14, after the scored run)
+
+*Findings from an audit of the frozen implementation and the scored
+artifacts. Nothing here changes the scored numbers, and no code was changed.
+Provenance is of two kinds, marked per claim (wording corrected per round-2
+referee point 6 — the original preamble said "no re-run", which conflated
+them): (a) facts read directly from the frozen `results.json`; (b)
+deterministic diagnostic recomputations — re-executing the frozen module on
+individual scored seeds (same seeds, same code, bit-for-bit reproducible) for
+facts the artifact does not store, such as region memberships and
+correspondence scores. They are listed so the referee sees them from us
+first.*
+
+### 8a. Q-D as implemented is tautological — and the pre-registered attribution, computed post hoc, shows something STRONGER than predicted
+
+As coded, `QD_e2b_geometric` is the identical predicate to
+`QB_e2b_contra_ge_min` and to `QC_e2b_obstructed` (all three are
+`contra >= OBS_MIN_CONTRA` on the same arm rows), so §6's third branch
+("Q-C passes but Q-D fails — geometric but redundant with P1") was
+unreachable as coded. The §4 Q4 attribution — obstructed vs would-need-P1 —
+was NOT implemented. It is, however, answerable from the recorded per-seed
+data, because the merged region's own `corroboration` was saved:
+
+| E2b merged region corroboration | seeds (of 50) |
+|---|---|
+| 0 | 9 |
+| 1 | 35 |
+| 2 | 6 |
+
+Under the frozen bench-multiweb projection rule (`concept = corroboration
+>= 1`, i.e. **P1 alone**), the false merge would have been **COMMITTED as a
+concept in 41/50 = 0.82 of seeds** (corroboration counts: provenance (a);
+that the merged region is the full A∪B and `concept = True` with
+correspondence scores up to 0.75: provenance (b) — these facts are not
+stored in the artifact). The mechanism: with lopsided anchored counts, the
+merged region's mapped image concentrates ≥ `CORR_THETA = 0.6` in ONE
+side's region of another view, clearing the concentration test.
+
+Consequence, with the denominators retained (wording corrected per round-2
+referee point 3 — an earlier draft of this paragraph said P1 "does not
+catch the overlap forgery at all", which overstated): the worry §6
+enumerated (obstruction real but redundant with P1) is not merely
+un-triggered — the opposite holds. **P1 is not a reliable defense against
+the overlap forgery: it commits the false merge in 41/50 seeds and keeps it
+provisional in only 9. The detector catches all 50, is uniquely responsible
+for rejection in the 41 P1-committing seeds, and is therefore necessary for
+complete rejection over the scored block.** The closed-world policy's
+rejection of the fresh-node forgery does not generalize to forgeries that
+land on the overlap; bench-multiweb's P-C ("the multi-web system rejects
+the coherent forgery") is now known to be a statement about fresh-node
+forgeries only. Any future scored run should implement Q-D as this
+attribution (fraction of E2b regions with `corroboration >= 1`, i.e.
+P1-would-commit), not as a copy of the Q-B predicate.
+
+### 8b. Q-E: the baseline comparison the prediction demands, and the denominators
+
+The Q-E prediction was "within noise of the bench-multiweb baseline"; the
+report gave the run's numbers without quoting the baseline. Baseline
+(results/bench-multiweb, seeds 0–49): recall **0.964**, purity **1.00**.
+This run (seeds 1000–1049): recall 0.99 ± 0.04, purity 1.00 ± 0.00 — passes
+(the seed blocks differ, so the small recall difference is noise, not
+improvement). The false-obstruction rate 0.02 is **per region-instance**:
+15 of 650 true-region rows pooled across seeds. Per SEED, 13/50 seeds
+(0.26) have at least one falsely-obstructed true region; the worst single
+region reached contra = 8 (seed 1030). The pre-registered gate reads
+per-region and passes; the per-seed rate is reported here so the gate's
+denominator is explicit. One further note: the implemented "true regions"
+pool includes uncorroborated regions, slightly broader than §5's "true
+corroborated regions" — immaterial to the pass, disclosed for exactness.
+
+## 9. Round-2 referee corrections (2026-07-14, accepted in full)
+
+*The round-2 referee report (docs/multiweb-overlap-forgery-referee-report.md,
+preserved verbatim) raised seven points; all are accepted — response in
+docs/multiweb-overlap-forgery-referee-response.md. Every diagnostic the
+referee computed was independently reproduced exactly before acceptance.
+The frozen sections §1–§7 above are left untouched; corrections to our own
+post-run notes (§8) were made in place with per-point attributions, and the
+substantive findings are recorded here. Referee point 2 (Q-D tautology) was
+already §8a; point 6 (provenance) is fixed in the §8 preamble; point 3
+(overstated P1 conclusion) is fixed in §8a; the remaining points:*
+
+- **Point 1 (major, reinterpretation of the headline).** The detector counts
+  a mapped backbone edge as CONTRADICTED when the other view lacks a strong
+  counterpart — but each web is a finite 400-episode sample, so absence is
+  non-observation, not negative evidence. Reading it as refutation is itself
+  an epistemic policy, now named **P2** (design-problem §6), distinct from
+  P1. The referee's diagnostic makes the cost concrete, and we reproduce it:
+  14 of the 15 falsely-obstructed true region-instances sit on correctly
+  mapped DIRECT anchors — sampling variance, not mapping error. The E2b
+  result is therefore a reliable cross-view **disagreement separation**
+  (every seed's E2b region carries ≥ 5 contradictions on correct direct
+  anchors; E1/E2 carry none), NOT yet literal incompatibility / Ext = ∅ /
+  a policy-free instance of T2. That identification awaits the P2 discharge:
+  an explicit semantics for absent co-occurrence edges plus a soundness
+  argument (design-problem §8 T2, §10). Headline language weakened
+  accordingly in design-problem §2/§7/§9/§10 and the results report.
+- **Point 4 (gate rationale falsified as stated).** §3a's justification for
+  `OBS_MIN_CONTRA = 2` — "two INDEPENDENT refuting backbone edges, so one
+  noisy mapping cannot manufacture a type" — is falsified by the code it
+  describes: the gate counts edges, not independent witnesses, and one
+  mis-mapped node can supply several contradicted edges. Scored instance,
+  reproduced: seed 1029, node `w1:17` is wrongly mapped and produces BOTH
+  counted contradictions, falsely obstructing a genuine region. This does
+  not touch the E2b headline (whose residuals ride on correct direct
+  anchors, ≥ 5 per seed) but it does explain one collateral error. The
+  frozen §3a text stands as written; re-run obligation: require
+  contradictions from independent witnesses (e.g. disjoint, directly
+  anchored endpoint pairs), and restate the rationale to match.
+- **Point 5 (bridge weights not exactly distribution-matched).** For a
+  selected A–B pair that already carries a noise edge, the implementation
+  ADDS the sampled intra weight to the existing weight instead of replacing
+  it. Reproduced: 179 of 2,092 wired bridge pairs across the scored block
+  (8.6%) were pre-existing, so their final weights are shifted samples —
+  systematically stronger than §2's "sampled from the SAME empirical
+  intra-community weight distribution" claim, slightly favoring merge
+  formation and backbone survival. Unlikely to explain the separation
+  (magnitude and the direct-anchor floor argue against), but a real
+  construction mismatch. Re-run obligation: replace rather than add, or
+  declare the shift.
+- **Point 7 (Q-E denominator, quantified).** The corroborated-only rate the
+  frozen prediction names is 15/616 = 2.44% (reproduced) vs the stored
+  broad-denominator 15/650 = 2.31%; the < 0.05 gate passes under both. The
+  machine metric remains mislabeled relative to the pre-registration (§8b);
+  re-run obligation: compute both denominators explicitly.
