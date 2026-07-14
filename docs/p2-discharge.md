@@ -214,3 +214,48 @@ completing, and the validator applies the same conditioning (skipped seeds
 recorded, never silent). A fix to `generate()` is a bench amendment
 requiring its own pre-registration; the latent-crash rate (~1% of seeds)
 is now a known property of the declared process.
+
+## 9. Amendment v2 (2026-07-14, pre-registered BEFORE the fresh block is run)
+
+*Committed before `region_alpha_v2` exists and before ANY computation
+touches seed block 3000–3049, which no prior run of anything has used.
+Nothing here is fitted: the only inputs to the v2 bound are the declared
+process (model seeds 10000+) and each region's measured m_j.*
+
+**The corrected false-alarm bound.** Replace §4(1)'s global-mean plug-in
+with the rate mixture the §8 diagnosis identified. Let F be the empirical
+distribution of per-world-view p_miss sampled from the declared process
+(the same model block; raw samples, not the mean). For a true region R
+with checkable-correct edge counts m_j:
+
+    α₂(R) = E_{p ~ F} [ 1 − Π_j (1 − τ(m_j, p)) ],   τ(m, p) = P(Bin(m, p) ≥ 2)
+
+with ONE p shared across the region's views — the maximal within-world
+rate correlation, the conservative choice; the independent-per-view-draw
+variant is computed and REPORTED as a sensitivity, but does not gate.
+
+**Verdict criteria (frozen now):**
+- **V2′** — on fresh block 3000–3049: the observed falsely-obstructed
+  count on CORRECT-endpoint contradictions only must lie within a factor
+  2.5 of Σ_R α₂(R). (v1's verdict compared the α part against the TOTAL
+  observed count, conflating the ε_map term that §4 explicitly separates;
+  the split is declared here, before the block is seen. ε_map-driven
+  obstructions are reported alongside, never pooled.)
+- **V1 replication (gating)** — the 3000-block correct-endpoint edge rate
+  must lie in the ORIGINAL V1 band (§5); the semantics must replicate,
+  not merely have passed once.
+- **V3 replication (gating)** — thresholds as in §5.
+
+**Failure routing, fixed now:** if V2′ fails again, world-level rate
+sharing does not capture the within-region correlation (node-level
+clustering — a weakly-visible endpoint degrading several edges at once —
+is the next named candidate); P2 stays undischarged, the failure is
+recorded in §10, and no third attempt is made without a diagnosis-backed
+model change pre-registered first.
+
+**Checklist additions (§7):** `region_alpha_v2()` (the mixture bound, both
+variants), `verdict_v2()`, and a `--v2` CLI mode running blocks 3000–3049
+(gating) and 2000–2049 (now retrodiction for V2′, disclosed as such);
+`model_rates()` gains a raw-samples return for F. Vacuity: the 3000 block
+is virgin; F never sees it; the tolerance factor is unchanged from v1 —
+the model is corrected, not the bar.
