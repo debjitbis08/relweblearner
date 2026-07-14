@@ -354,6 +354,11 @@ obligation, added by the round-2 referee, precedes any use of E2b as
 T2's formal boundary condition: the **P2 discharge** (§6, §8) — an
 explicit semantics for absent co-occurrence edges and a soundness
 argument connecting the disagreement detector to incompatibility.
+Process rule, added after referees twice caught the same plan-to-code
+leak (E2b's Q-D attribution, E6's activation trace): every plan ships a
+**plan-to-code checklist** mapping each pre-registered metric and probe
+to the function implementing it, audited before bring-up — see
+docs/rule27-diagnosis-referee-response.md §3.2 for the second instance.
 Empirical work licensed meanwhile, in priority order:
 
 1. ~~**E2b, the overlap forgery**~~ — **DONE** (§2): the referee's decisive
