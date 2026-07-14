@@ -421,7 +421,9 @@ were declared here before the validator re-ran.*
 2. **Predictive intervals.** The gating intervals are now the
    prediction-error bootstrap's (outer-resampling the 396 model worlds to
    include estimation uncertainty): count PI99 [2, 17], rate PI99
-   [0.01188, 0.02688]. The plain-bootstrap intervals are reported for
+   [0.01194, 0.02686] (an earlier draft of this item quoted rate values
+   from a pre-verification with a different RNG stream; these are the
+   committed artifact's). The plain-bootstrap intervals are reported for
    continuity. Observed 9 and 0.01753 remain comfortably inside — the
    verdict is unchanged by the correction, which is exactly what the
    referee's own replay found.

@@ -49,6 +49,23 @@ def test_world_stats_smoke_and_bridge_attribution_strictness():
     assert st["det_eligible"] == 1 and st["det_success"] == 1
 
 
+def test_detection_cell_synthetic_counterexamples():
+    from collections import Counter
+    C = Counter
+    # bridges POOLED across views (1+1) must NOT qualify — the pre-round-2
+    # implementation would have accepted this
+    assert P._detection_cell(C({1: 1, 2: 1}), C({1: 1, 2: 1})) == (0, 0)
+    # eligible in view 1, but the contradictions sit in a NON-eligible view:
+    # unrelated contradictions must not count as bridge-attributable success
+    assert P._detection_cell(C({1: 2, 2: 1}), C({2: 2})) == (1, 0)
+    # eligible view whose OWN bridges are contradicted: success
+    assert P._detection_cell(C({1: 2}), C({1: 2})) == (1, 1)
+    # eligible but only one of its bridges contradicted: below OBS_MIN_CONTRA
+    assert P._detection_cell(C({1: 3}), C({1: 1})) == (1, 0)
+    # two eligible views, success carried by the second
+    assert P._detection_cell(C({1: 2, 2: 2}), C({2: 2})) == (1, 1)
+
+
 def test_fresh_block_v3_eps_map_descriptive_semantics():
     P.SKIPPED.setdefault("test_block", [])
     out = P.fresh_block_v3(range(1000, 1002), "test_block")

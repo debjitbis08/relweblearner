@@ -251,7 +251,8 @@ Policies (epistemic choices, named so they can be varied):
   its model mismatched the evaluated pipeline, §11); v3 abandoned
   analytic composition for direct simulation of the actual detector
   under the actual process, and passed all virgin-block gates centered
-  (false-obstruction count 9 vs predicted 8.22 in PI99 [2, 16]; edge
+  (false-obstruction count 9 vs predicted 8.22 in prediction-error
+  PI99 [2, 17]; edge
   rate 0.01753 vs 0.01884; detection 50/50 under the strict per-view
   bridge-attributable gate; gating intervals are prediction-error
   bootstrap, detection carries β ≤ 0.0076 world-level, never β = 0).

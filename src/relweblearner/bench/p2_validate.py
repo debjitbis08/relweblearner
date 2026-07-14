@@ -410,12 +410,22 @@ def _world_stats(seed: int, tag: str) -> dict | None:
                 good_by_j[e["j"]] += 1
                 if e["contra"]:
                     contra_good_by_j[e["j"]] += 1
-        elig = [j for j, n in good_by_j.items() if n >= 2]
-        if elig:
-            st["det_eligible"] = 1
-            st["det_success"] = int(any(contra_good_by_j[j] >= OBS_MIN_CONTRA
-                                        for j in elig))
+        elig, succ = _detection_cell(good_by_j, contra_good_by_j)
+        st["det_eligible"], st["det_success"] = elig, succ
     return st
+
+
+def _detection_cell(good_by_j: Counter, contra_good_by_j: Counter) -> tuple[int, int]:
+    """The strict V3''' condition as a pure function (round-2 finding 4,
+    pinned by synthetic tests per round-3 finding 2): eligible iff some
+    SINGLE view has >= 2 correctly-anchored checkable bridges; success iff
+    in one of THOSE views >= OBS_MIN_CONTRA of its OWN bridges are
+    contradicted. Bridges pooled across views never qualify; contradictions
+    in a non-eligible view never count."""
+    elig = [j for j, n in good_by_j.items() if n >= 2]
+    if not elig:
+        return 0, 0
+    return 1, int(any(contra_good_by_j[j] >= OBS_MIN_CONTRA for j in elig))
 
 
 def direct_model(seeds=V3_MODEL_SEEDS) -> list[dict]:
