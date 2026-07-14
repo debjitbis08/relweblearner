@@ -23,6 +23,7 @@ relweb-multiweb-graphlog = "relweblearner.bench.multiweb_graphlog:main"
 relweb-multiweb-overlap = "relweblearner.bench.multiweb_overlap:main"
 relweb-rule27-diag = "relweblearner.bench.rule27_diag:main"
 relweb-rule20-diag = "relweblearner.bench.rule20_diag:main"
+relweb-p2-validate = "relweblearner.bench.p2_validate:main"
 
 [tool.poetry]
 packages = [{ include = "relweblearner", from = "src" }]

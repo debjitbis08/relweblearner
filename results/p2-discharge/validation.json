@@ -1,0 +1,99 @@
+{
+  "model": {
+    "n_world_views": 600,
+    "p_miss_mean": 0.020739682875448775,
+    "p_miss_q025": 0.0,
+    "p_miss_q975": 0.061855670103092786,
+    "delta_x_mean": 0.000462653796718418,
+    "delta_x_q975": 0.001092896174863388,
+    "threshold_mean": 3.7195833333333335
+  },
+  "blocks": {
+    "held_out_2000": {
+      "edges": {
+        "n_true_regions": 650,
+        "checkable_correct": 3405,
+        "contradicted_correct": 64,
+        "edge_rate_correct": 0.018795888399412628,
+        "checkable_wrong_mapped": 54,
+        "contradicted_wrong_mapped": 3,
+        "epsilon_map_edges": 3,
+        "observed_false_obstructed": 10,
+        "observed_false_obstructed_correct_only": 9
+      },
+      "region_alpha": {
+        "predicted_false_obstructed": 3.4,
+        "observed_false_obstructed": 10,
+        "observed_correct_only": 9
+      },
+      "detection": {
+        "constructible": 50,
+        "eligible_ge2_bridges": 50,
+        "obstructed": 50,
+        "obstructed_rate": 1.0,
+        "checkable_bridges": 616,
+        "bridge_contra_rate": 1.0
+      }
+    },
+    "retro_1000": {
+      "edges": {
+        "n_true_regions": 650,
+        "checkable_correct": 3582,
+        "contradicted_correct": 77,
+        "edge_rate_correct": 0.021496370742601897,
+        "checkable_wrong_mapped": 49,
+        "contradicted_wrong_mapped": 2,
+        "epsilon_map_edges": 2,
+        "observed_false_obstructed": 15,
+        "observed_false_obstructed_correct_only": 14
+      },
+      "region_alpha": {
+        "predicted_false_obstructed": 3.91,
+        "observed_false_obstructed": 15,
+        "observed_correct_only": 14
+      },
+      "detection": {
+        "constructible": 50,
+        "eligible_ge2_bridges": 50,
+        "obstructed": 50,
+        "obstructed_rate": 1.0,
+        "checkable_bridges": 670,
+        "bridge_contra_rate": 1.0
+      }
+    }
+  },
+  "verdict": {
+    "V1_edge_rate": {
+      "pass": true,
+      "band": [
+        0.0,
+        0.12371
+      ],
+      "observed": 0.0188
+    },
+    "V2_region_count": {
+      "pass": false,
+      "band": [
+        1.36,
+        8.5
+      ],
+      "predicted": 3.4,
+      "observed": 10
+    },
+    "V3_detection": {
+      "pass": true,
+      "obstructed_rate": 1.0,
+      "bridge_contra_rate": 1.0
+    },
+    "discharged": false
+  },
+  "skipped_crashing_seeds": {
+    "model": [
+      10145,
+      10191
+    ],
+    "held_out": [],
+    "retro": []
+  },
+  "elapsed_s": 14.5
+}
