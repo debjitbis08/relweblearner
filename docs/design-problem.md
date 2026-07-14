@@ -238,15 +238,20 @@ Policies (epistemic choices, named so they can be varied):
   Discharging P2 — a per-view completeness axiom for backbone edges, or
   a statistical soundness argument connecting the detector to genuine
   incompatibility — is the standing obligation before detector verdicts
-  may be read as Ext = ∅ (T2, §8). Status (docs/p2-discharge.md §8): the
-  discharge was attempted by the statistical route and is PARTIAL — the
-  edge-level absence semantics is validated held-out (observed 0.0188 vs
-  derived p_miss 0.0207) and the detection side is exact (1.00 / 1.0000),
-  but the region-level false-alarm bound FAILED its held-out test
-  (10 observed vs 3.4 predicted; diagnosed as a rate-mixture/Jensen
-  error — contradictions correlate through the world-level rate). P2
-  remains a policy until the pre-registered v2 amendment (a mixture-aware
-  bound, fresh held-out block) passes.
+  may be read as Ext = ∅ (T2, §8). **Status: DISCHARGED relative to A1**
+  (docs/p2-discharge.md §10, after one honest failure and a pre-registered
+  amendment): the edge-level absence semantics is validated on three
+  independent blocks (rates 0.0188 / 0.0204 / 0.0215 against the derived
+  p_miss 0.0207 — zero free parameters), detection is exact
+  (1.00 / 1.0000), and the rate-mixture false-alarm bound passed its
+  virgin-block test (11 observed vs α₂ = 5.64, within the frozen ×2.5
+  tolerance; the v1 global-mean bound FAILED its own test first — a
+  Jensen/rate-mixture error, diagnosed then corrected under
+  pre-registration). P2 accordingly moves from this policy list to the
+  assumption ledger: what remains is A1 itself (the declared sampling
+  regime — a per-domain empirical claim in any deployment) and the
+  tolerance choice every statistical test carries. Within A1 worlds,
+  "obstructed" reads as Ext = ∅ up to computed error rates.
 
 ## 7. Boundary conditions — what the experiments require
 
@@ -262,9 +267,11 @@ Policies (epistemic choices, named so they can be varied):
   cross-view disagreement residual (≥ 2 contradicted backbone edges in
   1.00 of seeds, min 5, vs exactly 0), read under P2; P1 alone would
   have committed it in 41/50 seeds. Any formalism must derive this
-  rejection from overlap disagreement, not support counting; equating
-  the residual with Ext = empty awaits T2's soundness argument — see §2
-  and results/bench-multiweb-overlap.
+  rejection from overlap disagreement, not support counting. The P2
+  discharge is now done relative to A1 (docs/p2-discharge.md §10), so the
+  residual reads as Ext = empty up to computed error rates within the
+  named sampling model — see §2, §6 P2, and
+  results/bench-multiweb-overlap.
 - **E3**: zero real mispairings across 44 worlds; all errors orphan
   merges — identity underdetermined exactly up to overlap-visible
   automorphism (T3's content).
@@ -329,10 +336,12 @@ Policies (epistemic choices, named so they can be varied):
 - **T1 Extension classification.** Characterize when a local assignment
   has zero, one, or many global extensions.
 - **T2 Incompatibility.** Incompatible overlap data implies Ext = empty.
-  (E2b measures its candidate signal; identifying the E2b residual with
-  Ext = empty additionally requires the P2 discharge — an explicit
-  semantics for absent co-occurrence edges and a soundness argument
-  connecting the operational detector to incompatibility, §6.)
+  (The P2 discharge is DONE relative to A1 — docs/p2-discharge.md: absence
+  semantics validated on three blocks, detection exact, false-alarm bound
+  passed its virgin-block test after one pre-registered correction — so
+  E2b's separation now stands as T2's empirical instance RELATIVE TO the
+  named sampling model; T2's remaining content is the exact statement and
+  proof over the chosen D1/D2, with A1 as the bridge to data.)
 - **T3 Underdetermination.** Insufficient overlap yields many
   extensions, characterized by the automorphism group / quotient visible
   to the cover (orphan merges and provisional states live here).
@@ -384,11 +393,11 @@ Policies (epistemic choices, named so they can be varied):
 
 No implementation until T0–T3 are proved for the chosen D1/D2, at
 whatever rigor we can genuinely sustain; the first implementation ships
-with pre-registered predictions for all three benches. One theory-side
-obligation, added by the round-2 referee, precedes any use of E2b as
-T2's formal boundary condition: the **P2 discharge** (§6, §8) — an
-explicit semantics for absent co-occurrence edges and a soundness
-argument connecting the disagreement detector to incompatibility.
+with pre-registered predictions for all three benches. The theory-side
+obligation added by the round-2 referee — the **P2 discharge** — is
+**DONE relative to A1** (docs/p2-discharge.md; one pre-registered failure
+and correction on the way), so E2b is available to T2 as its empirical
+instance under the named sampling assumption (§6, §8).
 Process rule, added after referees twice caught the same plan-to-code
 leak (E2b's Q-D attribution, E6's activation trace): every plan ships a
 **plan-to-code checklist** mapping each pre-registered metric and probe

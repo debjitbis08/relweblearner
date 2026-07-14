@@ -259,3 +259,32 @@ variants), `verdict_v2()`, and a `--v2` CLI mode running blocks 3000–3049
 `model_rates()` gains a raw-samples return for F. Vacuity: the 3000 block
 is virgin; F never sees it; the tolerance factor is unchanged from v1 —
 the model is corrected, not the bar.
+
+## 10. Outcome of amendment v2 (2026-07-14, after the run) — DISCHARGED
+
+All three §9 gates pass on the virgin block 3000–3049
+(results/p2-discharge/v2-validation.json):
+
+- **V1 replication PASSED**: correct-endpoint edge rate 0.0204
+  (71/3,486) — the third independent block to land on the derived
+  p_miss = 0.0207 (2000-block: 0.0188; frozen 1000-block: 0.0215).
+- **V2′ PASSED**: 11 correct-endpoint false obstructions observed against
+  the rate-mixture bound's 5.64, inside the frozen ×2.5 band
+  [2.26, 14.1]. The shared-p and independent-draw variants nearly
+  coincide (5.64 / 5.66), so within-world cross-view rate correlation is
+  immaterial; the residual ×1.95 underprediction — passing, and stated
+  rather than hidden — is consistent with §9's named node-level
+  clustering remaining unmodeled, absorbed by the declared engineering
+  tolerance. Anyone requiring a tighter α than ×2.5 must model it.
+- **V3 replication PASSED**: obstructed rate 1.00, per-bridge
+  contradiction rate 1.0000.
+
+**P2 is therefore discharged in the §6 sense**: within A1 worlds, the
+detector verdict "obstructed" reads as Ext = ∅ up to the computed error
+rates (α₂ per region, ε_map measured, δ_x = 0.00046, β ≈ 0 at b ≥ 2
+bridges), and P2 moves from the policy list to the assumption list —
+design-problem §6 P2 → assumption A1 (declared sampling regime) + the
+tolerance choice that any statistical test carries. E2b's separation is,
+relative to A1, an empirical instance of T2. NOT established, permanently:
+any model-free license — in deployment A1 is a per-domain empirical claim
+to be validated there (§6). The E2b §9 re-run obligations stand.
