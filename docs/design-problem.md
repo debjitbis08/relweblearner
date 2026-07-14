@@ -171,18 +171,21 @@ H¹ class — cocycles and coboundaries first.)
   must restrict the admissible enrichments enough that the surviving
   candidates — linear, tropical, probabilistic, set-valued — are
   FALSIFIABLE against each other. rule_20's collapse (E5) is then a
-  selector experiment between enrichments, not a bug to patch. The E6
-  diagnosis added a second selector datum, CORRECTED after the E6 referee
-  forced the pre-registered causal measurement
-  (results/rule27-diagnosis/graded-causal.json): the graded layer found
-  and committed the hub identity, and making that identity EXACT recovers
-  almost nothing (0.163 → 0.168, against the discrete system's
-  identity-repair gain of 0.163 → 0.496 on the same world). An earlier
-  multiplicative-decay explanation was measured and WITHDRAWN (72% of
-  bridged applications are sim-killed, yet zero episodes lose their
-  reduction). The measured datum: the enrichment changes WHICH constraint
-  binds — identity for the discrete semantics, something undiagnosed
-  (plausibly soft cross-firing winning argmaxes) for the graded one.
+  selector experiment between enrichments, not a bug to patch — and it is
+  now DIAGNOSED (results/rule20-diagnosis): the tear decomposes exactly
+  into two FALSE identities committed by the graded hardening gate
+  (−0.267; a commit-policy failure, P1-family, not enrichment semantics)
+  plus the replacement of translation by runtime soft bridging (−0.075;
+  the genuine enrichment datum — the soft bridge is the graded system's
+  ONLY ensemble mechanism and is worth negative net value on tearing
+  draws). Fully exactified, the graded machinery is prediction-identical
+  to the discrete system, so the two-timescale architecture per se is
+  exonerated; what E5 selects against is (i) the weak hardening gate and
+  (ii) bridge-at-derivation-time in place of translate-then-derive. The
+  E6 datum stands as corrected after its referee
+  (results/rule27-diagnosis/graded-causal.json): identity exactness
+  recovers nothing on rule_27 either — there the graded system simply
+  inherits the discrete seam catastrophe (956/1000 predictions coincide).
 - **D4. Stable commitment, relative to the view model.** (Renamed per
   referee.) The needed theorem: the soft field lies near one exact
   compatible section and small perturbations do not change which — a
@@ -251,8 +254,19 @@ Policies (epistemic choices, named so they can be varied):
 - **E4**: the split-brain tax (0.79 × gold, knowledge 97% present) —
   the measured cost of refusing to glue; the linear layer must recover
   it and say by how much.
-- **E5**: graded bimodality — heals rule_26/30/42, rule_32 above
-  gold-pooled, tears rule_20 — the D3 selector data.
+- **E5** (DIAGNOSED, results/rule20-diagnosis): the graded bimodality —
+  heals rule_26/30/42, rule_32 above gold-pooled, tears rule_20 — is
+  DRAW-level, not world-level (rule_20 tears at 2 of 5 seeds, heals or
+  holds at the rest). On the frozen tearing draw the tear decomposes
+  exactly: two false commits from the hardening gate (−0.267, both
+  orphan-type) plus soft bridging in place of translation (−0.075);
+  exactified graded ≡ discrete on all 1,000 predictions. All four
+  pre-registered single-factor probes measured ~zero at the frozen
+  configuration — the dominant factor was fully masked (a standing
+  methodology lesson: factorial exactification, not single-factor
+  counterfactuals, for compound systems). The formalism's D3/T6 story
+  must reproduce the masking, the draw-dependence, and the two-factor
+  decomposition.
 - **E6** (DIAGNOSED, results/rule27-diagnosis; corrected per its referee
   report, accepted in full): rule_27's "immunity" (100 ensemble rules vs
   103 gold — 15 missing, 15 extra under translation — at 0.163 under
@@ -378,12 +392,20 @@ Empirical work licensed meanwhile, in priority order:
    unattributed discrete 0.50 → 0.83 gap (where broader harness
    interactions also remain candidates) and the undiagnosed graded
    failure mechanism — both licensed as follow-up cells if pursued.
-3. **E5, rule_20** — now the head of the queue: the enrichment selector
-   needs a mechanism-level account of the collapse, and E6 has sharpened
-   the question it must answer — the enrichment changes WHICH constraint
-   binds on the same world (identity for discrete, not for graded;
-   §5 D3), and the graded mechanism it must explain is plausibly the
-   same soft cross-firing that tears rule_20.
+3. ~~**E5, rule_20**~~ — **DONE** (results/rule20-diagnosis,
+   pre-registered in docs/rule20-diagnosis-plan.md): the tear is two
+   false hardening-gate commits (−0.267) plus soft-bridging-in-place-of-
+   translation (−0.075), exactly decomposed and prediction-validated;
+   the bimodality is draw-level; E6's graded residual closed by the
+   companion cell (inherited seam failure, no distinct mechanism).
+   Licensed follow-ups if pursued: the seed-2 mechanism check, and
+   whether healing worlds' gains come from correct bridging.
+
+The empirical queue is now EMPTY: E2b, E6, and E5 are run, refereed or
+pre-registered-and-audited, and folded in. The head of the project is the
+theory work this document exists for — T0–T3 for the chosen D1/D2, with
+the P2 discharge gating T2's use of E2b, and D3's admissible-enrichment
+set now constrained by measured selector data from both diagnoses.
 
 Reading: Hansen & Ghrist, *Toward a spectral theory of cellular sheaves*
 (2019); Michael Robinson's sheaf-based sensor fusion and consistency
