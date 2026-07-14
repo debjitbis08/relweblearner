@@ -366,6 +366,139 @@ def probe_graded(ctx: dict, attribution: dict) -> dict:
             "implicated_tokens": tokens}
 
 
+# ------------------------------------- §4b graded trace + causal interventions
+# (added after the E6 referee report, finding 3.2: the plan pre-registered a
+#  per-span activation trace that the first implementation omitted. This
+#  completes plan compliance and adds the referee's suggested causal
+#  interventions. Run standalone via --graded-causal; the original outputs
+#  are not regenerated.)
+
+def probe_graded_causal(ctx: dict) -> dict:
+    """(a) The pre-registered trace: per failing episode, does a bridged rule
+    application (similarity weight w < 1) drop an otherwise-live activation
+    (base >= ACT_MIN) below ACT_MIN — i.e. does the similarity factor kill it?
+    (b) Causal intervention I: committed identity pairs read as EXACT
+    (similarity 1.0), everything else frozen. (c) Causal intervention II:
+    committed identities translated on rule INPUT symbols (not just outputs).
+    If the multiplicative-decay account is causal, (b)/(c) recover roughly the
+    discrete identity-repair ceiling (~0.50); if not, they stay near 0.163."""
+    v, anchors = ctx["views"], ctx["anchors"]
+    ia, ib, S = GR.token_similarity(ctx["votes_a"], ctx["votes_b"], anchors)
+    commits = GR.hardened(ia, ib, S, anchors)
+    merge_of = {y: x for x, y in commits.items()}
+    committed = set(commits.items())
+    back = lambda t: ctx["inv_a"].get(t, ctx["inv_b"].get(t, t))
+
+    def orient(rule_tok, path_tok):
+        return ((rule_tok, path_tok) if rule_tok in ia else
+                (path_tok, rule_tok) if path_tok in ia else (None, None))
+
+    def sim_frozen(rule_tok, path_tok):
+        if rule_tok == path_tok:
+            return 1.0
+        a, b = orient(rule_tok, path_tok)
+        if a is None or b not in ib:
+            return 0.0
+        return float(S[ia[a], ib[b]])
+
+    def sim_exact(rule_tok, path_tok):
+        if rule_tok == path_tok:
+            return 1.0
+        a, b = orient(rule_tok, path_tok)
+        if a is None or b not in ib:
+            return 0.0
+        if (a, b) in committed:
+            return 1.0
+        return float(S[ia[a], ib[b]])
+
+    rules = ([(p, q, h) for (p, q), h in MG._threshold(ctx["votes_a"]).items()]
+             + [(p, q, h) for (p, q), h in MG._threshold(ctx["votes_b"]).items()])
+    tr = lambda t: merge_of.get(t, t)
+    rules_translated = [(tr(p), tr(q), tr(h)) for p, q, h in rules]
+
+    def traced_reduce(labels, rls, sim, memo, stats):
+        # GR.graded_reduce, verbatim semantics, with the §4b trace counters
+        if labels in memo:
+            return memo[labels]
+        if len(labels) == 1:
+            out = {labels[0]: 1.0}
+        else:
+            acts: dict = defaultdict(float)
+            for i in range(1, len(labels)):
+                left = traced_reduce(labels[:i], rls, sim, memo, stats)
+                right = traced_reduce(labels[i:], rls, sim, memo, stats)
+                for s1, a1 in left.items():
+                    for s2, a2 in right.items():
+                        base = a1 * a2
+                        if base < GR.ACT_MIN:
+                            continue
+                        for p, q, h in rls:
+                            w = sim(p, s1) * sim(q, s2)
+                            if w > 0:
+                                if w < 1.0:
+                                    stats["bridged_apps"] += 1
+                                    if base * w < GR.ACT_MIN:
+                                        stats["sim_killed"] += 1
+                                acts[h] = max(acts[h], base * w)
+            out = GR._prune(dict(acts))
+        memo[labels] = out
+        return out
+
+    def run(sim, rls, trace=False):
+        hit, per_ep = 0, []
+        for rec in ctx["w"]["test"]:
+            edges = []
+            for u, vv, r in rec["edges"]:
+                if r not in v["hide_a"]:
+                    edges.append((u, vv, v["perm_a"][r]))
+                elif r not in v["hide_b"]:
+                    edges.append((u, vv, v["perm_b"][r]))
+            stats = Counter()
+            if trace:
+                u0, v0, _ = rec["query"]
+                out_idx: dict[int, list] = defaultdict(list)
+                for u, vv, rel in edges:
+                    out_idx[u].append((vv, rel))
+                total: dict = defaultdict(float)
+                memo: dict = {}
+                stack = [(u0, ())]
+                while stack:
+                    node, labs = stack.pop()
+                    if node == v0 and labs:
+                        for s, a in traced_reduce(labs, rls, sim, memo, stats).items():
+                            total[merge_of.get(s, s)] += a
+                        continue
+                    if len(labs) >= 5:
+                        continue
+                    for y, rel in out_idx[node]:
+                        stack.append((y, labs + (rel,)))
+                got = (max(total, key=lambda s: (total[s], s)) if total
+                       else ctx["maj_a"])
+                per_ep.append({"empty": not total, **stats})
+            else:
+                got = GR.graded_predict({"edges": edges, "query": rec["query"]},
+                                        rls, sim, merge_of, ctx["maj_a"])
+            hit += back(got) == rec["query"][2]
+        return hit / len(ctx["w"]["test"]), per_ep
+
+    acc_frozen, trace_ep = run(sim_frozen, rules, trace=True)
+    acc_exact, _ = run(sim_exact, rules)
+    acc_translated, _ = run(sim_frozen, rules_translated)
+
+    targets = [rec["query"][2] for rec in ctx["w"]["test"]]
+    # discrete-failure indices come from the caller's attribution if present;
+    # recompute cheaply from the frozen discrete pipeline otherwise
+    empty_and_killed = sum(1 for e in trace_ep if e["empty"] and e.get("sim_killed", 0))
+    return {"acc_frozen_reproduced": round(acc_frozen, 4),
+            "acc_commits_exact": round(acc_exact, 4),
+            "acc_rules_translated": round(acc_translated, 4),
+            "episodes_total": len(trace_ep),
+            "episodes_empty_reduction": sum(1 for e in trace_ep if e["empty"]),
+            "episodes_empty_with_sim_kill": empty_and_killed,
+            "bridged_applications": sum(e.get("bridged_apps", 0) for e in trace_ep),
+            "sim_killed_applications": sum(e.get("sim_killed", 0) for e in trace_ep)}
+
+
 # ------------------------------------------------------------------ reporting
 
 def _report_md(out: dict) -> str:
@@ -411,8 +544,21 @@ def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--seeds-robust", type=int, default=4,
                     help="additional seeds (1..N) for §4c attribution shares")
+    ap.add_argument("--graded-causal", action="store_true",
+                    help="run ONLY the §4b graded trace + causal interventions "
+                         "(post-referee); writes graded-causal.json, leaves "
+                         "the original outputs untouched")
     ap.add_argument("--out", default="results/rule27-diagnosis")
     args = ap.parse_args(argv)
+
+    if args.graded_causal:
+        ctx = setup(seed=0)
+        res = probe_graded_causal(ctx)
+        o = Path(args.out)
+        o.mkdir(parents=True, exist_ok=True)
+        (o / "graded-causal.json").write_text(json.dumps(res, indent=2))
+        print(json.dumps(res, indent=2))
+        return
 
     t0 = time.time()
     ctx = setup(seed=0)

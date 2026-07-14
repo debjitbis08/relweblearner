@@ -1,0 +1,10 @@
+{
+  "acc_frozen_reproduced": 0.163,
+  "acc_commits_exact": 0.168,
+  "acc_rules_translated": 0.166,
+  "episodes_total": 1000,
+  "episodes_empty_reduction": 0,
+  "episodes_empty_with_sim_kill": 0,
+  "bridged_applications": 1591644,
+  "sim_killed_applications": 1147495
+}
