@@ -239,7 +239,10 @@ Policies (epistemic choices, named so they can be varied):
   a statistical soundness argument connecting the detector to genuine
   incompatibility — is the standing obligation before detector verdicts
   may be read as Ext = ∅ (T2, §8). **Status: DISCHARGED at the MEASURED
-  tier** (docs/p2-discharge.md §13) of the ledger's three-way
+  tier, under the declared E2b evaluation process** — A1 worlds PLUS the
+  pre-registered overlap-forgery intervention, per the round-2 referee's
+  scope correction (docs/p2-discharge.md §13–§14) — of the ledger's
+  three-way
   distinction — bounded (proved) / MEASURED (simulated under the named
   model, validated on virgin data) / calibrated (fit within a
   tolerance). The path there is part of the record: a v1 analytic bound
@@ -250,8 +253,10 @@ Policies (epistemic choices, named so they can be varied):
   under the actual process, and passed all virgin-block gates centered
   (false-obstruction count 9 vs predicted 8.22 in PI99 [2, 16]; edge
   rate 0.01753 vs 0.01884; detection 50/50 under the strict per-view
-  bridge-attributable gate). Within A1 worlds, "obstructed" reads as
-  Ext = ∅ with MEASURED error rates; the bounded tier stays open to
+  bridge-attributable gate; gating intervals are prediction-error
+  bootstrap, detection carries β ≤ 0.0076 world-level, never β = 0).
+  Within the declared E2b process, "obstructed" reads as Ext = ∅ with
+  MEASURED error rates; the bounded tier stays open to
   whoever wants the clustering-aware inequality. In deployment A1 is a
   per-domain empirical claim — never a model-free license to read
   absence as refutation.
@@ -271,8 +276,9 @@ Policies (epistemic choices, named so they can be varied):
   1.00 of seeds, min 5, vs exactly 0), read under P2; P1 alone would
   have committed it in 41/50 seeds. Any formalism must derive this
   rejection from overlap disagreement, not support counting. P2 is
-  discharged at the measured tier (§6), so the residual reads as
-  Ext = empty with MEASURED error rates within A1 — see §2, §6 P2, and
+  discharged at the measured tier under the declared E2b evaluation
+  process (§6), so the residual reads as Ext = empty with MEASURED error
+  rates within that process — see §2, §6 P2, and
   results/bench-multiweb-overlap.
 - **E3**: zero real mispairings across 44 worlds; all errors orphan
   merges — identity underdetermined exactly up to overlap-visible
@@ -338,9 +344,10 @@ Policies (epistemic choices, named so they can be varied):
 - **T1 Extension classification.** Characterize when a local assignment
   has zero, one, or many global extensions.
 - **T2 Incompatibility.** Incompatible overlap data implies Ext = empty.
-  (P2 discharged at the measured tier — docs/p2-discharge.md §13 — so
-  E2b's separation stands as T2's empirical instance relative to A1,
-  with measured rather than analytically bounded error rates. T2's
+  (P2 discharged at the measured tier under the declared E2b evaluation
+  process — docs/p2-discharge.md §13–§14 — so E2b's separation stands as
+  T2's empirical instance relative to that named process, with measured
+  rather than analytically bounded error rates. T2's
   remaining content is the exact statement and proof over the chosen
   D1/D2, with A1 as the bridge to data.)
 - **T3 Underdetermination.** Insufficient overlap yields many
@@ -396,10 +403,12 @@ No implementation until T0–T3 are proved for the chosen D1/D2, at
 whatever rigor we can genuinely sustain; the first implementation ships
 with pre-registered predictions for all three benches. The theory-side
 obligation added by the round-2 referee — the **P2 discharge** — is
-**DONE at the measured tier** (docs/p2-discharge.md §13; the record
-includes one failed analytic bound, one withdrawn calibrated claim, and
-the direct-simulation validation that passed centered on a virgin
-block); E2b reaches T2 as its empirical instance under A1 (§6, §8).
+**DONE at the measured tier, scoped to the declared E2b evaluation
+process** (docs/p2-discharge.md §13–§14; the record includes one failed
+analytic bound, one withdrawn calibrated claim, and the direct-simulation
+validation that passed centered on a virgin block and survived a second
+referee round with corrections applied); E2b reaches T2 as its empirical
+instance under that named process (§6, §8).
 Process rule, added after referees twice caught the same plan-to-code
 leak (E2b's Q-D attribution, E6's activation trace): every plan ships a
 **plan-to-code checklist** mapping each pre-registered metric and probe
