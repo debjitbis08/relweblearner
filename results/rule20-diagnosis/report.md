@@ -336,7 +336,72 @@ replaces graded components with their discrete counterparts one at a time
    graded mechanism there — the seam catastrophe is inherited, and soft
    bridging cannot repair it.
 
-## §4d rule_27 companion (closes E6's open residual)
+## Referee corrections (accepted in full) and the committed factorial
+
+*The E5 referee report (docs/rule20-diagnosis-referee-report.md, preserved
+verbatim; response in docs/rule20-diagnosis-referee-response.md) raised
+eight findings; all are accepted. Where this section contradicts the
+"Findings" section above or supplementary.json, THIS section supersedes.
+The factorial reproducer is committed (`rule20_diag.py --exactify`,
+functions `factorial()` / `preregistered_full_sets()`); its artifacts are
+factorial.json (16 cells, full heal/break sets, Shapley) and
+episode-sets.json (the pre-registered probes with COMPLETE episode lists —
+finding 3.3; the frozen results.json retains the truncated ones). Every
+cell previously reported from uncommitted scripts reproduces exactly from
+the committed code: 0.317 / 0.358 / 0.371 / 0.392 / 0.659, and the
+1000/1000 identities.*
+
+**The order-independent analysis (finding 3.1).** The published
+"−0.267 commits + −0.075 bridging" was one path through an interacting
+system and is WITHDRAWN as a decomposition. The 2⁴ factorial over
+R (rules translated), D (rendering translated), S (similarity exact),
+C (2 wrong commits removed):
+
+| quantity | value |
+|---|---|
+| Shapley: R / C / S / D | **0.183 / 0.139 / 0.021 / 0.000** |
+| commits marginal at frozen config | 0.000 |
+| commits marginal after R+D+S exactification | +0.267 |
+| the 2×2 interaction | 0.267 |
+| best cell: **C+R** (frozen soft sim retained) | **0.669 — above discrete 0.659** |
+| C+R+S (soft sim also removed) | 0.659, ≡ discrete 1000/1000 |
+
+Three facts the single ladder missed: **D is inert everywhere** (rendering
+translation changes nothing in any context); the interaction is
+specifically **C×R** (commit removal is worth 0.000 without translated
+rules and +0.298 with them); and with both faults fixed, the frozen soft
+similarity is mildly BENEFICIAL (+0.010 over discrete). Beam re-check from
+committed code: no accuracy effect; at the frozen config 3 of 1,000
+predictions wobble with accuracy unchanged (refining the earlier "changes
+nothing").
+
+**Corrected claims.**
+- Finding 2's "every pre-registered single-factor probe measured ~zero"
+  is WITHDRAWN (finding 3.4): only P-commits and the beam settings are
+  prediction-inert; P-ident changed 105 predictions (+0.041) and the
+  aggregation probes 131 and 146 (both negative). The masking lesson is
+  narrowed to what is measured: the commits factor alone has zero marginal
+  effect at the frozen configuration and a large conditional effect after
+  rule translation.
+- "The two-timescale architecture per se is exonerated" is WITHDRAWN
+  (finding 3.5). Supported: full recovery under discrete exactification
+  (prediction-identical endpoint), and — stronger, from the factorial —
+  the frozen soft machinery slightly exceeds discrete once rules are
+  translated and the false commits removed. The tear lives in the missing
+  translation layer and the weak hardening gate, not in graded similarity
+  semantics, ON THIS DRAW.
+- "E6's residual is CLOSED / no distinct graded mechanism on rule_27" is
+  narrowed (finding 3.6): 956/1000 predictions coincide, so the residual
+  is substantially narrowed to 44 flipped episodes, which remain
+  unattributed (no causal probe was run on them).
+- The draw-level bimodality conclusion is SCOPED to rule_20 (finding
+  3.7); no other world was rerun across draws.
+- Marker caveats extended (finding 3.8): `cross_fired` does not
+  distinguish correct cross-view correspondence from spurious firing;
+  `beam_starved` marks any pruned target-mapped symbol at any visited
+  span. Markers support nothing beyond the probes.
+
+## §4d rule_27 companion (E6's residual, substantially narrowed — see corrections above)
 
 ```json
 {
