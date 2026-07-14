@@ -1,0 +1,32 @@
+{
+  "note": "Post-plan supplementary cells (same day, after the pre-registered probes were read; labeled per the E2b SS8 convention). Motivation: all four pre-registered hypotheses measured causally near-inert at the frozen configuration, so the tear was unattributed; the exactification ladder below replaces graded components with their discrete counterparts one at a time until the two systems coincide. All cells seed 0, provenance (b).",
+  "exactification_ladder": {
+    "frozen_graded": 0.317,
+    "native_rules_identity_sim": {"acc": 0.358, "identical_to_view_alone": "1000/1000",
+      "reading": "the soft similarity bridge is the graded system's ONLY ensemble mechanism; with it removed the system IS view-alone, to the prediction"},
+    "translated_rules_frozen_sim": 0.371,
+    "translated_rules_and_rendering_frozen_sim": {"acc": 0.371, "identical_to_discrete_ensemble": "561/1000"},
+    "translated_rules_and_rendering_identity_sim": {"acc": 0.392, "identical_to_discrete_ensemble": "733/1000"},
+    "beam_removed_everywhere_tested": "no effect in any configuration (TOP_K 10^6, ACT_MIN 0: native 0.358 unchanged; exactified 0.392 unchanged) — H4 refuted beyond the bounded pre-registered settings",
+    "exactified_merge_empty": {"acc": 0.659, "identical_to_discrete_ensemble": "1000/1000"},
+    "exactified_merge_anchors_only": {"acc": 0.659, "identical_to_discrete_ensemble": "1000/1000"},
+    "exactified_merge_minus_2_wrong_commits": {"acc": 0.659, "identical_to_discrete_ensemble": "1000/1000"},
+    "exactified_merge_ONLY_2_wrong_commits": {"acc": 0.392, "identical_to_discrete_ensemble": "733/1000"}
+  },
+  "attribution": {
+    "wrong_commit_pooling": {"cost": 0.267,
+      "pairs": [["R_4_-", "R_0_-"], ["R_5_-", "R_6_-"]],
+      "reading": "the graded hardening gate (mutual argmax + HARD_SIM) committed two FALSE identities, both orphan-type; pooling output-symbol mass through them costs 0.267 — the dominant cause of the tear"},
+    "translation_replaced_by_soft_bridging": {"cost": 0.075,
+      "reading": "the graded architecture never translates rules or seam rendering through the discovered mapping; its runtime similarity bridge under-performs the discrete translation and is worth NEGATIVE net value on this draw (native identity-sim 0.358 vs frozen 0.317)"},
+    "validation": "graded machinery with translated rules, translated rendering, exact similarity, and wrong commits removed is prediction-identical to the discrete ensemble on all 1000 episodes — the decomposition is exhaustive"
+  },
+  "masking_finding": {
+    "claim": "every pre-registered single-factor probe measured ~zero for the factor that dominates the tear",
+    "evidence": "P-commits at the frozen configuration: 0 heals, 0 breaks (the 2 wrong commits fully masked); the same 2 commits cost 0.267 once translation is restored",
+    "consequence": "single-factor counterfactuals on a system at a compound floor are uninformative; factorial exactification (or fractional-factorial probes) must be pre-registered for compound systems. Recorded for the next plan."
+  },
+  "marker_flaw_disclosed": "the winner-trace commit_pooled mark (365/371) counts pooling through ANCHORS as well as hardened commits, so it is nearly universal and weakly informative; the probes, not the marks, are the causal reading (as the plan SS6a already required)",
+  "companion_rule27_reading": "E6's open graded-mechanism residual is CLOSED: rule_27's graded predictions coincide with discrete on 956/1000 episodes (815 both-wrong, 141 both-right; 22 torn / 22 healed — the count coincidence confirmed at prediction level). There is no distinct graded failure mechanism on rule_27; the graded system inherits the discrete seam catastrophe, which soft bridging cannot repair.",
+  "robustness_reading": "the tear is DRAW-dependent (E6 precedent): seeds 0 and 2 tear (0.659->0.317, 0.593->0.293); seeds 1, 3, 4 are neutral-to-healing (0.733->0.727, 0.633->0.703, 0.692->0.708). The graded-ensemble bimodality is a property of draws, not worlds. Whether the seed-2 tear shares the wrong-commit mechanism is a licensed follow-up cell (not run)."
+}

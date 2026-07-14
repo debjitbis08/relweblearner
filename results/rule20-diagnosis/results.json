@@ -1,0 +1,7358 @@
+{
+  "world": "rule_20",
+  "gate": {
+    "frozen": {
+      "view-alone": 0.358,
+      "ensemble": 0.659,
+      "gold-pooled": 0.752,
+      "graded": 0.317
+    },
+    "recomputed": {
+      "view-alone": 0.358,
+      "ensemble": 0.659,
+      "gold-pooled": 0.752,
+      "graded": 0.317
+    },
+    "diag_copy_identical": true,
+    "pass": true
+  },
+  "flip": {
+    "cells": {
+      "both_wrong": 312,
+      "torn": 371,
+      "both_right": 288,
+      "healed": 29
+    },
+    "torn_idx": [
+      2,
+      3,
+      4,
+      6,
+      13,
+      14,
+      15,
+      17,
+      20,
+      22,
+      25,
+      26,
+      32,
+      35,
+      38,
+      43,
+      44,
+      45,
+      46,
+      49,
+      53,
+      55,
+      56,
+      58,
+      59,
+      63,
+      64,
+      66,
+      67,
+      76,
+      78,
+      81,
+      82,
+      86,
+      87,
+      88,
+      90,
+      92,
+      95,
+      96,
+      100,
+      101,
+      103,
+      107,
+      113,
+      116,
+      118,
+      119,
+      121,
+      122,
+      124,
+      133,
+      135,
+      141,
+      142,
+      147,
+      148,
+      156,
+      158,
+      160,
+      162,
+      168,
+      171,
+      172,
+      174,
+      175,
+      176,
+      177,
+      178,
+      179,
+      180,
+      181,
+      183,
+      184,
+      193,
+      196,
+      197,
+      198,
+      202,
+      207,
+      214,
+      220,
+      221,
+      225,
+      226,
+      230,
+      231,
+      233,
+      234,
+      237,
+      238,
+      243,
+      247,
+      248,
+      249,
+      250,
+      251,
+      258,
+      259,
+      260,
+      261,
+      262,
+      268,
+      269,
+      270,
+      271,
+      272,
+      273,
+      274,
+      277,
+      279,
+      286,
+      290,
+      293,
+      294,
+      297,
+      298,
+      300,
+      304,
+      305,
+      306,
+      310,
+      314,
+      320,
+      321,
+      323,
+      324,
+      329,
+      331,
+      334,
+      340,
+      343,
+      345,
+      346,
+      349,
+      352,
+      356,
+      359,
+      362,
+      365,
+      367,
+      368,
+      370,
+      371,
+      373,
+      376,
+      378,
+      379,
+      380,
+      381,
+      386,
+      388,
+      393,
+      395,
+      396,
+      402,
+      404,
+      407,
+      409,
+      411,
+      414,
+      415,
+      419,
+      420,
+      421,
+      426,
+      427,
+      429,
+      430,
+      432,
+      434,
+      438,
+      439,
+      441,
+      442,
+      445,
+      447,
+      448,
+      450,
+      451,
+      454,
+      459,
+      461,
+      462,
+      466,
+      469,
+      474,
+      476,
+      479,
+      484,
+      487,
+      488,
+      490,
+      493,
+      494,
+      496,
+      502,
+      503,
+      511,
+      514,
+      515,
+      516,
+      519,
+      520,
+      521,
+      523,
+      526,
+      527,
+      528,
+      530,
+      533,
+      538,
+      541,
+      542,
+      547,
+      551,
+      553,
+      554,
+      561,
+      566,
+      573,
+      575,
+      579,
+      580,
+      583,
+      584,
+      585,
+      587,
+      590,
+      595,
+      596,
+      599,
+      604,
+      608,
+      609,
+      612,
+      622,
+      625,
+      633,
+      634,
+      636,
+      637,
+      643,
+      647,
+      649,
+      654,
+      655,
+      656,
+      657,
+      661,
+      662,
+      663,
+      667,
+      669,
+      670,
+      672,
+      677,
+      680,
+      681,
+      682,
+      684,
+      688,
+      689,
+      695,
+      703,
+      704,
+      706,
+      708,
+      716,
+      717,
+      722,
+      724,
+      725,
+      734,
+      735,
+      740,
+      744,
+      745,
+      746,
+      747,
+      748,
+      749,
+      752,
+      756,
+      758,
+      759,
+      760,
+      766,
+      767,
+      775,
+      777,
+      778,
+      780,
+      785,
+      790,
+      793,
+      794,
+      796,
+      797,
+      798,
+      799,
+      800,
+      805,
+      806,
+      807,
+      810,
+      812,
+      814,
+      818,
+      820,
+      821,
+      823,
+      828,
+      833,
+      834,
+      836,
+      838,
+      844,
+      847,
+      850,
+      851,
+      853,
+      855,
+      856,
+      859,
+      860,
+      861,
+      863,
+      866,
+      868,
+      869,
+      872,
+      874,
+      878,
+      880,
+      884,
+      886,
+      892,
+      901,
+      904,
+      910,
+      913,
+      921,
+      925,
+      927,
+      929,
+      930,
+      932,
+      936,
+      940,
+      941,
+      944,
+      945,
+      946,
+      955,
+      956,
+      961,
+      968,
+      969,
+      975,
+      977,
+      978,
+      979,
+      982,
+      983,
+      985,
+      988,
+      991,
+      993,
+      995,
+      997
+    ],
+    "discrete_acc": 0.659,
+    "graded_acc": 0.317
+  },
+  "trace": {
+    "n_torn": 371,
+    "marks": {
+      "cross_fired": 314,
+      "commit_pooled": 365,
+      "beam_starved": 52,
+      "sum_outvoted": 4,
+      "wrong_commit_involved": 17
+    },
+    "episodes": [
+      {
+        "i": 2,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 3,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 4,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 6,
+        "winner": "R_2_+",
+        "winner_mass": 11.6964,
+        "correct_mass": 8.5766,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.201
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 13,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 14,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 15,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 17,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 20,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 22,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 25,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 26,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 32,
+        "winner": "R_5_+",
+        "winner_mass": 49.5874,
+        "correct_mass": 11.9826,
+        "paths_winner": 100,
+        "paths_correct": 44,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": false,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": true
+      },
+      {
+        "i": 35,
+        "winner": "R_2_+",
+        "winner_mass": 40.5766,
+        "correct_mass": 32.0,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 38,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 43,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 44,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 45,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 46,
+        "winner": "R_4_-",
+        "winner_mass": 5.2923,
+        "correct_mass": 0,
+        "paths_winner": 10,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 49,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 53,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 55,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 56,
+        "winner": "R_2_+",
+        "winner_mass": 55.22,
+        "correct_mass": 49.3981,
+        "paths_winner": 122,
+        "paths_correct": 67,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 58,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 59,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 63,
+        "winner": "R_2_+",
+        "winner_mass": 12.8498,
+        "correct_mass": 2.1838,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 64,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 66,
+        "winner": "R_2_+",
+        "winner_mass": 38.4249,
+        "correct_mass": 8.5766,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 67,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 76,
+        "winner": "R_7_-",
+        "winner_mass": 2.8233,
+        "correct_mass": 0,
+        "paths_winner": 4,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          0.706,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": false,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 78,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 81,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 82,
+        "winner": "R_2_+",
+        "winner_mass": 8.0608,
+        "correct_mass": 2.2547,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 86,
+        "winner": "R_2_+",
+        "winner_mass": 11.6964,
+        "correct_mass": 8.5766,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.201
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 87,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 88,
+        "winner": "R_1_+",
+        "winner_mass": 4.8239,
+        "correct_mass": 3.8394,
+        "paths_winner": 48,
+        "paths_correct": 48,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 90,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 92,
+        "winner": "R_4_-",
+        "winner_mass": 5.2923,
+        "correct_mass": 0,
+        "paths_winner": 10,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 95,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 96,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 100,
+        "winner": "R_4_-",
+        "winner_mass": 5.2923,
+        "correct_mass": 0,
+        "paths_winner": 10,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 101,
+        "winner": "R_2_+",
+        "winner_mass": 97.9597,
+        "correct_mass": 72.8049,
+        "paths_winner": 512,
+        "paths_correct": 222,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 103,
+        "winner": "R_2_+",
+        "winner_mass": 8.0608,
+        "correct_mass": 2.2547,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 107,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 113,
+        "winner": "R_7_-",
+        "winner_mass": 17.7825,
+        "correct_mass": 0,
+        "paths_winner": 32,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 116,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 118,
+        "winner": "R_4_-",
+        "winner_mass": 4.2344,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 119,
+        "winner": "R_2_+",
+        "winner_mass": 8.0393,
+        "correct_mass": 5.0454,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 121,
+        "winner": "R_2_+",
+        "winner_mass": 40.8551,
+        "correct_mass": 40.148,
+        "paths_winner": 64,
+        "paths_correct": 64,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 122,
+        "winner": "R_2_+",
+        "winner_mass": 50.6646,
+        "correct_mass": 42.0651,
+        "paths_winner": 132,
+        "paths_correct": 58,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 124,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 133,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 135,
+        "winner": "R_7_-",
+        "winner_mass": 4.1441,
+        "correct_mass": 0,
+        "paths_winner": 10,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 141,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 142,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 147,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 148,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 156,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 158,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 160,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 162,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 168,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 171,
+        "winner": "R_2_+",
+        "winner_mass": 31.2699,
+        "correct_mass": 19.5309,
+        "paths_winner": 96,
+        "paths_correct": 64,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 172,
+        "winner": "R_7_-",
+        "winner_mass": 17.7825,
+        "correct_mass": 0,
+        "paths_winner": 32,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 174,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 175,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 176,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 177,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 178,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 179,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 180,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 181,
+        "winner": "R_4_-",
+        "winner_mass": 4.2344,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 183,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 184,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 193,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 196,
+        "winner": "R_2_+",
+        "winner_mass": 8.1469,
+        "correct_mass": 5.3058,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 197,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 198,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 202,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 207,
+        "winner": "R_4_-",
+        "winner_mass": 6.3502,
+        "correct_mass": 0,
+        "paths_winner": 12,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 214,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 220,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 221,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 225,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 226,
+        "winner": "R_2_+",
+        "winner_mass": 9.2658,
+        "correct_mass": 5.9336,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 230,
+        "winner": "R_2_+",
+        "winner_mass": 11.6964,
+        "correct_mass": 8.5766,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.201
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 231,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 233,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 234,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 237,
+        "winner": "R_2_+",
+        "winner_mass": 11.6964,
+        "correct_mass": 8.5766,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.201
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 238,
+        "winner": "R_2_+",
+        "winner_mass": 44.398,
+        "correct_mass": 28.7259,
+        "paths_winner": 163,
+        "paths_correct": 73,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 243,
+        "winner": "R_4_-",
+        "winner_mass": 6.3502,
+        "correct_mass": 0,
+        "paths_winner": 12,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 247,
+        "winner": "R_7_-",
+        "winner_mass": 17.7825,
+        "correct_mass": 0,
+        "paths_winner": 32,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 248,
+        "winner": "R_2_+",
+        "winner_mass": 77.359,
+        "correct_mass": 61.8703,
+        "paths_winner": 276,
+        "paths_correct": 138,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 249,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 250,
+        "winner": "R_2_+",
+        "winner_mass": 64.0,
+        "correct_mass": 40.148,
+        "paths_winner": 64,
+        "paths_correct": 64,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 251,
+        "winner": "R_2_+",
+        "winner_mass": 8.1469,
+        "correct_mass": 5.3058,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 258,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 259,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 260,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 261,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 262,
+        "winner": "R_2_+",
+        "winner_mass": 40.5766,
+        "correct_mass": 32.0,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 268,
+        "winner": "R_2_+",
+        "winner_mass": 41.6223,
+        "correct_mass": 39.0129,
+        "paths_winner": 88,
+        "paths_correct": 44,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 269,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 270,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 271,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 272,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 273,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 274,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 277,
+        "winner": "R_2_+",
+        "winner_mass": 4.0735,
+        "correct_mass": 2.339,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 279,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 286,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 290,
+        "winner": "R_7_-",
+        "winner_mass": 8.6887,
+        "correct_mass": 0,
+        "paths_winner": 20,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 293,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 294,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 297,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 298,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 300,
+        "winner": "R_2_+",
+        "winner_mass": 36.3795,
+        "correct_mass": 35.0366,
+        "paths_winner": 80,
+        "paths_correct": 40,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 304,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 305,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 306,
+        "winner": "R_4_-",
+        "winner_mass": 6.3502,
+        "correct_mass": 0,
+        "paths_winner": 12,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 310,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 314,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 320,
+        "winner": "R_4_+",
+        "winner_mass": 32.0,
+        "correct_mass": 32.0,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": false,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": true
+      },
+      {
+        "i": 321,
+        "winner": "R_2_+",
+        "winner_mass": 40.5766,
+        "correct_mass": 32.0,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 323,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 324,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 329,
+        "winner": "R_2_+",
+        "winner_mass": 55.7316,
+        "correct_mass": 49.073,
+        "paths_winner": 288,
+        "paths_correct": 138,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 331,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 334,
+        "winner": "R_2_+",
+        "winner_mass": 75.5162,
+        "correct_mass": 61.9365,
+        "paths_winner": 188,
+        "paths_correct": 108,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 340,
+        "winner": "R_2_+",
+        "winner_mass": 88.9319,
+        "correct_mass": 74.6869,
+        "paths_winner": 316,
+        "paths_correct": 154,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 343,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 345,
+        "winner": "R_7_-",
+        "winner_mass": 17.7825,
+        "correct_mass": 0,
+        "paths_winner": 32,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 346,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 349,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 352,
+        "winner": "R_2_+",
+        "winner_mass": 12.8498,
+        "correct_mass": 2.1838,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 356,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 359,
+        "winner": "R_2_+",
+        "winner_mass": 12.2332,
+        "correct_mass": 7.0171,
+        "paths_winner": 96,
+        "paths_correct": 48,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 362,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 365,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 367,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 368,
+        "winner": "R_2_+",
+        "winner_mass": 22.8895,
+        "correct_mass": 1.938,
+        "paths_winner": 96,
+        "paths_correct": 48,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 370,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 371,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 373,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 376,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 378,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 379,
+        "winner": "R_7_-",
+        "winner_mass": 17.7825,
+        "correct_mass": 0,
+        "paths_winner": 32,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 380,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 381,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 386,
+        "winner": "R_2_+",
+        "winner_mass": 40.6361,
+        "correct_mass": 37.6767,
+        "paths_winner": 82,
+        "paths_correct": 45,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 388,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 393,
+        "winner": "R_4_-",
+        "winner_mass": 8.466,
+        "correct_mass": 0,
+        "paths_winner": 16,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 395,
+        "winner": "R_7_-",
+        "winner_mass": 8.7343,
+        "correct_mass": 0,
+        "paths_winner": 16,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 396,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 402,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 404,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 407,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 409,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 411,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 414,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 415,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 419,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 420,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 421,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 426,
+        "winner": "R_2_+",
+        "winner_mass": 12.8498,
+        "correct_mass": 2.1838,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 427,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 429,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 430,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 432,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 434,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 438,
+        "winner": "R_2_+",
+        "winner_mass": 8.0608,
+        "correct_mass": 1.8957,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 439,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 441,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 442,
+        "winner": "R_2_+",
+        "winner_mass": 40.5766,
+        "correct_mass": 32.0,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 445,
+        "winner": "R_2_+",
+        "winner_mass": 108.5661,
+        "correct_mass": 88.1216,
+        "paths_winner": 224,
+        "paths_correct": 116,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 447,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 448,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 450,
+        "winner": "R_2_+",
+        "winner_mass": 16.0378,
+        "correct_mass": 14.9331,
+        "paths_winner": 44,
+        "paths_correct": 20,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 451,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 454,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 459,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 461,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 462,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 466,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 469,
+        "winner": "R_2_+",
+        "winner_mass": 11.6964,
+        "correct_mass": 8.5766,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.201
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 474,
+        "winner": "R_5_+",
+        "winner_mass": 1.7883,
+        "correct_mass": 0.3788,
+        "paths_winner": 12,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": false,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 476,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 479,
+        "winner": "R_2_+",
+        "winner_mass": 24.3855,
+        "correct_mass": 17.9606,
+        "paths_winner": 288,
+        "paths_correct": 104,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 484,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 487,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 488,
+        "winner": "R_7_-",
+        "winner_mass": 20.5553,
+        "correct_mass": 0,
+        "paths_winner": 40,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 490,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 493,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 494,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 496,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 502,
+        "winner": "R_2_+",
+        "winner_mass": 36.6517,
+        "correct_mass": 33.5378,
+        "paths_winner": 99,
+        "paths_correct": 41,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 503,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 511,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 514,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 515,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 516,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 519,
+        "winner": "R_2_+",
+        "winner_mass": 36.894,
+        "correct_mass": 16.6473,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 520,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 521,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 523,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 526,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 527,
+        "winner": "R_2_+",
+        "winner_mass": 4.0735,
+        "correct_mass": 2.339,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 528,
+        "winner": "R_7_-",
+        "winner_mass": 17.7825,
+        "correct_mass": 0,
+        "paths_winner": 32,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 530,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 533,
+        "winner": "R_2_+",
+        "winner_mass": 4.0735,
+        "correct_mass": 2.339,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 538,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 541,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 542,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 547,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 551,
+        "winner": "R_4_-",
+        "winner_mass": 4.2344,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 553,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 554,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 561,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 566,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 573,
+        "winner": "R_7_-",
+        "winner_mass": 7.476,
+        "correct_mass": 0,
+        "paths_winner": 16,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 575,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 579,
+        "winner": "R_2_+",
+        "winner_mass": 60.647,
+        "correct_mass": 56.1712,
+        "paths_winner": 116,
+        "paths_correct": 64,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 580,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 583,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 584,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 585,
+        "winner": "R_4_-",
+        "winner_mass": 4.2344,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 587,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 590,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 595,
+        "winner": "R_4_+",
+        "winner_mass": 32.0,
+        "correct_mass": 32.0,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": false,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": true
+      },
+      {
+        "i": 596,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 599,
+        "winner": "R_2_+",
+        "winner_mass": 4.0735,
+        "correct_mass": 2.339,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 604,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 608,
+        "winner": "R_2_+",
+        "winner_mass": 37.4555,
+        "correct_mass": 35.8929,
+        "paths_winner": 80,
+        "paths_correct": 44,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 609,
+        "winner": "R_7_-",
+        "winner_mass": 17.7825,
+        "correct_mass": 0,
+        "paths_winner": 32,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 612,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 622,
+        "winner": "R_2_+",
+        "winner_mass": 7.3252,
+        "correct_mass": 3.4664,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 625,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 633,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 634,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 636,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 637,
+        "winner": "R_4_-",
+        "winner_mass": 5.2923,
+        "correct_mass": 0,
+        "paths_winner": 10,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 643,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 647,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 649,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 654,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 655,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 656,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 657,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 661,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 662,
+        "winner": "R_7_-",
+        "winner_mass": 17.7825,
+        "correct_mass": 0,
+        "paths_winner": 32,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 663,
+        "winner": "R_4_-",
+        "winner_mass": 4.2344,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 667,
+        "winner": "R_9_+",
+        "winner_mass": 18.6179,
+        "correct_mass": 16.0,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": false,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": true
+      },
+      {
+        "i": 669,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 670,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 672,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 677,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 680,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 681,
+        "winner": "R_7_-",
+        "winner_mass": 17.7825,
+        "correct_mass": 0,
+        "paths_winner": 32,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 682,
+        "winner": "R_2_+",
+        "winner_mass": 40.5766,
+        "correct_mass": 32.0,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 684,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 688,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 689,
+        "winner": "R_2_+",
+        "winner_mass": 49.3408,
+        "correct_mass": 40.2691,
+        "paths_winner": 102,
+        "paths_correct": 48,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 695,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 703,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 704,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 706,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 708,
+        "winner": "R_2_+",
+        "winner_mass": 78.0833,
+        "correct_mass": 68.8551,
+        "paths_winner": 188,
+        "paths_correct": 96,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 716,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 717,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 722,
+        "winner": "R_1_+",
+        "winner_mass": 8.013,
+        "correct_mass": 5.4015,
+        "paths_winner": 64,
+        "paths_correct": 64,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 724,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 725,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 734,
+        "winner": "R_2_+",
+        "winner_mass": 8.1469,
+        "correct_mass": 5.3058,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 735,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 740,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 744,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 745,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 746,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 747,
+        "winner": "R_2_+",
+        "winner_mass": 35.221,
+        "correct_mass": 33.2415,
+        "paths_winner": 96,
+        "paths_correct": 48,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 748,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 749,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 752,
+        "winner": "R_2_+",
+        "winner_mass": 24.9908,
+        "correct_mass": 21.3764,
+        "paths_winner": 50,
+        "paths_correct": 29,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 756,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 758,
+        "winner": "R_2_+",
+        "winner_mass": 7.6298,
+        "correct_mass": 0.646,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 759,
+        "winner": "R_2_+",
+        "winner_mass": 52.9152,
+        "correct_mass": 48.8125,
+        "paths_winner": 156,
+        "paths_correct": 70,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 760,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 766,
+        "winner": "R_2_+",
+        "winner_mass": 3.1153,
+        "correct_mass": 0.3725,
+        "paths_winner": 28,
+        "paths_correct": 4,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.152
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 767,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 775,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 777,
+        "winner": "R_7_-",
+        "winner_mass": 5.726,
+        "correct_mass": 0,
+        "paths_winner": 16,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 778,
+        "winner": "R_4_-",
+        "winner_mass": 6.3502,
+        "correct_mass": 0,
+        "paths_winner": 12,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 780,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 785,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 790,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 793,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 794,
+        "winner": "R_4_-",
+        "winner_mass": 4.2344,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 796,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 797,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 798,
+        "winner": "R_4_-",
+        "winner_mass": 5.2923,
+        "correct_mass": 0,
+        "paths_winner": 10,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 799,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 800,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 805,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 806,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 807,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 810,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 812,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 814,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 818,
+        "winner": "R_2_+",
+        "winner_mass": 31.6648,
+        "correct_mass": 25.9071,
+        "paths_winner": 64,
+        "paths_correct": 36,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 820,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 821,
+        "winner": "R_2_+",
+        "winner_mass": 38.4249,
+        "correct_mass": 8.5766,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 823,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 828,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 833,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 834,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 836,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 838,
+        "winner": "R_2_+",
+        "winner_mass": 11.6964,
+        "correct_mass": 8.5766,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.201
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 844,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 847,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 850,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 851,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 853,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 855,
+        "winner": "R_4_-",
+        "winner_mass": 4.2344,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.53
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": true,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 856,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 859,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 860,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 861,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 863,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 866,
+        "winner": "R_1_+",
+        "winner_mass": 47.6789,
+        "correct_mass": 42.5166,
+        "paths_winner": 99,
+        "paths_correct": 128,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 868,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 869,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 872,
+        "winner": "R_2_+",
+        "winner_mass": 12.8498,
+        "correct_mass": 2.1838,
+        "paths_winner": 64,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 874,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 878,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 880,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 884,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 886,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 892,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 901,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 904,
+        "winner": "R_2_+",
+        "winner_mass": 65.8531,
+        "correct_mass": 59.1415,
+        "paths_winner": 144,
+        "paths_correct": 74,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 910,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 913,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 921,
+        "winner": "R_7_-",
+        "winner_mass": 20.5553,
+        "correct_mass": 0,
+        "paths_winner": 40,
+        "paths_correct": 0,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 925,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 927,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 929,
+        "winner": "R_2_+",
+        "winner_mass": 39.9076,
+        "correct_mass": 35.8871,
+        "paths_winner": 112,
+        "paths_correct": 58,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 930,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 932,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 936,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 940,
+        "winner": "R_1_+",
+        "winner_mass": 4.006,
+        "correct_mass": 3.2892,
+        "paths_winner": 32,
+        "paths_correct": 32,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 941,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 944,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 945,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 946,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 955,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 956,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 961,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 968,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 969,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 975,
+        "winner": "R_2_+",
+        "winner_mass": 74.4899,
+        "correct_mass": 72.5481,
+        "paths_winner": 196,
+        "paths_correct": 101,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 977,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 978,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 979,
+        "winner": "R_2_+",
+        "winner_mass": 4.0304,
+        "correct_mass": 1.1274,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 982,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 983,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 985,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 988,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 991,
+        "winner": "R_2_+",
+        "winner_mass": 98.0323,
+        "correct_mass": 92.4159,
+        "paths_winner": 326,
+        "paths_correct": 150,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": false,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": true,
+        "sum_outvoted": false
+      },
+      {
+        "i": 993,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 995,
+        "winner": "R_2_+",
+        "winner_mass": 4.0735,
+        "correct_mass": 2.339,
+        "paths_winner": 32,
+        "paths_correct": 16,
+        "top_app_origin": "A",
+        "top_app_factors": [
+          1.0,
+          1.0
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      },
+      {
+        "i": 997,
+        "winner": "R_7_-",
+        "winner_mass": 2.6158,
+        "correct_mass": 0,
+        "paths_winner": 8,
+        "paths_correct": 0,
+        "top_app_origin": "B",
+        "top_app_factors": [
+          1.0,
+          0.385
+        ],
+        "cross_fired": true,
+        "commit_pooled": true,
+        "wrong_commit_involved": false,
+        "beam_starved": false,
+        "sum_outvoted": false
+      }
+    ]
+  },
+  "p_commits": {
+    "minus_wrong_commits": {
+      "acc": 0.317,
+      "heals": 0,
+      "breaks": 0,
+      "healed_idx": [],
+      "broken_idx": []
+    },
+    "anchors_only": {
+      "acc": 0.318,
+      "heals": 1,
+      "breaks": 0,
+      "healed_idx": [
+        509
+      ],
+      "broken_idx": []
+    },
+    "n_wrong_commits": 2
+  },
+  "p_ident": {
+    "acc": 0.358,
+    "heals": 73,
+    "breaks": 32,
+    "healed_idx": [
+      9,
+      35,
+      51,
+      56,
+      82,
+      101,
+      103,
+      110,
+      122,
+      226,
+      238,
+      248,
+      262,
+      268,
+      270,
+      289,
+      293,
+      300,
+      312,
+      329
+    ],
+    "broken_idx": [
+      42,
+      65,
+      97,
+      123,
+      143,
+      189,
+      200,
+      228,
+      264,
+      295,
+      309,
+      337,
+      338,
+      387,
+      398,
+      444,
+      467,
+      505,
+      512,
+      517
+    ]
+  },
+  "p_agg": {
+    "max": {
+      "acc": 0.276,
+      "heals": 45,
+      "breaks": 86,
+      "healed_idx": [
+        6,
+        35,
+        86,
+        110,
+        119,
+        121,
+        138,
+        219,
+        230,
+        237,
+        250,
+        262,
+        268,
+        299,
+        300,
+        312,
+        321,
+        382,
+        386,
+        394
+      ],
+      "broken_idx": [
+        5,
+        19,
+        24,
+        42,
+        52,
+        73,
+        75,
+        83,
+        93,
+        94,
+        97,
+        105,
+        114,
+        125,
+        136,
+        154,
+        163,
+        173,
+        206,
+        215
+      ]
+    },
+    "count": {
+      "acc": 0.183,
+      "heals": 6,
+      "breaks": 140,
+      "healed_idx": [
+        623,
+        711,
+        858,
+        866,
+        917,
+        981
+      ],
+      "broken_idx": [
+        8,
+        18,
+        19,
+        24,
+        39,
+        40,
+        60,
+        65,
+        83,
+        105,
+        106,
+        114,
+        139,
+        143,
+        144,
+        149,
+        151,
+        154,
+        155,
+        169
+      ]
+    }
+  },
+  "p_beam": {
+    "top_k_16": {
+      "acc": 0.317,
+      "heals": 0,
+      "breaks": 0,
+      "healed_idx": [],
+      "broken_idx": []
+    },
+    "top_k_32": {
+      "acc": 0.317,
+      "heals": 0,
+      "breaks": 0,
+      "healed_idx": [],
+      "broken_idx": []
+    },
+    "act_min_0.001": {
+      "acc": 0.317,
+      "heals": 0,
+      "breaks": 0,
+      "healed_idx": [],
+      "broken_idx": []
+    },
+    "act_min_0": {
+      "acc": 0.317,
+      "heals": 0,
+      "breaks": 0,
+      "healed_idx": [],
+      "broken_idx": []
+    }
+  },
+  "robust": [
+    {
+      "seed": 1,
+      "discrete_acc": 0.733,
+      "graded_acc": 0.727,
+      "cells": {
+        "both_right": 694,
+        "both_wrong": 234,
+        "healed": 33,
+        "torn": 39
+      }
+    },
+    {
+      "seed": 2,
+      "discrete_acc": 0.593,
+      "graded_acc": 0.293,
+      "cells": {
+        "both_wrong": 321,
+        "torn": 386,
+        "both_right": 207,
+        "healed": 86
+      }
+    },
+    {
+      "seed": 3,
+      "discrete_acc": 0.633,
+      "graded_acc": 0.703,
+      "cells": {
+        "both_right": 609,
+        "both_wrong": 273,
+        "healed": 94,
+        "torn": 24
+      }
+    },
+    {
+      "seed": 4,
+      "discrete_acc": 0.692,
+      "graded_acc": 0.708,
+      "cells": {
+        "both_right": 608,
+        "both_wrong": 208,
+        "torn": 84,
+        "healed": 100
+      }
+    }
+  ],
+  "companion": {
+    "gate": {
+      "frozen": {
+        "view-alone": 0.133,
+        "ensemble": 0.163,
+        "gold-pooled": 0.828,
+        "graded": 0.163
+      },
+      "recomputed": {
+        "view-alone": 0.133,
+        "ensemble": 0.163,
+        "gold-pooled": 0.828,
+        "graded": 0.163
+      },
+      "diag_copy_identical": true,
+      "pass": true
+    },
+    "flip": {
+      "cells": {
+        "both_wrong": 815,
+        "both_right": 141,
+        "healed": 22,
+        "torn": 22
+      },
+      "discrete_acc": 0.163,
+      "graded_acc": 0.163
+    },
+    "trace_marks": {
+      "commit_pooled": 17,
+      "beam_starved": 17,
+      "sum_outvoted": 5,
+      "cross_fired": 2
+    },
+    "n_torn": 22
+  },
+  "elapsed_s": 247.2
+}
