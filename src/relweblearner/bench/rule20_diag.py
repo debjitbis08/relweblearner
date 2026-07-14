@@ -164,10 +164,12 @@ def _greduce(labels, rules, sim, memo, meta, top_k, act_min,
 
 
 def _gpredict(ctx, rec, rules, sim, merge_of, agg="sum",
-              top_k=GR.TOP_K, act_min=GR.ACT_MIN, trace=False):
+              top_k=GR.TOP_K, act_min=GR.ACT_MIN, trace=False, edges=None):
     """GR.graded_predict, verbatim semantics, parameterized on aggregation
-    and beam, with optional winner-provenance trace."""
-    edges = _graded_edges(ctx, rec)
+    and beam, with optional winner-provenance trace. `edges` overrides the
+    default graded rendering (used by the factorial's rendering factor)."""
+    if edges is None:
+        edges = _graded_edges(ctx, rec)
     u0, v0, _ = rec["query"]
     target = rec["query"][2]
     back = ctx["back"]
@@ -280,14 +282,17 @@ def gate(ctx: dict) -> dict:
 
 
 def audit(base_preds, alt_preds, targets) -> dict:
-    """Plan §6b row 10: heal/break episode sets vs the graded baseline."""
+    """Plan §4b/§6b row 10: heal/break episode sets vs the graded baseline.
+    The FULL sets are stored (the first frozen run truncated them to 20 —
+    referee finding 3.3; results.json is left frozen, episode-sets.json and
+    factorial.json carry the complete lists)."""
     heal = [i for i, t in enumerate(targets)
             if base_preds[i] != t and alt_preds[i] == t]
     brk = [i for i, t in enumerate(targets)
            if base_preds[i] == t and alt_preds[i] != t]
     return {"acc": round(_acc(alt_preds, targets), 4),
             "heals": len(heal), "breaks": len(brk),
-            "healed_idx": heal[:20], "broken_idx": brk[:20]}
+            "healed_idx": heal, "broken_idx": brk}
 
 
 # ------------------------------------------------------------- §4a flip table
@@ -380,6 +385,127 @@ def probe_beam(ctx: dict, base: list) -> dict:
     return out
 
 
+# ------------------------------- factorial exactification (post-referee 3.1/3.2)
+# The E5 referee (findings 3.1 and 3.2) required the supplementary
+# exactification cells to be (a) committed as a reproducer and (b) analyzed
+# as a genuine factorial with interactions, not a single ladder order. Four
+# binary factors, each replacing one graded operational choice with its
+# discrete counterpart:
+#   R  rules:      native both-web rules      -> translated rules_ens
+#   D  rendering:  seam left in B tokens      -> inv_map-translated rendering
+#   S  similarity: frozen soft field          -> exact identity indicator
+#   C  commits:    full hardened merge_of     -> the 2 wrong commits removed
+# The beam is NOT a factor: measured inert at both extremes in the frozen
+# run and re-checked here as two extra recorded cells.
+
+FACTORS = ("R", "D", "S", "C")
+
+
+def factorial(ctx: dict, base: list) -> dict:
+    """All 2^4 cells, each with full heal/break sets vs the frozen graded
+    baseline, plus prediction-identity counts against the frozen graded,
+    discrete-ensemble, and view-alone prediction vectors, plus Shapley
+    values over accuracy (the order-independent allocation the referee
+    asked for) and the full main-effect/interaction table."""
+    t = ctx["targets"]
+    inv_map = {y: x for x, y in ctx["mapping"].items()}
+    rules_trans = [(p, q, h) for (p, q), h in ctx["rules_ens"].items()]
+    ident = lambda a, b: 1.0 if a == b else 0.0
+    m_minus = {y: x for x, y in ctx["commits"].items()
+               if (x, y) not in ctx["wrong_commits"]}
+    disc = _discrete_preds(ctx, ctx["rules_ens"], "ensemble")
+    alone = _discrete_preds(ctx, ctx["rules_alone"], "alone")
+
+    def cell_preds(on: frozenset) -> list:
+        rules = rules_trans if "R" in on else ctx["rules_g"]
+        sim = ident if "S" in on else ctx["sim"]
+        merge = m_minus if "C" in on else ctx["merge_of"]
+        preds = []
+        for rec in ctx["w"]["test"]:
+            edges = (MG._render_test(rec, ctx["views"], inv_map,
+                                     ensemble=True)["edges"]
+                     if "D" in on else None)
+            preds.append(ctx["back"](_gpredict(ctx, rec, rules, sim, merge,
+                                               edges=edges)))
+        return preds
+
+    cells, acc = {}, {}
+    for bits in range(16):
+        on = frozenset(f for i, f in enumerate(FACTORS) if bits >> i & 1)
+        key = "+".join(sorted(on)) or "none"
+        preds = cell_preds(on)
+        a = audit(base, preds, t)
+        a["identical_to_frozen_graded"] = sum(p == b for p, b in zip(preds, base))
+        a["identical_to_discrete_ens"] = sum(p == d for p, d in zip(preds, disc))
+        a["identical_to_view_alone"] = sum(p == v for p, v in zip(preds, alone))
+        cells[key] = a
+        acc[on] = a["acc"]
+
+    # Shapley values over the 4 factors (v = cell accuracy)
+    from itertools import permutations
+    shap = {f: 0.0 for f in FACTORS}
+    perms = list(permutations(FACTORS))
+    for order in perms:
+        cur: frozenset = frozenset()
+        for f in order:
+            nxt = cur | {f}
+            shap[f] += (acc[nxt] - acc[cur]) / len(perms)
+            cur = nxt
+    # 2x2 summary the referee computed, kept explicit: E = R+D+S jointly
+    e_full = frozenset("RDS")
+    two_by_two = {
+        "commits_marginal_at_frozen": round(acc[frozenset("C")] - acc[frozenset()], 4),
+        "commits_marginal_after_exactification":
+            round(acc[e_full | {"C"}] - acc[e_full], 4),
+        "exactification_marginal_with_commits":
+            round(acc[e_full] - acc[frozenset()], 4),
+        "exactification_marginal_without_commits":
+            round(acc[e_full | {"C"}] - acc[frozenset("C")], 4),
+        "interaction": round((acc[e_full | {"C"}] - acc[e_full])
+                             - (acc[frozenset("C")] - acc[frozenset()]), 4)}
+
+    # the beam, re-checked as recorded cells (not a factor: inert)
+    beam_cells = {}
+    for name, tk, am in (("frozen+no_beam", 10**6, 0.0),
+                         ("exactified+no_beam", 10**6, 0.0)):
+        on = frozenset() if name.startswith("frozen") else frozenset("RDSC")
+        rules = rules_trans if "R" in on else ctx["rules_g"]
+        sim = ident if "S" in on else ctx["sim"]
+        merge = m_minus if "C" in on else ctx["merge_of"]
+        preds = []
+        for rec in ctx["w"]["test"]:
+            edges = (MG._render_test(rec, ctx["views"], inv_map,
+                                     ensemble=True)["edges"]
+                     if "D" in on else None)
+            preds.append(ctx["back"](_gpredict(ctx, rec, rules, sim, merge,
+                                               top_k=tk, act_min=am,
+                                               edges=edges)))
+        ref = base if "R" not in on else None
+        beam_cells[name] = {"acc": round(_acc(preds, t), 4),
+                            "identical_to_beam_on":
+                                sum(p == q for p, q in zip(
+                                    preds, cell_preds(on)))}
+
+    return {"factors": {"R": "rules translated (rules_ens)",
+                        "D": "rendering translated (inv_map seam)",
+                        "S": "similarity exact-identity",
+                        "C": "2 wrong hardened commits removed"},
+            "cells": cells,
+            "shapley_over_accuracy": {f: round(v, 4) for f, v in shap.items()},
+            "two_by_two": two_by_two,
+            "beam_recheck": beam_cells}
+
+
+def preregistered_full_sets(ctx: dict, base: list) -> dict:
+    """Referee 3.3: the pre-registered probes re-run with COMPLETE heal/break
+    episode sets (results.json is frozen with the truncated lists; this
+    artifact carries the full ones — deterministic regeneration)."""
+    return {"p_commits": probe_commits(ctx, base),
+            "p_ident": probe_identity_sim(ctx, base),
+            "p_agg": probe_aggregation(ctx, base),
+            "p_beam": probe_beam(ctx, base)}
+
+
 # ------------------------------------------------- §4c / §4d secondary cells
 
 def robust_seeds(world: str, n: int = 4) -> list:
@@ -445,8 +571,34 @@ def _report_md(out: dict) -> str:
 
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--exactify", action="store_true",
+                    help="run ONLY the post-referee factorial exactification "
+                         "(2^4 cells, Shapley, full episode sets) and the "
+                         "pre-registered probes with complete heal/break "
+                         "lists; writes factorial.json + episode-sets.json, "
+                         "leaves the frozen outputs untouched")
     ap.add_argument("--out", default="results/rule20-diagnosis")
     args = ap.parse_args(argv)
+
+    if args.exactify:
+        ctx = setup(WORLD, seed=0)
+        g = gate(ctx)
+        if not g["pass"]:
+            raise SystemExit("consistency gate FAILED")
+        base = g["_graded_preds"]
+        o = Path(args.out)
+        o.mkdir(parents=True, exist_ok=True)
+        fact = factorial(ctx, base)
+        (o / "factorial.json").write_text(json.dumps(fact, indent=2))
+        (o / "episode-sets.json").write_text(json.dumps(
+            preregistered_full_sets(ctx, base), indent=2))
+        slim = {k: (v if k != "cells" else
+                    {c: {kk: vv for kk, vv in a.items()
+                         if kk not in ("healed_idx", "broken_idx")}
+                     for c, a in v.items()})
+                for k, v in fact.items()}
+        print(json.dumps(slim, indent=2))
+        return
 
     t0 = time.time()
     ctx = setup(WORLD, seed=0)
