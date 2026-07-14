@@ -1,0 +1,115 @@
+{
+  "model": {
+    "n_worlds": 396,
+    "declared_block": [
+      10000,
+      10399
+    ],
+    "false_obs_rate_per_region": 0.01262,
+    "pooled_edge_rate": 0.01881,
+    "eps_map_rate": 0.02083,
+    "detection": "395/395",
+    "count_pi99": [
+      2,
+      16
+    ],
+    "rate_pi99": [
+      0.01228,
+      0.02631
+    ],
+    "count_mean": 8.22,
+    "rate_mean": 0.01884
+  },
+  "blocks": {
+    "fresh_4000": {
+      "n_worlds": 50,
+      "n_true": 649,
+      "false_obs_total": 9,
+      "false_obs_correct_only": 8,
+      "edge_rate_correct": 0.01753,
+      "checkable_correct": 3536,
+      "eps_map_rate": 0.06667,
+      "eps_map_rule_of_three_upper": null,
+      "detection_eligible": 50,
+      "detection_success": 50,
+      "detection_rate": 1.0
+    },
+    "retro_3000": {
+      "n_worlds": 48,
+      "n_true": 624,
+      "false_obs_total": 11,
+      "false_obs_correct_only": 11,
+      "edge_rate_correct": 0.02037,
+      "checkable_correct": 3486,
+      "eps_map_rate": 0.0,
+      "eps_map_rule_of_three_upper": 0.13636,
+      "detection_eligible": 48,
+      "detection_success": 48,
+      "detection_rate": 1.0
+    },
+    "retro_2000": {
+      "n_worlds": 50,
+      "n_true": 650,
+      "false_obs_total": 10,
+      "false_obs_correct_only": 9,
+      "edge_rate_correct": 0.0188,
+      "checkable_correct": 3405,
+      "eps_map_rate": 0.05556,
+      "eps_map_rule_of_three_upper": null,
+      "detection_eligible": 50,
+      "detection_success": 50,
+      "detection_rate": 1.0
+    },
+    "retro_1000": {
+      "n_worlds": 50,
+      "n_true": 650,
+      "false_obs_total": 15,
+      "false_obs_correct_only": 14,
+      "edge_rate_correct": 0.0215,
+      "checkable_correct": 3582,
+      "eps_map_rate": 0.04082,
+      "eps_map_rule_of_three_upper": null,
+      "detection_eligible": 50,
+      "detection_success": 50,
+      "detection_rate": 1.0
+    }
+  },
+  "verdict": {
+    "V2ppp_count": {
+      "pass": true,
+      "pi99": [
+        2,
+        16
+      ],
+      "predicted_mean": 8.22,
+      "observed": 9
+    },
+    "V1ppp_rate": {
+      "pass": true,
+      "pi99": [
+        0.01228,
+        0.02631
+      ],
+      "predicted_mean": 0.01884,
+      "observed": 0.01753
+    },
+    "V3ppp_detection": {
+      "pass": true,
+      "eligible": 50,
+      "rate": 1.0
+    },
+    "discharged_measured_tier": true
+  },
+  "skipped_crashing_seeds": {
+    "v3_model": [
+      10145,
+      10191,
+      10375,
+      10386
+    ],
+    "v3_retro_3000": [
+      3006,
+      3040
+    ]
+  }
+}

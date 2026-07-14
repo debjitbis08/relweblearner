@@ -359,6 +359,188 @@ def run_v2(out_dir: Path) -> dict:
     return out
 
 
+# --------------------------------------------- v3 amendment (note §12)
+# Direct simulation: no analytic composition, no pristine/mutated mismatch.
+# The false-alarm behavior of the ACTUAL detector is measured by running the
+# full frozen pipeline on the declared model block; world-level bootstrap
+# predictive intervals carry all within-world clustering by construction.
+
+V3_MODEL_SEEDS = range(10_000, 10_400)   # exactly as declared; crashers recorded
+V3_FRESH = range(4000, 4050)             # virgin gating block
+V3_BOOT_N = 20_000
+V3_BOOT_SEED = 4242
+
+
+def _world_stats(seed: int, tag: str) -> dict | None:
+    """One world through the full frozen pipeline: false-obstruction and
+    edge-level tallies for true regions, plus the per-view detection cell."""
+    p = _pipeline(seed, tag)
+    if p is None:
+        return None
+    world, maps = p["world"], p["maps"]
+    st = {"n_true": 0, "false_obs_total": 0, "false_obs_correct_only": 0,
+          "cc": 0, "cn": 0, "wc": 0, "wn": 0,
+          "det_eligible": 0, "det_success": 0}
+    for row in p["true_rows"]:
+        st["n_true"] += 1
+        edges = _edges_of(row, world, maps)
+        contra_by_j = Counter(e["j"] for e in edges if e["contra"])
+        correct_by_j = Counter(e["j"] for e in edges
+                               if e["contra"] and e["correct"])
+        if contra_by_j and max(contra_by_j.values()) >= OBS_MIN_CONTRA:
+            st["false_obs_total"] += 1
+        if correct_by_j and max(correct_by_j.values()) >= OBS_MIN_CONTRA:
+            st["false_obs_correct_only"] += 1
+        for e in edges:
+            if e["correct"]:
+                st["cn"] += 1
+                st["cc"] += e["contra"]
+            else:
+                st["wn"] += 1
+                st["wc"] += e["contra"]
+    # detection, per-view and bridge-attributable (note §12 V3''')
+    if p["info"].get("constructible") and p["merged_rows"]:
+        row = max(p["merged_rows"], key=lambda r: r["contra"])
+        ba, bb_ = p["info"]["bridged_a"], p["info"]["bridged_b"]
+        good_by_j, contra_good_by_j = Counter(), Counter()
+        for e in _edges_of(row, world, maps):
+            is_br = ((e["u"] in ba and e["v"] in bb_)
+                     or (e["u"] in bb_ and e["v"] in ba))
+            if is_br and e["correct"] and e["anchored"]:
+                good_by_j[e["j"]] += 1
+                if e["contra"]:
+                    contra_good_by_j[e["j"]] += 1
+        elig = [j for j, n in good_by_j.items() if n >= 2]
+        if elig:
+            st["det_eligible"] = 1
+            st["det_success"] = int(any(contra_good_by_j[j] >= OBS_MIN_CONTRA
+                                        for j in elig))
+    return st
+
+
+def direct_model(seeds=V3_MODEL_SEEDS) -> list[dict]:
+    """Note §12: per-world stats over EXACTLY the declared block."""
+    SKIPPED.setdefault("v3_model", [])
+    out = []
+    for seed in seeds:
+        st = _world_stats(seed, "v3_model")
+        if st is not None:
+            out.append(st)
+    return out
+
+
+def bootstrap_pi(worlds: list[dict], block_size: int = 50,
+                 n: int = V3_BOOT_N, seed: int = V3_BOOT_SEED) -> dict:
+    """99% predictive intervals for a block's total false-obstruction count
+    and pooled correct-endpoint edge rate, by world-level resampling."""
+    import random as _random
+    rng = _random.Random(seed)
+    counts, rates = [], []
+    for _ in range(n):
+        sample = [worlds[rng.randrange(len(worlds))] for _ in range(block_size)]
+        counts.append(sum(w["false_obs_total"] for w in sample))
+        cn = sum(w["cn"] for w in sample)
+        rates.append(sum(w["cc"] for w in sample) / cn if cn else 0.0)
+    counts.sort()
+    rates.sort()
+    q = lambda vals, p: vals[min(len(vals) - 1, int(p * len(vals)))]
+    return {"count_pi99": [q(counts, 0.005), q(counts, 0.995)],
+            "rate_pi99": [round(q(rates, 0.005), 5), round(q(rates, 0.995), 5)],
+            "count_mean": round(statistics.mean(counts), 2),
+            "rate_mean": round(statistics.mean(rates), 5)}
+
+
+def fresh_block_v3(block, tag: str) -> dict:
+    """The gating measurements on a 50-seed block."""
+    SKIPPED.setdefault(tag, [])
+    worlds = [st for seed in block
+              if (st := _world_stats(seed, tag)) is not None]
+    cn = sum(w["cn"] for w in worlds)
+    wn = sum(w["wn"] for w in worlds)
+    wc = sum(w["wc"] for w in worlds)
+    elig = sum(w["det_eligible"] for w in worlds)
+    return {"n_worlds": len(worlds),
+            "n_true": sum(w["n_true"] for w in worlds),
+            "false_obs_total": sum(w["false_obs_total"] for w in worlds),
+            "false_obs_correct_only": sum(w["false_obs_correct_only"] for w in worlds),
+            "edge_rate_correct": round(sum(w["cc"] for w in worlds) / cn, 5) if cn else None,
+            "checkable_correct": cn,
+            "eps_map_rate": (round(wc / wn, 5) if wn else None),
+            "eps_map_rule_of_three_upper": (round(3 / wn, 5) if wn and wc == 0 else None),
+            "detection_eligible": elig,
+            "detection_success": sum(w["det_success"] for w in worlds),
+            "detection_rate": (round(sum(w["det_success"] for w in worlds) / elig, 4)
+                               if elig else None)}
+
+
+def verdict_v3(pi: dict, fresh: dict) -> dict:
+    """Note §12 gates, verbatim."""
+    v2 = pi["count_pi99"][0] <= fresh["false_obs_total"] <= pi["count_pi99"][1]
+    v1 = pi["rate_pi99"][0] <= fresh["edge_rate_correct"] <= pi["rate_pi99"][1]
+    v3 = fresh["detection_rate"] is not None and fresh["detection_rate"] >= 0.98
+    return {"V2ppp_count": {"pass": v2, "pi99": pi["count_pi99"],
+                            "predicted_mean": pi["count_mean"],
+                            "observed": fresh["false_obs_total"]},
+            "V1ppp_rate": {"pass": v1, "pi99": pi["rate_pi99"],
+                           "predicted_mean": pi["rate_mean"],
+                           "observed": fresh["edge_rate_correct"]},
+            "V3ppp_detection": {"pass": v3,
+                                "eligible": fresh["detection_eligible"],
+                                "rate": fresh["detection_rate"]},
+            "discharged_measured_tier": v1 and v2 and v3}
+
+
+def run_v3(out_dir: Path) -> dict:
+    worlds = direct_model()
+    pi = bootstrap_pi(worlds)
+    model_summary = {
+        "n_worlds": len(worlds),
+        "declared_block": [V3_MODEL_SEEDS.start, V3_MODEL_SEEDS.stop - 1],
+        "false_obs_rate_per_region": round(
+            sum(w["false_obs_total"] for w in worlds)
+            / sum(w["n_true"] for w in worlds), 5),
+        "pooled_edge_rate": round(
+            sum(w["cc"] for w in worlds) / sum(w["cn"] for w in worlds), 5),
+        "eps_map_rate": round(
+            sum(w["wc"] for w in worlds) / max(1, sum(w["wn"] for w in worlds)), 5),
+        "detection": f"{sum(w['det_success'] for w in worlds)}"
+                     f"/{sum(w['det_eligible'] for w in worlds)}",
+        **pi}
+    blocks = {}
+    for name, block in (("fresh_4000", V3_FRESH),
+                        ("retro_3000", range(3000, 3050)),
+                        ("retro_2000", range(2000, 2050)),
+                        ("retro_1000", range(1000, 1050))):
+        blocks[name] = fresh_block_v3(block, f"v3_{name}")
+    v = verdict_v3(pi, blocks["fresh_4000"])
+    out = {"model": model_summary, "blocks": blocks, "verdict": v,
+           "skipped_crashing_seeds": {k: sorted(set(s)) for k, s in SKIPPED.items() if s}}
+    (out_dir / "v3-validation.json").write_text(json.dumps(out, indent=2))
+    rows = ["| block | false-obs total (correct-only) | edge rate | detection |",
+            "|---|---|---|---|"]
+    for name, b in blocks.items():
+        rows.append(f"| {name} | {b['false_obs_total']} ({b['false_obs_correct_only']}) | "
+                    f"{b['edge_rate_correct']} | {b['detection_success']}/{b['detection_eligible']} |")
+    (out_dir / "v3-report.md").write_text("\n".join([
+        "# The P2 discharge, amendment v3 — direct-simulation validation", "",
+        "Pre-registered: docs/p2-discharge.md §12 (committed before this code "
+        "or any touch of seed block 4000–4049). Model = the ACTUAL frozen "
+        "pipeline, forgery mutation included, on the declared block "
+        f"{model_summary['declared_block']} ({model_summary['n_worlds']} valid "
+        "worlds); 99% predictive intervals by world-level bootstrap "
+        f"(n={V3_BOOT_N}, seed {V3_BOOT_SEED}). Gating block: 4000–4049 "
+        "(virgin). Other blocks are retrodiction.", "",
+        f"Model: per-region false-obstruction rate "
+        f"{model_summary['false_obs_rate_per_region']}, pooled edge rate "
+        f"{model_summary['pooled_edge_rate']}, eps_map rate "
+        f"{model_summary['eps_map_rate']}, detection {model_summary['detection']}; "
+        f"block-count PI99 {pi['count_pi99']} (mean {pi['count_mean']}), "
+        f"rate PI99 {pi['rate_pi99']}.", "",
+        *rows, "",
+        f"Verdict (fresh 4000): ```{json.dumps(v, indent=1)}```", ""]))
+    return out
+
+
 # ------------------------------------------------------------------- verdict
 
 def verdict(model: dict, e: dict, ra: dict, det: dict) -> dict:
@@ -386,6 +568,10 @@ def verdict(model: dict, e: dict, ra: dict, det: dict) -> dict:
 
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--v3", action="store_true",
+                    help="run ONLY the note-§12 v3 direct-simulation "
+                         "validation (virgin block 4000–4049 gating); writes "
+                         "v3-validation.json + v3-report.md")
     ap.add_argument("--v2", action="store_true",
                     help="run ONLY the note-§9 v2 amendment validation "
                          "(fresh block 3000–3049 gating; 2000 as "
@@ -393,6 +579,15 @@ def main(argv=None) -> None:
                          "v2-report.md, leaves v1 outputs untouched")
     ap.add_argument("--out", default="results/p2-discharge")
     args = ap.parse_args(argv)
+
+    if args.v3:
+        o = Path(args.out)
+        o.mkdir(parents=True, exist_ok=True)
+        out = run_v3(o)
+        print(json.dumps(out["verdict"], indent=2))
+        print("model:", json.dumps(out["model"], indent=2))
+        print("skipped:", out["skipped_crashing_seeds"])
+        return
 
     if args.v2:
         o = Path(args.out)
