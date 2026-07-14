@@ -94,7 +94,8 @@ def model_rates(seeds=MODEL_SEEDS) -> dict:
             "p_miss_q975": q(per_world_miss, 0.975),
             "delta_x_mean": statistics.mean(per_world_x),
             "delta_x_q975": q(per_world_x, 0.975),
-            "threshold_mean": statistics.mean(thresholds)}
+            "threshold_mean": statistics.mean(thresholds),
+            "p_miss_samples": per_world_miss}      # F, for the v2 mixture (note §9)
 
 
 # ------------------------------------------------------- per-block measurement
@@ -257,6 +258,107 @@ def detection(block, tag="held_out") -> dict:
             "bridge_contra_rate": bridges_contra / bridges if bridges else None}
 
 
+# --------------------------------------------- v2 amendment (note §9)
+
+def _tail2(m, p):
+    return 1 - (1 - p) ** m - m * p * (1 - p) ** (m - 1)
+
+
+def region_alpha_v2(edge_out: dict, f_samples: list) -> dict:
+    """Note §9: the rate-mixture false-alarm bound. Primary (gating): one
+    p ~ F shared across a region's views. Secondary (reported): independent
+    per-view draws. F = raw per-world-view p_miss samples from the declared
+    process; no test-block artifact is an input."""
+    pred_shared = pred_indep = 0.0
+    n = len(f_samples)
+    for ms in edge_out["_per_region_m"]:
+        s = 0.0
+        for p in f_samples:
+            keep = 1.0
+            for m in ms:
+                keep *= 1 - _tail2(m, p)
+            s += 1 - keep
+        pred_shared += s / n
+        keep = 1.0
+        for m in ms:
+            keep *= 1 - sum(_tail2(m, p) for p in f_samples) / n
+        pred_indep += 1 - keep
+    return {"predicted_shared_p": round(pred_shared, 2),
+            "predicted_indep_p": round(pred_indep, 2),
+            "observed_correct_only": edge_out["observed_false_obstructed_correct_only"],
+            "observed_total": edge_out["observed_false_obstructed"]}
+
+
+def verdict_v2(model: dict, e: dict, ra2: dict, det: dict) -> dict:
+    """Note §9 gates, verbatim: V2' (mixture bound vs correct-only observed,
+    x2.5), V1 replication (original band), V3 replication."""
+    v1_lo = model["p_miss_q025"] / 2
+    v1_hi = model["p_miss_q975"] * 2
+    v1 = (e["edge_rate_correct"] is not None
+          and v1_lo <= e["edge_rate_correct"] <= v1_hi)
+    pred, obs = ra2["predicted_shared_p"], ra2["observed_correct_only"]
+    v2 = pred / 2.5 <= obs <= pred * 2.5
+    v3 = (det["obstructed_rate"] is not None and det["obstructed_rate"] >= 0.98
+          and det["bridge_contra_rate"] is not None
+          and det["bridge_contra_rate"] >= 0.99)
+    return {"V2prime_mixture": {"pass": v2,
+                                "band": [round(pred / 2.5, 2), round(pred * 2.5, 2)],
+                                "predicted_shared_p": pred,
+                                "predicted_indep_p": ra2["predicted_indep_p"],
+                                "observed_correct_only": obs,
+                                "observed_total": ra2["observed_total"]},
+            "V1_replication": {"pass": v1, "band": [round(v1_lo, 5), round(v1_hi, 5)],
+                               "observed": round(e["edge_rate_correct"], 5)},
+            "V3_replication": {"pass": v3,
+                               "obstructed_rate": det["obstructed_rate"],
+                               "bridge_contra_rate": round(det["bridge_contra_rate"], 4)},
+            "discharged": v1 and v2 and v3}
+
+
+def run_v2(out_dir: Path) -> dict:
+    model = model_rates()
+    f = model["p_miss_samples"]
+    blocks = {}
+    for name, block, tag in (("fresh_3000", range(3000, 3050), "fresh_3000"),
+                             ("retro_2000", HELD_OUT, "retro_2000")):
+        SKIPPED.setdefault(tag, [])
+        e = edge_rates(block, tag)
+        ra2 = region_alpha_v2(e, f)
+        det = detection(block, tag)
+        e.pop("_per_region_m")
+        blocks[name] = {"edges": e, "region_alpha_v2": ra2, "detection": det}
+    fresh = blocks["fresh_3000"]
+    v = verdict_v2(model, fresh["edges"], fresh["region_alpha_v2"],
+                   fresh["detection"])
+    out = {"model": {k: v_ for k, v_ in model.items() if k != "p_miss_samples"},
+           "blocks": blocks, "verdict": v,
+           "skipped_crashing_seeds": SKIPPED}
+    (out_dir / "v2-validation.json").write_text(json.dumps(out, indent=2))
+    h, r = blocks["fresh_3000"], blocks["retro_2000"]
+    (out_dir / "v2-report.md").write_text("\n".join([
+        "# The P2 discharge, amendment v2 — validation results", "",
+        "Pre-registered: docs/p2-discharge.md §9 (committed before this code "
+        "or any computation touched seed block 3000–3049). Gating block: "
+        "3000–3049 (virgin). The 2000 block is V2-retrodiction, disclosed.", "",
+        "| check | fresh 3000 (gating) | 2000 (retro) |", "|---|---|---|",
+        f"| edge rate, correct endpoints | {h['edges']['edge_rate_correct']:.4f} "
+        f"({h['edges']['contradicted_correct']}/{h['edges']['checkable_correct']}) | "
+        f"{r['edges']['edge_rate_correct']:.4f} "
+        f"({r['edges']['contradicted_correct']}/{r['edges']['checkable_correct']}) |",
+        f"| α₂ predicted (shared / indep) vs observed correct-only | "
+        f"{h['region_alpha_v2']['predicted_shared_p']} / "
+        f"{h['region_alpha_v2']['predicted_indep_p']} vs "
+        f"{h['region_alpha_v2']['observed_correct_only']} | "
+        f"{r['region_alpha_v2']['predicted_shared_p']} / "
+        f"{r['region_alpha_v2']['predicted_indep_p']} vs "
+        f"{r['region_alpha_v2']['observed_correct_only']} |",
+        f"| detection: obstructed / per-bridge | "
+        f"{h['detection']['obstructed_rate']:.2f} / {h['detection']['bridge_contra_rate']:.4f} | "
+        f"{r['detection']['obstructed_rate']:.2f} / {r['detection']['bridge_contra_rate']:.4f} |",
+        "", f"Verdict (fresh block): ```{json.dumps(v, indent=1)}```", ""]))
+    return out
+
+
 # ------------------------------------------------------------------- verdict
 
 def verdict(model: dict, e: dict, ra: dict, det: dict) -> dict:
@@ -284,8 +386,21 @@ def verdict(model: dict, e: dict, ra: dict, det: dict) -> dict:
 
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--v2", action="store_true",
+                    help="run ONLY the note-§9 v2 amendment validation "
+                         "(fresh block 3000–3049 gating; 2000 as "
+                         "retrodiction); writes v2-validation.json + "
+                         "v2-report.md, leaves v1 outputs untouched")
     ap.add_argument("--out", default="results/p2-discharge")
     args = ap.parse_args(argv)
+
+    if args.v2:
+        o = Path(args.out)
+        o.mkdir(parents=True, exist_ok=True)
+        out = run_v2(o)
+        print(json.dumps(out["verdict"], indent=2))
+        print("skipped:", out["skipped_crashing_seeds"])
+        return
 
     t0 = time.time()
     model = model_rates()

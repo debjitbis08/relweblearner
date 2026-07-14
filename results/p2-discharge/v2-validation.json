@@ -1,0 +1,109 @@
+{
+  "model": {
+    "n_world_views": 600,
+    "p_miss_mean": 0.020739682875448775,
+    "p_miss_q025": 0.0,
+    "p_miss_q975": 0.061855670103092786,
+    "delta_x_mean": 0.000462653796718418,
+    "delta_x_q975": 0.001092896174863388,
+    "threshold_mean": 3.7195833333333335
+  },
+  "blocks": {
+    "fresh_3000": {
+      "edges": {
+        "n_true_regions": 624,
+        "checkable_correct": 3486,
+        "contradicted_correct": 71,
+        "edge_rate_correct": 0.020367183017785426,
+        "checkable_wrong_mapped": 22,
+        "contradicted_wrong_mapped": 0,
+        "epsilon_map_edges": 0,
+        "observed_false_obstructed": 11,
+        "observed_false_obstructed_correct_only": 11
+      },
+      "region_alpha_v2": {
+        "predicted_shared_p": 5.64,
+        "predicted_indep_p": 5.66,
+        "observed_correct_only": 11,
+        "observed_total": 11
+      },
+      "detection": {
+        "constructible": 48,
+        "eligible_ge2_bridges": 48,
+        "obstructed": 48,
+        "obstructed_rate": 1.0,
+        "checkable_bridges": 625,
+        "bridge_contra_rate": 1.0
+      }
+    },
+    "retro_2000": {
+      "edges": {
+        "n_true_regions": 650,
+        "checkable_correct": 3405,
+        "contradicted_correct": 64,
+        "edge_rate_correct": 0.018795888399412628,
+        "checkable_wrong_mapped": 54,
+        "contradicted_wrong_mapped": 3,
+        "epsilon_map_edges": 3,
+        "observed_false_obstructed": 10,
+        "observed_false_obstructed_correct_only": 9
+      },
+      "region_alpha_v2": {
+        "predicted_shared_p": 5.07,
+        "predicted_indep_p": 5.1,
+        "observed_correct_only": 9,
+        "observed_total": 10
+      },
+      "detection": {
+        "constructible": 50,
+        "eligible_ge2_bridges": 50,
+        "obstructed": 50,
+        "obstructed_rate": 1.0,
+        "checkable_bridges": 616,
+        "bridge_contra_rate": 1.0
+      }
+    }
+  },
+  "verdict": {
+    "V2prime_mixture": {
+      "pass": true,
+      "band": [
+        2.26,
+        14.1
+      ],
+      "predicted_shared_p": 5.64,
+      "predicted_indep_p": 5.66,
+      "observed_correct_only": 11,
+      "observed_total": 11
+    },
+    "V1_replication": {
+      "pass": true,
+      "band": [
+        0.0,
+        0.12371
+      ],
+      "observed": 0.02037
+    },
+    "V3_replication": {
+      "pass": true,
+      "obstructed_rate": 1.0,
+      "bridge_contra_rate": 1.0
+    },
+    "discharged": true
+  },
+  "skipped_crashing_seeds": {
+    "model": [
+      10145,
+      10191
+    ],
+    "held_out": [],
+    "retro": [],
+    "fresh_3000": [
+      3006,
+      3040,
+      3006,
+      3040
+    ],
+    "retro_2000": []
+  }
+}
