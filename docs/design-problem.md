@@ -172,12 +172,17 @@ H¹ class — cocycles and coboundaries first.)
   candidates — linear, tropical, probabilistic, set-valued — are
   FALSIFIABLE against each other. rule_20's collapse (E5) is then a
   selector experiment between enrichments, not a bug to patch. The E6
-  diagnosis added a second selector datum (results/rule27-diagnosis): the
-  graded layer FOUND and COMMITTED the hub identity (S = 0.62, mutual
-  argmax) and still could not use it — multiplicative similarity taxes
-  every bridged span, so a discovered identity decays toward the
-  activation floor with derivation depth. The enrichment decides whether
-  identity, once discovered, is CASHABLE.
+  diagnosis added a second selector datum, CORRECTED after the E6 referee
+  forced the pre-registered causal measurement
+  (results/rule27-diagnosis/graded-causal.json): the graded layer found
+  and committed the hub identity, and making that identity EXACT recovers
+  almost nothing (0.163 → 0.168, against the discrete system's
+  identity-repair gain of 0.163 → 0.496 on the same world). An earlier
+  multiplicative-decay explanation was measured and WITHDRAWN (72% of
+  bridged applications are sim-killed, yet zero episodes lose their
+  reduction). The measured datum: the enrichment changes WHICH constraint
+  binds — identity for the discrete semantics, something undiagnosed
+  (plausibly soft cross-firing winning argmaxes) for the graded one.
 - **D4. Stable commitment, relative to the view model.** (Renamed per
   referee.) The needed theorem: the soft field lies near one exact
   compatible section and small perturbations do not change which — a
@@ -248,20 +253,28 @@ Policies (epistemic choices, named so they can be varied):
   it and say by how much.
 - **E5**: graded bimodality — heals rule_26/30/42, rule_32 above
   gold-pooled, tears rule_20 — the D3 selector data.
-- **E6** (DIAGNOSED, results/rule27-diagnosis): rule_27's "immunity"
-  (100/103 rules present, 0.163 under discrete and graded) is a
-  catastrophic view DRAW, not a world property — the same world clears
-  0.41–0.80 at seeds 1–4 — and not a harness artifact (zero pathless
-  failures). Under the bad draw the failure is the SEAM: 38% of failures
-  die on imported A-blind vocabulary; oracle identity repair (0.496),
-  oracle rule-inventory patch (0.503), and both combined (0.503) hit the
-  same ceiling — split vocabulary and missing rules are two faces of one
-  failure, and 6 of the 15 missing gold rules are cross-blind, unmineable
-  by ANY single view. The graded layer found and committed the hub
-  identity yet could not cash it (D3, §5). The formalism must reproduce
-  the seam as the binding constraint and say what the residual
-  (0.50 → 0.83, unattributed) is. "0.163 exactly" under graded was a
-  count coincidence (22 healed, 22 broken), not immobility.
+- **E6** (DIAGNOSED, results/rule27-diagnosis; corrected per its referee
+  report, accepted in full): rule_27's "immunity" (100 ensemble rules vs
+  103 gold — 15 missing, 15 extra under translation — at 0.163 under
+  discrete and graded) is a catastrophic view DRAW, not a world property:
+  the same world clears 0.41–0.80 at seeds 1–4. The failure is not loss
+  of a witnessing path (structural: the rendering preserves topology);
+  broader harness interactions remain candidates only inside the open
+  residual. Under the bad draw the causally validated constraint is the
+  SEAM: oracle repair of two identities heals 333 failing episodes and
+  breaks none (0.163 → 0.496), including ALL 315 that die on imported
+  vocabulary; the missing-body rule patch overlaps it heavily (both heal
+  the same 315; they differ on 197 predictions) and 6 of the 15 missing
+  gold rule bodies are cross-blind, unmineable by ANY single view. The
+  orphan merge is counterfactually sensitive (89 predictions change) but
+  nearly causally neutral (net +6). On the SAME world, making the graded
+  layer's committed hub identity exact recovers almost nothing
+  (0.163 → 0.168): identity binds the discrete semantics, not the graded
+  one (D3, §5). The formalism must reproduce the seam as the discrete
+  binding constraint and say what the two open residuals are — the
+  discrete 0.50 → 0.83 gap and the graded failure mechanism. "0.163
+  exactly" under graded was a count coincidence (22 healed, 22 broken),
+  not immobility.
 - **E7**: the confabulation trilogy — should reduce to "the field is a
   boundary-value problem" (I2).
 - **E8**: interference cannot cross rule-web components; anchors needed
@@ -322,10 +335,15 @@ Policies (epistemic choices, named so they can be varied):
   simultaneously — the bimodality is not an enrichment question.
 - ~~rule_27 (E6) turns out to be a harness artifact (e.g. path-horizon) —
   reclassify: it constrains the benches, not the theory.~~ **DID NOT
-  TRIGGER** (results/rule27-diagnosis): zero failing episodes lack a
-  witnessing path, and the world clears 0.41–0.80 at other seeds. Not an
-  artifact — a view-draw catastrophe at the vocabulary seam (§7 E6).
-  Retired.
+  TRIGGER, in its stated (path-horizon) form** (results/rule27-diagnosis;
+  scope narrowed per the E6 referee): path loss is excluded structurally —
+  the ensemble rendering preserves topology, so the check was vacuous by
+  construction — and the world clears 0.41–0.80 at other seeds, against
+  any stable artifact. The path-horizon falsifier is retired; broader
+  harness interactions (path voting, tie-breaking, seam-recrossing
+  intermediate symbols) remain candidates INSIDE the open 0.50 → 0.83
+  residual and are not retired with it. The positive finding stands: a
+  view-draw catastrophe at the vocabulary seam (§7 E6).
 
 ## 10. Discipline
 
@@ -347,15 +365,20 @@ Empirical work licensed meanwhile, in priority order:
    disagreement separation under P2 — T2's candidate anchor, pending the
    P2 discharge above.
 2. ~~**E6, rule_27**~~ — **DONE** (results/rule27-diagnosis, pre-registered
-   in docs/rule27-diagnosis-plan.md): not a harness artifact, not a wall —
-   a view-draw catastrophe at the vocabulary seam; repairs converge at a
-   0.50 ceiling; the graded layer discovers but cannot cash the hub
-   identity. Feeds E5/D3 directly. Open residual: the unattributed
-   0.50 → 0.83 gap, licensed as a follow-up cell if pursued.
+   in docs/rule27-diagnosis-plan.md; referee corrections accepted in
+   full): not a path-horizon artifact, not a wall — a view-draw
+   catastrophe at the vocabulary seam; identity repair heals-only to
+   0.496; the graded layer commits the hub identity yet gains nothing
+   from its exactness (0.168). Feeds E5/D3 directly. Open residuals: the
+   unattributed discrete 0.50 → 0.83 gap (where broader harness
+   interactions also remain candidates) and the undiagnosed graded
+   failure mechanism — both licensed as follow-up cells if pursued.
 3. **E5, rule_20** — now the head of the queue: the enrichment selector
    needs a mechanism-level account of the collapse, and E6 has sharpened
-   the question it must answer — the enrichment decides whether discovered
-   identity is cashable (rule_27's committed-but-unusable hub, §5 D3).
+   the question it must answer — the enrichment changes WHICH constraint
+   binds on the same world (identity for discrete, not for graded;
+   §5 D3), and the graded mechanism it must explain is plausibly the
+   same soft cross-firing that tears rule_20.
 
 Reading: Hansen & Ghrist, *Toward a spectral theory of cellular sheaves*
 (2019); Michael Robinson's sheaf-based sensor fusion and consistency
