@@ -238,7 +238,15 @@ Policies (epistemic choices, named so they can be varied):
   Discharging P2 — a per-view completeness axiom for backbone edges, or
   a statistical soundness argument connecting the detector to genuine
   incompatibility — is the standing obligation before detector verdicts
-  may be read as Ext = ∅ (T2, §8).
+  may be read as Ext = ∅ (T2, §8). Status (docs/p2-discharge.md §8): the
+  discharge was attempted by the statistical route and is PARTIAL — the
+  edge-level absence semantics is validated held-out (observed 0.0188 vs
+  derived p_miss 0.0207) and the detection side is exact (1.00 / 1.0000),
+  but the region-level false-alarm bound FAILED its held-out test
+  (10 observed vs 3.4 predicted; diagnosed as a rate-mixture/Jensen
+  error — contradictions correlate through the world-level rate). P2
+  remains a policy until the pre-registered v2 amendment (a mixture-aware
+  bound, fresh held-out block) passes.
 
 ## 7. Boundary conditions — what the experiments require
 

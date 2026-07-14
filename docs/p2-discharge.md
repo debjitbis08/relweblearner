@@ -168,3 +168,49 @@ term.
 
 Each row must exist and run before results are read; a dropped row is
 reported as dropped in the bring-up commit, not discovered by a referee.
+
+## 8. Validation outcome (2026-07-14, after the run) — P2 NOT DISCHARGED
+
+*Written after the §5 validation ran (results/p2-discharge). The §5
+tolerances were applied verbatim; per the frozen failure routing, this
+section records the failure rather than patching it.*
+
+- **V1 PASSED.** Held-out per-edge false-contradiction rate on
+  correctly-mapped endpoints: 0.0188 (64/3,405) against model
+  p_miss = 0.0207 — the likelihood-ratio semantics of §3 is confirmed at
+  the edge level. Measured ε_map: 3 contradicted wrong-mapped edges.
+- **V3 PASSED.** Detection 1.00 (50/50 eligible merged regions
+  obstructed); per-checkable-bridge contradiction rate 1.0000; δ_x
+  measured at 0.00046.
+- **V2 FAILED.** Falsely-obstructed region instances: 10 observed
+  (9 on correct endpoints only) against 3.4 predicted — outside the
+  frozen ×2.5 band [1.36, 8.5]. **P2 therefore remains undischarged.**
+
+**Diagnosis (labeled post-run diagnostic, not a repair).** The §4
+false-alarm bound plugged the GLOBAL MEAN p_miss into independent
+per-region binomials. The model's own output already showed a wide rate
+spread across world-views ([0.000, 0.062]); the false-alarm tail
+P(Bin(m, p) ≥ 2) is convex in p, so by Jensen's inequality the mean
+underpredicts under a mixture. Recomputing the same prediction with each
+world-view's OWN measured p_miss gives 7.44 vs the observed 10 (and 9 on
+correct endpoints — within ~1σ of Poisson counting noise). The failure is
+exactly the "independence error" the §5 routing anticipated: contradiction
+events are correlated through the world-level rate, not independent across
+regions.
+
+**What a v2 amendment must do before discharge can be claimed:** replace
+the §4 false-alarm bound with a rate-mixture form (per-world-view p_miss,
+or a fitted-free hierarchical bound derived from the declared process),
+pre-register it as an amendment to this note, and validate on a FRESH
+held-out block (e.g. 3000–3049) — the 2000-block is now spent for V2.
+V1 and V3 stand as validated and are not re-litigated by the amendment.
+
+**Also discovered during bring-up:** the frozen `generate()` crashes on
+worlds where an eligible community has exactly 3 visible members and an
+episode draws size 4 (multiweb.py:122; model-block seeds 10145 and 10191).
+No frozen artifact is affected — a crashing seed can never have produced a
+result — so all benched blocks are implicitly conditioned on the process
+completing, and the validator applies the same conditioning (skipped seeds
+recorded, never silent). A fix to `generate()` is a bench amendment
+requiring its own pre-registration; the latent-crash rate (~1% of seeds)
+is now a known property of the declared process.
