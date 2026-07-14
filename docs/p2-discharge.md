@@ -288,3 +288,88 @@ tolerance choice that any statistical test carries. E2b's separation is,
 relative to A1, an empirical instance of T2. NOT established, permanently:
 any model-free license — in deployment A1 is a per-domain empirical claim
 to be validated there (§6). The E2b §9 re-run obligations stand.
+
+## 11. Referee findings on v1+v2 (2026-07-14) — the §10 discharge is WITHDRAWN
+
+*The referee report (docs/p2-discharge-referee-report.md, verbatim;
+response: docs/p2-discharge-referee-response.md) found six issues; all are
+accepted, and every numeric claim was reproduced exactly before acceptance
+(view-0 mutation shift 0.03048 → 0.03794, threshold 3.000 → 3.234 on 23/48
+fresh worlds; exact-block α₂ 5.67; the stronger V3 condition holding 48/48
+and 50/50). §10's "discharged" status is withdrawn:*
+
+1. **α₂ is not a bound** (High): it composes conditionally-independent
+   binomial tails that A1 does not supply (shared nodes, episodes, and a
+   global median threshold), and its ×1.95 underprediction passing a ×2.5
+   engineering tolerance makes it a roughly CALIBRATED prediction, not a
+   computed error rate. The "obstructed ⇒ Ext = ∅ up to computed error
+   rates" claim was unsupported as stated.
+2. **The model distribution mismatched the evaluated pipeline** (High):
+   F was measured on pristine worlds; the pipeline mutates view 0 with the
+   forgery, shifting the backbone threshold and miss rates for roughly
+   half the evaluated worlds' view-0 edges.
+3. ε_map was a raw count, never a probability with a denominator or an
+   uncertainty statement (zero observed ≠ zero rate).
+4. V3 tested a weaker eligibility (bridges pooled across views) than the
+   stated theorem (b_j ≥ 2 in one view) and did not attribute the
+   obstruction to the bridges — a latent false-pass, though the stronger
+   condition happens to hold on all 98 current cases.
+5. The model sampler leaked past its declared seed block (10200–10201).
+6. V1's gate was weak and aggregation-mismatched (band [0, 0.1237]).
+
+What stands: the three-block agreement of the edge-level rate with the
+derived p_miss (0.0188 / 0.0204 / 0.0215 vs 0.0207) — evidence far
+stronger than the mis-designed gate demanded — the detection results, and
+the chronology. Status after this section: **P2 is CALIBRATED, not
+bounded**, and the design problem is rolled back accordingly.
+
+## 12. Amendment v3 (2026-07-14, pre-registered BEFORE any v3 code or the 4000 block)
+
+*The analytic-bound route is abandoned — not patched — in favor of the
+route the referee's two High findings jointly point at: measure the
+false-alarm behavior of the ACTUAL detector under the ACTUAL process
+directly, with no independence assumption and no pristine/mutated
+mismatch. A1 then carries the entire argument, and the claim becomes
+"MEASURED error rates under A1," explicitly not analytic bounds. The
+assumption ledger keeps the three-way distinction from now on: bounded
+(proved) / measured (simulated under the named model, validated on virgin
+data) / calibrated (fit within a tolerance). v3 claims the middle tier.*
+
+**The direct simulation.** Run the frozen E2b pipeline — `generate` PLUS
+`add_overlap_forgery` (fixing finding 2), regions, mappings, projection,
+and the frozen detector — on the declared model block, seeds
+**10000–10399 exactly** (crashers recorded, never replaced from outside
+the block — fixing finding 5). Per world, record: true-region count, the
+detector's falsely-obstructed count (total, and the correct-endpoint-only
+and wrong-mapped splits — ε_map is thereby included in the measured rate
+rather than bolted on, resolving finding 3 for the gate; the split is
+still reported, with a rule-of-three upper bound when a cell is zero),
+the pooled checkable-correct edge count and contradiction count.
+
+**Predictive intervals** (fixing findings 1 and 6): world-level bootstrap —
+resample 50 model worlds with replacement, 20,000 resamples, fixed seed
+4242 — giving 99% predictive intervals for (a) a 50-world block's total
+falsely-obstructed count and (b) its pooled correct-endpoint edge rate.
+World-level resampling carries ALL within-world clustering (shared nodes,
+episodes, thresholds) into the interval by construction.
+
+**Gates on the virgin block 4000–4049** (untouched by any computation;
+blocks 1000/2000/3000 reported as retrodiction only):
+- **V2‴**: observed total falsely-obstructed count within the 99%
+  bootstrap PI.
+- **V1‴**: observed pooled correct-endpoint edge rate within its 99%
+  bootstrap PI.
+- **V3‴** (fixing finding 4): eligibility = at least one SINGLE view j
+  with ≥ 2 correctly-anchored checkable bridges; success = in that same
+  view, ≥ 2 of those bridges contradicted (bridge-attributable). Rate
+  ≥ 0.98.
+
+**Claim if all gates pass:** P2 discharged with MEASURED error rates under
+A1 — the detector's false-alarm and detection rates are properties of the
+declared process, estimated on one seed block and predictively valid on a
+disjoint one. **Failure routing:** the blocks are identically distributed
+by construction, so a V1‴/V2‴ miss means the bootstrap PI or the
+measurement is wrong — P2 stays calibrated-only, the failure is recorded,
+and no v4 without a diagnosis. **Checklist:** `direct_model()`,
+`bootstrap_pi()`, `fresh_block_v3()`, `verdict_v3()`, CLI `--v3`; each row
+exists and runs before results are read.
