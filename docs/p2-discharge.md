@@ -400,3 +400,42 @@ bounded — error rates. The bounded tier remains open to anyone who wants
 to prove the clustering-aware inequality; nothing in the project currently
 needs it. In deployment A1 stays a per-domain empirical claim; the E2b §9
 re-run obligations stand.
+
+## 14. Round-2 referee corrections (2026-07-14, accepted in full; declared before the re-verdict)
+
+*Report: docs/p2-discharge-referee-report-2.md (verbatim); response:
+docs/p2-discharge-referee-response-2.md. The referee's prediction-error
+bootstrap was reproduced before acceptance (count PI [2, 17] under integer
+quantiles vs their interpolated ~[1.48, 16.76] — same substance). The
+corrections below are deterministic re-analyses of committed data; they
+were declared here before the validator re-ran.*
+
+1. **Scope (High).** §13's "under A1" overstated: the measured rates are
+   properties of the **declared E2b evaluation process** — A1 worlds PLUS
+   the pre-registered overlap-forgery intervention with its specific
+   bridge density, community selection, and weights. All discharge
+   language is renamed accordingly (here and in the design problem). The
+   discharge is thereby explicitly the E2b empirical instance; measuring
+   detector behavior under other interventions or pristine A1 worlds is
+   separate work, unclaimed.
+2. **Predictive intervals.** The gating intervals are now the
+   prediction-error bootstrap's (outer-resampling the 396 model worlds to
+   include estimation uncertainty): count PI99 [2, 17], rate PI99
+   [0.01188, 0.02688]. The plain-bootstrap intervals are reported for
+   continuity. Observed 9 and 0.01753 remain comfortably inside — the
+   verdict is unchanged by the correction, which is exactly what the
+   referee's own replay found.
+3. **ε_map zero-cell figure** relabeled DESCRIPTIVE (wrong-mapped edges
+   share nodes and worlds; 3/n is not a bound there); the gating verdict
+   already absorbs mapping errors via the total count.
+4. **Detection uncertainty attached**: worlds are iid by construction, so
+   the world-level rule of three is legitimate — β ≤ 3/395 = 0.0076 at
+   95% per eligible world; β = 0 is never claimed.
+5. **Automated tests added** for the v3 functions (tests/test_p2_validate.py:
+   bootstrap variants, verdict gates including the strict bridge-attribution
+   condition, block measurement smoke test).
+
+Status after re-verdict (all gates pass under the corrected intervals):
+**P2 discharged at the measured tier, under the declared E2b evaluation
+process** — the precise scope the project actually needs, since P2 exists
+to license reading E2b's verdicts.

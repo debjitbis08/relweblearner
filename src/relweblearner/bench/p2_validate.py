@@ -431,23 +431,41 @@ def direct_model(seeds=V3_MODEL_SEEDS) -> list[dict]:
 
 def bootstrap_pi(worlds: list[dict], block_size: int = 50,
                  n: int = V3_BOOT_N, seed: int = V3_BOOT_SEED) -> dict:
-    """99% predictive intervals for a block's total false-obstruction count
-    and pooled correct-endpoint edge rate, by world-level resampling."""
+    """Predictive intervals for a block's total false-obstruction count and
+    pooled correct-endpoint edge rate. Two variants (round-2 referee,
+    finding 2): the plain block bootstrap treats the model sample as the
+    known distribution; the PREDICTION-ERROR bootstrap outer-resamples the
+    model worlds first, so estimation uncertainty from the finite model
+    sample is included. The prediction-error intervals are the GATING ones;
+    the plain ones are reported for continuity with the frozen v3 artifact."""
     import random as _random
-    rng = _random.Random(seed)
-    counts, rates = [], []
-    for _ in range(n):
-        sample = [worlds[rng.randrange(len(worlds))] for _ in range(block_size)]
-        counts.append(sum(w["false_obs_total"] for w in sample))
-        cn = sum(w["cn"] for w in sample)
-        rates.append(sum(w["cc"] for w in sample) / cn if cn else 0.0)
-    counts.sort()
-    rates.sort()
+
+    def _draw(rng, pool):
+        block = [pool[rng.randrange(len(pool))] for _ in range(block_size)]
+        cn = sum(w["cn"] for w in block)
+        return (sum(w["false_obs_total"] for w in block),
+                sum(w["cc"] for w in block) / cn if cn else 0.0)
+
     q = lambda vals, p: vals[min(len(vals) - 1, int(p * len(vals)))]
-    return {"count_pi99": [q(counts, 0.005), q(counts, 0.995)],
-            "rate_pi99": [round(q(rates, 0.005), 5), round(q(rates, 0.995), 5)],
-            "count_mean": round(statistics.mean(counts), 2),
-            "rate_mean": round(statistics.mean(rates), 5)}
+    out = {}
+    for name, outer in (("plain", False), ("pe", True)):
+        rng = _random.Random(seed)
+        counts, rates = [], []
+        for _ in range(n):
+            pool = ([worlds[rng.randrange(len(worlds))]
+                     for _ in range(len(worlds))] if outer else worlds)
+            c, r = _draw(rng, pool)
+            counts.append(c)
+            rates.append(r)
+        counts.sort()
+        rates.sort()
+        out[f"count_pi99_{name}"] = [q(counts, 0.005), q(counts, 0.995)]
+        out[f"rate_pi99_{name}"] = [round(q(rates, 0.005), 5),
+                                    round(q(rates, 0.995), 5)]
+        if name == "pe":
+            out["count_mean"] = round(statistics.mean(counts), 2)
+            out["rate_mean"] = round(statistics.mean(rates), 5)
+    return out
 
 
 def fresh_block_v3(block, tag: str) -> dict:
@@ -466,27 +484,41 @@ def fresh_block_v3(block, tag: str) -> dict:
             "edge_rate_correct": round(sum(w["cc"] for w in worlds) / cn, 5) if cn else None,
             "checkable_correct": cn,
             "eps_map_rate": (round(wc / wn, 5) if wn else None),
-            "eps_map_rule_of_three_upper": (round(3 / wn, 5) if wn and wc == 0 else None),
+            # DESCRIPTIVE zero-cell figure only (round-2 referee, finding 3):
+            # wrong-mapped edges share nodes and worlds, so 3/n is not a
+            # bound here; the gating verdict absorbs mapping errors via the
+            # total false-obstruction count.
+            "eps_map_zero_cell_descriptive": (round(3 / wn, 5)
+                                              if wn and wc == 0 else None),
             "detection_eligible": elig,
             "detection_success": sum(w["det_success"] for w in worlds),
             "detection_rate": (round(sum(w["det_success"] for w in worlds) / elig, 4)
                                if elig else None)}
 
 
-def verdict_v3(pi: dict, fresh: dict) -> dict:
-    """Note §12 gates, verbatim."""
-    v2 = pi["count_pi99"][0] <= fresh["false_obs_total"] <= pi["count_pi99"][1]
-    v1 = pi["rate_pi99"][0] <= fresh["edge_rate_correct"] <= pi["rate_pi99"][1]
+def verdict_v3(pi: dict, fresh: dict, model_eligible: int = 0,
+               model_success: int = 0) -> dict:
+    """Note §12 gates, with the round-2 corrections: gating intervals are
+    the prediction-error bootstrap's; detection carries a world-level
+    zero-failure upper bound (worlds are iid by construction, so the
+    rule of three is legitimate at world level), never beta = 0."""
+    v2 = pi["count_pi99_pe"][0] <= fresh["false_obs_total"] <= pi["count_pi99_pe"][1]
+    v1 = pi["rate_pi99_pe"][0] <= fresh["edge_rate_correct"] <= pi["rate_pi99_pe"][1]
     v3 = fresh["detection_rate"] is not None and fresh["detection_rate"] >= 0.98
-    return {"V2ppp_count": {"pass": v2, "pi99": pi["count_pi99"],
+    beta_upper = (round(3 / model_eligible, 5)
+                  if model_eligible and model_success == model_eligible else None)
+    return {"V2ppp_count": {"pass": v2, "pi99_pe": pi["count_pi99_pe"],
+                            "pi99_plain": pi["count_pi99_plain"],
                             "predicted_mean": pi["count_mean"],
                             "observed": fresh["false_obs_total"]},
-            "V1ppp_rate": {"pass": v1, "pi99": pi["rate_pi99"],
+            "V1ppp_rate": {"pass": v1, "pi99_pe": pi["rate_pi99_pe"],
+                           "pi99_plain": pi["rate_pi99_plain"],
                            "predicted_mean": pi["rate_mean"],
                            "observed": fresh["edge_rate_correct"]},
             "V3ppp_detection": {"pass": v3,
                                 "eligible": fresh["detection_eligible"],
-                                "rate": fresh["detection_rate"]},
+                                "rate": fresh["detection_rate"],
+                                "beta_upper_rule3_world_level": beta_upper},
             "discharged_measured_tier": v1 and v2 and v3}
 
 
@@ -512,7 +544,9 @@ def run_v3(out_dir: Path) -> dict:
                         ("retro_2000", range(2000, 2050)),
                         ("retro_1000", range(1000, 1050))):
         blocks[name] = fresh_block_v3(block, f"v3_{name}")
-    v = verdict_v3(pi, blocks["fresh_4000"])
+    v = verdict_v3(pi, blocks["fresh_4000"],
+                   model_eligible=sum(w["det_eligible"] for w in worlds),
+                   model_success=sum(w["det_success"] for w in worlds))
     out = {"model": model_summary, "blocks": blocks, "verdict": v,
            "skipped_crashing_seeds": {k: sorted(set(s)) for k, s in SKIPPED.items() if s}}
     (out_dir / "v3-validation.json").write_text(json.dumps(out, indent=2))
@@ -523,9 +557,12 @@ def run_v3(out_dir: Path) -> dict:
                     f"{b['edge_rate_correct']} | {b['detection_success']}/{b['detection_eligible']} |")
     (out_dir / "v3-report.md").write_text("\n".join([
         "# The P2 discharge, amendment v3 — direct-simulation validation", "",
-        "Pre-registered: docs/p2-discharge.md §12 (committed before this code "
-        "or any touch of seed block 4000–4049). Model = the ACTUAL frozen "
-        "pipeline, forgery mutation included, on the declared block "
+        "Pre-registered: docs/p2-discharge.md §12; round-2 referee "
+        "corrections applied (§14): gating intervals are prediction-error "
+        "bootstrap. SCOPE: the measured rates are properties of the declared "
+        "E2b evaluation process — A1 worlds PLUS the pre-registered overlap-"
+        "forgery intervention — not of A1 alone. Model = that full pipeline "
+        "on the declared block "
         f"{model_summary['declared_block']} ({model_summary['n_worlds']} valid "
         "worlds); 99% predictive intervals by world-level bootstrap "
         f"(n={V3_BOOT_N}, seed {V3_BOOT_SEED}). Gating block: 4000–4049 "
@@ -534,8 +571,9 @@ def run_v3(out_dir: Path) -> dict:
         f"{model_summary['false_obs_rate_per_region']}, pooled edge rate "
         f"{model_summary['pooled_edge_rate']}, eps_map rate "
         f"{model_summary['eps_map_rate']}, detection {model_summary['detection']}; "
-        f"block-count PI99 {pi['count_pi99']} (mean {pi['count_mean']}), "
-        f"rate PI99 {pi['rate_pi99']}.", "",
+        f"block-count PI99 pe {pi['count_pi99_pe']} / plain "
+        f"{pi['count_pi99_plain']} (mean {pi['count_mean']}), rate PI99 pe "
+        f"{pi['rate_pi99_pe']} / plain {pi['rate_pi99_plain']}.", "",
         *rows, "",
         f"Verdict (fresh 4000): ```{json.dumps(v, indent=1)}```", ""]))
     return out
