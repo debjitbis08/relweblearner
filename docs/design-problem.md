@@ -238,21 +238,23 @@ Policies (epistemic choices, named so they can be varied):
   Discharging P2 — a per-view completeness axiom for backbone edges, or
   a statistical soundness argument connecting the detector to genuine
   incompatibility — is the standing obligation before detector verdicts
-  may be read as Ext = ∅ (T2, §8). **Status: CALIBRATED, NOT BOUNDED —
-  the v2 "discharged" claim is WITHDRAWN** per its referee
-  (docs/p2-discharge.md §11, all six findings accepted): α₂ composed
-  independence A1 does not supply and underpredicted ×1.95 inside an
-  engineering tolerance — a calibrated prediction, not a computed error
-  rate — and its model distribution was measured on pristine worlds while
-  the pipeline evaluates forgery-mutated ones. What stands: the
-  edge-level absence semantics (three independent blocks at
-  0.0188 / 0.0204 / 0.0215 against the derived p_miss 0.0207) and the
-  detection results. The v3 route (§12: direct simulation of the actual
-  detector under the actual process, world-level bootstrap predictive
-  intervals, virgin-block gating) targets the intermediate tier of the
-  ledger's new three-way distinction — bounded (proved) / MEASURED
-  (simulated under the named model, validated on virgin data) /
-  calibrated (fit within a tolerance).
+  may be read as Ext = ∅ (T2, §8). **Status: DISCHARGED at the MEASURED
+  tier** (docs/p2-discharge.md §13) of the ledger's three-way
+  distinction — bounded (proved) / MEASURED (simulated under the named
+  model, validated on virgin data) / calibrated (fit within a
+  tolerance). The path there is part of the record: a v1 analytic bound
+  failed its own held-out test; v2's mixture correction passed but was
+  withdrawn per referee (it composed independence A1 does not supply and
+  its model mismatched the evaluated pipeline, §11); v3 abandoned
+  analytic composition for direct simulation of the actual detector
+  under the actual process, and passed all virgin-block gates centered
+  (false-obstruction count 9 vs predicted 8.22 in PI99 [2, 16]; edge
+  rate 0.01753 vs 0.01884; detection 50/50 under the strict per-view
+  bridge-attributable gate). Within A1 worlds, "obstructed" reads as
+  Ext = ∅ with MEASURED error rates; the bounded tier stays open to
+  whoever wants the clustering-aware inequality. In deployment A1 is a
+  per-domain empirical claim — never a model-free license to read
+  absence as refutation.
 
 ## 7. Boundary conditions — what the experiments require
 
@@ -268,11 +270,9 @@ Policies (epistemic choices, named so they can be varied):
   cross-view disagreement residual (≥ 2 contradicted backbone edges in
   1.00 of seeds, min 5, vs exactly 0), read under P2; P1 alone would
   have committed it in 41/50 seeds. Any formalism must derive this
-  rejection from overlap disagreement, not support counting. P2 status:
-  calibrated, not bounded (§6; the v2 discharge withdrawn per referee,
-  v3 pre-registered) — the residual reads as a disagreement separation
-  with a ~×2-calibrated false-alarm model, not yet Ext = empty with
-  computed error rates — see §2, §6 P2, and
+  rejection from overlap disagreement, not support counting. P2 is
+  discharged at the measured tier (§6), so the residual reads as
+  Ext = empty with MEASURED error rates within A1 — see §2, §6 P2, and
   results/bench-multiweb-overlap.
 - **E3**: zero real mispairings across 44 worlds; all errors orphan
   merges — identity underdetermined exactly up to overlap-visible
@@ -338,11 +338,11 @@ Policies (epistemic choices, named so they can be varied):
 - **T1 Extension classification.** Characterize when a local assignment
   has zero, one, or many global extensions.
 - **T2 Incompatibility.** Incompatible overlap data implies Ext = empty.
-  (P2 status: calibrated, not bounded — the v2 discharge was withdrawn
-  per its referee; the v3 direct-simulation route is pre-registered
-  (docs/p2-discharge.md §11–§12). Until it passes, E2b remains T2's
-  candidate anchor: a disagreement separation whose false-alarm model is
-  calibrated to ~×2, not a computed error rate.)
+  (P2 discharged at the measured tier — docs/p2-discharge.md §13 — so
+  E2b's separation stands as T2's empirical instance relative to A1,
+  with measured rather than analytically bounded error rates. T2's
+  remaining content is the exact statement and proof over the chosen
+  D1/D2, with A1 as the bridge to data.)
 - **T3 Underdetermination.** Insufficient overlap yields many
   extensions, characterized by the automorphism group / quotient visible
   to the cover (orphan merges and provisional states live here).
@@ -395,11 +395,11 @@ Policies (epistemic choices, named so they can be varied):
 No implementation until T0–T3 are proved for the chosen D1/D2, at
 whatever rigor we can genuinely sustain; the first implementation ships
 with pre-registered predictions for all three benches. The theory-side
-obligation added by the round-2 referee — the **P2 discharge** — is OPEN
-at the "calibrated" tier: its v2 claim was withdrawn per referee review
-(docs/p2-discharge.md §11) and the v3 direct-simulation amendment is
-pre-registered (§12); E2b reaches T2 as a candidate anchor until v3's
-virgin-block gates pass (§6, §8).
+obligation added by the round-2 referee — the **P2 discharge** — is
+**DONE at the measured tier** (docs/p2-discharge.md §13; the record
+includes one failed analytic bound, one withdrawn calibrated claim, and
+the direct-simulation validation that passed centered on a virgin
+block); E2b reaches T2 as its empirical instance under A1 (§6, §8).
 Process rule, added after referees twice caught the same plan-to-code
 leak (E2b's Q-D attribution, E6's activation trace): every plan ships a
 **plan-to-code checklist** mapping each pre-registered metric and probe

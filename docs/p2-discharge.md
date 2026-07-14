@@ -373,3 +373,30 @@ measurement is wrong — P2 stays calibrated-only, the failure is recorded,
 and no v4 without a diagnosis. **Checklist:** `direct_model()`,
 `bootstrap_pi()`, `fresh_block_v3()`, `verdict_v3()`, CLI `--v3`; each row
 exists and runs before results are read.
+
+## 13. Outcome of amendment v3 (2026-07-14, after the run) — DISCHARGED, MEASURED TIER
+
+All three §12 gates pass on the virgin block 4000–4049
+(results/p2-discharge/v3-validation.json), and pass CENTERED rather than
+at a tolerance edge:
+
+- **V2‴**: 9 falsely-obstructed instances observed vs predicted mean 8.22,
+  99% PI [2, 16]. The v2 route's ×1.95 underprediction vanishes entirely
+  under direct simulation — the referee's two High findings (independence
+  composition; pristine-vs-mutated mismatch) were the whole discrepancy.
+- **V1‴**: pooled correct-endpoint edge rate 0.01753 vs predicted mean
+  0.01884, 99% PI [0.01228, 0.02631]. All three retrodiction blocks
+  (counts 10 / 11 / 15; rates 0.0188 / 0.0204 / 0.0215) also fall inside
+  the intervals.
+- **V3‴**: 50/50 eligible merged regions detected under the strict
+  per-view, bridge-attributable condition (model side: 395/395).
+  ε_map is a rate with denominators (model 0.02083).
+
+**P2 is discharged at the MEASURED tier**: under A1, the detector's
+false-alarm and detection behavior are measured properties of the declared
+process with predictive intervals validated on disjoint virgin data;
+"obstructed" reads as Ext = ∅ with measured — explicitly not analytically
+bounded — error rates. The bounded tier remains open to anyone who wants
+to prove the clustering-aware inequality; nothing in the project currently
+needs it. In deployment A1 stays a per-domain empirical claim; the E2b §9
+re-run obligations stand.
