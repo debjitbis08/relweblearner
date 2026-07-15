@@ -279,6 +279,9 @@ This gives the formal hooks needed to distinguish the measured cases:
 - E2b: empty/incompatible under the measured P2/A1 bridge;
 - E3: many scoped raw extensions organized by an unpinned automorphism orbit.
 
-The remaining theory work moves to T4-T7 and to the named composition-closure
-extension if GraphLog/holonomy composed facts are to be folded into T2 rather
-than supplied as exact observations.
+T4's hidden-world identifiability bridge is discharged after referee review in
+docs/t4-identifiability.md as a conditional theorem schema. T5's anchored
+harmonic operator is discharged after referee review in
+docs/t5-thinking-operator.md. The remaining theory work moves to T6-T7 and to the named
+composition-closure extension if GraphLog/holonomy composed facts are to be
+folded into T2 rather than supplied as exact observations.

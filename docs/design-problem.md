@@ -19,7 +19,21 @@ is stated as a statistical disagreement separation, not yet a literal
 Ext = ∅ instance of T2. rev 2 is preserved in git history. **Revision 4,
 2026-07-15, after T1-T3 review,** adopts supported-candidate counting: E1/E2
 are determined-as-solo in the scoped discrete model and refused by P1, while
-imagined sampling alternatives move to T4. This document builds nothing. It
+imagined sampling alternatives move to T4. **Revision 5, 2026-07-15,** drafts
+T4 as a separating-coverage theorem with an explicit model/semantic quotient
+bridge and a conditional probabilistic coverage certificate. **Revision 6,
+2026-07-15, after T4 referee review,** makes the coverage event an explicit
+premise, constructs the induced output action, modularizes the quotient
+bridge, and separates demonstrated hidden multiplicity from unavailable
+certification; the referee's confirmation discharges the conditional theorem
+without discharging any bench or deployment coverage claim. **Revision 7,
+2026-07-15,** drafts T5 as an anchored Dirichlet theorem over a declared
+Hilbert-space linearization and records that the current nonlinear
+Sinkhorn/annealing benchmark is not yet an instance. **Revision 8, 2026-07-15,
+after T5 referee review,** makes the uniqueness scope, spectral-bound
+obligations, coordinate transport, and within-stalk locality explicit; the
+referee's confirmation discharges the theorem while leaving the current
+nonlinear benchmark outside its guarantee. This document builds nothing. It
 fixes the objects, states the
 invariances and policies any designed structure must respect, translates
 the empirical findings into boundary conditions, and lists the theorems
@@ -343,14 +357,16 @@ Policies (epistemic choices, named so they can be varied):
   boundary-value problem" (I2).
 - **E8**: interference cannot cross rule-web components; anchors needed
   per component. Per referee: this is not colour, it is likely the
-  UNIQUENESS CONDITION of T5 (anchors in every relevant component;
-  positive-definite Dirichlet Laplacian; no uncontrolled kernel).
+  UNIQUENESS CONDITION of T5 (no uncontrolled Dirichlet kernel, equivalently a
+  positive-definite Dirichlet Laplacian). One full anchor in every relevant
+  component is the scalar/identity-restriction corollary, not the general
+  sheaf criterion.
 - **E9**: the one-web frozen-algebra ceiling was real and measurable
   (carrier ladder), and the ensemble cleared it (0.13 → 0.51). The
   formalism should locate where representational capacity now lives so
   the old ceiling provably does not rebind.
 
-## 8. The theorems (revised list, referee's T0–T4 adopted)
+## 8. The theorems (revised list)
 
 - **T0 Model/data separation.** Define the local state objects,
   observations-as-assignments, overlaps, and legal maps; say what a
@@ -377,15 +393,22 @@ Policies (epistemic choices, named so they can be varied):
   after quotienting (orphan merges live here; mere absence of overlap does
   not). **Status: discharged after referee review in
   docs/t3-underdetermination.md.**
-- **T4 Identifiability.** Under explicit coverage and independence
-  conditions, global extensions correspond to hidden-world semantic
-  structure up to known automorphisms. (This, plus P1, is where any
-  claim about TRUTH lives.)
+- **T4 Identifiability.** Under explicit exact-answer and separating-coverage
+  conditions, typed projections of global extensions correspond to
+  hidden-world semantic structure up to known automorphisms; a named
+  conditional-independence model may certify the coverage event. (This, plus
+  P1, is where any claim about TRUTH lives.)
+  **Status: discharged after referee review in docs/t4-identifiability.md as a
+  conditional theorem schema. No bench or deployment coverage claim is
+  discharged by the theorem alone.**
 - **T5 The thinking operator.** The graded field is the harmonic
   extension of anchor data in the linearized object: existence,
   uniqueness (hypotheses = E8), locality, convergence — retiring
   annealing, backbone thresholds and init choices as theorems or
-  hypotheses.
+  hypotheses. **Status: discharged after referee review in
+  docs/t5-thinking-operator.md. The current graded benchmark remains outside
+  the theorem until it satisfies the explicit instantiation or replacement
+  obligations in T5 §9.**
 - **T6 Enrichment soundness.** For each admissible D3 enrichment, graded
   derivations approximate exact ones with stated error; E5 selects.
 - **T7 Stable commitment.** The D4 bound. Two-timescale as a theorem,
@@ -425,10 +448,12 @@ Policies (epistemic choices, named so they can be varied):
 
 ## 10. Discipline
 
-The T0-T3 definition and classification gate has survived review, including
-T1's scoped-counting and supported-candidate amendments. The next theory
-obligation is T4; the first implementation still ships with pre-registered
-predictions for all three benches. The theory-side
+The T0-T5 definition, classification, conditional-identifiability, and thinking
+operator chain has survived review, including T1's scoped-counting and
+supported-candidate amendments, T4's induced output action, and T5's exact
+Dirichlet-kernel criterion. T6 enrichment soundness is the next theorem. The
+first implementation still ships with pre-registered predictions for all
+three benches. The theory-side
 obligation added by the round-2 referee — the **P2 discharge** — is
 **DONE at the measured tier, scoped to the declared E2b evaluation
 process** (docs/p2-discharge.md §13–§14; the record includes one failed
@@ -478,13 +503,14 @@ The empirical queue is now EMPTY on the referee's own condition — the
 supplementary experiment that carries E5's conclusion is a committed
 reproducer (factorial.json, episode-sets.json) and the interaction is
 represented as measured, not as a chosen ladder order. E2b, E6, and E5
-are run, refereed, and folded in. The head of the project is now T4 over the
-discharged T0-T3 setup
+are run, refereed, and folded in. The head of the project is now T6 over the
+discharged T0-T5 setup
 (docs/t0-model-data-separation.md; docs/t1-extension-classification.md;
-docs/t2-incompatibility.md; docs/t3-underdetermination.md), with the measured
+docs/t2-incompatibility.md; docs/t3-underdetermination.md;
+docs/t4-identifiability.md; docs/t5-thinking-operator.md), with the measured
 P2/A1 semantics gating T2's use of E2b and with imagined hidden-world states
-kept in T4 rather than counted as T1 candidates. D3's admissible-enrichment
-set remains constrained by measured selector data from both diagnoses.
+kept in T4 rather than counted as T1 candidates. D3's admissible-enrichment set
+remains constrained by measured selector data from both diagnoses.
 
 Reading: Hansen & Ghrist, *Toward a spectral theory of cellular sheaves*
 (2019); Michael Robinson's sheaf-based sensor fusion and consistency

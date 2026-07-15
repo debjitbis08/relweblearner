@@ -340,3 +340,15 @@ T3 is discharged in docs/t3-underdetermination.md: nontrivial automorphism
 orbits invisible to the cover inside `W` imply `|Ext_raw^W(A)| > 1`, with
 quotienting kept separate from raw cardinality. This is where supported orphan
 alternatives belong; E1/E2 are instead determined-as-solo P1 cases.
+
+T4 is discharged after referee review in docs/t4-identifiability.md as a
+conditional theorem schema: external-truth claims require a typed hidden-state
+class, exact separating witnesses, a model/semantic bridge, and aligned
+automorphism groups. No application-level truth claim is discharged without
+validating those premises.
+
+T5 is discharged after referee review in docs/t5-thinking-operator.md: a
+declared finite Hilbert-space linearization has an anchored harmonic extension;
+uniqueness is exactly vanishing of its Dirichlet kernel. The current nonlinear
+graded benchmark remains outside the theorem until it satisfies T5 §9's
+instantiation or replacement obligations.

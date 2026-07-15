@@ -272,5 +272,6 @@ T3 discharges the many-solution lemma:
 
 These are the first non-tautological mathematical tests of the T0 setup. T2
 and T3 prove them in docs/t2-incompatibility.md and
-docs/t3-underdetermination.md. The next theorem-layer obligation is T4's
-identifiability bridge to hidden-world semantics.
+docs/t3-underdetermination.md. T4's identifiability bridge to hidden-world
+semantics is discharged after referee review in docs/t4-identifiability.md as
+a conditional theorem schema.
