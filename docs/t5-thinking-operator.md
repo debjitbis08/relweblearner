@@ -433,3 +433,10 @@ T5 is discharged as a finite-dimensional, model-relative theorem. T6-T7 may
 use that theorem for a declared `L(M)`, but may not cite it as a guarantee for
 the current graded benchmark without satisfying the instantiation obligations
 in §9.
+
+T6's local enrichment-comparison theorem is discharged after referee review in
+docs/t6-enrichment-soundness.md. It preserves this implementation boundary
+rather than treating the current nonlinear loop as a T5 field. T7 stable
+commitment is discharged after referee review in
+docs/t7-stable-commitment.md. The designed T0-T7 theory chain is closed; this
+operator's §9 instantiation obligations remain active.

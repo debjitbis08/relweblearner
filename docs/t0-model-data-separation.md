@@ -352,3 +352,15 @@ declared finite Hilbert-space linearization has an anchored harmonic extension;
 uniqueness is exactly vanishing of its Dirichlet kernel. The current nonlinear
 graded benchmark remains outside the theorem until it satisfies T5 §9's
 instantiation or replacement obligations.
+
+T6 is discharged after referee review in docs/t6-enrichment-soundness.md: a
+comparison-admissible enrichment transports the T5 field error and local
+operation defects through a finite exact derivation DAG, while a
+separation-margin test locates representation capacity. The current graded
+benchmark remains outside the theorem.
+
+T7 is discharged after referee review in docs/t7-stable-commitment.md:
+target-level extension classification, policy permission, joint T5/T6 and
+perturbation budgets, and an exact decision-region margin gate stable
+model-relative commitment. The current `HARD_SIM` path remains outside the
+theorem.

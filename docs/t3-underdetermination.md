@@ -282,6 +282,9 @@ This gives the formal hooks needed to distinguish the measured cases:
 T4's hidden-world identifiability bridge is discharged after referee review in
 docs/t4-identifiability.md as a conditional theorem schema. T5's anchored
 harmonic operator is discharged after referee review in
-docs/t5-thinking-operator.md. The remaining theory work moves to T6-T7 and to the named
-composition-closure extension if GraphLog/holonomy composed facts are to be
-folded into T2 rather than supplied as exact observations.
+docs/t5-thinking-operator.md. T6's local enrichment-comparison theorem is
+discharged after referee review in docs/t6-enrichment-soundness.md. The
+T7's stable-commitment theorem is discharged after referee review in
+docs/t7-stable-commitment.md, closing the designed T0-T7 chain. The named
+composition-closure extension remains open if GraphLog/holonomy composed facts
+are to be folded into T2 rather than supplied as exact observations.

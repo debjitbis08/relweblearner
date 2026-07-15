@@ -33,7 +33,22 @@ Sinkhorn/annealing benchmark is not yet an instance. **Revision 8, 2026-07-15,
 after T5 referee review,** makes the uniqueness scope, spectral-bound
 obligations, coordinate transport, and within-stalk locality explicit; the
 referee's confirmation discharges the theorem while leaving the current
-nonlinear benchmark outside its guarantee. This document builds nothing. It
+nonlinear benchmark outside its guarantee. **Revision 9, 2026-07-15,** drafts
+T6 as a local-comparison theorem: a Dirichlet field bound, compositional
+derivation-error recursion, and finite-family capacity certificate, with the
+current graded path explicitly outside the premises. **Revision 10,
+2026-07-15, after T6 referee review,** makes equivariance well-defined on T1's
+quotients, ties the field budget to T5's spectral gap, states tube admissibility
+as the DAG induction side condition, and records the failed headline gate
+alongside E4's positive uplift; the referee's confirmation discharges T6. This
+**Revision 11, 2026-07-15,** drafts T7 as a target-level decision-region margin
+theorem with explicit field/evaluator perturbation radii and safe feedback into
+the slow knowledge layer; the current `HARD_SIM` gate remains outside the
+premises. **Revision 12, 2026-07-15, after T7 referee review,** makes tube
+admissibility joint in the T6 and perturbation budgets, corrects the current
+hardener's margin description, and pins feedback equality at the
+provenance-labeled candidate level; the referee's confirmation discharges T7
+and closes the designed T0-T7 theory chain. This document builds nothing. It
 fixes the objects, states the
 invariances and policies any designed structure must respect, translates
 the empirical findings into boundary conditions, and lists the theorems
@@ -410,9 +425,14 @@ Policies (epistemic choices, named so they can be varied):
   the theorem until it satisfies the explicit instantiation or replacement
   obligations in T5 §9.**
 - **T6 Enrichment soundness.** For each admissible D3 enrichment, graded
-  derivations approximate exact ones with stated error; E5 selects.
+  derivations approximate exact ones with stated error; E5 selects. **Status:
+  discharged after referee review in docs/t6-enrichment-soundness.md. The
+  current graded benchmark remains outside the theorem because it has no
+  T5/T6 instantiation.**
 - **T7 Stable commitment.** The D4 bound. Two-timescale as a theorem,
-  explicitly relative to the view model.
+  explicitly relative to the view model. **Status: discharged after referee
+  review in docs/t7-stable-commitment.md. The current graded benchmark remains
+  outside the theorem because it has no T5-T7 certificate.**
 
 ## 9. What would falsify the conjecture itself
 
@@ -448,12 +468,15 @@ Policies (epistemic choices, named so they can be varied):
 
 ## 10. Discipline
 
-The T0-T5 definition, classification, conditional-identifiability, and thinking
-operator chain has survived review, including T1's scoped-counting and
-supported-candidate amendments, T4's induced output action, and T5's exact
-Dirichlet-kernel criterion. T6 enrichment soundness is the next theorem. The
-first implementation still ships with pre-registered predictions for all
-three benches. The theory-side
+The T0-T7 definition, classification, conditional-identifiability, thinking,
+enrichment-comparison, and stable-commitment chain has survived review,
+including T1's
+scoped-counting and supported-candidate amendments, T4's induced output action,
+T5's exact Dirichlet-kernel criterion, and T6's finite-family error and capacity
+certificates, and T7's joint-budget decision margin. The designed theory chain
+is closed; the next project obligation is a replacement implementation that
+satisfies T5 §9, T6 §8, and T7 §8. The first implementation still ships with
+pre-registered predictions for all three benches. The theory-side
 obligation added by the round-2 referee — the **P2 discharge** — is
 **DONE at the measured tier, scoped to the declared E2b evaluation
 process** (docs/p2-discharge.md §13–§14; the record includes one failed
@@ -503,14 +526,16 @@ The empirical queue is now EMPTY on the referee's own condition — the
 supplementary experiment that carries E5's conclusion is a committed
 reproducer (factorial.json, episode-sets.json) and the interaction is
 represented as measured, not as a chosen ladder order. E2b, E6, and E5
-are run, refereed, and folded in. The head of the project is now T6 over the
-discharged T0-T5 setup
+are run, refereed, and folded in. The head of the project is now
+theory-to-implementation instantiation over the discharged T0-T7 setup
 (docs/t0-model-data-separation.md; docs/t1-extension-classification.md;
 docs/t2-incompatibility.md; docs/t3-underdetermination.md;
-docs/t4-identifiability.md; docs/t5-thinking-operator.md), with the measured
-P2/A1 semantics gating T2's use of E2b and with imagined hidden-world states
-kept in T4 rather than counted as T1 candidates. D3's admissible-enrichment set
-remains constrained by measured selector data from both diagnoses.
+docs/t4-identifiability.md; docs/t5-thinking-operator.md;
+docs/t6-enrichment-soundness.md; docs/t7-stable-commitment.md), with the
+measured P2/A1 semantics gating T2's use of E2b and with imagined hidden-world
+states kept in T4 rather than counted as T1 candidates. D3's
+admissible-enrichment set remains constrained by measured selector data from
+both diagnoses.
 
 Reading: Hansen & Ghrist, *Toward a spectral theory of cellular sheaves*
 (2019); Michael Robinson's sheaf-based sensor fusion and consistency

@@ -481,4 +481,7 @@ instantiate and validate H1-H5; no bench, deployment, or other external-truth
 claim is discharged merely by this theorem-level result.
 
 T5's anchored harmonic thinking operator is discharged after referee review in
-docs/t5-thinking-operator.md. T6 enrichment soundness is the next theorem.
+docs/t5-thinking-operator.md. T6 enrichment soundness is discharged after
+referee review in docs/t6-enrichment-soundness.md. T7 stable commitment is
+discharged after referee review in docs/t7-stable-commitment.md. The designed
+T0-T7 theory chain is closed, subject to application-level instantiation.
