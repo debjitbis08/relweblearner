@@ -90,11 +90,13 @@ Two consequences, one of each kind:
   co-occurrence sample absence is non-observation, not negative evidence —
   that reading is itself an epistemic policy (**P2**, §6), and its false
   positives are exactly its sampling-variance cost (14 of the 15 collateral
-  flags sit on correctly mapped direct anchors). So E2b establishes a
-  reliable, typed, cross-view **disagreement separation** — not yet literal
-  incompatibility (Ext = ∅): that identification is T2's standing proof
-  obligation (§8), requiring an explicit semantics for absent edges. Two
-  calibration lessons: gate the residual on a COUNT, not a dilution-prone
+  flags sit on correctly mapped direct anchors). The later P2 discharge
+  (§6; docs/p2-discharge.md §13–§14) supplies that explicit semantics at
+  the MEASURED tier for the declared E2b process, so E2b now stands as a
+  reliable, typed, cross-view **disagreement separation** whose detector
+  verdict reads as raw Ext = ∅ within that process. T2's remaining
+  obligation is the exact proof over the chosen D1/D2. Two calibration
+  lessons: gate the residual on a COUNT, not a dilution-prone
   weight ratio (ratio mean 0.49, straddling the naive 0.5 gate) — and the
   count is of edges, not independent witnesses (one mis-mapped node
   produced both counted contradictions in one collateral case; re-run
@@ -341,10 +343,15 @@ Policies (epistemic choices, named so they can be varied):
 
 - **T0 Model/data separation.** Define the local state objects,
   observations-as-assignments, overlaps, and legal maps; say what a
-  global section denotes in each layer (§3).
-- **T1 Extension classification.** Characterize when a local assignment
-  has zero, one, or many global extensions.
-- **T2 Incompatibility.** Incompatible overlap data implies Ext = empty.
+  global section denotes in each layer (§3). **Status: discharged after
+  second referee pass in docs/t0-model-data-separation.md; T1-T3 must use
+  that span-valued structured-overlap setup rather than bench thresholds.**
+- **T1 Extension classification.** Characterize when a finite observation
+  family has zero, one, or many raw global extensions before quotienting
+  by invisible automorphisms. **Status: discharged after referee review in
+  docs/t1-extension-classification.md; T2/T3 must now prove structural
+  sufficient conditions for the zero and many cases.**
+- **T2 Incompatibility.** Incompatible overlap data implies raw Ext = empty.
   (P2 discharged at the measured tier under the declared E2b evaluation
   process — docs/p2-discharge.md §13–§14 — so E2b's separation stands as
   T2's empirical instance relative to that named process, with measured
@@ -381,9 +388,11 @@ Policies (epistemic choices, named so they can be varied):
   redundancy question resolved in the opposite direction — P1 alone
   would have committed the forgery in 41/50 seeds, so the detector is
   necessary, not merely independent (plan §8a). Per the round-2 referee
-  the result is a disagreement separation under P2, not yet literal
-  Ext = ∅ — a bounded interpretation carried as T2's proof obligation
-  (§8), not a triggered falsifier. This falsifier is retired.
+  and the later P2 discharge, the result is a disagreement separation
+  whose detector verdict reads as raw Ext = ∅ at the measured tier under
+  the declared E2b process; T2's remaining proof obligation is the exact
+  statement over the chosen D1/D2 (§8), not a triggered falsifier. This
+  falsifier is retired.
 - Every admissible enrichment fails some of E5's healed/torn worlds
   simultaneously — the bimodality is not an enrichment question.
 - ~~rule_27 (E6) turns out to be a harness artifact (e.g. path-horizon) —
@@ -400,9 +409,10 @@ Policies (epistemic choices, named so they can be varied):
 
 ## 10. Discipline
 
-No implementation until T0–T3 are proved for the chosen D1/D2, at
-whatever rigor we can genuinely sustain; the first implementation ships
-with pre-registered predictions for all three benches. The theory-side
+No implementation until T2–T3 are proved over the discharged T0/T1 setup, at
+whatever rigor we can genuinely sustain; the first
+implementation ships with pre-registered predictions for all three
+benches. The theory-side
 obligation added by the round-2 referee — the **P2 discharge** — is
 **DONE at the measured tier, scoped to the declared E2b evaluation
 process** (docs/p2-discharge.md §13–§14; the record includes one failed
@@ -422,9 +432,10 @@ Empirical work licensed meanwhile, in priority order:
    different measured type, and the geometry vs P1 attribution is
    answered — P1 alone would have passed the forgery in 41/50 seeds
    (plan §8a), so the detector is necessary over the scored block, not
-   just independent. Interpretation bounded per the round-2 referee: a
-   disagreement separation under P2 — T2's candidate anchor, pending the
-   P2 discharge above.
+   just independent. Interpretation bounded per the round-2 referee and
+   the measured P2 discharge above: a disagreement separation under P2
+   that now serves as T2's empirical instance relative to the declared
+   E2b process.
 2. ~~**E6, rule_27**~~ — **DONE** (results/rule27-diagnosis, pre-registered
    in docs/rule27-diagnosis-plan.md; referee corrections accepted in
    full): not a path-horizon artifact, not a wall — a view-draw
@@ -452,9 +463,11 @@ supplementary experiment that carries E5's conclusion is a committed
 reproducer (factorial.json, episode-sets.json) and the interaction is
 represented as measured, not as a chosen ladder order. E2b, E6, and E5
 are run, refereed, and folded in. The head of the project is the theory
-work this document exists for — T0–T3 for the chosen D1/D2, with the P2
-discharge gating T2's use of E2b, and D3's admissible-enrichment set now
-constrained by measured selector data from both diagnoses.
+work this document exists for — prove T2–T3 over the discharged T0/T1 setup
+(docs/t0-model-data-separation.md; docs/t1-extension-classification.md),
+with the measured P2/A1 semantics gating T2's use of E2b, and D3's
+admissible-enrichment set now constrained by measured selector data from
+both diagnoses.
 
 Reading: Hansen & Ghrist, *Toward a spectral theory of cellular sheaves*
 (2019); Michael Robinson's sheaf-based sensor fusion and consistency
