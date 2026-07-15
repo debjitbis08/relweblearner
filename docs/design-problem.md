@@ -16,8 +16,11 @@ an ABSENT overlap edge in a finite sampled view as refutation, and that
 reading is itself an epistemic policy — now named P2 (§6) rather than
 smuggled as geometry, exactly as P1 was named in rev 2 — so E2b's result
 is stated as a statistical disagreement separation, not yet a literal
-Ext = ∅ instance of T2. rev 2 is preserved in git history. This document
-builds nothing. It fixes the objects, states the
+Ext = ∅ instance of T2. rev 2 is preserved in git history. **Revision 4,
+2026-07-15, after T1-T3 review,** adopts supported-candidate counting: E1/E2
+are determined-as-solo in the scoped discrete model and refused by P1, while
+imagined sampling alternatives move to T4. This document builds nothing. It
+fixes the objects, states the
 invariances and policies any designed structure must respect, translates
 the empirical findings into boundary conditions, and lists the theorems
 required for the structure to count as DESIGNED rather than found.*
@@ -47,9 +50,13 @@ So: **the forgery was rejected by absence of overlap support under a
 closed-world projection policy, not by incompatibility.** No view ever
 contradicted it; no view could — it was built from fresh, never
 co-witnessed nodes, so it touches no overlap. E1 and E2 are geometrically
-identical (both unglued/underdetermined), exactly as the bench's own
-honest-limit paragraph (P-D) had already stated before the v1 document
-forgot it. The v1 claim "forgery = nonzero H¹" was wrong.
+identical: both have the same unique supported solo reading in the scoped
+discrete model, and P1 declines both because neither has cross-view support.
+The multiplicity one may imagine — for example, that another view simply did
+not sample a counterpart — is a hidden-world hypothesis for T4, not a T1-T3
+extension. The bench's own honest-limit paragraph (P-D) already required the
+same treatment before the v1 document forgot it. The v1 claim "forgery =
+nonzero H¹" was wrong.
 
 Two consequences, one of each kind:
 
@@ -212,8 +219,10 @@ Invariances (facts the formalism must respect):
 - **I2.** Identity evidence is local: it originates in co-witnessed
   events and propagates only along genuine structure (zero-init and
   backbone findings, promoted to axioms).
-- **I3.** Refusal is typed by Ext(s) (§4), not thresholded. Any ε in a
-  refusal decision carries a D4-style stability bound.
+- **I3.** Structural status is typed by Ext(s) (§4), not by a score. Empty
+  rejects and many is structurally provisional; singleton permits but does
+  not force commitment because named policies such as P1 may still refuse.
+  Any ε in a scored policy decision carries a D4-style stability bound.
 - **I4.** The knowledge layer is auditable: discrete, provenanced,
   exactly retractable commitments (event-sourcing is orthogonal to the
   redesign and survives it).
@@ -267,12 +276,14 @@ Policies (epistemic choices, named so they can be varied):
 ## 7. Boundary conditions — what the experiments require
 
 - **E1** (revised): the fresh-node coherent forgery is non-committed
-  50/50 — by P1 over an underdetermined extension set, NOT by
-  obstruction. The formalism must reproduce it as such.
+  50/50 — by P1 over absent cross-view support, NOT by obstruction or
+  underdetermination. In the canonical scoped discrete model its supported
+  extension set is the singleton solo reading.
 - **E2**: the solo truth is non-committed 50/50 — the SAME state as E1
-  (settled, §2). Any framework that makes E1 and E2 differ without an
-  overlap-forgery-style signal or provenance is claiming more than the
-  data.
+  (settled, §2): determined-as-solo in scope, with P1 refusal for absent
+  cross-view support. Any framework that makes E1 and E2 differ without an
+  overlap-forgery-style signal or provenance is claiming more than the data;
+  hidden-world sampling alternatives belong to T4.
 - **E2b** (RUN, held-out, passed; interpretation bounded per round-2
   referee): the overlap forgery is separated from E1/E2 by a disjoint
   cross-view disagreement residual (≥ 2 contradicted backbone edges in
@@ -349,18 +360,23 @@ Policies (epistemic choices, named so they can be varied):
 - **T1 Extension classification.** Characterize when a finite observation
   family has zero, one, or many raw global extensions before quotienting
   by invisible automorphisms. **Status: discharged after referee review in
-  docs/t1-extension-classification.md; T2/T3 must now prove structural
-  sufficient conditions for the zero and many cases.**
+  docs/t1-extension-classification.md; the scoped-counting and
+  supported-candidate amendments were accepted in the T3 review. Candidates
+  contain only observed facts or facts legally propagated from them, so
+  unsupported model padding cannot manufacture a many case.**
 - **T2 Incompatibility.** Incompatible overlap data implies raw Ext = empty.
   (P2 discharged at the measured tier under the declared E2b evaluation
   process — docs/p2-discharge.md §13–§14 — so E2b's separation stands as
   T2's empirical instance relative to that named process, with measured
   rather than analytically bounded error rates. T2's
-  remaining content is the exact statement and proof over the chosen
-  D1/D2, with A1 as the bridge to data.)
-- **T3 Underdetermination.** Insufficient overlap yields many
-  extensions, characterized by the automorphism group / quotient visible
-  to the cover (orphan merges and provisional states live here).
+  exact theorem is docs/t2-incompatibility.md, with A1 as the bridge to
+  data.) **Status: discharged after referee review; E2b now has its exact
+  theorem at the measured tier. Composition-closure forcing remains open.**
+- **T3 Underdetermination.** A nontrivial supported automorphism orbit that is
+  invisible to the cover yields many extensions, characterized before and
+  after quotienting (orphan merges live here; mere absence of overlap does
+  not). **Status: discharged after referee review in
+  docs/t3-underdetermination.md.**
 - **T4 Identifiability.** Under explicit coverage and independence
   conditions, global extensions correspond to hidden-world semantic
   structure up to known automorphisms. (This, plus P1, is where any
@@ -409,10 +425,10 @@ Policies (epistemic choices, named so they can be varied):
 
 ## 10. Discipline
 
-No implementation until T2–T3 are proved over the discharged T0/T1 setup, at
-whatever rigor we can genuinely sustain; the first
-implementation ships with pre-registered predictions for all three
-benches. The theory-side
+The T0-T3 definition and classification gate has survived review, including
+T1's scoped-counting and supported-candidate amendments. The next theory
+obligation is T4; the first implementation still ships with pre-registered
+predictions for all three benches. The theory-side
 obligation added by the round-2 referee — the **P2 discharge** — is
 **DONE at the measured tier, scoped to the declared E2b evaluation
 process** (docs/p2-discharge.md §13–§14; the record includes one failed
@@ -462,12 +478,13 @@ The empirical queue is now EMPTY on the referee's own condition — the
 supplementary experiment that carries E5's conclusion is a committed
 reproducer (factorial.json, episode-sets.json) and the interaction is
 represented as measured, not as a chosen ladder order. E2b, E6, and E5
-are run, refereed, and folded in. The head of the project is the theory
-work this document exists for — prove T2–T3 over the discharged T0/T1 setup
-(docs/t0-model-data-separation.md; docs/t1-extension-classification.md),
-with the measured P2/A1 semantics gating T2's use of E2b, and D3's
-admissible-enrichment set now constrained by measured selector data from
-both diagnoses.
+are run, refereed, and folded in. The head of the project is now T4 over the
+discharged T0-T3 setup
+(docs/t0-model-data-separation.md; docs/t1-extension-classification.md;
+docs/t2-incompatibility.md; docs/t3-underdetermination.md), with the measured
+P2/A1 semantics gating T2's use of E2b and with imagined hidden-world states
+kept in T4 rather than counted as T1 candidates. D3's admissible-enrichment
+set remains constrained by measured selector data from both diagnoses.
 
 Reading: Hansen & Ghrist, *Toward a spectral theory of cellular sheaves*
 (2019); Michael Robinson's sheaf-based sensor fusion and consistency

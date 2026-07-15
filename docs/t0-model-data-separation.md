@@ -21,8 +21,11 @@ answers to the four T0 questions from design-problem §8:
   layers, specified below.
 
 T1-T3 must use these definitions rather than replacing them with
-bench-specific thresholds. T1 is discharged in
-docs/t1-extension-classification.md; T2-T3 remain open.
+bench-specific thresholds. T1, including its scoped-counting and
+supported-candidate amendments, is discharged in
+docs/t1-extension-classification.md; T2 is discharged in
+docs/t2-incompatibility.md; T3 is discharged in
+docs/t3-underdetermination.md.
 
 ## 2. The index object: the cover nerve
 
@@ -71,7 +74,8 @@ This is the first D1 choice:
 - absence from `O_ij` means "not in the overlap domain";
 - conflicting images in `O_ij` are incompatibility candidates for T2;
 - fresh-node forgeries and solo truths both have empty or insufficient
-  overlap domain, so they are T3/P1 cases, not T2 cases.
+  overlap domain, so their canonical scoped state is determined-as-solo and
+  their non-commitment is a P1 case, not a T2 or T3 case.
 
 Operational anchors, structural extensions, and GraphLog vocabulary seams are
 all observations of these span legs. They are never allowed to become hidden
@@ -85,8 +89,13 @@ opaque-id structures with provenance:
 - weighted undirected graphs for bench-multiweb regions;
 - finite directed labeled multigraphs or semicategories for GraphLog-style
   composition;
+- optional exact negative predicates, such as absent edge/path facts, only
+  when a named assumption or measured discharge admits them into the model;
 - optional typing/provenance fields used only to audit which observations
   support an edge, rule, anchor, or restriction.
+
+State-space exclusion axiom: no legal state may contain both a positive fact
+and its declared exact negation on the same support.
 
 Morphisms in `Str` are partial structure-preserving maps, represented by
 spans as above. They must preserve:
@@ -96,6 +105,7 @@ spans as above. They must preserve:
 - edge labels or rule bodies when the state object carries them;
 - weights only through declared predicates such as "backbone", not by
   assuming equal numeric scales across views;
+- exact negative predicates and the state-space exclusion axiom;
 - provenance monotonicity: a map may forget support when restricting, but may
   not invent support.
 
@@ -134,6 +144,14 @@ relevant overlap object. T1 classifies completions of these observed partial
 substructures, not arbitrary points of a hidden stalk and not total view
 states.
 
+T1 may use only **supported candidates**: every atomic fact in a candidate
+must either occur in an observed assignment or be legally propagated from one
+through the declared restriction spans and structural rules, with the
+provenance chain retained. Ambient atoms in `M(S)` with no such support are
+model possibilities, not candidate extensions. Abductive or imagined states
+belong to T4 and do not enter T1-T3 extension counts unless a later observation
+or deductive rule supplies support.
+
 Examples:
 
 - a Louvain-stable region in view `i` is an assignment at `{i}`;
@@ -165,11 +183,21 @@ declared structure predicates on that domain, matching §4:
 - automorphisms inside an overlap-invisible component are legal alternatives,
   not errors.
 
+Every propagation rule used by T1 must be declared as a finite relation on
+atomic facts in the relevant `M(S)`. A legal propagation step requires
+supported input facts, checks the rule's structural preconditions, produces
+only facts already available in the target model object, and records the
+source observations and rule identifiers in normalized finite provenance.
+Repeated traversal of a propagation cycle does not create a new provenance
+label. Legal propagation is the least fixed point of those finite rules.
+Scores, unused ambient atoms, and abductive or imagined hypotheses are not
+propagation steps.
+
 Illegal maps are not merely low-score maps. They are outside the assignment
 space and cannot be used by T1-T3.
 
 P2/A1 is not part of map legality. It is a statistical semantics for reading
-a sampled missing edge as evidence that no compatible edge exists in the
+a sampled missing edge as evidence for an exact negative edge fact in the
 overlap object, with measured error, and enters only when T2 interprets an
 E2b detector verdict as an exact overlap conflict under the declared process.
 
@@ -209,15 +237,26 @@ T1 reads this modulo sample presentation: two observations with the same
 image subobject or span image inside `M(S)`, and the same provenance labels,
 contribute one raw extension, not two syntactic presentations.
 
+T1 also reads extension counts relative to a declared scope `W`: by default
+the support closure of the observation family. Variation outside `W` is not
+counted. This prevents irrelevant untouched charts from making every
+observation family many by default; T1 writes the scoped set as
+`Ext_raw^W(A)`.
+
+Inside `W`, T1 counts only supported candidates as fixed in §5. Unsupported
+padding is not an extension: adding an unused atom of `M(S)` with no observed
+or legally propagated provenance does not turn a singleton into a many case.
+
 Only after this raw set is defined may we quotient by invisible
-automorphisms. Let `Aut_cover(s)` act on `Ext_raw(s)` by changing choices
-inside components not pinned by overlap spans. The quotient
-`Ext_raw(s) / Aut_cover(s)` records semantic equivalence classes, but P1's
-"singleton permits commitment" reads the raw cardinality unless a later T3
-theorem explicitly proves that the whole raw fiber is a harmless torsor for
-the requested output. This keeps E3 orphan merges in the many-extension
-case: they may be one quotient class while still having multiple raw
-extensions.
+automorphisms. Let `Aut_cover^W(A)` act on `Ext_raw^W(A)` by changing choices
+inside supported components not pinned by overlap spans. The quotient
+`Ext_raw^W(A) / Aut_cover^W(A)` records semantic equivalence classes. Raw
+cardinality supplies the structural state before this quotient, while P1
+independently evaluates its declared cross-view support requirement.
+Singleton is therefore only structural permission to commit; P1 may still
+refuse. This keeps E3 orphan merges in the many-extension case: they may be
+one quotient class while still having multiple raw extensions, while E1/E2
+remain singleton solo readings that P1 declines to commit.
 
 **Linear thinking layer.** A global linear section is a compatible field in a
 linearization `L(M)` of the structured model, with boundary values supplied
@@ -234,12 +273,15 @@ bridge.
 The existing empirical facts translate into T0 as follows.
 
 **E1 fresh-node forgery.** The forged region is a valid assignment at `{0}`
-with no overlap-domain assignment at `{0,j}`. Its refusal is P1 over
-underdetermination, not incompatibility.
+with no overlap-domain assignment at `{0,j}`. Supported-candidate counting
+gives the canonical scoped state a unique solo extension. Its refusal is P1
+over absent cross-view support, not incompatibility or T3 underdetermination.
 
-**E2 solo truth.** The solo community has the same T0 type as E1: a valid
-single-view assignment with insufficient overlap domain. Any later truth claim
-must enter through T4 assumptions, not through T0.
+**E2 solo truth.** The solo community has the same T0 type as E1: a valid,
+determined-as-solo single-view assignment with insufficient overlap support
+for P1 commitment. Any claim that this solo reading is externally true, or
+that another view merely failed to sample it, must enter through T4
+assumptions, not through T0.
 
 **E2b overlap forgery.** The false merge asserts a local assignment whose
 mapped bridge edges conflict with the overlap object when the detector's
@@ -281,21 +323,20 @@ They may not assume:
 - truth in the external world without T4 coverage and independence
   assumptions.
 
-## 10. Immediate next proof obligations
+## 10. T0-T3 outcome
 
-T1 should be stated first for finite graph objects with span restrictions:
-given a local structured assignment `s`, characterize `Ext_raw(s)` by the
-existence and cardinality of raw compatible families over the cover nerve.
-If the proof constructs completions by gluing, it must either prove the
-equivalence between those pushout-like glued objects and the limit-side raw
-section set, or state which side it classifies.
+T1 is discharged, including the scoped-counting and supported-candidate
+amendments, in docs/t1-extension-classification.md: finite observation
+families are classified by the finite solution set `Sol(C_M^W(A))`, with raw
+sections counted modulo sample presentation, relative to a declared scope
+`W`, and without unsupported model padding.
 
-T2 should then specialize the zero-extension case to overlap conflicts:
-two assignments whose restrictions assert incompatible edge or path facts in
-an overlap object have no common global section. The P2 discharge supplies
-the measured bridge from sampled absent edges to this exact overlap conflict
-for E2b.
+T2 is discharged in docs/t2-incompatibility.md: exact incompatible facts
+forced in a common overlap object imply `Sol(C_M^W(A)) = empty` for every
+scope `W` containing that conflict. The P2 discharge supplies the measured
+bridge from sampled absent edges to this exact overlap conflict for E2b.
 
-T3 should characterize the many-extension case as an automorphism torsor and
-then its quotient over components not pinned by overlap spans. This is where
-orphan merges and solo/provisional regions belong.
+T3 is discharged in docs/t3-underdetermination.md: nontrivial automorphism
+orbits invisible to the cover inside `W` imply `|Ext_raw^W(A)| > 1`, with
+quotienting kept separate from raw cardinality. This is where supported orphan
+alternatives belong; E1/E2 are instead determined-as-solo P1 cases.
