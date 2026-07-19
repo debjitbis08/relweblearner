@@ -1,0 +1,39 @@
+{
+  "change_scope": "implementation_only_no_draws_or_scores",
+  "created_date": "2026-07-19",
+  "execution": {
+    "enabled": false,
+    "executor_file": null,
+    "executor_qualname": null,
+    "reason": "control harness is frozen; phase-computation adapter remains unimplemented and unreviewed"
+  },
+  "implementation_freeze": {
+    "commit": "2d38af8890d710ab732eb59af3a52cee280fafd9",
+    "files": {
+      "src/relweblearner/bench/graphlog_g6.py": "ba63b10797dc3839a545ef2be17bd3497343e02bc98dd8b712f68e6ca8c01db8",
+      "tests/test_graphlog_g6.py": "5d73d83fb11f95797e9a9a1142254ad2af3826aa755f5efc6755d1c67124d2ea"
+    },
+    "harness_version": "graphlog-certified-g6-harness/v1",
+    "tree": "8f517d8197f4872e575d63b93b2491ad6ebba466"
+  },
+  "manifest_id": "sha256:c63dc5cc4e49a5aeb45be132075fccb721c4826730f1065f19f418f94721422d",
+  "manifest_id_method": "SHA-256 of canonical JSON with manifest_id omitted",
+  "parent_preregistration_commit": "17a5fa7d76a142c7915b9c2243d1c56f98cb6a89",
+  "review_record": {
+    "dedicated_tests": 9,
+    "full_suite": "465 passed, 1 skipped",
+    "g0_g5_source_digest_after_harness": "115801d3dae727675031ab924f41190525dabed30b1a6bd3414a2c5d5bb01aa4",
+    "guards": [
+      "literal 44-world cohort and all SHA-256 expansions recompute exactly",
+      "complete-world barrier after structural, T5, T6, and T7 safety before accuracy",
+      "phase receipts and artifact digests are revalidated before and after every later phase",
+      "existing final or partial output refuses rerun without deletion",
+      "production executor must be named and hashed by an execution-enabling amendment",
+      "preflight imports no GraphLog loader and creates no output"
+    ],
+    "validation_output_or_partial_present": false
+  },
+  "schema_version": "graphlog-certified-g6-validation-amendment/v1",
+  "study_manifest_id": "sha256:8b31eac972bfa718ae51f3fd22e8e63ab47d0b1c60ca1c9330cfc205a2968a5b",
+  "validation_draws_or_scores_observed": false
+}
