@@ -1,0 +1,38 @@
+{
+  "change_scope": "implementation_only_no_draws_or_scores",
+  "created_date": "2026-07-19",
+  "execution": {
+    "enabled": false,
+    "executor_file": null,
+    "executor_qualname": null,
+    "reason": "corrected control harness is frozen; phase-computation adapter remains unimplemented and unreviewed"
+  },
+  "implementation_freeze": {
+    "commit": "6a374bac16cf320dc1f3c0036a8de8975199f35c",
+    "files": {
+      "src/relweblearner/bench/graphlog_g6.py": "c5c5bce59e994b19d8bdd18bc733cf20ed0158f2b537c63abdaae90b4e6ec060",
+      "tests/test_graphlog_g6.py": "67c5c7c9086a77c42ce46e104682403449eabb743eec4ff8726701d2a4b1a7a5"
+    },
+    "harness_version": "graphlog-certified-g6-harness/v1",
+    "tree": "85b0578beb5bed4890b3f7872e0a06a7da351694"
+  },
+  "manifest_id": "sha256:5f38ba4117da8d93d38a1c61b61f5a9f73b8a17abc45617f3a1d6239dc195535",
+  "manifest_id_method": "SHA-256 of canonical JSON with manifest_id omitted",
+  "parent_amendment_id": "sha256:c63dc5cc4e49a5aeb45be132075fccb721c4826730f1065f19f418f94721422d",
+  "review_record": {
+    "dedicated_tests": 13,
+    "findings_addressed": [
+      "execution-disabled and executor-identity gates are unconditional",
+      "receipt immutability is anchored by a harness-owned in-memory SHA-256 ledger",
+      "G5 freeze shape, harness version, Git failures, and repository paths fail closed with typed errors",
+      "amendments form a contiguous append-only parent-linked chain"
+    ],
+    "full_suite": "469 passed, 1 skipped",
+    "g0_g5_source_digest_after_harness": "115801d3dae727675031ab924f41190525dabed30b1a6bd3414a2c5d5bb01aa4",
+    "prior_amendment_preserved": true,
+    "validation_output_or_partial_present": false
+  },
+  "schema_version": "graphlog-certified-g6-validation-amendment/v1",
+  "study_manifest_id": "sha256:8b31eac972bfa718ae51f3fd22e8e63ab47d0b1c60ca1c9330cfc205a2968a5b",
+  "validation_draws_or_scores_observed": false
+}
