@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ast
 import hashlib
+import inspect
 import json
 import re
 from copy import deepcopy
@@ -18,6 +19,7 @@ from relweblearner.bench.graphlog_g6 import (
     G6PreflightError,
     PHASE_ORDER,
     execute_study,
+    load_amendment_chain,
     load_study_manifest,
 )
 from relweblearner.bench.graphlog_certified.spec import VALIDATION_WORLDS
@@ -34,17 +36,28 @@ def _write_manifest(path: Path, document: dict) -> None:
     path.write_bytes(canonical_bytes(document) + b"\n")
 
 
-def _amendment(study_id: str) -> G6Amendment:
+def _amendment(study_id: str, executor=None) -> G6Amendment:
+    if executor is None:
+        implementation_files = (("unused.py", "0" * 64),)
+        executor_file = executor_qualname = None
+    else:
+        source = Path(inspect.getsourcefile(executor)).resolve()
+        executor_file = str(source.relative_to(ROOT))
+        executor_qualname = executor.__qualname__
+        implementation_files = ((
+            executor_file, hashlib.sha256(source.read_bytes()).hexdigest(),
+        ),)
     return G6Amendment(
         manifest_id="sha256:test-amendment",
         amendment_path=Path("unused.json"),
         study_manifest_id=study_id,
+        parent_amendment_id=None,
         harness_commit="0" * 40,
         harness_tree="0" * 40,
-        implementation_files=(("unused.py", "0" * 64),),
-        execution_enabled=False,
-        executor_file=None,
-        executor_qualname=None,
+        implementation_files=implementation_files,
+        execution_enabled=executor is not None,
+        executor_file=executor_file,
+        executor_qualname=executor_qualname,
     )
 
 
@@ -82,10 +95,61 @@ def test_manifest_tampering_fails_closed(tmp_path, mutation, message):
         load_study_manifest(path)
 
 
+def test_missing_g5_freeze_records_raise_typed_preflight_error(tmp_path):
+    document = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    del document["freeze"]["g5_runs"]
+    path = tmp_path / "manifest.json"
+    _write_manifest(path, document)
+    with pytest.raises(G6PreflightError, match="no G5 run records"):
+        load_study_manifest(path)
+
+
+def test_append_only_amendment_chain_preserves_and_links_every_record(tmp_path):
+    first_source = (
+        ROOT / "results/graphlog-certified/g6-validation-amendment.json"
+    )
+    first = json.loads(first_source.read_text(encoding="utf-8"))
+    first_path = tmp_path / "amendment.json"
+    first_path.write_bytes(canonical_bytes(first) + b"\n")
+
+    second = deepcopy(first)
+    second["parent_amendment_id"] = first["manifest_id"]
+    second["created_date"] = "2026-07-20"
+    second_path = tmp_path / "amendment-2.json"
+    _write_manifest(second_path, second)
+
+    chain = load_amendment_chain(first_path)
+    assert len(chain) == 2
+    assert chain[1].parent_amendment_id == chain[0].manifest_id
+    assert first_path.read_bytes() == canonical_bytes(first) + b"\n"
+
+    broken = json.loads(second_path.read_text(encoding="utf-8"))
+    broken["parent_amendment_id"] = "sha256:" + "0" * 64
+    _write_manifest(second_path, broken)
+    with pytest.raises(G6PreflightError, match="parent link"):
+        load_amendment_chain(first_path)
+
+
+def test_amendment_harness_version_drift_fails_closed(tmp_path):
+    document = json.loads((
+        ROOT / "results/graphlog-certified/g6-validation-amendment.json"
+    ).read_text(encoding="utf-8"))
+    document["implementation_freeze"]["harness_version"] = "changed/v0"
+    path = tmp_path / "amendment.json"
+    _write_manifest(path, document)
+    with pytest.raises(G6PreflightError, match="harness version"):
+        g6_module.load_amendment(path)
+
+
+def test_unknown_git_object_raises_typed_preflight_error():
+    with pytest.raises(G6PreflightError, match="git verification failed"):
+        g6_module._git(ROOT, "rev-parse", "f" * 40 + "^{tree}")
+
+
 def test_executor_observes_complete_phase_barriers_and_accuracy_last(tmp_path):
     source = load_study_manifest(MANIFEST)
     study = deepcopy(source)
-    object.__setattr__(study, "output_root", Path("g6-test-output"))
+    object.__setattr__(study, "output_root", tmp_path / "g6-test-output")
     calls = []
 
     def executor(phase, draw, prior, output):
@@ -111,8 +175,8 @@ def test_executor_observes_complete_phase_barriers_and_accuracy_last(tmp_path):
         }
 
     output = execute_study(
-        study, _amendment(study.manifest_id), executor,
-        root=tmp_path, verify_repository=False,
+        study, _amendment(study.manifest_id, executor), executor,
+        root=ROOT, verify_repository=False,
     )
     assert output.is_dir()
     assert len(calls) == 44 * 5
@@ -127,8 +191,10 @@ def test_executor_observes_complete_phase_barriers_and_accuracy_last(tmp_path):
 def test_existing_or_interrupted_study_is_never_rerun(tmp_path):
     source = load_study_manifest(MANIFEST)
     study = deepcopy(source)
-    object.__setattr__(study, "output_root", Path("g6-test-output"))
-    partial = tmp_path / f".g6-test-output.{study.manifest_id[7:19]}.partial"
+    object.__setattr__(study, "output_root", tmp_path / "g6-test-output")
+    partial = (tmp_path / "g6-test-output").with_name(
+        f".g6-test-output.{study.manifest_id[7:19]}.partial"
+    )
     partial.mkdir()
 
     def forbidden_executor(*_args):
@@ -136,24 +202,20 @@ def test_existing_or_interrupted_study_is_never_rerun(tmp_path):
 
     with pytest.raises(G6PreflightError, match="rerun refused"):
         execute_study(
-            study, _amendment(study.manifest_id), forbidden_executor,
-            root=tmp_path, verify_repository=False,
+            study, _amendment(study.manifest_id, forbidden_executor),
+            forbidden_executor, root=ROOT, verify_repository=False,
         )
 
 
-def test_production_execution_is_disabled_without_pinned_adapter(
-    tmp_path, monkeypatch,
-):
+def test_execution_is_disabled_even_when_repository_verification_is_skipped(tmp_path):
     source = load_study_manifest(MANIFEST)
     study = deepcopy(source)
     object.__setattr__(study, "output_root", Path("g6-test-output"))
     amendment = _amendment(study.manifest_id)
-    monkeypatch.setattr(g6_module, "repository_preflight", lambda *_args, **_kw: None)
-
     with pytest.raises(G6PreflightError, match="disabled pending"):
         execute_study(
             study, amendment, lambda *_args: {}, root=tmp_path,
-            verify_repository=True,
+            verify_repository=False,
         )
     assert not (tmp_path / study.output_root).exists()
 
@@ -161,13 +223,20 @@ def test_production_execution_is_disabled_without_pinned_adapter(
 def test_executor_cannot_mutate_a_prior_phase(tmp_path):
     source = load_study_manifest(MANIFEST)
     study = deepcopy(source)
-    object.__setattr__(study, "output_root", Path("g6-test-output"))
+    object.__setattr__(study, "output_root", tmp_path / "g6-test-output")
 
     def executor(phase, draw, prior, output):
         if phase is G6Phase.T5 and draw.ordinal == 0:
-            (prior[G6Phase.STRUCTURAL] / "phase.json").write_text(
-                "tampered", encoding="utf-8",
-            )
+            prior_dir = prior[G6Phase.STRUCTURAL]
+            prior_artifact = prior_dir / "phase.json"
+            prior_artifact.write_text("tampered", encoding="utf-8")
+            receipt_path = prior_dir / "receipt.json"
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            receipt["artifact_records"][0].update({
+                "byte_size": prior_artifact.stat().st_size,
+                "sha256": hashlib.sha256(prior_artifact.read_bytes()).hexdigest(),
+            })
+            receipt_path.write_bytes(canonical_bytes(receipt) + b"\n")
         artifact = output / "phase.json"
         artifact.write_bytes(canonical_bytes({"phase": phase.value}))
         data = artifact.read_bytes()
@@ -184,10 +253,10 @@ def test_executor_cannot_mutate_a_prior_phase(tmp_path):
             }],
         }
 
-    with pytest.raises(ValueError, match="do not match"):
+    with pytest.raises(ValueError, match="receipt changed"):
         execute_study(
-            study, _amendment(study.manifest_id), executor,
-            root=tmp_path, verify_repository=False,
+            study, _amendment(study.manifest_id, executor), executor,
+            root=ROOT, verify_repository=False,
         )
 
 

@@ -12,6 +12,7 @@ import argparse
 import hashlib
 import inspect
 import json
+import re
 import subprocess
 from dataclasses import dataclass
 from enum import Enum
@@ -62,6 +63,7 @@ class G6Study:
     spec_digest: str
     phases: tuple[G6Phase, ...]
     draws: tuple[G6Draw, ...]
+    g5_runs: tuple[tuple[str, str], ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -69,6 +71,7 @@ class G6Amendment:
     manifest_id: str
     amendment_path: Path
     study_manifest_id: str
+    parent_amendment_id: str | None
     harness_commit: str
     harness_tree: str
     implementation_files: tuple[tuple[str, str], ...]
@@ -185,6 +188,23 @@ def load_study_manifest(path: Path = G6_MANIFEST) -> G6Study:
         raise G6PreflightError("G6 baseline manifest id is malformed")
     if document.get("virginity_proof", {}).get("result") != "PASS_ZERO_MATCHES":
         raise G6PreflightError("G6 virginity proof did not pass")
+    g5_rows = freeze.get("g5_runs")
+    if not isinstance(g5_rows, list) or not g5_rows:
+        raise G6PreflightError("G6 freeze has no G5 run records")
+    g5_runs = []
+    for row in g5_rows:
+        if not isinstance(row, dict) or set(row) != {"run_id", "seed", "world"}:
+            raise G6PreflightError("G6 freeze has a malformed G5 run record")
+        run_id = row["run_id"]
+        world = row["world"]
+        if not isinstance(run_id, str) or not re.fullmatch(r"[0-9a-f]{64}", run_id) \
+                or not isinstance(world, str) or not world \
+                or row["seed"] != 0:
+            raise G6PreflightError("G6 freeze has an invalid G5 run identity")
+        g5_runs.append((run_id, world))
+    if len({run_id for run_id, _world in g5_runs}) != len(g5_runs) \
+            or len({world for _run_id, world in g5_runs}) != len(g5_runs):
+        raise G6PreflightError("G6 freeze repeats a G5 run record")
     required_acceptance = {
         "certificate_soundness", "non_vacuity", "primary_usefulness",
         "secondary_usefulness", "usefulness_claim_requires",
@@ -202,6 +222,7 @@ def load_study_manifest(path: Path = G6_MANIFEST) -> G6Study:
         spec_digest=freeze["spec_digest"],
         phases=tuple(G6Phase(phase) for phase in PHASE_ORDER),
         draws=tuple(draws),
+        g5_runs=tuple(g5_runs),
     )
 
 
@@ -214,6 +235,8 @@ def load_amendment(path: Path = G6_AMENDMENT) -> G6Amendment:
     if document.get("validation_draws_or_scores_observed") is not False:
         raise G6PreflightError("G6 amendment does not attest zero observed outcomes")
     implementation = document.get("implementation_freeze", {})
+    if implementation.get("harness_version") != G6_HARNESS_VERSION:
+        raise G6PreflightError("G6 amendment harness version mismatch")
     files = implementation.get("files")
     if not isinstance(files, dict) or not files:
         raise G6PreflightError("G6 amendment has no implementation file freeze")
@@ -238,10 +261,17 @@ def load_amendment(path: Path = G6_AMENDMENT) -> G6Amendment:
             raise G6PreflightError("enabled G6 amendment lacks a pinned executor")
     elif executor_file is not None or executor_qualname is not None:
         raise G6PreflightError("disabled G6 amendment must not name an executor")
+    parent_id = document.get("parent_amendment_id")
+    if parent_id is not None and (
+        not isinstance(parent_id, str)
+        or not re.fullmatch(r"sha256:[0-9a-f]{64}", parent_id)
+    ):
+        raise G6PreflightError("G6 parent amendment id is malformed")
     return G6Amendment(
         manifest_id=document["manifest_id"],
         amendment_path=path,
         study_manifest_id=document.get("study_manifest_id", ""),
+        parent_amendment_id=parent_id,
         harness_commit=implementation.get("commit", ""),
         harness_tree=implementation.get("tree", ""),
         implementation_files=tuple(sorted(files.items())),
@@ -251,10 +281,44 @@ def load_amendment(path: Path = G6_AMENDMENT) -> G6Amendment:
     )
 
 
-def _git(root: Path, *args: str, check: bool = True) -> str:
-    result = subprocess.run(
-        ("git", *args), cwd=root, check=check, capture_output=True, text=True,
+def load_amendment_chain(path: Path = G6_AMENDMENT) -> tuple[G6Amendment, ...]:
+    """Load contiguous append-only amendments and verify every parent link."""
+    pattern = re.compile(
+        rf"{re.escape(path.stem)}(?:-(\d+))?{re.escape(path.suffix)}"
     )
+    indexed = {}
+    for candidate in path.parent.glob(f"{path.stem}*{path.suffix}"):
+        match = pattern.fullmatch(candidate.name)
+        if match:
+            index = 1 if match.group(1) is None else int(match.group(1))
+            if index in indexed:
+                raise G6PreflightError("duplicate G6 amendment sequence number")
+            indexed[index] = candidate
+    if not indexed or 1 not in indexed:
+        raise G6PreflightError("base G6 amendment is missing")
+    expected = set(range(1, max(indexed) + 1))
+    if set(indexed) != expected:
+        raise G6PreflightError("G6 amendment chain has a numbering gap")
+    amendments = tuple(load_amendment(indexed[index]) for index in sorted(indexed))
+    if amendments[0].parent_amendment_id is not None:
+        raise G6PreflightError("base G6 amendment unexpectedly has a parent")
+    for previous, current in zip(amendments, amendments[1:]):
+        if current.parent_amendment_id != previous.manifest_id:
+            raise G6PreflightError("G6 amendment parent link mismatch")
+        if current.study_manifest_id != previous.study_manifest_id:
+            raise G6PreflightError("G6 amendment chain changes the study manifest")
+    return amendments
+
+
+def _git(root: Path, *args: str, check: bool = True) -> str:
+    try:
+        result = subprocess.run(
+            ("git", *args), cwd=root, check=check, capture_output=True, text=True,
+        )
+    except subprocess.CalledProcessError as error:
+        raise G6PreflightError(
+            f"git verification failed: {' '.join(args)}"
+        ) from error
     return result.stdout.strip()
 
 
@@ -341,21 +405,33 @@ def repository_preflight(
         raise G6PreflightError("current HEAD does not descend from G6 harness freeze")
     if require_clean and _git(root, "status", "--porcelain"):
         raise G6PreflightError("G6 execution requires a clean worktree")
-    manifest_relative = str(study_path.resolve().relative_to(root.resolve()))
-    frozen_manifest = subprocess.run(
-        ("git", "show", f"{amendment.harness_commit}:{manifest_relative}"),
-        cwd=root, check=True, capture_output=True,
-    ).stdout
+    try:
+        manifest_relative = str(study_path.resolve().relative_to(root.resolve()))
+    except ValueError as error:
+        raise G6PreflightError("G6 study manifest is outside the repository") from error
+    try:
+        frozen_manifest = subprocess.run(
+            ("git", "show", f"{amendment.harness_commit}:{manifest_relative}"),
+            cwd=root, check=True, capture_output=True,
+        ).stdout
+    except subprocess.CalledProcessError as error:
+        raise G6PreflightError("G6 study manifest is absent from harness commit") \
+            from error
     if hashlib.sha256(frozen_manifest).hexdigest() != _sha256_file(study_path):
         raise G6PreflightError("G6 harness commit predates or changes the study manifest")
     for relative, expected in amendment.implementation_files:
         path = root / relative
         if not path.is_file() or _sha256_file(path) != expected:
             raise G6PreflightError(f"G6 implementation file drift: {relative}")
-        frozen = subprocess.run(
-            ("git", "show", f"{amendment.harness_commit}:{relative}"),
-            cwd=root, check=True, capture_output=True,
-        ).stdout
+        try:
+            frozen = subprocess.run(
+                ("git", "show", f"{amendment.harness_commit}:{relative}"),
+                cwd=root, check=True, capture_output=True,
+            ).stdout
+        except subprocess.CalledProcessError as error:
+            raise G6PreflightError(
+                f"G6 implementation file absent from commit: {relative}"
+            ) from error
         if hashlib.sha256(frozen).hexdigest() != expected:
             raise G6PreflightError(f"G6 implementation commit mismatch: {relative}")
 
@@ -364,12 +440,11 @@ def repository_preflight(
     validate_manifest(baseline, root, verify_data=True)
     if baseline.get("manifest_id") != study.baseline_manifest_id:
         raise G6PreflightError("G6 baseline manifest drift")
-    original = json.loads(study_path.read_text(encoding="utf-8"))
-    for run in original["freeze"]["g5_runs"]:
-        directory = root / "results/graphlog-certified" / run["run_id"]
+    for run_id, world in study.g5_runs:
+        directory = root / "results/graphlog-certified" / run_id
         _validate_frozen_g5_directory(
             directory,
-            expected_world=run["world"],
+            expected_world=world,
             baseline_manifest_id=study.baseline_manifest_id,
         )
 
@@ -415,6 +490,7 @@ def _validate_unit_directory(
     unit: Path,
     phase: G6Phase,
     draw: G6Draw,
+    expected_receipt_sha256: str,
 ) -> None:
     entries = tuple(unit.iterdir())
     if any(not path.is_file() for path in entries):
@@ -422,6 +498,8 @@ def _validate_unit_directory(
     receipt_path = unit / "receipt.json"
     if not receipt_path.is_file():
         raise RuntimeError("G6 phase receipt is missing")
+    if _sha256_file(receipt_path) != expected_receipt_sha256:
+        raise ValueError("G6 phase receipt changed after harness creation")
     receipt = _validate_receipt(
         json.loads(receipt_path.read_text(encoding="utf-8")), phase, draw,
     )
@@ -448,19 +526,21 @@ def execute_study(
     verify_repository: bool = True,
 ) -> Path:
     """Execute one immutable block; interrupted or existing blocks never rerun."""
+    if not amendment.execution_enabled:
+        raise G6PreflightError("G6 execution is disabled pending a pinned adapter")
     if verify_repository:
         repository_preflight(study, amendment, root=root)
-        if not amendment.execution_enabled:
-            raise G6PreflightError("G6 execution is disabled pending a pinned adapter")
-        module = inspect.getmodule(executor)
-        source = inspect.getsourcefile(executor)
-        if module is None or source is None:
-            raise G6PreflightError("G6 executor has no inspectable source module")
+    module = inspect.getmodule(executor)
+    source = inspect.getsourcefile(executor)
+    if module is None or source is None:
+        raise G6PreflightError("G6 executor has no inspectable source module")
+    try:
         relative = str(Path(source).resolve().relative_to(root.resolve()))
-        qualname = getattr(executor, "__qualname__", type(executor).__qualname__)
-        if relative != amendment.executor_file \
-                or qualname != amendment.executor_qualname:
-            raise G6PreflightError("G6 executor differs from the pinned adapter")
+    except ValueError as error:
+        raise G6PreflightError("G6 executor source is outside the repository") from error
+    qualname = getattr(executor, "__qualname__", type(executor).__qualname__)
+    if relative != amendment.executor_file or qualname != amendment.executor_qualname:
+        raise G6PreflightError("G6 executor differs from the pinned adapter")
     output = root / study.output_root
     staging = output.with_name(f".{output.name}.{study.manifest_id[7:19]}.partial")
     if output.exists() or staging.exists():
@@ -476,6 +556,7 @@ def execute_study(
         "completed_phases": [],
     }
     (staging / "study-index.json").write_bytes(canonical_bytes(index) + b"\n")
+    receipt_digests: dict[tuple[G6Phase, int], str] = {}
 
     for phase_index, phase in enumerate(study.phases):
         if phase is G6Phase.ACCURACY and phase_index != len(study.phases) - 1:
@@ -488,16 +569,25 @@ def execute_study(
             if set(prior) != set(study.phases[:phase_index]):
                 raise RuntimeError("G6 phase barrier is incomplete")
             for prior_phase, directory in prior.items():
-                _validate_unit_directory(directory, prior_phase, draw)
+                _validate_unit_directory(
+                    directory, prior_phase, draw,
+                    receipt_digests[(prior_phase, draw.ordinal)],
+                )
             unit = _unit_directory(staging, phase, draw)
             unit.mkdir(parents=True)
             receipt = _validate_receipt(
                 executor(phase, draw, prior, unit), phase, draw,
             )
-            (unit / "receipt.json").write_bytes(canonical_bytes(receipt) + b"\n")
-            _validate_unit_directory(unit, phase, draw)
+            receipt_bytes = canonical_bytes(receipt) + b"\n"
+            (unit / "receipt.json").write_bytes(receipt_bytes)
+            receipt_digest = hashlib.sha256(receipt_bytes).hexdigest()
+            receipt_digests[(phase, draw.ordinal)] = receipt_digest
+            _validate_unit_directory(unit, phase, draw, receipt_digest)
             for prior_phase, directory in prior.items():
-                _validate_unit_directory(directory, prior_phase, draw)
+                _validate_unit_directory(
+                    directory, prior_phase, draw,
+                    receipt_digests[(prior_phase, draw.ordinal)],
+                )
         index["completed_phases"].append(phase.value)
         (staging / "study-index.json").write_bytes(canonical_bytes(index) + b"\n")
 
@@ -505,6 +595,7 @@ def execute_study(
         for draw in study.draws:
             _validate_unit_directory(
                 _unit_directory(staging, phase, draw), phase, draw,
+                receipt_digests[(phase, draw.ordinal)],
             )
     staging.rename(output)
     return output
@@ -517,7 +608,7 @@ def preflight(
     amendment_path: Path = G6_AMENDMENT,
 ) -> G6Study:
     study = load_study_manifest(root / manifest_path)
-    amendment = load_amendment(root / amendment_path)
+    amendment = load_amendment_chain(root / amendment_path)[-1]
     repository_preflight(study, amendment, root=root)
     return study
 
@@ -532,7 +623,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     study = preflight(
         root=root, manifest_path=args.manifest, amendment_path=args.amendment,
     )
-    amendment = load_amendment(root / args.amendment)
+    amendment = load_amendment_chain(root / args.amendment)[-1]
     print(json.dumps({
         "status": (
             "READY_NO_DRAWS_GENERATED"
