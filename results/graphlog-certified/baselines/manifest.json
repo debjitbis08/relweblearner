@@ -1,0 +1,1175 @@
+{
+  "schema_version": "graphlog-certified-baselines/v1",
+  "semantic_hash_version": "canonical-json-exact-pointer-exclusions/v1",
+  "semantic_exclusion_policy": "exact JSON pointers removed before canonical JSON hashing",
+  "input_groups": {
+    "code": {
+      "schema": "source-files/v1",
+      "id": "sha256:c49e84a7489221ca1cb35c44e6b2cb9c07a2807e4dac72a86b91f037be4d24f3",
+      "files": [
+        {
+          "path": "pyproject.toml",
+          "byte_size": 1590,
+          "raw_sha256": "843d725688c7091a2b2cfc542307dc0a88a2c26ce6a1b4765e958ade20a5e7c8"
+        },
+        {
+          "path": "src/relweblearner/bench/graphlog.py",
+          "byte_size": 16757,
+          "raw_sha256": "0ec5626e00488b8a818c9bc9ea15b95de3a50fd6b7356d6a21e89884ea4e0b0b"
+        },
+        {
+          "path": "src/relweblearner/bench/multiweb.py",
+          "byte_size": 19625,
+          "raw_sha256": "bbf6e3c1d1cbdde29fcbeffb6f5a0098bfc7e80b69cc8bb1baad72d4763b4c73"
+        },
+        {
+          "path": "src/relweblearner/bench/multiweb_graded.py",
+          "byte_size": 19200,
+          "raw_sha256": "037a647a490028b60e9c31eee2e9505c12079a841e9fc098c37880037f70a93f"
+        },
+        {
+          "path": "src/relweblearner/bench/multiweb_graphlog.py",
+          "byte_size": 19387,
+          "raw_sha256": "7dd6074319d8e430a81172c0e92caf23b58ef045e8bc83e5158537ce65edc005"
+        },
+        {
+          "path": "src/relweblearner/bench/rule20_diag.py",
+          "byte_size": 28128,
+          "raw_sha256": "0f0c6a2146e99a7cfe1a859e68371288553b7ff3adf12df9e5af0ffe084014cb"
+        },
+        {
+          "path": "src/relweblearner/bench/rule27_diag.py",
+          "byte_size": 27429,
+          "raw_sha256": "b079fa8f4b067f922c6fe4f63a59a4b825317a46b1ba87f24341d1e90a7c73f9"
+        },
+        {
+          "path": "uv.lock",
+          "byte_size": 331361,
+          "raw_sha256": "1cf36f69b7014a320b1248cd1541406a91a8f96fb5cfd2d3b716dc19c63670ce"
+        }
+      ]
+    },
+    "baseline_specs": {
+      "schema": "baseline-spec-files/v1",
+      "id": "sha256:b7ba45e02f27b4361fdf154cdaa1e985a883d36c9977c2869a9d7121938fc22d",
+      "files": [
+        {
+          "path": "docs/graded-ensemble-plan.md",
+          "byte_size": 6987,
+          "raw_sha256": "6592897ac722d24866787394dd2c93aef7de4530b978427ab168daf216794aff"
+        },
+        {
+          "path": "docs/multiweb-graphlog-plan.md",
+          "byte_size": 9083,
+          "raw_sha256": "5db559dbbafeae132f9588a2b1d82a832de023b12ab2a0fbeb29e535aa0c59b6"
+        },
+        {
+          "path": "docs/rule20-diagnosis-plan.md",
+          "byte_size": 12347,
+          "raw_sha256": "0c96f6d869bbd4543219230823e7a14752aaf309991c288a085b43700be3a880"
+        },
+        {
+          "path": "docs/rule27-diagnosis-plan.md",
+          "byte_size": 10450,
+          "raw_sha256": "b55285ada1fade3f050f2de964a8a84e922e9b5c6d1983290fbd8635b31ccdec"
+        }
+      ]
+    },
+    "graphlog_heldout_reference": {
+      "schema": "historical-reference/v1",
+      "id": "sha256:08c61e143f161ca4e1d875d745282c3f39a17c98b4c40a32cc2f51e64f0fa027",
+      "files": [
+        {
+          "path": "results/graphlog-heldout/results.json",
+          "byte_size": 52526,
+          "raw_sha256": "e1b9d968dd232fd4ea0d8e98b557b4ad10b34f08aae90877c30e7a5b3fa38ad5"
+        }
+      ]
+    },
+    "data": {
+      "schema": "graphlog-data-files/v1",
+      "id": "sha256:97aa41e5d5b7ab3abdbd5a5a2231aff01b0cca2d8e4361ea0f296775fa31d045",
+      "files": [
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_1/rules_1.json",
+          "byte_size": 480,
+          "raw_sha256": "5bde20b1cf445352ac0e3d707db5c19587e8d3ec46e367017e98e58844c89442"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_1/test.jsonl",
+          "byte_size": 1617222,
+          "raw_sha256": "a4a5c6aac518ca1e53dc2933947b9c30d70224c74961ff38c0fdfc05407332ad"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_1/train.jsonl",
+          "byte_size": 8020291,
+          "raw_sha256": "a11740a2c3ca115f5eff195381d96f1fb9673f2ee4625204a4d6d7b40d2b9e66"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_10/rules_10.json",
+          "byte_size": 480,
+          "raw_sha256": "4f7b49574f7f8667beb10e165d75290bc28ca870ba7b0bf5b0fd3f38c45e8ff5"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_10/test.jsonl",
+          "byte_size": 1655990,
+          "raw_sha256": "8bc739dfa71a20dcb25f6add4a9f6020560aa052cf402e54566ee538ce6590f6"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_10/train.jsonl",
+          "byte_size": 8101718,
+          "raw_sha256": "247d22c7d3e25100757ce377d46c42ccd514e448b0998518f1952fa2cc4fd78f"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_11/rules_11.json",
+          "byte_size": 480,
+          "raw_sha256": "5d30b3856ab57822be926ad8a80226ecc655db8ac2c9bcbfb08b3d56035f7a8a"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_11/test.jsonl",
+          "byte_size": 1641467,
+          "raw_sha256": "8338b02b27b3a5c80b821487a6ed951997818b3a48c404e7a04d20b9fbc10b9c"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_11/train.jsonl",
+          "byte_size": 8038722,
+          "raw_sha256": "c32020f7c2f1686bbc0e8eb72f4fcf6ffd7dd3c177e7bff51fd135bec1946c7f"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_12/rules_12.json",
+          "byte_size": 480,
+          "raw_sha256": "b312ecd7f6c7cccf5e36bf0a703ce67a33d6730cb785b6f85f927c5c340d1267"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_12/test.jsonl",
+          "byte_size": 1616460,
+          "raw_sha256": "b46432216e1b84d274da47a7263516604f881fcb60903efa013f6071be955498"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_12/train.jsonl",
+          "byte_size": 8261011,
+          "raw_sha256": "56d30fa580031933391885707e1b7b35061e379a13f05d8ede9186840048d6c4"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_13/rules_13.json",
+          "byte_size": 480,
+          "raw_sha256": "5cc666377e3dd1aab4e91774539dfe29cb635139a33f1ec6dc147e55ca706848"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_13/test.jsonl",
+          "byte_size": 1628270,
+          "raw_sha256": "1f8de7a5d8ccd4a671b9e37781fb620979da3612ad1ba0b618960ac57a326f25"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_13/train.jsonl",
+          "byte_size": 8218018,
+          "raw_sha256": "4622f8f100863ae5872e8539d9c3ee559a2bbfc25ca3ba2505632a005960bf90"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_14/rules_14.json",
+          "byte_size": 480,
+          "raw_sha256": "23f1a92573257e8d61e6467de9693d388f7c6c36745d49870555b0f6fb4ce43f"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_14/test.jsonl",
+          "byte_size": 1639510,
+          "raw_sha256": "5223a4b72f7885c7778ba92f67bee07f52250de6e48ad18074bfc3910dee371a"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_14/train.jsonl",
+          "byte_size": 8301208,
+          "raw_sha256": "fd79a1a6918f624beaa4901df4caae874d260781e446f0a536fa5ef44e6296ae"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_15/rules_15.json",
+          "byte_size": 480,
+          "raw_sha256": "76730c487579dc01cf2720b041b71168a229dcb435a3bb612e0ac10a2be1cd96"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_15/test.jsonl",
+          "byte_size": 1613979,
+          "raw_sha256": "6cca4f2674852e37cdb797295d20ad9339cd0904fb89bbf59710f3601429e00b"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_15/train.jsonl",
+          "byte_size": 8296062,
+          "raw_sha256": "24893d226e34711ec1150cd5dfd6f92ca5a885c002c9100cd3bc33720996d249"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_16/rules_16.json",
+          "byte_size": 480,
+          "raw_sha256": "3c3826c65fb33fd16d7f35879ce3513c69f48f9d0db7a7cd1cebf07e8b52c14d"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_16/test.jsonl",
+          "byte_size": 1623360,
+          "raw_sha256": "4db81de54a1457df6dccbd048587c5dd2c4f6cf4eaea43d12af8ee3b83382648"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_16/train.jsonl",
+          "byte_size": 8325308,
+          "raw_sha256": "3e0ab4899f89abe5d5905bb21c786b6b3016b43634616a2d6a669e3b15682519"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_17/rules_17.json",
+          "byte_size": 480,
+          "raw_sha256": "990ff1a4ee8a00dbce6fb4290f7706ff24930b8a546feaae468d0924e4a46abe"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_17/test.jsonl",
+          "byte_size": 1697695,
+          "raw_sha256": "de98a57364268ad4681c099e584b30bf13d084ba396ed322c857c15b79fa1606"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_17/train.jsonl",
+          "byte_size": 8151573,
+          "raw_sha256": "4bb0849c6c80c7ec354705a69dcc95321dcb2620d76059ea526cf0f2eae85b85"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_2/rules_2.json",
+          "byte_size": 480,
+          "raw_sha256": "9161bbe31793c46d1943ab2c09d1de4801bb54fe224815f36951086a55f9cc38"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_2/test.jsonl",
+          "byte_size": 1669141,
+          "raw_sha256": "0e18fa1b6c438e9027d43a9c1c0dde98252f46ec3bf92e8bd323722cc9106cd2"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_2/train.jsonl",
+          "byte_size": 7841257,
+          "raw_sha256": "6ed8e5dd59a6bd32a7798d9259bf9c01b6a90222ed79c7bebc47a102b7e0a5cd"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_20/rules_20.json",
+          "byte_size": 480,
+          "raw_sha256": "5beabc93cf27876d7d3d1f8606a491d8c47de5c059e40378bfb23c21c3c5c66a"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_20/test.jsonl",
+          "byte_size": 1517833,
+          "raw_sha256": "80c103ed17e15bb1c028ef0b20d9026843f21aa8ca3d7848c40a5deb57abd80d"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_20/train.jsonl",
+          "byte_size": 7805586,
+          "raw_sha256": "99de9e33ce7e563f4e88b30b5fe39dda33bd4cce008905583ecabc6effde67e6"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_23/rules_23.json",
+          "byte_size": 480,
+          "raw_sha256": "16b4ed5b7f128ffc00b860b33bb3c643e771703b9c21e090873fe01c86dae821"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_23/test.jsonl",
+          "byte_size": 1520619,
+          "raw_sha256": "ad881434afe17d43f155210155d3ebe904dbb192c12af9f501195598cea00513"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_23/train.jsonl",
+          "byte_size": 7682318,
+          "raw_sha256": "ebc1a719310fefed09dcc266204020e3583fb2579e478b738cebfda02ae13a50"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_24/rules_24.json",
+          "byte_size": 480,
+          "raw_sha256": "7647409f81df7ad50e730d2aca9be244f13c469b0e0192b793d65323df380e8a"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_24/test.jsonl",
+          "byte_size": 1504560,
+          "raw_sha256": "62f367a418120ac7daa0cf63004fa446971ef233f5bda87c7efb501d15fd055f"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_24/train.jsonl",
+          "byte_size": 7658196,
+          "raw_sha256": "1cde6cc33214d67d90f81053a39e50cda5481af14434d383d3c01bea4965e5c0"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_25/rules_25.json",
+          "byte_size": 480,
+          "raw_sha256": "ae5bb80679b53ec65f19eb6eb7a629e1203d317fb483f18eb0d3f25d9f417ea0"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_25/test.jsonl",
+          "byte_size": 1527905,
+          "raw_sha256": "ab7cd72ef0f988abc56a4f4e6742881c415538a7aa68f65dcbf8ff5504a3ec97"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_25/train.jsonl",
+          "byte_size": 7625516,
+          "raw_sha256": "e341dbdfa18e8ce88c04d8454578fac2682b2fb2c0db0e4ef5cc7e52715a6e72"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_26/rules_26.json",
+          "byte_size": 480,
+          "raw_sha256": "e1989aa0970652551021cef0cddd0c280edcf2c34851206f394a0e9acda33ec9"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_26/test.jsonl",
+          "byte_size": 1555219,
+          "raw_sha256": "5f1640224838236bab70566187dfa0748657e2bcb1687bcb55fcbf469a4175df"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_26/train.jsonl",
+          "byte_size": 7788703,
+          "raw_sha256": "56539edecb1a63a93fd3403bffb77fa68f8c3fb42eef1f0338c07d803a2c2817"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_27/rules_27.json",
+          "byte_size": 480,
+          "raw_sha256": "517af755aac03d2706c094d011f76887184cd2153d651934c44843053c8c63e7"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_27/test.jsonl",
+          "byte_size": 1529468,
+          "raw_sha256": "86d856aa7327f7c58d058f05bf3c5ceb052516db8bda048ba3afaf3abce38f99"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_27/train.jsonl",
+          "byte_size": 7738044,
+          "raw_sha256": "704f92cb0cfc9d261083158afd0e37049aa197c13fa8d0019d3b75fb8cabf736"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_28/rules_28.json",
+          "byte_size": 480,
+          "raw_sha256": "f09be7e843799265863d758098be6691bd85fa0c0f55673997fb76a73dc6801a"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_28/test.jsonl",
+          "byte_size": 1563808,
+          "raw_sha256": "b55eae0a29d2bfa9bb81494b3134eafb7fc89e197140b82775270e37fec7d3d9"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_28/train.jsonl",
+          "byte_size": 7800917,
+          "raw_sha256": "7ccc89cb3cce3a91f8d6cc0db7495d2ceba96278abfd7cdb70cf18477295ae1c"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_29/rules_29.json",
+          "byte_size": 480,
+          "raw_sha256": "a6d229bcd78b2368c8c0e1fbe43407a1cb08050808fd7308a79a9bf09407eabf"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_29/test.jsonl",
+          "byte_size": 1528784,
+          "raw_sha256": "ca696e518add2c1863c3be4cbc009fe75003e7c177dc27f08d9523a4067c65ed"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_29/train.jsonl",
+          "byte_size": 7787099,
+          "raw_sha256": "7140d34845018151cf53bdb0cedc234c7fb681ad33a0afe557bd17d09f35e056"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_3/rules_3.json",
+          "byte_size": 480,
+          "raw_sha256": "a99dfda6cb20e1bbe6b13df3c79fc8374e80feac37fe4f32870bcfb50c814ddd"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_3/test.jsonl",
+          "byte_size": 1735119,
+          "raw_sha256": "9e973798b63c4f5382438c56deb5499bce9f026effe34954491886981ab6c8ed"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_3/train.jsonl",
+          "byte_size": 8252083,
+          "raw_sha256": "a079966d193c4e6cf8c6e1cf7d287bf38b1077fa0bb4e29231b930556c6c1f62"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_30/rules_30.json",
+          "byte_size": 480,
+          "raw_sha256": "58187369a1c619520501409d0ccdd83ef1b779c4c7071e882ae0ebf9666932ad"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_30/test.jsonl",
+          "byte_size": 1563150,
+          "raw_sha256": "87063cdc1f380809ecdc34b6d7c3f8e6d476fab7357832511812952aef86a4c4"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_30/train.jsonl",
+          "byte_size": 7854223,
+          "raw_sha256": "db1c862ef7ba6aa4943c898e51e0fc1b80dab732537bea4de8237c25b78145bb"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_31/rules_31.json",
+          "byte_size": 480,
+          "raw_sha256": "fa51c6d165bd874e0b761da37cee6785f604f37f14ebf6b19151bb4e172bab10"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_31/test.jsonl",
+          "byte_size": 1553976,
+          "raw_sha256": "853c353f257754a4f2bd9154444b9db4a5691f5118b435dc087b3a3bcedc4c82"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_31/train.jsonl",
+          "byte_size": 7830247,
+          "raw_sha256": "c68b38454caf812e62b750ab1b1518e0fa237bf87c212f180f2f62626d6a7aad"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_32/rules_32.json",
+          "byte_size": 480,
+          "raw_sha256": "f4d2434ddffffd9fa3948d321058ab9900677af0a74b67c1f8b9254027f8a30d"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_32/test.jsonl",
+          "byte_size": 1539263,
+          "raw_sha256": "f5d6bcc623d9cfc2534150ca632799e8c9a1f8d0dc5a1d95dbe52421d6a33df4"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_32/train.jsonl",
+          "byte_size": 7783995,
+          "raw_sha256": "497473e8869dca7add4a57035b67f4b3cf22a486a82cbb4567da9e426547f1c2"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_33/rules_33.json",
+          "byte_size": 480,
+          "raw_sha256": "996137456cde249ff8bf781e0700382e8b09bc5b16ee4dba2333398b98727ce0"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_33/test.jsonl",
+          "byte_size": 1570900,
+          "raw_sha256": "f326317c3da720794f12ce645f5bf03d040576d021cac00d434ea1397f0a4a3f"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_33/train.jsonl",
+          "byte_size": 7696056,
+          "raw_sha256": "5c0a6cadda215171305a598c76d832435155a107a54c11a045d127476e65d07e"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_34/rules_34.json",
+          "byte_size": 480,
+          "raw_sha256": "07342b5edd699cbee3bbc94d86d3d63f9a4ffeda81ce5a5abf642af741bdea0d"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_34/test.jsonl",
+          "byte_size": 1601817,
+          "raw_sha256": "20dc84f0cf58b0a7248a724bcb31e4bca1caa48048536f455220e1c03a5d5957"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_34/train.jsonl",
+          "byte_size": 7822231,
+          "raw_sha256": "465de8f7dcb52114d15fd360d915338ce2303c5d248656b85fac56e6eecf8a05"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_35/rules_35.json",
+          "byte_size": 480,
+          "raw_sha256": "f5a3c11c269fd3c86c222e9bf725174635f8fcc03fa3607661142dcd0dad5319"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_35/test.jsonl",
+          "byte_size": 1564045,
+          "raw_sha256": "3e21ab2b0db652ae4cbbe9a55acf4ca5c928c823bd82a50983410b730067cd0a"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_35/train.jsonl",
+          "byte_size": 7883244,
+          "raw_sha256": "5a27d794d6b3145eaea438bf4b01fb7f32effd175a366208fb621a71247e13bf"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_36/rules_36.json",
+          "byte_size": 480,
+          "raw_sha256": "ecdea5a93abf6a034668d32f6dbd546d393415d9320f02a565f14db85b290fa0"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_36/test.jsonl",
+          "byte_size": 1613024,
+          "raw_sha256": "115135d8574133099dc6dee059e5061b5196be630ebe0c702ed3a8775e312f8a"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_36/train.jsonl",
+          "byte_size": 7898372,
+          "raw_sha256": "747b529ad7157873c9f1b0ae0a78bc90442fa9c3feeac225b26f3c245f128fbe"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_37/rules_37.json",
+          "byte_size": 480,
+          "raw_sha256": "bdf1e3c6a48dff040b593e54ac796ac3a5e56f4924f6dae87ce8ea7fb82af701"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_37/test.jsonl",
+          "byte_size": 1563670,
+          "raw_sha256": "85e9e1083bedb48da696f94c2b75ede2c31c155a9b78cb0720ba80e540739cd7"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_37/train.jsonl",
+          "byte_size": 7981388,
+          "raw_sha256": "e9ccc66aa27a1153b717c84603c19a6386295e3c9d8cdb75077ffaef6f593b33"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_38/rules_38.json",
+          "byte_size": 480,
+          "raw_sha256": "b6865ffdaead795e317257e5cc4862c637c0d20470dfb99c03e9faefc31736f3"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_38/test.jsonl",
+          "byte_size": 1604760,
+          "raw_sha256": "d554bd1326de998850ac726681d03f763eb71169adbeb964607e7465f76c889a"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_38/train.jsonl",
+          "byte_size": 8032478,
+          "raw_sha256": "eada72617c5a1cc4f48c1e100d83fcf327b6d8f497a4c3d889929d9d83a21a01"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_39/rules_39.json",
+          "byte_size": 480,
+          "raw_sha256": "d3d847514e72673a10e1015c618eda73a481a8e11b5da36032fa98e95bda61cd"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_39/test.jsonl",
+          "byte_size": 1612117,
+          "raw_sha256": "1e3a258efbe69ed87e3a7e6e0fa8df60aa15dd2fbbd193afe68b18903c2ef108"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_39/train.jsonl",
+          "byte_size": 8046358,
+          "raw_sha256": "28f98f98ca348a86c4577f68bacd8ffc868d35b72a3e7ce27ba2a55b57a64676"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_4/rules_4.json",
+          "byte_size": 480,
+          "raw_sha256": "06c9dea3f40710b33d7237666eefbb0962ad3c36682a7c0a44ba68ee28089b2c"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_4/test.jsonl",
+          "byte_size": 1607340,
+          "raw_sha256": "7a949cc63c2895f3fdccdd941ae221b1e4105ce5a75071ccf5dbabcdb7b11902"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_4/train.jsonl",
+          "byte_size": 8127861,
+          "raw_sha256": "49a2861c676ce3ceb0730bddd720211becae43ea9e41e52959e71115ec6faa9a"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_40/rules_40.json",
+          "byte_size": 480,
+          "raw_sha256": "18c10118ca18b8833e08b4109454002a4cb0a3407bbb89ba3662b59ff1b959e3"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_40/test.jsonl",
+          "byte_size": 1597609,
+          "raw_sha256": "4cda0756f552beb91e79bff66f92af1c853a2613b4d3019af9c1bb06d82f5e8a"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_40/train.jsonl",
+          "byte_size": 7959468,
+          "raw_sha256": "0d438f89a144c807883dd0ccdebec7e43f1326681287a7b858d8813150d23aaa"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_41/rules_41.json",
+          "byte_size": 480,
+          "raw_sha256": "1b9e63bd3c7b73b9ce79e4d1a92edef9f21a74be5e1aeb9e2b2d29b84d20becb"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_41/test.jsonl",
+          "byte_size": 1651999,
+          "raw_sha256": "d1509b0814e3a3612f1f241d0762a0594380acc2f11e5a87e0a10d7b803015a7"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_41/train.jsonl",
+          "byte_size": 8221890,
+          "raw_sha256": "77406c607f131a79dde404d44e60f73591b4506247a6ae9c08b3bb96aa14d9e4"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_42/rules_42.json",
+          "byte_size": 480,
+          "raw_sha256": "f98ae8f091cb975e36cd38571f277485256f9d0394c3c264be2d3466437cd477"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_42/test.jsonl",
+          "byte_size": 1637656,
+          "raw_sha256": "82a1627a910add05de9ec5fa6ea5da5401cc6e594977cc7176671e6a4f4d64a0"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_42/train.jsonl",
+          "byte_size": 8312063,
+          "raw_sha256": "564034120c7f1d9f3c86c37ba390ef1ed1b9756e7bcddcf5c1ba8f718ea6193b"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_45/rules_45.json",
+          "byte_size": 480,
+          "raw_sha256": "60be8a8cacf260fe80ccf40779259c0f1a38574d84b7c79a28cc909304e6502b"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_45/test.jsonl",
+          "byte_size": 1661702,
+          "raw_sha256": "31ca80448ba8fdc8e1478a0f19c70d431f936acbec4ed984b5a6d4120fb45860"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_45/train.jsonl",
+          "byte_size": 8119289,
+          "raw_sha256": "6c4db68b29c01aceb6ef70b7e7cb8706b112c9fafd22b6fb67862ac311672f6b"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_46/rules_46.json",
+          "byte_size": 480,
+          "raw_sha256": "c0b06a3e237f3a0b51ac730bbfe6d3448cfb3391e781f06f84fa12c5c9448ca0"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_46/test.jsonl",
+          "byte_size": 1581568,
+          "raw_sha256": "72e6919fc13d6aab33ed313576fd34defbb228b6232e873547cae9163b3b5531"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_46/train.jsonl",
+          "byte_size": 8181436,
+          "raw_sha256": "069b0ee5ea6254ade45f6cd86d038f1f857e0f54fb96c87f503ea702ea97149e"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_47/rules_47.json",
+          "byte_size": 480,
+          "raw_sha256": "7713aed2ac9b42e0ef957459ff5a76967a7c84ce79b48976e18815b51ace995a"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_47/test.jsonl",
+          "byte_size": 1660452,
+          "raw_sha256": "cae3614857e85730e8481dea19ddb57db15df1f13cf1596efb0b6f8e34cb8393"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_47/train.jsonl",
+          "byte_size": 8206070,
+          "raw_sha256": "c0abbe0f36663766f3da9d9a6f82ca8ef040f7ab8178355b36c3e017a07dcc98"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_48/rules_48.json",
+          "byte_size": 480,
+          "raw_sha256": "3ba28449f9043086fc0beaafff39cd7a8fef2a346f5c5716f58b5137104e2653"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_48/test.jsonl",
+          "byte_size": 1627029,
+          "raw_sha256": "cc8506b28531fe1043ff1c2bf7319a09586ff36042409915e093fbe211168101"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_48/train.jsonl",
+          "byte_size": 8117841,
+          "raw_sha256": "5640569397b3f1d76dfbe9f0aa97d24e518f1ebeeaeca439b130db8815f8735d"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_49/rules_49.json",
+          "byte_size": 480,
+          "raw_sha256": "923a3aa4164cc49d0ced7d02d2e26293ca925d4928b1ca467871452cf7320eca"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_49/test.jsonl",
+          "byte_size": 1605461,
+          "raw_sha256": "abb518f5542aa2e8da8339f4f7621852472ae6ec08a4045f97242f9a1a5a6704"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_49/train.jsonl",
+          "byte_size": 8043870,
+          "raw_sha256": "e8e54653f09d151bc9b72e26732d7c6ceadd99564e9ab08d17a103e41f640500"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_5/rules_5.json",
+          "byte_size": 480,
+          "raw_sha256": "cff6b2036df7d6c0f1b3effd16575c385f27ac04534199a30c566d212cfd876e"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_5/test.jsonl",
+          "byte_size": 1554946,
+          "raw_sha256": "89a742a1670f24755f64a602fe0ca67e6745f9caf0f4e8a762b5759746953d2b"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_5/train.jsonl",
+          "byte_size": 8211484,
+          "raw_sha256": "4613add6bb07f052f5f568f380d5e4baf2109212b47c70edc2131052ac4be5f4"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_50/rules_50.json",
+          "byte_size": 480,
+          "raw_sha256": "d4199c3e33a2b1faf7ad386adac0f562428cb43f932bb991a852eccc8f1e40d7"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_50/test.jsonl",
+          "byte_size": 1703421,
+          "raw_sha256": "4c636cae1d7240c4dfd9e58c55434410a187401f2fd7fa24e3b7010fc1bad22c"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_50/train.jsonl",
+          "byte_size": 7947310,
+          "raw_sha256": "2af9d686345a005fa71af23f783c45d8c814559b8eac032ac55855aead511212"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_6/rules_6.json",
+          "byte_size": 480,
+          "raw_sha256": "178859b98b16a259695aaf4c6c53cdcc6f821d9456fde6cb2e2ec830598a80cb"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_6/test.jsonl",
+          "byte_size": 1663713,
+          "raw_sha256": "080e19b90618a5477ce386c4f9d516f1572e44a856e824abe9d58a73d385f385"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_6/train.jsonl",
+          "byte_size": 8156608,
+          "raw_sha256": "2d6637e8c127cfd7fcaab7833cd58927a3b42e55bfae62a8613f82eba77c5068"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_7/rules_7.json",
+          "byte_size": 480,
+          "raw_sha256": "283f474cf23518224a6fc20c5cddca98a6c6d0f777f9d861f68a9cfada28a0e0"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_7/test.jsonl",
+          "byte_size": 1655361,
+          "raw_sha256": "f747c76ade9e7a74fb81138b024b8b2b875495da7093957d191860018fbececd"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_7/train.jsonl",
+          "byte_size": 8139247,
+          "raw_sha256": "7abbabc8b9eb03756cf81dfd52c21e7fae9cc1f96029c9162c6a185e709403fd"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_8/rules_8.json",
+          "byte_size": 480,
+          "raw_sha256": "a1013959341897882582474ce8ffe21f968e63f451f72736750b51f643948d47"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_8/test.jsonl",
+          "byte_size": 1657726,
+          "raw_sha256": "b75eec3157e88798712d74d66f18fef4a932ccdb9409d22a35cb1c4d1909dba0"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_8/train.jsonl",
+          "byte_size": 8136281,
+          "raw_sha256": "62b780f9fd026f02114a3be50d000b552a97b121ceaa3659e644aade04faae05"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_9/rules_9.json",
+          "byte_size": 480,
+          "raw_sha256": "76684d5ba9cf3f74c10176bfb393755006f1081fa892975e23e2aee4c450f9f2"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_9/test.jsonl",
+          "byte_size": 1658353,
+          "raw_sha256": "8edf323c0de94f6d8b1f10288d26ec892527409d82f175c213f81fdc02f4fdb3"
+        },
+        {
+          "path": "data/graphlog/graphlog_v1.1/train/rule_9/train.jsonl",
+          "byte_size": 8264702,
+          "raw_sha256": "fb088a0171d596e19d1ca9a447b588f763dc50f602fdd8e430465cb163c4ce0e"
+        }
+      ],
+      "dataset_version": "graphlog/v1.1",
+      "declared_source_zip_md5": "5b6762c8e343659eaf96547787c596d4",
+      "worlds": [
+        "rule_1",
+        "rule_2",
+        "rule_3",
+        "rule_4",
+        "rule_5",
+        "rule_6",
+        "rule_7",
+        "rule_8",
+        "rule_9",
+        "rule_10",
+        "rule_11",
+        "rule_12",
+        "rule_13",
+        "rule_14",
+        "rule_15",
+        "rule_16",
+        "rule_17",
+        "rule_20",
+        "rule_23",
+        "rule_24",
+        "rule_25",
+        "rule_26",
+        "rule_27",
+        "rule_28",
+        "rule_29",
+        "rule_30",
+        "rule_31",
+        "rule_32",
+        "rule_33",
+        "rule_34",
+        "rule_35",
+        "rule_36",
+        "rule_37",
+        "rule_38",
+        "rule_39",
+        "rule_40",
+        "rule_41",
+        "rule_42",
+        "rule_45",
+        "rule_46",
+        "rule_47",
+        "rule_48",
+        "rule_49",
+        "rule_50"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "artifact_id": "multiweb_graphlog",
+      "path": "results/multiweb-graphlog/results.json",
+      "byte_size": 26796,
+      "raw_sha256": "f107659f8fdf2cdad39b8c51853182d30135eb96ec8f10a48893290042a9e4f1",
+      "schema": "multiweb-graphlog/results-v1",
+      "semantic_hash_version": "canonical-json-exact-pointer-exclusions/v1",
+      "semantic_exclusions": [
+        "/summary/elapsed_s"
+      ],
+      "semantic_sha256": "feed5d8ea7f2a5237e52865eb6a1a9994b902065865d01f6c59d3b7cc880472b",
+      "reproduction_command": ".venv/bin/python -m relweblearner.bench.multiweb_graphlog --worlds rule_1,rule_2,rule_3,rule_4,rule_5,rule_6,rule_7,rule_8,rule_9,rule_10,rule_11,rule_12,rule_13,rule_14,rule_15,rule_16,rule_17,rule_20,rule_23,rule_24,rule_25,rule_26,rule_27,rule_28,rule_29,rule_30,rule_31,rule_32,rule_33,rule_34,rule_35,rule_36,rule_37,rule_38,rule_39,rule_40,rule_41,rule_42,rule_45,rule_46,rule_47,rule_48,rule_49,rule_50 --n-train 150 --seed 0 --out results/multiweb-graphlog",
+      "dependencies": [
+        "code",
+        "data",
+        "baseline_specs",
+        "graphlog_heldout_reference"
+      ],
+      "expected_fields": {
+        "/summary": {
+          "worlds": 44,
+          "mean_view_alone": 0.3886590909090909,
+          "mean_ensemble": 0.5143636363636364,
+          "mean_gold_pooled": 0.6478409090909091,
+          "mean_transport_prior": 0.13365909090909092,
+          "P-K1_ext_precision": 0.9226100288600289,
+          "P-K1_coverage": 0.7225275337407691,
+          "wrong_orphan_total": 17,
+          "wrong_real_total": 0,
+          "P-K2_ensemble_over_gold": 0.7939659708823014,
+          "P-T1_ensemble_minus_transport": 0.38070454545454546,
+          "P-T2_gap_closure": 0.5641390904757418,
+          "P-T2_worlds_with_gap": 41,
+          "s0_precision": 0.8683712121212122,
+          "s0_mapped_mean": 3.977272727272727
+        }
+      },
+      "collections": [
+        {
+          "pointer": "/worlds",
+          "kind": "list",
+          "count": 44,
+          "required_fields": [
+            "world",
+            "seed",
+            "accuracy",
+            "alignment",
+            "s0",
+            "rules",
+            "n_labels",
+            "prior"
+          ],
+          "canonical_sha256": "1b260ac1da71864dca18ccba6314a6c8a0d67f2c44cbe530a8fcd23ddcb523ff",
+          "identity_field": "world",
+          "identity_sha256": "5ef34a964c82cf03472ca6891ff089ce2dabd8b1eb9158d39694a891d407968d"
+        }
+      ],
+      "producing_ids": {
+        "code": "sha256:c49e84a7489221ca1cb35c44e6b2cb9c07a2807e4dac72a86b91f037be4d24f3",
+        "data": "sha256:97aa41e5d5b7ab3abdbd5a5a2231aff01b0cca2d8e4361ea0f296775fa31d045",
+        "baseline_specs": "sha256:b7ba45e02f27b4361fdf154cdaa1e985a883d36c9977c2869a9d7121938fc22d",
+        "graphlog_heldout_reference": "sha256:08c61e143f161ca4e1d875d745282c3f39a17c98b4c40a32cc2f51e64f0fa027"
+      }
+    },
+    {
+      "artifact_id": "graded_graphlog",
+      "path": "results/graded-ensemble/graphlog.json",
+      "byte_size": 10091,
+      "raw_sha256": "45cf3f2cdcf834014389d21d651db6fb772fc76b7e309701a5bd5115f48ea622",
+      "schema": "graded-ensemble/graphlog-v1",
+      "semantic_hash_version": "canonical-json-exact-pointer-exclusions/v1",
+      "semantic_exclusions": [
+        "/summary/elapsed_s"
+      ],
+      "semantic_sha256": "b50dae2bac8ee1c7a874a2c7a3b38cd7b98a20d24d93aa58417cf720836ff8d2",
+      "reproduction_command": ".venv/bin/python -m relweblearner.bench.multiweb_graded --arm graphlog --out results/graded-ensemble",
+      "dependencies": [
+        "code",
+        "data",
+        "baseline_specs",
+        "artifact:multiweb_graphlog"
+      ],
+      "expected_fields": {
+        "/summary": {
+          "arm": "graphlog",
+          "worlds": 44,
+          "mean_graded": 0.5358636363636363,
+          "mean_discrete": 0.5143636363636364,
+          "mean_gold_pooled": 0.6478409090909091,
+          "P-G1_graded_over_gold": 0.8271531310296438,
+          "P-G2_worlds_improved": 0.5909090909090909,
+          "P-G2_mean_improvement": 0.021499999999999964,
+          "P-G3_commit_precision": 0.8069895382395382,
+          "commit_wrong_orphan": 40,
+          "commit_wrong_real": 2
+        }
+      },
+      "collections": [
+        {
+          "pointer": "/worlds",
+          "kind": "list",
+          "count": 44,
+          "required_fields": [
+            "world",
+            "graded",
+            "commits",
+            "discrete",
+            "view_alone",
+            "gold"
+          ],
+          "canonical_sha256": "7401f07b82898bc94303acac12e7cbe8d1849d019e21f4f949a2bccec6ea1997",
+          "identity_field": "world",
+          "identity_sha256": "5ef34a964c82cf03472ca6891ff089ce2dabd8b1eb9158d39694a891d407968d"
+        }
+      ],
+      "producing_ids": {
+        "code": "sha256:c49e84a7489221ca1cb35c44e6b2cb9c07a2807e4dac72a86b91f037be4d24f3",
+        "data": "sha256:97aa41e5d5b7ab3abdbd5a5a2231aff01b0cca2d8e4361ea0f296775fa31d045",
+        "baseline_specs": "sha256:b7ba45e02f27b4361fdf154cdaa1e985a883d36c9977c2869a9d7121938fc22d",
+        "artifact:multiweb_graphlog": "sha256:feed5d8ea7f2a5237e52865eb6a1a9994b902065865d01f6c59d3b7cc880472b"
+      }
+    },
+    {
+      "artifact_id": "rule20_factorial",
+      "path": "results/rule20-diagnosis/factorial.json",
+      "byte_size": 38248,
+      "raw_sha256": "78049485961f4cc914e25511760273149ff8affc4348a396e9ce8305fb906728",
+      "schema": "rule20-diagnosis/factorial-v1",
+      "semantic_hash_version": "canonical-json-exact-pointer-exclusions/v1",
+      "semantic_exclusions": [],
+      "semantic_sha256": "f29ba0896832ebb6be5140c7103142cf3c1434bf5eebd5abc11a3d530d04a706",
+      "reproduction_command": ".venv/bin/python -m relweblearner.bench.rule20_diag --exactify --out results/rule20-diagnosis",
+      "dependencies": [
+        "code",
+        "data",
+        "baseline_specs",
+        "artifact:multiweb_graphlog",
+        "artifact:graded_graphlog"
+      ],
+      "expected_fields": {
+        "/factors": {
+          "R": "rules translated (rules_ens)",
+          "D": "rendering translated (inv_map seam)",
+          "S": "similarity exact-identity",
+          "C": "2 wrong hardened commits removed"
+        },
+        "/cells/none/acc": 0.317,
+        "/cells/R/acc": 0.371,
+        "/cells/D/acc": 0.317,
+        "/cells/C/acc": 0.317,
+        "/cells/C+R/acc": 0.669,
+        "/cells/C+D+R/acc": 0.669,
+        "/cells/C+R+S/acc": 0.659,
+        "/two_by_two": {
+          "commits_marginal_at_frozen": 0.0,
+          "commits_marginal_after_exactification": 0.267,
+          "exactification_marginal_with_commits": 0.075,
+          "exactification_marginal_without_commits": 0.342,
+          "interaction": 0.267
+        },
+        "/beam_recheck": {
+          "frozen+no_beam": {
+            "acc": 0.317,
+            "identical_to_beam_on": 997
+          },
+          "exactified+no_beam": {
+            "acc": 0.659,
+            "identical_to_beam_on": 1000
+          }
+        }
+      },
+      "collections": [
+        {
+          "pointer": "/cells",
+          "kind": "mapping",
+          "count": 16,
+          "required_fields": [
+            "acc",
+            "heals",
+            "breaks",
+            "healed_idx",
+            "broken_idx"
+          ],
+          "canonical_sha256": "320a902385363a03f6c3511dffe4aa9e66b794943f575460741c509e2be1121a"
+        }
+      ],
+      "producing_ids": {
+        "code": "sha256:c49e84a7489221ca1cb35c44e6b2cb9c07a2807e4dac72a86b91f037be4d24f3",
+        "data": "sha256:97aa41e5d5b7ab3abdbd5a5a2231aff01b0cca2d8e4361ea0f296775fa31d045",
+        "baseline_specs": "sha256:b7ba45e02f27b4361fdf154cdaa1e985a883d36c9977c2869a9d7121938fc22d",
+        "artifact:multiweb_graphlog": "sha256:feed5d8ea7f2a5237e52865eb6a1a9994b902065865d01f6c59d3b7cc880472b",
+        "artifact:graded_graphlog": "sha256:b50dae2bac8ee1c7a874a2c7a3b38cd7b98a20d24d93aa58417cf720836ff8d2"
+      }
+    },
+    {
+      "artifact_id": "rule20_episode_sets",
+      "path": "results/rule20-diagnosis/episode-sets.json",
+      "byte_size": 6021,
+      "raw_sha256": "49ec83aac26aa7773d44a967fe243576f7767d22225b003a3d3bb72cf8c9a668",
+      "schema": "rule20-diagnosis/episode-sets-v1",
+      "semantic_hash_version": "canonical-json-exact-pointer-exclusions/v1",
+      "semantic_exclusions": [],
+      "semantic_sha256": "f182a960961a55c423bff1426527af27b44aae5a1642f489e7c443aad507520e",
+      "reproduction_command": ".venv/bin/python -m relweblearner.bench.rule20_diag --exactify --out results/rule20-diagnosis",
+      "dependencies": [
+        "code",
+        "data",
+        "baseline_specs",
+        "artifact:multiweb_graphlog",
+        "artifact:graded_graphlog"
+      ],
+      "expected_fields": {
+        "/p_commits/n_wrong_commits": 2,
+        "/p_commits/minus_wrong_commits/acc": 0.317,
+        "/p_commits/anchors_only/acc": 0.318,
+        "/p_ident/acc": 0.358,
+        "/p_agg/max/acc": 0.276,
+        "/p_agg/count/acc": 0.183
+      },
+      "collections": [],
+      "producing_ids": {
+        "code": "sha256:c49e84a7489221ca1cb35c44e6b2cb9c07a2807e4dac72a86b91f037be4d24f3",
+        "data": "sha256:97aa41e5d5b7ab3abdbd5a5a2231aff01b0cca2d8e4361ea0f296775fa31d045",
+        "baseline_specs": "sha256:b7ba45e02f27b4361fdf154cdaa1e985a883d36c9977c2869a9d7121938fc22d",
+        "artifact:multiweb_graphlog": "sha256:feed5d8ea7f2a5237e52865eb6a1a9994b902065865d01f6c59d3b7cc880472b",
+        "artifact:graded_graphlog": "sha256:b50dae2bac8ee1c7a874a2c7a3b38cd7b98a20d24d93aa58417cf720836ff8d2"
+      }
+    },
+    {
+      "artifact_id": "rule27_diagnosis",
+      "path": "results/rule27-diagnosis/results.json",
+      "byte_size": 217963,
+      "raw_sha256": "7757597f0ebe1f98e915b1c153e49d385815b19dc2443994c15b742321e6bff4",
+      "schema": "rule27-diagnosis/results-v1",
+      "semantic_hash_version": "canonical-json-exact-pointer-exclusions/v1",
+      "semantic_exclusions": [
+        "/elapsed_s"
+      ],
+      "semantic_sha256": "9a1c1a1b2195994a688d5ff36216bcbe4284313b41dd28bc60f8eb286f3f9afa",
+      "reproduction_command": ".venv/bin/python -m relweblearner.bench.rule27_diag --seeds-robust 4 --out results/rule27-diagnosis",
+      "dependencies": [
+        "code",
+        "data",
+        "baseline_specs",
+        "artifact:multiweb_graphlog",
+        "artifact:graded_graphlog"
+      ],
+      "expected_fields": {
+        "/world": "rule_27",
+        "/consistency_gate": {
+          "frozen": {
+            "view-alone": 0.133,
+            "ensemble": 0.163,
+            "gold-pooled": 0.828
+          },
+          "recomputed": {
+            "view-alone": 0.133,
+            "ensemble": 0.163,
+            "gold-pooled": 0.828
+          },
+          "pass": true
+        },
+        "/attribution/n_test": 1000,
+        "/attribution/cells": {
+          "wrong-argmax-other": 333,
+          "cyk-dead-split": 315,
+          "cyk-dead-missing-rule": 71,
+          "correct": 163,
+          "cyk-dead-other": 29,
+          "wrong-argmax-orphan-tainted": 89
+        },
+        "/repair_curve": [
+          {
+            "repaired": null,
+            "acc": 0.163
+          },
+          {
+            "repaired": "R_9_-",
+            "evicted": [],
+            "acc": 0.496
+          },
+          {
+            "repaired": "R_1_-",
+            "evicted": [],
+            "acc": 0.496
+          }
+        ],
+        "/unmerge": {
+          "orphan_pairs": [
+            [
+              "a6",
+              "b1",
+              "R_4_+",
+              "R_7_+"
+            ]
+          ],
+          "acc_base": 0.163,
+          "acc_unmerged": 0.169
+        },
+        "/rule_patch/acc_base": 0.163,
+        "/rule_patch/acc_patched": 0.503,
+        "/rule_patch/acc_gold": 0.828,
+        "/graded/graded_acc": 0.163,
+        "/graded/graded_commits_n": 5
+      },
+      "collections": [
+        {
+          "pointer": "/attribution/episodes",
+          "kind": "list",
+          "count": 1000,
+          "required_fields": [
+            "i",
+            "target",
+            "cause"
+          ],
+          "canonical_sha256": "b9de0002fec71a98fa2227878ee3850bb4a7b8d0453558a66063867721827344",
+          "identity_field": "i",
+          "identity_sha256": "b1c32e2197c96b83093960b247b9a8eac730c9527f14fa7691c116b77d679a63"
+        }
+      ],
+      "producing_ids": {
+        "code": "sha256:c49e84a7489221ca1cb35c44e6b2cb9c07a2807e4dac72a86b91f037be4d24f3",
+        "data": "sha256:97aa41e5d5b7ab3abdbd5a5a2231aff01b0cca2d8e4361ea0f296775fa31d045",
+        "baseline_specs": "sha256:b7ba45e02f27b4361fdf154cdaa1e985a883d36c9977c2869a9d7121938fc22d",
+        "artifact:multiweb_graphlog": "sha256:feed5d8ea7f2a5237e52865eb6a1a9994b902065865d01f6c59d3b7cc880472b",
+        "artifact:graded_graphlog": "sha256:b50dae2bac8ee1c7a874a2c7a3b38cd7b98a20d24d93aa58417cf720836ff8d2"
+      }
+    },
+    {
+      "artifact_id": "rule27_graded_causal",
+      "path": "results/rule27-diagnosis/graded-causal.json",
+      "byte_size": 268,
+      "raw_sha256": "7686920302256816a4aba876e46cdfe045e3a2c5fcf26a28194e333c9d9000c7",
+      "schema": "rule27-diagnosis/graded-causal-v1",
+      "semantic_hash_version": "canonical-json-exact-pointer-exclusions/v1",
+      "semantic_exclusions": [],
+      "semantic_sha256": "bf929b4ebd01558c3f429c83a8f691cb83438ad31adc80488fca5cd83aa2834e",
+      "reproduction_command": ".venv/bin/python -m relweblearner.bench.rule27_diag --graded-causal --out results/rule27-diagnosis",
+      "dependencies": [
+        "code",
+        "data",
+        "baseline_specs",
+        "artifact:multiweb_graphlog",
+        "artifact:graded_graphlog",
+        "artifact:rule27_diagnosis"
+      ],
+      "expected_fields": {
+        "": {
+          "acc_frozen_reproduced": 0.163,
+          "acc_commits_exact": 0.168,
+          "acc_rules_translated": 0.166,
+          "episodes_total": 1000,
+          "episodes_empty_reduction": 0,
+          "episodes_empty_with_sim_kill": 0,
+          "bridged_applications": 1591644,
+          "sim_killed_applications": 1147495
+        }
+      },
+      "collections": [],
+      "producing_ids": {
+        "code": "sha256:c49e84a7489221ca1cb35c44e6b2cb9c07a2807e4dac72a86b91f037be4d24f3",
+        "data": "sha256:97aa41e5d5b7ab3abdbd5a5a2231aff01b0cca2d8e4361ea0f296775fa31d045",
+        "baseline_specs": "sha256:b7ba45e02f27b4361fdf154cdaa1e985a883d36c9977c2869a9d7121938fc22d",
+        "artifact:multiweb_graphlog": "sha256:feed5d8ea7f2a5237e52865eb6a1a9994b902065865d01f6c59d3b7cc880472b",
+        "artifact:graded_graphlog": "sha256:b50dae2bac8ee1c7a874a2c7a3b38cd7b98a20d24d93aa58417cf720836ff8d2",
+        "artifact:rule27_diagnosis": "sha256:9a1c1a1b2195994a688d5ff36216bcbe4284313b41dd28bc60f8eb286f3f9afa"
+      }
+    }
+  ],
+  "manifest_id": "sha256:f8f0c210e22cfac075a1f516a026c3e431d617abed39ca85df3ee043bd52e7e0"
+}

@@ -95,6 +95,19 @@ candidate local states at `S`:
   correspondences at overlap charts, subject to the same support condition;
 - the empty candidate.
 
+An application may declare a stricter finite **completion convention** on
+this supported family, provided the convention is fixed and serialized as
+part of the theorem instance. The variable domain `D_S^W(A)` below then uses
+the selected candidates. For example, the GraphLog T5-T7 instance orders
+supported partial overlap maps by inclusion and retains only maximal legal
+maps containing every anchor. Operationally its non-anchored relation
+variables have an explicit `UNMAPPED` value and a completed assignment is
+kept exactly when no legal supported identity pair can be added without
+changing an existing pair. This is not ambient totalization: unsupported
+Cartesian-product pairs never enter a domain, and anchored variables cannot
+be unmapped. Without a declared completion convention, `Cand_M^W(A; S)` has
+the inclusive meaning stated above.
+
 Two presentations with different external sample objects but the same image
 subobject or same span image inside `M(S)`, with the same provenance labels,
 are one candidate. T1 therefore counts model-side raw states, not syntactic
@@ -109,7 +122,8 @@ particular, a candidate cannot be enlarged by an atom that has no provenance
 path from `A`.
 
 A raw scoped extension of `A` over `W` is a family `(x_S)_{S in W}` with one
-candidate local state for every cover object `S` in `W`, such that:
+candidate local state (after any declared completion convention) for every
+cover object `S` in `W`, such that:
 
 - each `x_S` lies in `Cand_M^W(A; S)`;
 - every observed `s_alpha` at chart `S_alpha` is contained in `x_{S_alpha}`

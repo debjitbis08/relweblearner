@@ -65,6 +65,20 @@ a provenance-supported partial bijection. A legal state must:
 4. preserve view, incidence, body order, and provenance labels; and
 5. satisfy admitted P2 overlap conflicts before extension counting.
 
+For this GraphLog theorem instance, the word "partial" uses a declared
+completion convention. Every anchored A-token is forced to its anchored
+B-token. Every other A-token reached by the supported candidate closure has
+its provenance-backed B candidates plus an explicit `UNMAPPED` value. Among
+the legal assignments satisfying the five conditions above, extensions are
+the **inclusion-maximal partial bijections**: a solution is discarded when
+another legal solution strictly contains its graph of identity pairs. Thus a
+spurious propagated candidate may remain unmapped when adding it would break
+composition, while an individually legal supported identity cannot be
+omitted merely to manufacture an extra extension. Maximality never repairs an
+anchored conflict because anchors cannot take `UNMAPPED`. This convention is
+serialized as `extension_semantics_version`; changing it defines a different
+theorem instance.
+
 Candidate pairs enter `Prop_M^W` only through an anchor or a named structural
 propagation rule backed by triangles from both views. Ambient Cartesian-product
 pairs are search values, not supported facts, and cannot by themselves create
