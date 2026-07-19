@@ -7,10 +7,8 @@ logic and sends its sealed evaluation capability directly to ``evaluation``.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import io
 import json
-import math
 import shutil
 import tempfile
 import zipfile
@@ -50,12 +48,18 @@ from .model import (
     classify_target,
     triangle_components,
 )
-from .notarization import DEFAULT_MANIFEST, validate_manifest
+from .notarization import (
+    DEFAULT_MANIFEST,
+    _repo_root,
+    _sha256_bytes,
+    validate_manifest,
+)
 from .policy import CommitmentValue, permit
 from .spec import DEFAULT_SPEC, GraphLogCertifiedSpec
 
 
 G5_WORLDS = ("rule_20", "rule_27")
+DEFAULT_OUTPUT_ROOT = Path("results/graphlog-certified")
 RUNNER_VERSION = "graphlog-certified-g5-runner/v1"
 RUN_MANIFEST_SCHEMA = "graphlog-certified-run-manifest/v1"
 ARTIFACT_NAMES = (
@@ -93,13 +97,33 @@ class G5RunResult:
     commitment_counts: tuple[tuple[str, int], ...]
     query_summary: tuple[tuple[str, int | float], ...]
 
+    @classmethod
+    def from_manifest(
+        cls,
+        manifest: dict[str, Any],
+        output: Path,
+        root: Path,
+    ) -> G5RunResult:
+        """Build both cached and fresh results from the persisted summary."""
+        summary = manifest["result_summary"]
+        counts = summary["commitment_counts"]
+        query = summary["query_summary"]
+        return cls(
+            manifest["run_id"], _display_path(output, root), manifest["world"],
+            summary["implementation_passed"], summary["vacuous"],
+            summary["synthetic_nonvacuity_witness"],
+            summary["real_nonanchor_commits"],
+            tuple((key, counts[key]) for key in COMMITMENT_COUNT_ORDER),
+            tuple((key, query[key]) for key in QUERY_SUMMARY_ORDER),
+        )
 
-def _repo_root() -> Path:
-    return Path(__file__).resolve().parents[4]
 
-
-def _sha256(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
+@dataclass(frozen=True, slots=True)
+class _G5RunContext:
+    root: Path
+    output_base: Path
+    baseline_manifest_id: str
+    source_digest: str
 
 
 def _write_canonical_json(path: Path, value: Any) -> None:
@@ -133,7 +157,8 @@ def _source_digest(root: Path) -> str:
         for path in base.glob("*.py")
     ))
     records = tuple(
-        (str(path.relative_to(root)), _sha256(path.read_bytes())) for path in paths
+        (str(path.relative_to(root)), _sha256_bytes(path.read_bytes()))
+        for path in paths
     )
     return canonical_digest(records)
 
@@ -152,7 +177,7 @@ def _array_record(array: np.ndarray) -> dict[str, Any]:
         "shape": list(value.shape),
         "dtype": value.dtype.str,
         "order": "C",
-        "sha256": _sha256(value.tobytes(order="C")),
+        "sha256": _sha256_bytes(value.tobytes(order="C")),
     }
 
 
@@ -322,7 +347,7 @@ def _artifact_record_from_bytes(name: str, data: bytes) -> dict[str, Any]:
     return {
         "name": name,
         "byte_size": len(data),
-        "sha256": _sha256(data),
+        "sha256": _sha256_bytes(data),
     }
 
 
@@ -344,19 +369,23 @@ def _display_path(path: Path, root: Path) -> str:
     return str(path.relative_to(root)) if path.is_relative_to(root) else str(path)
 
 
-def _result_from_manifest(
-    manifest: dict[str, Any], output: Path, root: Path,
-) -> G5RunResult:
-    summary = manifest["result_summary"]
-    counts = summary["commitment_counts"]
-    query = summary["query_summary"]
-    return G5RunResult(
-        manifest["run_id"], _display_path(output, root), manifest["world"],
-        summary["implementation_passed"], summary["vacuous"],
-        summary["synthetic_nonvacuity_witness"],
-        summary["real_nonanchor_commits"],
-        tuple((key, counts[key]) for key in COMMITMENT_COUNT_ORDER),
-        tuple((key, query[key]) for key in QUERY_SUMMARY_ORDER),
+def _prepare_g5_context(
+    root: Path | None,
+    output_root: Path,
+) -> _G5RunContext:
+    resolved_root = root or _repo_root()
+    baseline = json.loads(
+        (resolved_root / DEFAULT_MANIFEST).read_text(encoding="utf-8")
+    )
+    validate_manifest(baseline, resolved_root, verify_data=True)
+    output_base = (
+        output_root if output_root.is_absolute() else resolved_root / output_root
+    )
+    return _G5RunContext(
+        root=resolved_root,
+        output_base=output_base,
+        baseline_manifest_id=baseline["manifest_id"],
+        source_digest=_source_digest(resolved_root),
     )
 
 
@@ -385,17 +414,6 @@ def _validated_cached_manifest(
     except (OSError, TypeError, ValueError, KeyError, json.JSONDecodeError):
         _discard_incomplete_output(output)
         return None
-
-
-def _finite_json(value: Any) -> bool:
-    if isinstance(value, float):
-        return math.isfinite(value)
-    if isinstance(value, dict):
-        return all(isinstance(key, str) and _finite_json(item)
-                   for key, item in value.items())
-    if isinstance(value, list):
-        return all(_finite_json(item) for item in value)
-    return value is None or isinstance(value, (str, bool, int))
 
 
 def validate_run_directory(
@@ -428,8 +446,7 @@ def validate_run_directory(
         if name in JSON_ARTIFACTS:
             documents[name] = json.loads(data)
     for name, document in documents.items():
-        if not _finite_json(document):
-            raise ValueError(f"run artifact {name} contains non-finite data")
+        canonical_data(document)
         if not document.get("schema_version") or not document.get("version_ids"):
             raise ValueError(f"run artifact {name} lacks version metadata")
 
@@ -448,7 +465,8 @@ def validate_run_directory(
         raise ValueError("commitment ledger is empty")
     for line in lines:
         row = json.loads(line)
-        if not _finite_json(row) or not row.get("schema_version"):
+        canonical_data(row)
+        if not row.get("schema_version"):
             raise ValueError("invalid commitment record")
         certificate = row["certificate"]
         if row["certificate_id"] != canonical_digest(certificate):
@@ -458,8 +476,17 @@ def validate_run_directory(
         event = row["event"]
         if event["event_id"] != canonical_digest(event["body"]):
             raise ValueError("commitment event id mismatch")
-    evaluation = documents["evaluation.json"]
-    if len(evaluation["payload"]["episode_rows"]) != 1000:
+    evaluation_payload = documents["evaluation.json"]["payload"]
+    evaluation_summary = dict(evaluation_payload["query_summary"])
+    episode_count = evaluation_summary.get("total")
+    if (
+        not isinstance(episode_count, int)
+        or isinstance(episode_count, bool)
+        or episode_count < 1
+        or len(evaluation_payload["episode_rows"]) != episode_count
+        or manifest["result_summary"]["query_summary"].get("total")
+        != episode_count
+    ):
         raise ValueError("development evaluation lacks per-episode rows")
     if expected_baseline_manifest_id is not None and (
         manifest.get("baseline_manifest_id") != expected_baseline_manifest_id
@@ -479,33 +506,44 @@ def run_world(
     *,
     seed: int = 0,
     root: Path | None = None,
-    output_root: Path = Path("results/graphlog-certified"),
+    output_root: Path = DEFAULT_OUTPUT_ROOT,
     spec: GraphLogCertifiedSpec = DEFAULT_SPEC,
 ) -> G5RunResult:
     """Execute one ordered G5 world and emit its validated artifact directory."""
     if seed != 0:
         raise ValueError("G5 development runs are frozen to seed=0")
-    root = root or _repo_root()
-    baseline = json.loads((root / DEFAULT_MANIFEST).read_text(encoding="utf-8"))
-    validate_manifest(baseline, root, verify_data=True)
-    source_digest = _source_digest(root)
+    context = _prepare_g5_context(root, output_root)
+    return _run_world(world, seed=seed, spec=spec, context=context)
+
+
+def _run_world(
+    world: str,
+    *,
+    seed: int,
+    spec: GraphLogCertifiedSpec,
+    context: _G5RunContext,
+) -> G5RunResult:
+    if seed != 0:
+        raise ValueError("G5 development runs are frozen to seed=0")
+    root = context.root
+    baseline_manifest_id = context.baseline_manifest_id
     descriptor = {
         "runner_version": RUNNER_VERSION,
         "world": world,
         "seed": seed,
         "spec_digest": spec.digest,
-        "source_digest": source_digest,
-        "baseline_manifest_id": baseline["manifest_id"],
+        "source_digest": context.source_digest,
+        "baseline_manifest_id": baseline_manifest_id,
     }
     run_id = canonical_digest(descriptor)
-    output_base = output_root if output_root.is_absolute() else root / output_root
+    output_base = context.output_base
     output_base.mkdir(parents=True, exist_ok=True)
     output = output_base / run_id
     cached = _validated_cached_manifest(
-        output, root=root, baseline_manifest_id=baseline["manifest_id"],
+        output, root=root, baseline_manifest_id=baseline_manifest_id,
     )
     if cached is not None:
-        return _result_from_manifest(cached, output, root)
+        return G5RunResult.from_manifest(cached, output, root)
     artifact_dir = Path(tempfile.mkdtemp(
         prefix=f".{run_id}.partial-", dir=output_base,
     ))
@@ -738,7 +776,7 @@ def run_world(
         "descriptor": descriptor,
         "world": world,
         "seed": seed,
-        "baseline_manifest_id": baseline["manifest_id"],
+        "baseline_manifest_id": baseline_manifest_id,
         "artifacts": artifact_records,
         "result_summary": result_summary,
     }
@@ -751,7 +789,7 @@ def run_world(
         artifact_dir,
         root=root,
         verify_baselines=False,
-        expected_baseline_manifest_id=baseline["manifest_id"],
+        expected_baseline_manifest_id=baseline_manifest_id,
         require_directory_name=False,
     )
     try:
@@ -763,22 +801,22 @@ def run_world(
             output,
             root=root,
             verify_baselines=False,
-            expected_baseline_manifest_id=baseline["manifest_id"],
+            expected_baseline_manifest_id=baseline_manifest_id,
         )
         _discard_incomplete_output(artifact_dir)
-        return _result_from_manifest(winner, output, root)
-    return _result_from_manifest(manifest, output, root)
+        return G5RunResult.from_manifest(winner, output, root)
+    return G5RunResult.from_manifest(manifest, output, root)
 
 
 def run_g5(
     *,
     root: Path | None = None,
-    output_root: Path = Path("results/graphlog-certified"),
+    output_root: Path = DEFAULT_OUTPUT_ROOT,
 ) -> tuple[G5RunResult, G5RunResult]:
     """Run the frozen development order: rule_20 first, then rule_27."""
-    root = root or _repo_root()
+    context = _prepare_g5_context(root, output_root)
     return tuple(
-        run_world(world, root=root, output_root=output_root)
+        _run_world(world, seed=0, spec=DEFAULT_SPEC, context=context)
         for world in G5_WORLDS
     )  # type: ignore[return-value]
 
@@ -786,7 +824,7 @@ def run_g5(
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--world", choices=(*G5_WORLDS, "all"), default="all")
-    parser.add_argument("--output-root", default="results/graphlog-certified")
+    parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT_ROOT))
     parser.add_argument("--validate", type=Path)
     args = parser.parse_args(argv)
     root = _repo_root()
@@ -795,11 +833,11 @@ def main(argv: list[str] | None = None) -> None:
         print(manifest["manifest_id"])
         return
     worlds = G5_WORLDS if args.world == "all" else (args.world,)
-    results = tuple(run_world(
-        world,
-        root=root,
-        output_root=Path(args.output_root),
-    ) for world in worlds)
+    context = _prepare_g5_context(root, Path(args.output_root))
+    results = tuple(
+        _run_world(world, seed=0, spec=DEFAULT_SPEC, context=context)
+        for world in worlds
+    )
     print(json.dumps(canonical_data(results), indent=2))
 
 

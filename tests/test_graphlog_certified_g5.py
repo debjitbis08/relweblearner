@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import json
 import re
 from copy import deepcopy
@@ -14,10 +15,10 @@ from relweblearner.bench.graphlog_certified.runner import (
     ARTIFACT_NAMES,
     COMMITMENT_COUNT_ORDER,
     G5_WORLDS,
+    G5RunResult,
     QUERY_SUMMARY_ORDER,
     _display_path,
     _records_by_name,
-    _result_from_manifest,
     _source_digest,
     _validated_cached_manifest,
     validate_run_directory,
@@ -91,12 +92,33 @@ def test_cached_result_order_and_external_output_paths_are_stable(tmp_path):
         summary["query_summary"].items()
     )))
     external = tmp_path / manifest["run_id"]
-    result = _result_from_manifest(manifest, external, ROOT)
+    result = G5RunResult.from_manifest(manifest, external, ROOT)
     assert tuple(key for key, _value in result.commitment_counts) \
         == COMMITMENT_COUNT_ORDER
     assert tuple(key for key, _value in result.query_summary) == QUERY_SUMMARY_ORDER
     assert result.output_directory == str(external)
     assert _display_path(ROOT / "results/example", ROOT) == "results/example"
+
+
+def test_run_g5_prepares_shared_baseline_and_source_context_once(monkeypatch):
+    context = object()
+    preparations = []
+    worlds = []
+
+    def fake_prepare(root, output_root):
+        preparations.append((root, output_root))
+        return context
+
+    def fake_run(world, *, seed, spec, context):
+        worlds.append((world, seed, spec, context))
+        return world
+
+    monkeypatch.setattr(runner_module, "_prepare_g5_context", fake_prepare)
+    monkeypatch.setattr(runner_module, "_run_world", fake_run)
+    assert runner_module.run_g5(root=ROOT) == G5_WORLDS
+    assert len(preparations) == 1
+    assert tuple(row[0] for row in worlds) == G5_WORLDS
+    assert all(row[1] == 0 and row[3] is context for row in worlds)
 
 
 def test_interrupted_final_directory_is_discarded_for_regeneration(tmp_path):
@@ -129,8 +151,10 @@ def test_g5_evaluation_has_paired_episode_joins_and_baseline_headlines():
     }
     for world, (directory, _manifest) in _manifests().items():
         evaluation = _artifact(directory, "evaluation.json")["payload"]
-        assert len(evaluation["episode_rows"]) == 1000
         summary = dict(evaluation["query_summary"])
+        assert len(evaluation["episode_rows"]) == summary["total"]
+        assert _manifest["result_summary"]["query_summary"]["total"] \
+            == summary["total"]
         assert summary["discrete_accuracy"] == expected[world]["discrete_accuracy"]
         assert summary["graded_accuracy"] == expected[world]["graded_accuracy"]
         assert all(
@@ -155,6 +179,42 @@ def test_g5_reports_vacuity_without_promoting_false_identity_events():
     assert all(row["outcome"] != "COMMIT" for row in split_hub)
 
 
+def _from_imports(path: Path):
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    return tuple(
+        (node.level, node.module, {alias.name for alias in node.names})
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+    )
+
+
+def test_certified_runtime_has_only_narrow_structural_gold_boundary_imports():
+    package = ROOT / "src/relweblearner/bench/graphlog_certified"
+    runner_imports = _from_imports(package / "runner.py")
+    assert (1, "evaluation", {
+        "DevelopmentEvaluation", "evaluate_development_run",
+    }) in runner_imports
+    assert (2, "graphlog", {"load_world"}) in runner_imports
+
+    ingest_imports = _from_imports(package / "ingest.py")
+    assert (1, "evaluation", {"EvaluationKey", "_seal_evaluation_key"}) \
+        in ingest_imports
+
+    runtime_modules = (
+        "derivations.py", "enrichment.py", "hardening.py",
+        "linearization.py", "model.py", "policy.py", "spec.py",
+    )
+    forbidden_modules = {
+        "evaluation", "multiweb_graphlog", "multiweb_graded",
+        "rule20_diag", "rule27_diag",
+    }
+    for name in runtime_modules:
+        for _level, module, _names in _from_imports(package / name):
+            assert module not in forbidden_modules
+            assert module is None or module.rsplit(".", 1)[-1] \
+                not in forbidden_modules
+
+
 def test_non_evaluation_artifacts_have_no_gold_label_route():
     forbidden_fields = {
         "perm_a", "perm_b", "true_map", "query_target", "query_targets",
@@ -169,11 +229,3 @@ def test_non_evaluation_artifacts_have_no_gold_label_route():
             for item in _walk(_artifact(directory, name)):
                 assert item not in forbidden_fields
                 assert not raw_label.match(item)
-
-    runner_source = (
-        ROOT / "src/relweblearner/bench/graphlog_certified/runner.py"
-    ).read_text(encoding="utf-8")
-    assert "HARD_SIM" not in runner_source
-    assert "make_views" not in runner_source
-    assert "pick_anchors" not in runner_source
-    assert "_render_test" not in runner_source
