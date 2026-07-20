@@ -1,0 +1,43 @@
+{
+  "change_scope": "implementation_only_no_draws_or_scores",
+  "created_date": "2026-07-19",
+  "execution": {
+    "enabled": true,
+    "executor_file": "src/relweblearner/bench/graphlog_g6_executor.py",
+    "executor_qualname": "execute_phase",
+    "reason": "reviewed phase adapter and evaluation-only boundary are committed, pinned, and ready for the single preregistered execution"
+  },
+  "implementation_freeze": {
+    "commit": "4c1d3a0395e4af2b92461b8b30e059d7d20a557c",
+    "files": {
+      "src/relweblearner/bench/graphlog_g6.py": "c5c5bce59e994b19d8bdd18bc733cf20ed0158f2b537c63abdaae90b4e6ec060",
+      "src/relweblearner/bench/graphlog_g6_analysis.py": "db5209d7fcd81f1d08d1a779490acb83020f38ce4bbac5d0b569f7547018818a",
+      "src/relweblearner/bench/graphlog_g6_evaluation.py": "2fc9d60122cd5bf945e8e42964cb180be08f9eaf7c364b919a043c1a082da3b3",
+      "src/relweblearner/bench/graphlog_g6_executor.py": "7f885cf935efeda4075871caa74d046e43d9ff354be1aa711926f294df690c1c",
+      "tests/test_graphlog_g6.py": "67c5c7c9086a77c42ce46e104682403449eabb743eec4ff8726701d2a4b1a7a5",
+      "tests/test_graphlog_g6_executor.py": "f116ab73ea59aede69424ad6cac1f8651fbd6546da997c44ec8ad6e94f78a0ac"
+    },
+    "harness_version": "graphlog-certified-g6-harness/v1",
+    "tree": "bf651d0b9f54de41d851971496cf2c2810109709"
+  },
+  "manifest_id": "sha256:112cfe12ff8eac294a11b1cb2f054379de7e58c6ea89c9b58d454ff3f8ec590e",
+  "manifest_id_method": "SHA-256 of canonical JSON with manifest_id omitted",
+  "parent_amendment_id": "sha256:5f38ba4117da8d93d38a1c61b61f5a9f73b8a17abc45617f3a1d6239dc195535",
+  "review_record": {
+    "accuracy_boundary": "sealed evaluation key is discarded after structural ingest and independently reconstructed only after the global T7 barrier",
+    "analysis_freeze": {
+      "coverage_interval": "deterministic 10000-resample paired-world percentile bootstrap at 95 percent",
+      "identity_precision_interval": "exact one-sided 95 percent Clopper-Pearson lower bound",
+      "primary_and_secondary": "unweighted macro mean of the 44 paired per-world accuracy differences"
+    },
+    "dedicated_tests": 19,
+    "development_smoke": "all five phases PASS on previously used rule_20 seed 0; no preregistered seed used",
+    "full_suite": "475 passed, 1 skipped",
+    "g0_g5_source_digest_after_adapter": "115801d3dae727675031ab924f41190525dabed30b1a6bd3414a2c5d5bb01aa4",
+    "prior_amendments_preserved": true,
+    "validation_output_or_partial_present": false
+  },
+  "schema_version": "graphlog-certified-g6-validation-amendment/v1",
+  "study_manifest_id": "sha256:8b31eac972bfa718ae51f3fd22e8e63ab47d0b1c60ca1c9330cfc205a2968a5b",
+  "validation_draws_or_scores_observed": false
+}
