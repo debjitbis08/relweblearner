@@ -1,0 +1,36 @@
+{
+    "change_scope": "criterion_extension_reused_draws_disclosed",
+    "created_date": "2026-07-21",
+    "execution": {
+        "enabled": true,
+        "executor_file": "src/relweblearner/bench/graphlog_g7_executor.py",
+        "executor_qualname": "execute_phase",
+        "reason": "reviewed G7 harness, conditional-separation mathematics, and phase adapter are committed and pinned; structural and T5 delegate verbatim to the pinned G6 executor and the conditional criterion was validated on synthetic systems only"
+    },
+    "g7_outputs_or_scores_observed": false,
+    "implementation_freeze": {
+        "commit": "88f5a75798129f21bc8d6be3fe9a08c1264e35d6",
+        "files": {
+            "src/relweblearner/bench/graphlog_g7.py": "4133f44b4b7c61bf0f1f994702915a495cf1c686fc4587eddec64716136faf33",
+            "src/relweblearner/bench/graphlog_g7_conditional.py": "705b2c5f9221021157fa0549d180b15174db1723094f4095630813fcc227d586",
+            "src/relweblearner/bench/graphlog_g7_executor.py": "e4eede379b17f9db4bcf712937a765b23b0a2e3a21d971a8c1abe3b018a31e8b",
+            "tests/test_graphlog_g7.py": "9813987277c25ff19eba9b7e0583d9af90a21c8005d5c839c736207559548ea0"
+        },
+        "harness_version": "graphlog-certified-g7-harness/v1",
+        "tree": "86b6ec5a7bd0776b667650ddb15c7fa085782fc0"
+    },
+    "manifest_id": "sha256:7dd22d3e18f20e89e6bf66b5e7ff839d0090795b51213c318cd1481c7d3c46c2",
+    "parent_amendment_id": "sha256:6f294dece6aebe56b52f80ebec708629ee9e3ea35f89a56f7dade64a3e3911eb",
+    "review_record": {
+        "base_phase_reuse": "structural, T5, T7, and accuracy delegate to the pinned G6 executor; T6 reproduces the pinned base body verbatim before the conditional layer",
+        "dedicated_tests": 14,
+        "frozen_files_untouched": "no G0-G5 module and no G6-pinned file is modified; conditional commitments are an overlay artifact, not a change to the certified T7 ledger vocabulary",
+        "full_suite": "488 passed, 1 skipped; one pre-existing failure in the G6-pinned test asserting the sealed g6 output block does not exist",
+        "g7_validation_output_or_partial_present": false,
+        "known_environmental_failure": "the G6-pinned test asserting the sealed g6 output block does not exist fails since that block was promoted; the pinned test file cannot be amended",
+        "no_ambiguous_world_smoke": "the conditional certificate was never executed on rule_2, rule_3, or rule_7 state; the G7 headline outcome remains unobserved before execution",
+        "workflow_review": "29-agent high-effort adversarial review before the freeze commit; all ten confirmed findings fixed: minimum-cardinality pivot search replacing the non-minimal greedy, always-sound pinned fallback witness, executable draw-reuse cross-check against the G6 manifest, restored g5-run/seed-derivation/expansion validations, corrected study_id, emitted SEPARATING_CONDITIONAL status vocabulary, unconditional real freeze-commit requirement, unsound-witness disclosure, and documentation change_scope fix"
+    },
+    "schema_version": "graphlog-certified-g7-validation-amendment/v1",
+    "study_manifest_id": "sha256:530cf07d9ba08420b0a7789ae562d21d45949c959f52480356c92308b5a6bc33"
+}
