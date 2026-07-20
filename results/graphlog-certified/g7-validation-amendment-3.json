@@ -1,0 +1,31 @@
+{
+    "change_scope": "criterion_extension_reused_draws_disclosed",
+    "created_date": "2026-07-21",
+    "execution": {
+        "enabled": true,
+        "executor_file": "src/relweblearner/bench/graphlog_g7_executor.py",
+        "executor_qualname": "execute_phase",
+        "reason": "reviewed G7 harness, conditional-separation mathematics, and phase adapter are committed and pinned; structural and T5 delegate verbatim to the pinned G6 executor and the conditional criterion was validated on synthetic systems only"
+    },
+    "g7_outputs_or_scores_observed": false,
+    "implementation_freeze": {
+        "commit": "88f5a75798129f21bc8d6be3fe9a08c1264e35d6",
+        "files": {
+            "src/relweblearner/bench/graphlog_g7.py": "4133f44b4b7c61bf0f1f994702915a495cf1c686fc4587eddec64716136faf33",
+            "src/relweblearner/bench/graphlog_g7_conditional.py": "705b2c5f9221021157fa0549d180b15174db1723094f4095630813fcc227d586",
+            "src/relweblearner/bench/graphlog_g7_executor.py": "e4eede379b17f9db4bcf712937a765b23b0a2e3a21d971a8c1abe3b018a31e8b",
+            "tests/test_graphlog_g7.py": "9813987277c25ff19eba9b7e0583d9af90a21c8005d5c839c736207559548ea0"
+        },
+        "harness_version": "graphlog-certified-g7-harness/v1",
+        "tree": "86b6ec5a7bd0776b667650ddb15c7fa085782fc0"
+    },
+    "manifest_id": "sha256:026dc18407f4dbe9082595fb2f738675c0b55389809877883399542b66310118",
+    "parent_amendment_id": "sha256:7dd22d3e18f20e89e6bf66b5e7ff839d0090795b51213c318cd1481c7d3c46c2",
+    "review_record": {
+        "interrupted_attempt_disposition": "the first execution attempt (launched 2026-07-21) was killed at 00:54 IST by harness-session teardown, not by the study harness, after the structural and T5 phase barriers completed (89 of 220 unit receipts) and one T6 unit had sealed; the partial staging block was deleted per the frozen refuse-resume rule without any receipt content, artifact, or outcome being read \u2014 only receipt counts and completed-phase names were observed to make this disposition decision",
+        "no_criterion_change": "no implementation, threshold, or criterion changed between the interrupted attempt and the relaunch",
+        "relaunch": "execution re-armed unchanged: same manifest, freeze commit, executor, and draws; the relaunched process is fully detached from the interactive session to remove the interruption cause"
+    },
+    "schema_version": "graphlog-certified-g7-validation-amendment/v1",
+    "study_manifest_id": "sha256:530cf07d9ba08420b0a7789ae562d21d45949c959f52480356c92308b5a6bc33"
+}
