@@ -1,8 +1,11 @@
-# G7 plan: conditional commitments for ambiguous worlds (draft)
+# G7 plan: conditional commitments for ambiguous worlds
 
-Status: DRAFT for review — not preregistered, no manifest authored, no execution
-enabled. Successor study to the sealed G6 block; the G6 result stands unchanged
-as a preregistered negative on separation.
+Status: EXECUTED AND SEALED — preregistered (study manifest
+`sha256:530cf07d…`, amendment chain tip amendment-3 `sha256:026dc184…`),
+single run promoted 2026-07-21 into `results/graphlog-certified/g7`,
+verified 220/220. See §9 for the outcome. Successor study to the sealed
+G6 block; the G6 result stands unchanged as a preregistered negative on
+separation.
 
 ## 1. Motivation — what the sealed G6 block showed
 
@@ -286,3 +289,52 @@ into `results/graphlog-certified/g7`.
    replacement predictions (`A if a9↔b13 else B`) without perturbing the
    frozen prediction-format contract — likely a parallel artifact rather
    than a change to the existing one.
+
+## 9. Execution outcome — sealed block (2026-07-21)
+
+The single preregistered run (the relaunch recorded in amendment-3, after
+the first attempt's environmental kill) was launched 2026-07-21 ~03:00 IST
+fully detached, and the harness log ends `PROMOTED after 383.7 minutes`
+with the atomic rename into `results/graphlog-certified/g7`. The block
+holds 220/220 sealed units (5 phases × 44 worlds); `study-index.json`
+records all phases completed and matches the study manifest
+(`sha256:530cf07d…`) and amendment tip (`sha256:026dc184…`).
+
+Post-hoc verification (2026-07-22, read-only): every unit's
+`receipt.json` re-validated against the frozen receipt contract and every
+artifact re-hashed against the receipt's declared `byte_size`/`sha256`
+records — 220/220 pass, zero failures, every receipt status `PASS`.
+(Receipt digests exist only inside the running harness, so the post-hoc
+check is receipt↔artifact consistency, the strongest available after
+promotion.)
+
+### Headline result — preregistered question answered
+
+Exactly the three G6-ambiguous worlds carry `SEPARATING_CONDITIONAL` in
+`T6/conditional-separation.json`; the other 41 worlds are `UNIQUE`
+(single exact extension, no condition invented, G6 path reused verbatim):
+
+| world  | pivot    | conditions | hedge localization (mean err / threshold) |
+|--------|----------|------------|-------------------------------------------|
+| rule_2 | `X:3:4`  | 1 bit      | 0.016 / 0.1, localized                    |
+| rule_3 | `X:0:4`  | 1 bit      | 0.020 / 0.1, localized                    |
+| rule_7 | `X:2:13` | 1 bit      | 0.025 / 0.1, localized                    |
+
+In all three: exactly one condition invented (the one-bit prediction from
+§1.5 held), both branches `SOLVED` and boundary-consistent, positive
+branch spectral lower bounds, and zero bound-soundness violations.
+
+### Honest qualification — separation is by pivot, not interior
+
+`interior_separated_pair_count = 0` in all three worlds: the
+propagation-decisiveness claim (§3.4(a) at interior localized witnesses)
+did **not** certify anywhere. Best interior margins were negative
+(−5.3 to −9.9): the localized per-coordinate bounds (3.1–5.8 per side)
+still dwarf the exact gap γ = 1.0, the same bound-vs-gap mismatch G6
+exposed globally, now surviving at per-coordinate scale. Separation was
+instead certified through the always-sound `pinned_fallback` witness —
+the pivot coordinate, where both branch fields are exact by construction
+(γ = 1.0, bounds 0, margin 1.0). The headline status is therefore sound
+but rests on the pivot-injectivity argument, not on conditioned-field
+decisiveness; tightening the localized bound (open question §8.1)
+remains open and is now measurably motivated.
