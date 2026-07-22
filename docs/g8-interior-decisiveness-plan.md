@@ -10,8 +10,9 @@ pinned pivot fallback, `interior_separated_pair_count = 0` everywhere).
 G7 (§9 of `docs/g7-conditional-commitment-plan.md`) certified conditional
 separation in all three ambiguous worlds, but never at an interior
 witness: the shipped localized bound `‖row_c(H_uu⁻¹)‖₂ · ‖r‖₂` (3.1–5.8
-per side) dwarfs the exact gap γ = 1.0, so every pair fell back to the
-pivot. The post-hoc bound-gap analysis of the sealed block (2026-07-22,
+per side at the best interior witnesses; up to 37.2 across all disputed
+coordinates) dwarfs the exact gap γ = 1.0, so every pair fell back to
+the pivot. The post-hoc bound-gap analysis of the sealed block (2026-07-22,
 read-only; reconstruction verified bitwise-identical to the sealed
 certificates by an adversarial review) established:
 
@@ -34,11 +35,13 @@ certificates by an adversarial review) established:
    disappears" is therefore false as a per-coordinate claim, and
    §3.4(b)'s "the field reports the fork" does not describe a field
    asserting the wrong branch.
-4. **The margins are knife-edge, draw-specific facts.** Non-certifying
-   interior margins were −0.030 and −0.006 against the certifying
-   +0.023–+0.384. "Exactly one decisive coordinate per world" is a fact
-   about these draws, not structure of the rules, and must not be
-   preregistered as a general property.
+4. **The margins are knife-edge, draw-specific facts.** The full set of
+   non-certifying tight interior margins is −0.194 (rule_2 `X:5:8`),
+   −0.057 (rule_2 `X:6:9`), −0.030 (rule_7 `X:14:2`), −0.006 (rule_3
+   `X:5:12`), against the certifying +0.023, +0.301, +0.384. Two of the
+   seven sit within ±0.03 of zero. "Exactly one decisive coordinate per
+   world" is a fact about these draws, not structure of the rules, and
+   must not be preregistered as a general property.
 
 ## 2. Design principle — why two parts
 
@@ -54,8 +57,10 @@ splits:
   as precomputed): certifies that the frozen harness reproduces the
   precomputed margins. Replication value only; zero discovery content by
   declaration.
-- **Part II — test block** (fresh draws, outcomes unobserved): the real
-  preregistered test, with predictions at the *mechanism* level only.
+- **Part II — measurement block** (fresh draws, outcomes unobserved): a
+  preregistered *calibrated measurement* (§5) — instrument claims that
+  are theorems, empirical claims that can genuinely fail, and the
+  interior-decisiveness distribution reported without prediction.
 
 Part I seals before Part II is preregistered; Part I observes nothing
 about Part II's draws.
@@ -87,8 +92,12 @@ bound_c = |row_c(H_uu⁻¹) · r| · (1 + LOCAL_BOUND_RELATIVE_SLACK)
 - **Criterion shape is unchanged**: a pair separates preferentially at
   an interior witness (`γ_c − bound_L − bound_R > 0`), otherwise at the
   always-sound pinned pivot fallback. Witness exclusion
-  (`observed_within_bound`) is retained; under the tight bound it can
-  never falsely fire, since bound ≥ observed by construction.
+  (`observed_within_bound`) is retained; under the tight bound it
+  cannot falsely fire *in exact arithmetic* (bound ≥ observed by the
+  triangle inequality, solver-error sign absorbed) — in float it holds
+  only up to the disclosed heuristic slack, so any firing is a genuine
+  slack-breach alarm signalling an implementation defect, not a
+  discarded witness.
 - **Everything else is pinned.** Pivot discovery, conditioned branches,
   hedge localization, the G7/G6 base layers, and all thresholds are
   reused bitwise. The G8 layer is additive: a new
@@ -100,49 +109,114 @@ bound_c = |row_c(H_uu⁻¹) · r| · (1 + LOCAL_BOUND_RELATIVE_SLACK)
 - **Cohort and draws**: the 44 G7 draws, reused verbatim.
 - **Governance**: the manifest's `draw_provenance` must state, in the
   pattern G7 set but stronger: draws reused, sealed G7 outcomes
-  observed, **and the Part I outcome itself precomputed** — a truthful
-  `change_scope` on the order of
+  observed, **and the Part I outcome itself precomputed**. The
+  `change_scope` is a loader-validated literal (G7's loader checks the
+  exact string), fixed at manifest-authoring time as
   `bound_replacement_outcome_precomputed_on_reused_draws`. Part I
-  cannot and does not assert unobserved outputs.
+  cannot truthfully carry G7's loader-enforced
+  `g?_outputs_or_scores_observed: false` attestation; its amendment
+  schema instead enforces a non-empty outcome-disclosure field naming
+  the precomputation record, so the disclosure is mechanical, not
+  discretionary.
 - **Precomputed expectations (published in the manifest before the
   run)**: rule_2/3/7 interior-separate with witnesses `X:8:4`, `X:8:1`,
-  `X:14:4` and margins +0.38374, +0.30105, +0.02329 each within
-  ±2·10⁻⁶ (two solver bounds); all 41 UNIQUE worlds byte-identical to
-  their G7 artifacts; zero bound-soundness violations.
+  `X:14:4` and margins 0.3837413504669356, 0.3010490853163964,
+  0.023287620838464473 — **full precision, emitted by the sealed §7.1
+  precomputation script**, never rounded quotes (a 5-decimal quote of
+  the rule_7 margin differs from the true value by 2.4·10⁻⁶ and would
+  fail its own tolerance on a perfect rerun). Tolerance per margin:
+  2 × `field_tolerance` (= 2·10⁻⁶, the *guaranteed* solver ceiling; the
+  sealed 9.9·10⁻⁷ bounds are outcomes, not guarantees) plus an explicit
+  small cross-platform reproducibility allowance; Part I additionally
+  records whether the same-host rerun was bit-identical. Byte-identity
+  is asserted per reproduced G7-layer artifact (receipts excluded —
+  they carry the G8 receipt schema and list the overlay); conditioned
+  worlds get the interior-decisiveness certificate, all other worlds an
+  explicit passthrough overlay record. Zero bound-soundness violations.
+  Part I overlay statuses use a distinct vocabulary
+  (`VERIFIED_PRECOMPUTED`, not any `SEPARATING*` string) so a sealed
+  Part I artifact cannot be miscited as a finding.
 - **Interpretation rule, fixed now**: any deviation is an
   implementation defect, not evidence about the mechanism. Part I
   failing blocks Part II until diagnosed; Part I passing licenses
   nothing beyond "the machinery computes what the analysis computed."
 
-## 5. Part II — the test, on fresh draws
+## 5. Part II — preregistered calibrated measurement, on fresh draws
 
-- **Cohort**: the same 44 literal worlds (optionally extended — open
-  question 8.3). **Draws**: a fresh master seed minted by the frozen
-  G6/G7 derivation (`SHA-256(master_seed ‖ world_name)`), committed in
-  the manifest before any Part II computation touches it. Nothing
-  conditional on the new draws is computed before sealing the
-  preregistration.
-- **Preregistered claims (falsifiable, mechanism-level):**
+Part II is honestly a **preregistered calibrated measurement**, not a
+hypothesis test in the classical mold. Its instrument claims are
+exact-arithmetic theorems (below); their preregistration certifies the
+*instrument*, and the scientific content is the measured distribution of
+interior decisiveness under fresh draws, reported without prediction.
+
+- **Cohort**: the same 44 literal worlds (extension deferred — open
+  question 8.2). **Draws**: a fresh master seed through the frozen
+  G6/G7 derivation (`SHA-256(master_seed ‖ world_name)`).
+- **Seed-minting ceremony (mechanism, not honesty assertion):** the
+  master seed is minted by a single disclosed invocation (the G7
+  `master_seed_generation` pattern: `openssl rand -hex 32`, after the
+  freeze commit, before any expansion), logged in the amendment chain
+  with an attestation that **no other master seed was ever expanded**;
+  any remint requires a disclosed amendment stating why. Preferred
+  hardening (open question 8.1): derive the seed from a named public
+  randomness beacon pulse committed to before it exists. Deriving from
+  the Part I block digest is NOT acceptable — Part I's outputs are
+  precomputable by design. The sealed margins sit within ±0.03 of zero
+  at two of seven coordinates, so seed shopping could plausibly move
+  the headline count; the ceremony exists to make that impossible, not
+  merely disavowed.
+- **Instrument claims (preregistered; exact-arithmetic theorems whose
+  only empirical content is the float-slack heuristic):**
   1. *Soundness*: zero bound-soundness violations under the tight
-     bound across all worlds and branches.
+     bound. (Theorem: obs ≤ |g·r| + solver_bound ≤ bound, triangle
+     inequality; can fail only via implementation defect or slack
+     breach.)
   2. *Tightness*: at every evaluated interior witness,
-     `bound_c − observed_c ≤ 2·solver_bound + slacks` — the bound
-     tracks the true error to solver tolerance, so interior
-     certification occurs **iff** the oracle margin is positive, up to
-     ~2·10⁻⁶.
-  3. *Conditional layer unchanged*: conditions invented iff `|S| > 1`;
-     hedge localization and the G7 acceptance rules hold as in G7.
+     `bound_c − observed_c ≤ 2·solver_bound + slacks`. (Derivable a
+     priori — the form is analytically forced, not tuned on sealed
+     data; it guarantees the instrument reads the oracle margin to
+     ~2·10⁻⁶, which is precisely what makes the measured counts below
+     trustworthy.)
+  A failure of either is an implementation/float defect: block release,
+  defect investigation, the G7 `failure_action` pattern.
+- **Empirical claims (preregistered, genuinely falsifiable):**
+  3. *Hedge localization holds on fresh draws*: for every conditioned
+     world the unconditioned field's mean absolute error on agreeing
+     coordinates is ≤ 0.1 (the one G7 acceptance rule with real
+     empirical teeth on new draws; it can genuinely fail).
+  4. *Conditions invented iff `|S| > 1`*, with the G7 cap and overflow
+     semantics (`AMBIGUITY_OVERFLOW` is a reported outcome, not a
+     defect — fresh seeds may organically exercise multibit paths never
+     run under any seed; the synthetic tests are the only prior
+     validation, and that is disclosed).
+- **Non-vacuity clause (fixed now):** if fewer than **2** worlds have
+  `|S| > 1` under the fresh draws, the block is reported *empirically
+  uninformative for interior decisiveness* and no mechanism claim of
+  any strength is made — the G7 `non_vacuity` rule's failure_action
+  pattern. Ambiguity incidence was 3/44 under one seed; zero is a live
+  possibility and must not read as success.
+- **Acceptance rules are rewritten, not imported.** G7's `no_regression`
+  rule (byte-identity with the sealed G6 block) is unsatisfiable and
+  meaningless on fresh draws; G7's loader hard-requires the G6 draws.
+  The Part II manifest carries its own acceptance-rule set scoped to
+  whichever fresh worlds turn out ambiguous, and the G8 loader performs
+  its own seed-derivation/expansion self-validation instead of the G7
+  loader's cross-check against G6.
 - **Explicitly NOT predicted**: the number of ambiguous worlds under
   fresh seeds, the number that interior-separate, per-world outcomes,
-  or "exactly one decisive coordinate". The sealed margins straddle
-  zero within ±0.03; the count is a **measured outcome**, reported with
-  the same secondary-report discipline G7 used for
-  `interior_separated_pair_count`. Ambiguity incidence itself may
-  change under fresh seeds and is likewise a measured outcome.
-- **Failure semantics**: claim 1 or 2 failing falsifies the
-  exact-contraction mechanism (block release, defect investigation —
-  the G7 `failure_action` pattern). A world where no interior witness
-  certifies but the pivot fallback separates is *not* a failure of any
+  or "exactly one decisive coordinate" (the sealed non-certifying
+  margins −0.194, −0.057, −0.030, −0.006 against certifying +0.023,
+  +0.301, +0.384 show these are draw-specific facts). All are
+  **measured outcomes** under the secondary-report discipline G7 used
+  for `interior_separated_pair_count`. Secondary reports include: the
+  interior-decisiveness count, per-witness margins, the
+  anti-propagation count (disputed coordinates where a conditioned
+  field crosses to the opposing branch's value — promoted from open
+  question to preregistered secondary metric), and the max (not just
+  mean) off-scope field error, since sealed rule_2 hides a 1.10
+  pointwise excursion under a passing 0.016 mean.
+- **Failure semantics**: a world where no interior witness certifies
+  but the pivot fallback separates is *not* a failure of any
   preregistered claim; it lands in the secondary report.
 
 ## 6. Implementation and governance sketch
@@ -164,7 +238,18 @@ sealed block per part):
   in T6.
 - Output roots: `results/graphlog-certified/g8-verification` (Part I)
   and `results/graphlog-certified/g8` (Part II); archive to
-  `/data/graphlog-certified/` destination-verified, as g6/g7.
+  `/data/graphlog-certified/` destination-verified, as g6/g7. Both
+  need literal `.gitignore` entries (the `.g*.partial` staging pattern
+  already covers both).
+- **Ordering link**: the Part II manifest pins the sha256 of the sealed
+  Part I `study-index.json`, turning "Part I seals before Part II is
+  preregistered" from prose into a checkable fact. (This is an
+  ordering witness only — it must not be the seed source, per §5.)
+- Two-manifest structure means **two full repository preflights and two
+  archive/symlink/destination-verify steps**; the G7 refuse-resume rule
+  for environmentally killed runs (amendment-3 disposition pattern:
+  delete the partial unobserved, amend, relaunch — never resume) is
+  inherited explicitly for both parts.
 
 ## 7. Pre-preregistration obligations (from the adversarial review)
 
@@ -174,27 +259,35 @@ Fixes owed before any of this becomes a sealed artifact:
    (condition id + one witness) to the full-certificate bitwise
    comparison the review performed, and correct its "bit-for-bit"
    docstring; the corrected script becomes the Part I precomputation
-   record.
-2. State the heuristic float-slack status for both the shipped and
+   record and the source of §4's full-precision expectations.
+2. **Seal a pre-committed Part II analysis script** (the §7.1 harness
+   parameterized over fresh draws), so the post-hoc analysis of G8 is
+   itself preregistered. Promoted from open question: the entire G8
+   motivation is that an un-preregistered post-hoc analysis chose the
+   next bound, and leaving the analysis loop open reopens exactly that
+   for G9.
+3. State the heuristic float-slack status for both the shipped and
    tight bounds in the Part I and Part II manifests (§3).
-3. Carry the anti-propagation finding (§1.3) into the motivation
-   honestly: the claim under test is "conditioning makes at least one
-   disputed coordinate decisive", not "conditioned fields snap into
-   their valleys".
+4. Carry the anti-propagation finding (§1.3) into the motivation
+   honestly: the claim under measurement is "conditioning makes at
+   least one disputed coordinate decisive", not "conditioned fields
+   snap into their valleys".
 
 ## 8. Open questions
 
-1. Whether Part II should also seal a *pre-committed analysis script*
-   (the Part I precomputation harness re-run on fresh draws) so the
-   post-hoc analysis of G8 is itself preregistered.
-2. Slack constants for the tight bound: keep the G7 10⁻⁹ pair with the
+1. Seed-source hardening (§5): mint by the disclosed
+   `openssl rand` ceremony, or remove discretion entirely by deriving
+   from a named public randomness beacon pulse (e.g. a future NIST
+   beacon pulse or block hash) committed to before it exists. Beacon
+   preferred if the operational cost is acceptable.
+2. Whether Part II extends the cohort (held-out GraphLog rules or
+   higher-|S| synthetic worlds) to probe multibit conditions and
+   `AMBIGUITY_OVERFLOW`, which no seed has ever exercised — at the
+   cost of a larger untested surface inside a preregistered run.
+   Current call: keep the 44 worlds; note that fresh seeds could
+   organically produce `|S| > 2` in one of them anyway, which §5's
+   claim 4 already handles (reported outcome, synthetic-only prior
+   validation disclosed).
+3. Slack constants for the tight bound: keep the G7 10⁻⁹ pair with the
    ~5–10× heuristic headroom disclosed, or widen (e.g. 10⁻⁸ absolute)
    to restore G7-scale margin at no cost to the +0.023-scale decisions.
-3. Whether Part II extends the cohort (held-out GraphLog rules or
-   higher-|S| synthetic worlds) to probe multibit conditions and
-   `AMBIGUITY_OVERFLOW`, which G6/G7 seeds never exercised — at the
-   cost of a larger untested surface inside a preregistered run.
-4. Whether the anti-propagation phenomenon (§1.3) deserves its own
-   secondary metric in Part II (count of disputed coordinates where a
-   conditioned field crosses to the opposing branch value) so the
-   §3.2-correction is measured, not anecdotal.
