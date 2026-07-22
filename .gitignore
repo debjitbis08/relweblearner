@@ -20,6 +20,8 @@ results/*.pdf
 # their manifests and amendment chains ARE committed
 results/graphlog-certified/g6
 results/graphlog-certified/g7
+results/graphlog-certified/g8
+results/graphlog-certified/g8-verification
 results/graphlog-certified/.g*.partial
 
 # reading-app session data + trained creatures (local state, regenerable)

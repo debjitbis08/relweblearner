@@ -120,9 +120,11 @@ bound_c = |row_c(H_uu⁻¹) · r| · (1 + LOCAL_BOUND_RELATIVE_SLACK)
   discretionary.
 - **Precomputed expectations (published in the manifest before the
   run)**: rule_2/3/7 interior-separate with witnesses `X:8:4`, `X:8:1`,
-  `X:14:4` and margins 0.3837413504669356, 0.3010490853163964,
+  `X:14:4` and margins 0.3837413504669355, 0.3010490853163964,
   0.023287620838464473 — **full precision, emitted by the sealed §7.1
-  precomputation script**, never rounded quotes (a 5-decimal quote of
+  precomputation script** (whose summation order is authoritative; an
+  independent recomputation differed in the last ulp on rule_2), never
+  rounded quotes (a 5-decimal quote of
   the rule_7 margin differs from the true value by 2.4·10⁻⁶ and would
   fail its own tolerance on a perfect rerun). Tolerance per margin:
   2 × `field_tolerance` (= 2·10⁻⁶, the *guaranteed* solver ceiling; the

@@ -40,6 +40,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
 from relweblearner.bench import graphlog_g6_executor as g6x  # noqa: E402
+from relweblearner.certification.types import canonical_bytes  # noqa: E402
 from relweblearner.bench.graphlog_certified.linearization import (  # noqa: E402
     encode_extension,
 )
@@ -175,6 +176,28 @@ def analyze(draw, block):
           f"{certificate['bound_soundness_violation_count']}, "
           f"anti_propagation_count = {anti}")
 
+    best = max(
+        (
+            (float(abs(v0[i] - v1[i]))
+             - tight[0][i]["bound"] - tight[1][i]["bound"], i)
+            for i in interior if v0[i] != v1[i]
+        ),
+    )
+    margin, witness_index = best
+    return {
+        "world": draw.world,
+        "pivot_coordinate_ids": [
+            coordinate_ids[i] for i in discovery.pivot_indices
+        ],
+        "certifying_witness_coordinate_id": coordinate_ids[witness_index],
+        "tight_interior_margin": margin,
+        "interior_separated_pair_count":
+            certificate["interior_separated_pair_count"],
+        "bound_soundness_violation_count":
+            certificate["bound_soundness_violation_count"],
+        "anti_propagation_count": anti,
+    }
+
 
 def main(argv=None):
     import argparse
@@ -183,11 +206,25 @@ def main(argv=None):
     parser.add_argument("--block", type=Path, default=DEFAULT_BLOCK,
                         help="sealed G7 block root (read-only)")
     parser.add_argument("--manifest", type=Path, default=ROOT / G7_MANIFEST)
+    parser.add_argument(
+        "--emit-expectations", type=Path, default=None,
+        help="write the full-precision Part I expectation record (canonical "
+             "JSON) to this path; the G8 Part I manifest embeds these values "
+             "verbatim, never rounded quotes",
+    )
     args = parser.parse_args(argv)
     study = load_study_manifest(args.manifest)
     draws = {draw.world: draw for draw in study.draws}
-    for world in SEPARATING_WORLDS:
-        analyze(draws[world], args.block)
+    records = [analyze(draws[world], args.block) for world in SEPARATING_WORLDS]
+    if args.emit_expectations is not None:
+        payload = {
+            "record_type": "g8-part1-precomputed-expectations/v1",
+            "source_study_manifest_id": study.manifest_id,
+            "source_block": "results/graphlog-certified/g7",
+            "expectations": records,
+        }
+        args.emit_expectations.write_bytes(canonical_bytes(payload) + b"\n")
+        print(f"\nexpectations written: {args.emit_expectations}")
 
 
 if __name__ == "__main__":
