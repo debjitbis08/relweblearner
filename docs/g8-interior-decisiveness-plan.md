@@ -1,31 +1,13 @@
 # G8 plan: interior decisiveness under the exact-contraction bound
 
 Status: COMPLETED — both parts preregistered, executed, sealed, and
-archived 2026-07-23. Two-part successor to the sealed G7 block; the G7
-result stands unchanged (SEPARATING_CONDITIONAL in rule_2/3/7 via the
-pinned pivot fallback, `interior_separated_pair_count = 0` everywhere).
+archived 2026-07-23; the execution outcome is recorded in §9. Two-part
+successor to the sealed G7 block; the G7 result stands unchanged
+(SEPARATING_CONDITIONAL in rule_2/3/7 via the pinned pivot fallback,
+`interior_separated_pair_count = 0` everywhere).
 
-- **Part I** (`g8-verification`, study `sha256:e8679fb8…`): PROMOTED
-  after 393 min; 220/220 receipts re-hashed, all precomputed margins
-  reproduced bit-identically (delta 0.0). Replication only, as declared.
-- **Part II** (`g8`, study `sha256:851f28d2…`, seed from NIST beacon
-  chain 2 pulse 1871520 per the pre-committed selection rule): PROMOTED
-  after 419.5 min; first read of the sealed block was the pre-committed
-  `scripts/g8_part2_report.py` (§7.2). All four preregistered claims
-  passed (soundness 0 violations, no tightness alarms, hedge
-  localization held in every conditioned world, conditions iff
-  ambiguous). Non-vacuity met: 6 conditioned worlds (rule_2/5/6/8/9/12
-  — a different set than G7's, as fresh draws permit), and all six
-  certified INTERIOR_SEPARATING. Measured secondary outcomes, per the
-  no-prediction discipline: interior margins down to +0.011 (rule_12)
-  and +0.037 (rule_8); one rule_6 pair negative (−0.128, 2 of 3 pairs
-  separated); anti-propagation recurred (2–5 coordinates in four of the
-  six worlds); max off-scope errors up to ~1.0 under passing means.
-- Both blocks archived to `/data/graphlog-certified/`
-  destination-verified (220/220 re-hash at destination), local results
-  paths are symlinks.
-
-Sections below are the plan as preregistered, kept verbatim.
+Sections 1–8 are the plan as preregistered, kept verbatim; §9 was
+added after both blocks sealed.
 
 ## 1. Motivation — what the sealed G7 block and its autopsy showed
 
@@ -315,3 +297,183 @@ Fixes owed before any of this becomes a sealed artifact:
    Part II would re-freeze code and forfeit "Part I verified the same
    instrument Part II measures with." The ~5–10× heuristic headroom
    stays disclosed in both manifests' `float_slack_status`.
+
+## 9. Execution outcome — sealed blocks (2026-07-23)
+
+Both parts ran exactly once, in the preregistered order, each fully
+detached with the harness log ending in an atomic `PROMOTED` rename.
+Every quantitative statement below is read from the sealed blocks, the
+pre-committed Part II report, or the pinned manifests; nothing here
+amends the preregistered sections above.
+
+### 9.1 Part I — verification block (`g8-verification`)
+
+Study `sha256:e8679fb8…`, amendment chain `sha256:cc17e5b7…` (disabled)
+→ `sha256:d251d9b9…` (enabling, adapter `execute_phase_verification`).
+PROMOTED after 393.0 minutes; 220/220 sealed units (5 phases × 44
+worlds), log clean.
+
+Verification (same day, read-only): 220/220 receipts re-hashed against
+their declared `byte_size`/`sha256` artifact records (G8 receipt
+schema); manifest chain recomputed via `canonical_digest`; overlay
+vocabulary clean — exactly rule_2/rule_3/rule_7 carry
+`VERIFIED_PRECOMPUTED`, the other 41 `VERIFIED_PRECOMPUTED_PASSTHROUGH`,
+and no overlay status carries a `SEPARATING*`/`INTERIOR*` success
+string (the manifest's `status_vocabulary` rule; the bitwise-reproduced
+G7-layer artifacts in rule_2/3/7 legitimately retain their own
+`SEPARATING_CONDITIONAL` status, and the overlay's carryover field
+quotes it).
+All `part1_precomputed_expectations` matched with margins
+**bit-identical** to the precomputed values (delta 0.0 against a
+tolerance of 2·10⁻⁶ + 10⁻⁹): rule_2 `X:8:4` +0.384, rule_3 `X:8:1`
++0.301, rule_7 `X:14:4` +0.023, pivots `X:3:4`/`X:0:4`/`X:2:13` exact.
+
+As declared in §2 and §4, Part I licenses no scientific claim. Its
+completion (a) certifies that the frozen harness reproduces the
+precomputed tight-bound margins on the G7 draws, and (b) unblocked
+Part II, whose manifest pins the sha256 of the sealed Part I
+`study-index.json` (`b86f258b…`) as the §6 ordering witness.
+
+### 9.2 Part II — measurement block (`g8`): provenance
+
+Study `sha256:851f28d2…`, amendment chain `sha256:a8e48683…` (disabled)
+→ `sha256:af931c86…` (enabling, adapter `execute_phase_test`).
+
+- **Seed ceremony (§5, resolved §8.1):** the selection rule — first
+  NIST beacon chain-2 pulse at or after 2026-07-23T03:20:00Z, master
+  seed = SHA-256 of the hex-decoded `outputValue` — was committed in
+  `g8-seed-commitment.json` at 03:01:09Z (commit `0c762dc`), nineteen
+  minutes **before the pulse existed**. The realized pulse is index
+  1871520; per-world draws derive via the frozen
+  `SHA-256(master_seed ‖ world_name)` expansion, validated by the
+  loader's self-check. Honesty scope: the pre-pulse ordering rests on
+  local evidence (commit header, reflog, and git object mtime agree to
+  the second) — the commit was not pushed to a public remote before
+  the pulse, so an external verifier gets a corroborated attestation,
+  not a public anchor. The pulse itself is externally checkable: the
+  beacon's published `outputValue` for pulse 1871520 reproduces the
+  manifest's master seed and all 44 per-world expansions.
+- **Analysis precommitment (§7.2):** `scripts/g8_part2_report.py` was
+  pinned in the same pre-pulse commit and never modified after it
+  (byte-identical at HEAD). That it was the **first read** of the
+  sealed block after promotion is a process attestation, as are
+  "single launch, no remint, no resume" below. All numbers in
+  §9.3–§9.4 are from its output
+  (`record_type: g8-part2-preregistered-report/v1`).
+- **Run:** PROMOTED after 419.5 minutes; 220/220 sealed units; log
+  clean; no `.partial` staging remnants; single launch, no remint, no
+  resume.
+- **Post-seal verification:** 220/220 receipts re-hashed OK (G8 schema,
+  directory contents equal to artifact records, byte sizes match);
+  manifest chain recomputed via `canonical_digest` with all parent and
+  study links consistent. Both blocks archived to
+  `/data/graphlog-certified/` with a destination re-hash (220/220 OK)
+  and full file-listing comparison performed while both copies still
+  existed — the sealed Part II `study-index.json` hashed identically
+  at source and destination before the local copy was replaced by a
+  symlink — and the pre-committed report reproduces semantically
+  identical output through the symlinked path.
+
+### 9.3 Part II — preregistered claims: all four passed
+
+Instrument claims (exact-arithmetic theorems; a failure would have been
+an implementation/float defect blocking release):
+
+1. **Tight-bound soundness**: zero bound-soundness violations across
+   all evaluated witnesses in all 44 worlds.
+2. **Tight-bound tightness**: zero witness-exclusion alarms — under the
+   tight bound `observed_within_bound` can only fire on a float-slack
+   breach, and it never fired.
+
+Empirical claims (genuinely falsifiable on fresh draws):
+
+3. **Hedge localization**: passed in every conditioned world — mean
+   absolute error of the unconditioned field on agreeing coordinates
+   0.0166–0.0213 against the 0.1 threshold (agreeing-coordinate counts
+   193–251 per world).
+4. **Conditions iff ambiguous**: zero iff-violations; conditions were
+   invented in exactly the worlds with `|S| > 1`, and no
+   `AMBIGUITY_OVERFLOW` occurred.
+
+**Non-vacuity (§5): met.** Six of 44 fresh draws were ambiguous —
+`rule_2, rule_5, rule_6, rule_8, rule_9, rule_12` — against the
+preregistered minimum of 2, so the block is empirically informative
+for interior decisiveness.
+
+### 9.4 Part II — measured outcomes (secondary report; none predicted)
+
+Under the §5 discipline, everything in this subsection is a measured
+outcome: none of these numbers was predicted, and none licenses a
+claim beyond its own value.
+
+**Headline measurement: all six ambiguous worlds certified
+`INTERIOR_SEPARATING`** (interior-decisiveness count 6/6; the status
+requires at least one branch pair separated at an interior witness).
+Every branch pair in every conditioned world separated; 8 of the 10
+pairs separated at interior witnesses:
+
+| world   | branches | pivots           | pairs interior / total | interior margins (per pair)  | hedge mean / max err | anti-prop coords |
+|---------|----------|------------------|------------------------|------------------------------|----------------------|------------------|
+| rule_2  | 3        | `X:4:1`, `X:4:7` | 2 / 3                  | 0.419, 0.429                 | 0.019 / 0.449        | 0                |
+| rule_5  | 2        | `X:1:1`          | 1 / 1                  | 0.699                        | 0.021 / 0.980        | 2                |
+| rule_6  | 3        | `X:0:8`, `X:0:13`| 2 / 3                  | 0.420, 0.171 (third −0.128)  | 0.017 / 0.465        | 5                |
+| rule_8  | 2        | `X:0:13`         | 1 / 1                  | 0.037                        | 0.017 / 0.902        | 5                |
+| rule_9  | 2        | `X:1:6`          | 1 / 1                  | 0.088                        | 0.018 / 0.593        | 4                |
+| rule_12 | 2        | `X:1:15`         | 1 / 1                  | 0.011                        | 0.020 / 1.004        | 4                |
+
+The two non-interior pairs differ in kind: rule_2 pair 0–1 separated
+directly at the pinned pivot `X:4:1` (witness kind `pinned`; no
+interior margin was evaluated for that pair — its per-pair margin is
+null in the report), while rule_6 pair 1–2 fell back to the pivot
+`X:0:13` (witness kind `pinned_fallback`) after its best interior
+margin came out negative (−0.128). Neither is a failure of any
+preregistered claim (§5 failure semantics).
+
+Measured facts worth recording:
+
+1. **The fresh conditioned set is different.** rule_2/5/6/8/9/12 versus
+   the sealed G7 draws' rule_2/3/7 — only rule_2 is common, and
+   ambiguity incidence doubled (6/44 vs 3/44). Which worlds condition
+   is a draw-level fact, exactly as §5 anticipated by refusing to
+   predict it; claim 4 held on both sides of the change.
+2. **Multibit conditioning ran on organic draws for the first time.**
+   rule_2 and rule_6 each drew three exact solutions (two pivot
+   coordinates, three realized branches) — a path previously exercised
+   only by the synthetic tests, as §5's claim-4 disclosure flagged. It
+   ran within the cap, with no overflow and no iff-violation.
+3. **Margins remain knife-edge in places.** The certifying interior
+   margins span 0.011–0.699; rule_12 (+0.011) and rule_8 (+0.037) are
+   the fresh-draw analogues of the sealed +0.023, and rule_6's third
+   pair shows a negative best interior margin (−0.128) alongside two
+   certifying pairs. The §1.4 warning — decisive coordinates are
+   draw-specific facts, not rule structure — survives contact with new
+   data.
+4. **Anti-propagation recurred**: 20 branch–coordinate crossing
+   records across five of the six worlds (per-world counts 0, 2, 5, 5,
+   4, 4; 19 unique coordinates — one rule_6 coordinate crosses in two
+   branches) where a conditioned field crosses to the opposing
+   branch's value. The §7.4
+   framing is confirmed as the honest one: conditioning makes at least
+   one disputed coordinate decisive; it does not snap conditioned
+   fields into their valleys.
+5. **Means hide excursions, as disclosed.** Max off-scope pointwise
+   errors run 0.449–1.004 while every mean stays ≤ 0.0214 — the sealed
+   rule_2 pattern (a 1.10 excursion under a 0.016 mean) generalizes;
+   the max was preregistered as a secondary metric for exactly this
+   reason.
+
+### 9.5 What is licensed, and what is not
+
+The instrument is now validated prospectively: the tight bound read
+fresh-draw interior margins with zero soundness violations and zero
+tightness alarms, under seeds that could not have been shopped and
+outcomes that were not observed before the pre-committed report ran.
+Hedge localization is a replicated empirical regularity (G7 sealed
+draws and now fresh draws). The 6/6 interior-decisiveness result is a
+measured distribution under one fresh master seed — honest evidence
+that the sealed-draw 3/3 was not an artifact of those draws, but by
+this block's own discipline it is a point estimate, not a universal
+claim. The open threads it sharpens: a mechanism-level account of
+anti-propagation, the distribution of near-zero margins under further
+seeds, and rule-generalization beyond the frozen 44-world cohort
+(§8.2, deliberately deferred).
