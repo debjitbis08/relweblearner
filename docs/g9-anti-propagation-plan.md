@@ -130,7 +130,9 @@ Part I / G7 blocks (20 evaluated records: 6 crossing, 14
 non-crossing), and the pinned operators and cochains reachable from
 them — 91 evaluated records, 26 crossings in all. No new draws, no
 new solves beyond reconstruction of sealed state with pinned code
-(the G7-autopsy pattern, which the bound-gap analysis validated).
+and the §4.1 attribution's Green-row solves (ground truth is
+analysis-side; the budget constrains only the predictor). The
+G7-autopsy pattern, which the bound-gap analysis validated.
 
 Deliverables, in order:
 
@@ -214,8 +216,11 @@ else measured-only.
      with balanced accuracy ≥ the preregistered floor. The floor is
      fixed in the sealed Phase A report, before any Phase B seed
      exists, and must satisfy all of: (a) it exceeds every named
-     naive baseline — majority class, "crossed iff branch ≠ 0",
-     "crossed iff non-pivot" — by a stated δ; (b) its generalization
+     naive baseline by a stated δ, each evaluated on its stated
+     population — majority class and "crossed iff branch ≠ 0" on
+     the non-pivot (claim-4) population, "crossed iff non-pivot" on
+     the full population (the only population where it is
+     non-degenerate); (b) its generalization
      allowance is anchored by cross-seed-family validation (fit
      interpretation on the G8-seed records, evaluate on the G7-seed
      records, and leave-one-world-out), not chosen freely against
@@ -341,6 +346,66 @@ History is never rewritten (the chain pins commits by sha).
    the diagnostic either way. Open only: the exact degree (2 vs 3) and the 0.99
    ceiling, to be confirmed with a written rationale before Phase A
    runs — never widened after.
+
+   **Numeric confirmation (2026-07-24, closes this question):**
+
+   - **Degree k = 3**, and the admitted polynomial class is stated
+     precisely: `p(H_uu)` with `deg p ≤ 3`, and the
+     diagonally-preconditioned family `q(D⁻¹H_uu)·D⁻¹` with
+     `deg q ≤ 3` where `D = diag(H_uu)` — the standard
+     polynomial-method class (Neumann/Jacobi iterates and truncated
+     Chebyshev filters live here), admitted because `D` is
+     per-coordinate data, not solve output. Coefficients must be
+     fixed constants or pinned certificate scalars. Rationale: the
+     support argument is dead (near-clique components — degree 1
+     already reaches everything), so degree matters only spectrally.
+     Under the measured G7-system condition numbers 86–348
+     (bound-gap analysis), the best degree-3 approximation to `λ⁻¹`
+     on the spectral interval retains worst-case relative error at
+     least `((√κ−1)/(√κ+1))⁴ ≈ 0.42–0.65` (the exact Chebyshev
+     min-max is larger, ≈ 0.71–0.91) — even the full budget cannot
+     mimic the solve in the worst case *for the raw class*. Those
+     condition numbers do not govern the diagonally-preconditioned
+     class, whose operative spectrum is that of
+     `D^(−1/2)·H_uu·D^(−1/2)`; Phase A must therefore measure and
+     report, per conditioned system, both the raw spectrum
+     (λ_min/λ_max) and the preconditioned spectrum (together with
+     the spectral radius of `I − D⁻¹H_uu`, which also reveals
+     whether the degree-3 Jacobi iterate smooths or diverges), and
+     the worst-case argument stands or falls per class on those
+     measurements — the co-equal diagnostic carries the
+     instance-level guarantee either way. **Composition closure:**
+     admitted operators may not be chained — the end-to-end linear
+     map from the declared data vectors (residual, cochain,
+     indicators) to every budgeted intermediate must have total
+     degree ≤ 3; applying one admitted operator to another's output
+     is outside the budget (iterated chaining is the solve). k = 2
+     would forfeit the third moment (three independent smoothing
+     steps is the minimum a mechanism formula distinguishing
+     "shallow local pull" from "component-wide consensus" plausibly
+     needs) while buying no honesty the co-equal diagnostic does
+     not already enforce instance-wise.
+   - **Ceiling 0.99**, Spearman rank correlation between the
+     predictor's **finest-grained budgeted linear estimate of the
+     signed error** — the raw polynomial output feeding the
+     decision rule, before any thresholding, quantization, or
+     rank-coarsening (a coarsened score evading the ceiling while
+     classifying at solve grade is exactly the smuggling this
+     pinning forbids) — and the true signed error, computed over
+     every sealed record where the budgeted estimate is defined
+     (non-pivot records; pivot coordinates are Dirichlet-pinned in
+     the branch systems, so no interior estimate exists there —
+     this scopes the "91 sealed records" phrase above to the
+     estimable subpopulation, consistently with claim 4's
+     population) and reported pooled and per seed family.
+     Rationale for the line: a disguised solve reproduces `e_c` to
+     solver tolerance (~10⁻⁶ absolute against sealed depths ≥ 0.5),
+     landing at rank correlation 1 − O(float) > 0.999; the
+     strongest honest compressed mechanism we would credit explains
+     sign and coarse magnitude (plausibly ρ ≈ 0.7–0.9). 0.99 sits
+     above any creditable mechanism and below the solve's float
+     band, an order of magnitude of disagreement on each side.
+   - Both numbers are now closed and may narrow but never widen.
 2. **Accuracy floor and its allowance.** The *mechanism* is now fixed
    in §5.4 (naive-baseline dominance, cross-seed-family anchoring,
    sample-size-aware pass rule); open is only the δ over the best
