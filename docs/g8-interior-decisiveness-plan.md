@@ -275,21 +275,21 @@ Fixes owed before any of this becomes a sealed artifact:
    least one disputed coordinate decisive", not "conditioned fields
    snap into their valleys".
 
-## 8. Open questions
+## 8. Open questions — all resolved 2026-07-23, before Part II authoring
 
-1. Seed-source hardening (§5): mint by the disclosed
-   `openssl rand` ceremony, or remove discretion entirely by deriving
-   from a named public randomness beacon pulse (e.g. a future NIST
-   beacon pulse or block hash) committed to before it exists. Beacon
-   preferred if the operational cost is acceptable.
-2. Whether Part II extends the cohort (held-out GraphLog rules or
-   higher-|S| synthetic worlds) to probe multibit conditions and
-   `AMBIGUITY_OVERFLOW`, which no seed has ever exercised — at the
-   cost of a larger untested surface inside a preregistered run.
-   Current call: keep the 44 worlds; note that fresh seeds could
-   organically produce `|S| > 2` in one of them anyway, which §5's
-   claim 4 already handles (reported outcome, synthetic-only prior
-   validation disclosed).
-3. Slack constants for the tight bound: keep the G7 10⁻⁹ pair with the
-   ~5–10× heuristic headroom disclosed, or widen (e.g. 10⁻⁸ absolute)
-   to restore G7-scale margin at no cost to the +0.023-scale decisions.
+1. Seed-source hardening (§5): **RESOLVED — beacon.** The master seed
+   derives from a named future NIST beacon pulse (chain 2, first pulse
+   at or after 2026-07-23T03:20:00Z) committed to before it existed in
+   `results/graphlog-certified/g8-seed-commitment.json`; the commit
+   containing that document predates the pulse. Operational cost was
+   measured (one HTTP fetch, service reachable) and accepted.
+2. Cohort extension: **RESOLVED — keep the 44 worlds**, as the
+   standing call already stated; fresh seeds may organically produce
+   `|S| > 2`, which §5's claim 4 handles (reported outcome,
+   synthetic-only prior validation disclosed).
+3. Slack constants: **RESOLVED — keep the G7 10⁻⁹ pair, disclosed.**
+   Part I verified the instrument bit-identically with these exact
+   constants (imported from the pinned G7 module); widening for
+   Part II would re-freeze code and forfeit "Part I verified the same
+   instrument Part II measures with." The ~5–10× heuristic headroom
+   stays disclosed in both manifests' `float_slack_status`.
