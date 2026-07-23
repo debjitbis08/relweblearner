@@ -1,9 +1,31 @@
-# G8 plan: interior decisiveness under the exact-contraction bound (draft)
+# G8 plan: interior decisiveness under the exact-contraction bound
 
-Status: DRAFT for review — not preregistered, no manifest authored, no
-execution enabled. Two-part successor to the sealed G7 block; the G7
+Status: COMPLETED — both parts preregistered, executed, sealed, and
+archived 2026-07-23. Two-part successor to the sealed G7 block; the G7
 result stands unchanged (SEPARATING_CONDITIONAL in rule_2/3/7 via the
 pinned pivot fallback, `interior_separated_pair_count = 0` everywhere).
+
+- **Part I** (`g8-verification`, study `sha256:e8679fb8…`): PROMOTED
+  after 393 min; 220/220 receipts re-hashed, all precomputed margins
+  reproduced bit-identically (delta 0.0). Replication only, as declared.
+- **Part II** (`g8`, study `sha256:851f28d2…`, seed from NIST beacon
+  chain 2 pulse 1871520 per the pre-committed selection rule): PROMOTED
+  after 419.5 min; first read of the sealed block was the pre-committed
+  `scripts/g8_part2_report.py` (§7.2). All four preregistered claims
+  passed (soundness 0 violations, no tightness alarms, hedge
+  localization held in every conditioned world, conditions iff
+  ambiguous). Non-vacuity met: 6 conditioned worlds (rule_2/5/6/8/9/12
+  — a different set than G7's, as fresh draws permit), and all six
+  certified INTERIOR_SEPARATING. Measured secondary outcomes, per the
+  no-prediction discipline: interior margins down to +0.011 (rule_12)
+  and +0.037 (rule_8); one rule_6 pair negative (−0.128, 2 of 3 pairs
+  separated); anti-propagation recurred (2–5 coordinates in four of the
+  six worlds); max off-scope errors up to ~1.0 under passing means.
+- Both blocks archived to `/data/graphlog-certified/`
+  destination-verified (220/220 re-hash at destination), local results
+  paths are symlinks.
+
+Sections below are the plan as preregistered, kept verbatim.
 
 ## 1. Motivation — what the sealed G7 block and its autopsy showed
 
