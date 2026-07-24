@@ -420,10 +420,21 @@ History is never rewritten (the chain pins commits by sha).
    naive baseline. Note the baselines are strong: "crossed iff
    branch ≠ 0" already captures 18 of 20 fresh-seed positives, so a
    predictor that cannot beat it is not a mechanism account.
+   **RESOLVED 2026-07-24 by the sealed Phase A report §6: δ = 0.02,
+   floor F = 0.776, pass rule = mean of one-sided Jeffreys lower
+   bounds (the 0.20 quantile of Beta(s+½, f+½)) ≥ F.**
 3. **Verification part: include or skip?** Include iff the predictor
    precomputes cheaply on sealed draws; skipping loses the
    replication anchor, but a predictor too expensive to precompute
-   would already violate the §8.1 budget.
+   would already violate the §8.1 budget. **RESOLVED 2026-07-24 —
+   included, realized without a second execution block: the
+   pre-committed Phase B report script carries a `verification` mode
+   that reads the ALREADY-SEALED G8 Part II block (outcomes
+   precomputed by Phase A, disclosed as such), checks instrument
+   claims 1–3 on it, and verifies the pinned predictor module
+   reproduces Phase A round 2's per-record estimates bit-for-bit.
+   Full replication anchor, no new run; it executes after the
+   commitment commit and before the fresh block's first read.**
 4. **Non-vacuity minimum.** Observed base rates: 20 unambiguous
    crossing records under the G8 seed, 6 under the G7 seed — so a
    minimum of 8 would be failed by one of the only two seeds ever
@@ -432,9 +443,13 @@ History is never rewritten (the chain pins commits by sha).
    records (both observed seeds pass) alongside the ≥2
    conditioned-worlds floor, with the final number fixed at
    authoring by a written rationale that confronts this arithmetic
-   explicitly.
+   explicitly. **RESOLVED 2026-07-24 by the sealed Phase A report
+   §6: minimum 5 unambiguous crossing records, ≥2 conditioned
+   worlds.**
 5. **Cohort.** The 44 frozen worlds again, or the long-deferred
    rule-generalization extension (G8 §8.2)? Extending the cohort in
    the same block that tests the predictor conflates two
    generalizations; the conservative default is same-cohort G9 with
-   rule extension deferred to G10.
+   rule extension deferred to G10. **RESOLVED 2026-07-24 — same
+   44-world cohort; rule extension deferred to G10, as the
+   conservative default argued.**
