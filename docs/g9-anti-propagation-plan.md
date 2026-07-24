@@ -356,7 +356,15 @@ History is never rewritten (the chain pins commits by sha).
      polynomial-method class (Neumann/Jacobi iterates and truncated
      Chebyshev filters live here), admitted because `D` is
      per-coordinate data, not solve output. Coefficients must be
-     fixed constants or pinned certificate scalars. Rationale: the
+     fixed constants, pinned certificate scalars, or explicitly
+     declared closed-form aggregates of 1-hop operator data
+     (diagonals, row sums — e.g. Gershgorin bounds) — never fitted
+     quantities, never functions of solve output. (The 1-hop
+     aggregate clause was added pre-seal on the §4.5 referee's
+     ruling: the class already admits `D` inside the operator, a
+     row-sum scalar carries strictly less information than `D`, and
+     the degree cap and in-interval worst-case floor are unchanged —
+     letter aligned with spirit, no material widening.) Rationale: the
      support argument is dead (near-clique components — degree 1
      already reaches everything), so degree matters only spectrally.
      Under the measured G7-system condition numbers 86–348
