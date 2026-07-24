@@ -88,11 +88,32 @@ from relweblearner.certification.types import (  # noqa: E402
 )
 
 
-RECORD_TYPE = "g9-phase-a-analysis/v1"
+RECORD_TYPE = "g9-phase-a-analysis/v2"
 DECODE_THRESHOLD = 0.1          # frozen G7 hedge threshold (plan section 6)
 JACOBI_DEGREE = 3               # section 8.1 confirmed budget: k = 3
 DIAGNOSTIC_CEILING = 0.99       # section 8.1 confirmed ceiling
 TOP_ATTRIBUTION_SITES = 3
+
+# Round-2 disclosed estimator (Phase A hypothesis iteration): the round-1
+# degree-3 Jacobi iterate DIVERGES on every sealed system (measured
+# rho(I - D^-1 H_uu) = 1.98-2.84; the operators are near-cliques, not
+# diagonally dominant), so its failure was instrument-level.  Round 2
+# replaces it with a Chebyshev semi-iteration of the same polynomial
+# degree, designed on an interval built ONLY from budget-clean inputs:
+# the upper edge is the Gershgorin bound on the Jacobi-preconditioned
+# spectrum (1-hop row-sum data), the lower edge is upper/KAPPA_DESIGN
+# with KAPPA_DESIGN a FIXED design constant.  KAPPA_DESIGN = 30 was
+# chosen after observing round 1's measured preconditioned condition
+# numbers 18.4-65.1 -- a disclosed, Phase-A-legitimate use of sealed
+# measurements to design the next hypothesis, which Phase B would freeze
+# as a preregistered constant.  The Chebyshev residual polynomial
+# satisfies |C(lambda)| <= 1 on (0, upper], so unlike Jacobi the
+# iteration cannot amplify any mode (Gershgorin guarantees containment
+# of the top of the spectrum), and at KAPPA_DESIGN = 30 the in-interval
+# worst-case error factor is 1/T_4(theta_0) ~= 0.43 -- far from
+# solve-grade by construction.
+CHEBYSHEV_DEGREE = 3
+CHEBYSHEV_KAPPA_DESIGN = 30.0
 
 FAMILIES = (
     {
@@ -157,6 +178,53 @@ def jacobi_estimate(
     x = np.zeros_like(residual)
     for _ in range(degree + 1):
         x = x - (laplacian_uu @ x + residual) / diagonal
+    return x
+
+
+def chebyshev_estimate(
+    laplacian_uu: np.ndarray,
+    residual: np.ndarray,
+    degree: int = CHEBYSHEV_DEGREE,
+    kappa_design: float = CHEBYSHEV_KAPPA_DESIGN,
+) -> np.ndarray:
+    """Budgeted Chebyshev semi-iterative estimate of the signed error.
+
+    Solves ``(D^-1 H) e = -D^-1 r`` (equivalent to ``H e = -r``) with the
+    classical three-term Chebyshev recurrence on the design interval
+    ``[b/kappa_design, b]``, where ``b`` is the Gershgorin upper bound on
+    the spectrum of ``D^-1/2 H D^-1/2`` (1-hop row-sum data; always
+    contains the true spectrum, so no mode is ever amplified) and
+    ``kappa_design`` is a fixed design constant.  Four steps total, so the
+    result is a polynomial of degree exactly ``degree`` in ``D^-1 H``
+    applied to ``D^-1 r`` — inside the section 8.1 class, with
+    coefficients built only from 1-hop aggregates and fixed constants.
+    """
+    H = np.asarray(laplacian_uu, dtype=float)
+    diagonal = np.diag(H).copy()
+    if np.any(diagonal <= 0.0):
+        raise ValueError("Chebyshev estimate requires a positive diagonal")
+    sqrt_d = np.sqrt(diagonal)
+    off_diagonal = np.abs(H / np.outer(sqrt_d, sqrt_d))
+    np.fill_diagonal(off_diagonal, 0.0)
+    upper = 1.0 + float(off_diagonal.sum(axis=1).max())
+    lower = upper / kappa_design
+    theta = 0.5 * (upper + lower)
+    delta = 0.5 * (upper - lower)
+    sigma = theta / delta
+
+    def apply(x: np.ndarray) -> np.ndarray:
+        return (H @ x) / diagonal
+
+    f = -residual / diagonal
+    x = f / theta
+    step = x.copy()
+    rho_prev = 1.0 / sigma
+    for _ in range(degree):
+        current_residual = f - apply(x)
+        rho = 1.0 / (2.0 * sigma - rho_prev)
+        step = rho * rho_prev * step + (2.0 * rho / delta) * current_residual
+        x = x + step
+        rho_prev = rho
     return x
 
 
@@ -395,6 +463,9 @@ def analyze_world(family: dict, draw) -> dict:
             "jacobi_signed_estimate": None,
             "predicted_field": None,
             "predicted_crossed": None,
+            "chebyshev_signed_estimate": None,
+            "chebyshev_predicted_field": None,
+            "chebyshev_predicted_crossed": None,
         }
         record["crossing_depth"] = abs(field_value - own)
         if not is_pivot:
@@ -432,28 +503,33 @@ def analyze_world(family: dict, draw) -> dict:
                 }
                 for i in order
             ]
-            residual = (
-                np.asarray(system.laplacian_uu, dtype=float) @ y_u
-                + np.asarray(system.forcing, dtype=float)
-            )
-            estimate = jacobi_estimate(
-                np.asarray(system.laplacian_uu, dtype=float), residual,
-            )[position[index]]
-            predicted_field = own + float(estimate)
+            H = np.asarray(system.laplacian_uu, dtype=float)
+            residual = H @ y_u + np.asarray(system.forcing, dtype=float)
+            jacobi = float(
+                jacobi_estimate(H, residual)[position[index]])
+            chebyshev = float(
+                chebyshev_estimate(H, residual)[position[index]])
             all_values = tuple(float(v[index]) for v in vectors)
             opposing_values = tuple(
                 value for value in all_values if value != own
             )
+            jacobi_field = own + jacobi
+            chebyshev_field = own + chebyshev
             record.update({
                 "signed_true_error": signed_error,
                 "attribution_faithfulness_delta": delta,
                 "toward_opposing_mass": toward_opposing,
                 "toward_own_mass": toward_own,
                 "top_sites": top_sites,
-                "jacobi_signed_estimate": float(estimate),
-                "predicted_field": predicted_field,
+                "jacobi_signed_estimate": jacobi,
+                "predicted_field": jacobi_field,
                 "predicted_crossed": crossed_under_rule(
-                    predicted_field, own, opposing_values,
+                    jacobi_field, own, opposing_values,
+                ),
+                "chebyshev_signed_estimate": chebyshev,
+                "chebyshev_predicted_field": chebyshev_field,
+                "chebyshev_predicted_crossed": crossed_under_rule(
+                    chebyshev_field, own, opposing_values,
                 ),
             })
         records.append(record)
@@ -531,11 +607,16 @@ def analyze_world(family: dict, draw) -> dict:
     }
 
 
-def predictor_metrics(records: list[dict]) -> dict:
+def predictor_metrics(
+    records: list[dict],
+    estimate_key: str = "jacobi_signed_estimate",
+    field_key: str = "predicted_field",
+    crossed_key: str = "predicted_crossed",
+) -> dict:
     """Confusion matrices, baselines, and the solve-equivalence diagnostic."""
     non_pivot = [r for r in records if not r["is_pivot"]]
     truths_np = [r["crossed_to_opposing"] for r in non_pivot]
-    preds_np = [bool(r["predicted_crossed"]) for r in non_pivot]
+    preds_np = [bool(r[crossed_key]) for r in non_pivot]
     truths_all = [r["crossed_to_opposing"] for r in records]
 
     baselines = {
@@ -548,7 +629,7 @@ def predictor_metrics(records: list[dict]) -> dict:
     }
 
     estimates = np.asarray(
-        [r["jacobi_signed_estimate"] for r in non_pivot], dtype=float)
+        [r[estimate_key] for r in non_pivot], dtype=float)
     errors = np.asarray(
         [r["signed_true_error"] for r in non_pivot], dtype=float)
     diagnostic = spearman(estimates, errors)
@@ -557,7 +638,7 @@ def predictor_metrics(records: list[dict]) -> dict:
     for world in sorted({r["world"] for r in non_pivot}):
         rows = [r for r in non_pivot if r["world"] == world]
         per_world[world] = balanced_accuracy(
-            [bool(r["predicted_crossed"]) for r in rows],
+            [bool(r[crossed_key]) for r in rows],
             [r["crossed_to_opposing"] for r in rows],
         )
 
@@ -566,7 +647,7 @@ def predictor_metrics(records: list[dict]) -> dict:
     for branch_index in sorted({r["branch_index"] for r in non_pivot}):
         rows = [r for r in non_pivot if r["branch_index"] == branch_index]
         per_branch[str(branch_index)] = balanced_accuracy(
-            [bool(r["predicted_crossed"]) for r in rows],
+            [bool(r[crossed_key]) for r in rows],
             [r["crossed_to_opposing"] for r in rows],
         )
 
@@ -584,8 +665,8 @@ def predictor_metrics(records: list[dict]) -> dict:
             "branch_index": r["branch_index"],
             "coordinate_id": r["coordinate_id"],
             "observed_depth": r["crossing_depth"],
-            "predicted_depth": abs(r["predicted_field"] - r["own_value"]),
-            "predicted_crossed": bool(r["predicted_crossed"]),
+            "predicted_depth": abs(r[field_key] - r["own_value"]),
+            "predicted_crossed": bool(r[crossed_key]),
         }
         for r in crossings
     ]
@@ -639,10 +720,26 @@ def run_sealed_analysis() -> dict:
             worlds_out.append({"family": family["family"], **result})
             all_records.extend(result["records"])
 
+    estimators = {
+        "jacobi_degree3": (
+            "jacobi_signed_estimate", "predicted_field", "predicted_crossed",
+        ),
+        "chebyshev_degree3": (
+            "chebyshev_signed_estimate", "chebyshev_predicted_field",
+            "chebyshev_predicted_crossed",
+        ),
+    }
+    pooled = {
+        name: predictor_metrics(all_records, *keys)
+        for name, keys in estimators.items()
+    }
     families_metrics = {
-        name: predictor_metrics(
-            [r for r in all_records if r["family"] == name])
-        for name in ("g7-seed", "g8-seed")
+        family: {
+            name: predictor_metrics(
+                [r for r in all_records if r["family"] == family], *keys)
+            for name, keys in estimators.items()
+        }
+        for family in ("g7-seed", "g8-seed")
     }
     return {
         "record_type": RECORD_TYPE,
@@ -650,14 +747,32 @@ def run_sealed_analysis() -> dict:
         "discipline": "Phase A makes no claims; every number here is "
                       "determined by sealed data; hypothesis selection on "
                       "this output must be disclosed in the Phase A report",
+        "round_disclosure": {
+            "round": 2,
+            "history": [
+                "round 1 (2026-07-24): degree-3 Jacobi estimator; failed "
+                "at balanced accuracy 0.551 vs branch!=0 baseline 0.756; "
+                "root cause instrument-level — the Jacobi iteration "
+                "diverges on every sealed system (measured "
+                "rho(I - D^-1 H_uu) = 1.98-2.84)",
+                "round 2 (2026-07-24): Chebyshev semi-iteration, same "
+                "degree, design interval [b/30, b] with b the Gershgorin "
+                "preconditioned upper bound; KAPPA_DESIGN = 30 chosen "
+                "after observing round 1's measured preconditioned "
+                "condition numbers 18.4-65.1 (disclosed hypothesis "
+                "iteration); Jacobi retained in the output for the record",
+            ],
+        },
         "decode_threshold": DECODE_THRESHOLD,
         "jacobi_degree": JACOBI_DEGREE,
+        "chebyshev_degree": CHEBYSHEV_DEGREE,
+        "chebyshev_kappa_design": CHEBYSHEV_KAPPA_DESIGN,
         "source_manifests": {
             "g7": g7_study.manifest_id,
             "g8_part2": g8_study.manifest_id,
         },
         "worlds": worlds_out,
-        "predictor_metrics_pooled": predictor_metrics(all_records),
+        "predictor_metrics_pooled": pooled,
         "predictor_metrics_per_family": families_metrics,
     }
 
@@ -771,6 +886,43 @@ def selftest() -> int:
           and spectra["condition_number"] >= 1.0
           and spectra["preconditioned_condition_number"] >= 1.0
           and 0.0 < spectra["jacobi_iteration_spectral_radius"] < 1.0)
+
+    # (j) Chebyshev estimate: exact degree bookkeeping — the four-step
+    # iterate must lie exactly in the degree-3 Krylov space of D^-1 H
+    # applied to D^-1 r (least-squares residual ~ 0).
+    def krylov_fit_residual(H, r, estimate):
+        diagonal = np.diag(H)
+        f = -r / diagonal
+        basis = [f]
+        for _ in range(3):
+            basis.append((H @ basis[-1]) / diagonal)
+        matrix = np.stack(basis, axis=1)
+        _, residuals, _, _ = np.linalg.lstsq(matrix, estimate, rcond=None)
+        fitted = matrix @ np.linalg.lstsq(matrix, estimate, rcond=None)[0]
+        return float(np.linalg.norm(fitted - estimate))
+
+    cheb = chebyshev_estimate(laplacian, residual)
+    check("Chebyshev iterate lies exactly in the degree-3 Krylov space",
+          krylov_fit_residual(laplacian, residual, cheb) < 1e-10)
+
+    # (k) Chebyshev never amplifies: on a near-clique system where Jacobi
+    # DIVERGES (radius > 1), the Chebyshev estimate must still be
+    # no farther from the true error than the zero estimate, and closer
+    # than the Jacobi estimate.
+    clique = np.ones((6, 6)) + 0.5 * np.eye(6)
+    clique_forcing = np.array([0.2, -0.3, 0.1, 0.4, -0.2, 0.05])
+    clique_y = np.array([1.0, 0.0, 0.0, 1.0, 0.0, 1.0])
+    clique_residual = clique @ clique_y + clique_forcing
+    true_error = np.linalg.solve(clique, -clique_residual)
+    cheb_err = np.linalg.norm(
+        chebyshev_estimate(clique, clique_residual) - true_error)
+    jacobi_err = np.linalg.norm(
+        jacobi_estimate(clique, clique_residual) - true_error)
+    check("on a diverging-Jacobi near-clique system, Chebyshev contracts "
+          "and beats Jacobi",
+          system_spectra(clique)["jacobi_iteration_spectral_radius"] > 1.0
+          and cheb_err <= np.linalg.norm(true_error) + 1e-12
+          and cheb_err < jacobi_err)
 
     print(f"\nselftest: {'ALL PASS' if not rng_free_failures else 'FAILURES'}")
     return 1 if rng_free_failures else 0
